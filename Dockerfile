@@ -59,7 +59,7 @@ FROM frankenphp_base AS frankenphp_dev
 ENV APP_ENV=dev XDEBUG_MODE=off
 ENV FRANKENPHP_CONFIG="worker ./public/index.php"
 ENV APP_RUNTIME=Runtime\\FrankenPhpSymfony\\Runtime
-ENV MAX_REQUESTS=3
+ENV MAX_REQUESTS=1000
 
 RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
 
