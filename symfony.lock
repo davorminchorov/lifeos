@@ -64,6 +64,18 @@
             "phpstan.dist.neon"
         ]
     },
+    "qossmic/deptrac": {
+        "version": "2.0",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "main",
+            "version": "2.0",
+            "ref": "05ab8813714080c7bc915cb10c780e6cfdbdb991"
+        },
+        "files": [
+            "deptrac.yaml"
+        ]
+    },
     "symfony/console": {
         "version": "7.1",
         "recipe": {

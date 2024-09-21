@@ -86,6 +86,7 @@
     "require-dev": {
         "behat/behat": "^3.14",
         "phpspec/phpspec": "^7.5",
-        "phpstan/phpstan": "^1.12"
+        "phpstan/phpstan": "^1.12",
+        "qossmic/deptrac": "^2.0"
     }
 }
