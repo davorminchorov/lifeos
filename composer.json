@@ -88,6 +88,7 @@
         "behat/behat": "^3.14",
         "eventsauce/code-generation": "^3.5",
         "eventsauce/test-utilities": "^3.4",
+        "friendsofphp/php-cs-fixer": "^3.64",
         "phpspec/phpspec": "^7.5",
         "phpstan/phpstan": "^1.12",
         "qossmic/deptrac": "^2.0"
