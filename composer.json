@@ -1,8 +1,8 @@
 {
-    "name": "symfony/skeleton",
+    "name": "davorminchorov/lifeos",
     "type": "project",
     "license": "MIT",
-    "description": "A minimal Symfony project recommended to create bare bones applications",
+    "description": "The API for LifeOS",
     "minimum-stability": "stable",
     "prefer-stable": true,
     "require": {
@@ -82,5 +82,8 @@
             "require": "7.1.*",
             "docker": true
         }
+    },
+    "require-dev": {
+        "phpstan/phpstan": "^1.12"
     }
 }
