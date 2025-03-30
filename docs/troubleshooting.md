@@ -279,3 +279,55 @@ PDOException: SQLSTATE[HY000] [2002] Connection refused
 - Restart MySQL container
 - Check database credentials in .env
 - Verify MySQL service is running 
+
+## React 19 & Tailwind CSS 4 Issues
+
+### React 19 Compatibility Issues
+
+**Symptoms:**
+- Unexpected errors with third-party libraries
+- Components not rendering properly
+- Console errors about missing or incompatible APIs
+
+**Solutions:**
+
+1. **Check Library Compatibility:**
+   - Ensure all libraries are compatible with React 19
+   - Look for React 19 specific versions of libraries
+
+2. **Use Modern APIs:**
+   - Prefer React 19's native hooks and patterns
+   - Avoid deprecated patterns and lifecycle methods
+
+3. **Node Version Compatibility:**
+   - Use Node.js 18+ (Node.js 23 recommended)
+   - Run `node -v` to verify your version
+
+### Tailwind CSS 4 Configuration Issues
+
+**Symptoms:**
+- CSS classes not applying
+- Missing utility classes
+- Build errors related to Tailwind
+
+**Solutions:**
+
+1. **Check Tailwind Configuration:**
+   ```bash
+   # Run this to generate a new default config if needed
+   npx tailwindcss init
+   ```
+
+2. **Verify Content Paths:**
+   - Ensure all template paths are correctly defined in tailwind.config.js
+   - Confirm content glob patterns match your file structure
+
+3. **Rebuild CSS:**
+   ```bash
+   # Force a clean rebuild of the CSS
+   npm run build
+   ```
+
+4. **Check for Conflicting CSS:**
+   - Look for CSS that might override Tailwind utilities
+   - Use proper layering in your CSS imports

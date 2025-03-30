@@ -20,10 +20,10 @@ LifeOS is a personal management system built with Laravel to track and manage va
   - File storage for attachments
 
 - **Frontend**: 
-  - Inertia.js with React (TypeScript) for the main dashboard
-  - Filament for admin panel interface
-  - Shadcn UI components for dashboard
-  - Tailwind CSS for styling
+  - React 19 (Single Page Application)
+  - Tailwind CSS 4 for styling
+  - Vite for frontend build tooling
+  - Modern TypeScript with module system
 
 - **Database**: 
   - MySQL/PostgreSQL for relational data
@@ -84,7 +84,7 @@ The application is structured in vertical slices (bounded contexts) where each f
 ## Implementation Plan
 
 ### Phase 1: Foundation
-- Project setup with Laravel, Inertia, React+TypeScript, and Shadcn
+- Project setup with Laravel, React 19, and Tailwind CSS 4
 - Event sourcing infrastructure
 - Authentication system
 - Base UI components and layouts
@@ -116,7 +116,8 @@ The application is structured in vertical slices (bounded contexts) where each f
 - PHP 8.1 or higher
 - Composer
 - MySQL or PostgreSQL
-- Node.js and NPM
+- Node.js 18+ (Node.js 23 recommended)
+- NPM
 
 ### Option 1: Using Laravel Herd (macOS)
 

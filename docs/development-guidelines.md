@@ -2,8 +2,8 @@
 
 ## Technology Stack
 
-- **Frontend**: React with TypeScript, Inertia.js
-- **UI Framework**: Tailwind CSS
+- **Frontend**: React 19 (SPA), Tailwind CSS 4
+- **UI Framework**: Tailwind CSS 4 with utility-first approach
 - **Backend**: Laravel (PHP)
 - **Database**: MySQL
 - **Containerization**: Docker with Laravel Sail

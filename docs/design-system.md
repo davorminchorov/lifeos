@@ -109,19 +109,20 @@ LifeOS is a personal operating system that helps users manage their finances, ta
 ## Coding Standards
 
 ### CSS/Tailwind
-- Prefer Tailwind utility classes for styling
-- Use consistent class ordering:
+- Utilize Tailwind CSS 4 utility classes for styling
+- Follow a consistent utility ordering pattern:
   1. Layout (display, positioning)
   2. Spacing (margin, padding)
   3. Sizing (width, height)
   4. Typography
   5. Visual (colors, backgrounds)
   6. Interactive states
-- Avoid custom CSS where possible; extend Tailwind theme instead
+- Use Tailwind's configuration system for customization
+- Leverage Tailwind's modern Just-In-Time engine for performance
 
 ### React Components
-- Create reusable, composable components
-- Use TypeScript interfaces for proper typing
+- Create reusable, composable components using React 19 patterns
+- Use modern React features like hooks and function components
 - Implement proper keyboard accessibility
 - Follow conventional naming patterns
 
