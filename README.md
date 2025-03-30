@@ -117,6 +117,12 @@ The application is structured in vertical slices (bounded contexts) where each f
 - [UI Component Development](docs/frontend-components.md) - Component design and implementation
 - [Frontend Implementation Guide](docs/frontend-implementation.md) - Step-by-step implementation instructions
 
+### Backend Development
+- [Backend Architecture](docs/backend-architecture.md) - Detailed backend architecture with event sourcing
+- [Backend Implementation Guide](docs/backend-implementation.md) - How to implement backend features
+- [API Design Guidelines](docs/api-design.md) - RESTful API standards and patterns
+- [Event Sourcing Guide](docs/event-sourcing.md) - Comprehensive guide to event sourcing patterns
+
 ### System Documentation
 - [Design System](docs/design-system.md) - Design tokens, colors, and UI guidelines
 - [Development Guidelines](docs/development-guidelines.md) - General coding standards and practices
