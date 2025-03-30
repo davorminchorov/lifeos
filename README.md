@@ -5,10 +5,21 @@ LifeOS is a personal management system built with Laravel to track and manage va
 ## Features
 
 - **Monthly Subscription Tracking**: Manage and monitor recurring subscription services, payment dates, and costs
-- **Recurring Utility Bills Tracking**: Track utility bills, due dates, and payment history
-- **Investments Tracking**: Monitor investment portfolio, performance metrics, and transaction history
+- **Recurring Utility Bills Tracking**: Track utility bills, due dates, and payment history with automated reminders
+- **Investments Tracking**: Monitor investment portfolio across multiple categories (Life insurance, Investment funds, etc.), track performance metrics, and transaction history
 - **Job Application Tracking**: Keep track of job applications, interview status, and follow-ups
-- **Expenses Tracking**: Log and categorize daily expenses to monitor spending habits
+- **Expenses Tracking**: Log and categorize daily expenses with budget setting and analysis features
+
+## Technology Stack
+
+- **Backend**: Laravel 10+
+- **Frontend**: 
+  - Livewire for interactive dashboard components
+  - Filament for admin panel interface
+  - Tailwind CSS for styling
+- **Database**: MySQL/PostgreSQL
+- **Authentication**: Single-user application with sign-in only (no registration)
+- **Mobile Support**: Responsive design for mobile devices
 
 ## Installation
 
