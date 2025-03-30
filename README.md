@@ -138,7 +138,8 @@ The application is structured in vertical slices (bounded contexts) where each f
 
 ### System Documentation
 - [Development Guidelines](docs/development-guidelines.md) - General coding standards and practices
-- [Coding Standards](docs/coding-standards.md) - Detailed coding standards for backend and frontend
+- [Coding Standards](docs/coding-standards.md) - Coding conventions and best practices for LifeOS development.
+- [Domain-Driven Design](docs/domain-driven-design.md) - DDD tactical patterns used in the LifeOS application.
 - [Troubleshooting](docs/troubleshooting.md) - Common issues and solutions
 
 ## Installation
