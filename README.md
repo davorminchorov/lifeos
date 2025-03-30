@@ -12,14 +12,102 @@ LifeOS is a personal management system built with Laravel to track and manage va
 
 ## Technology Stack
 
-- **Backend**: Laravel 10+
+- **Backend**: 
+  - Laravel 12+
+  - Event Sourcing for complete history and audit trails
+  - Vertical Slices Architecture with bounded contexts
+  - Laravel Reverb for WebSockets
+  - File storage for attachments
+
 - **Frontend**: 
-  - Livewire for interactive dashboard components
+  - Inertia.js with React (TypeScript) for the main dashboard
   - Filament for admin panel interface
+  - Shadcn UI components for dashboard
   - Tailwind CSS for styling
-- **Database**: MySQL/PostgreSQL
+
+- **Database**: 
+  - MySQL/PostgreSQL for relational data
+  - Event Store for domain events
+
 - **Authentication**: Single-user application with sign-in only (no registration)
 - **Mobile Support**: Responsive design for mobile devices
+- **Data Management**: Import/Export capabilities for backup and migration
+
+## Architecture Overview
+
+### Vertical Slices with Event Sourcing
+
+The application is structured in vertical slices (bounded contexts) where each feature is implemented as a complete stack from UI to data layer:
+
+1. **Identity & Authentication**
+   - Single-user authentication
+   - Profile management
+
+2. **Subscription Management**
+   - Commands: AddSubscription, UpdateSubscription, CancelSubscription, RecordPayment
+   - Events: SubscriptionAdded, SubscriptionUpdated, SubscriptionCancelled, PaymentRecorded
+   - Projections: ActiveSubscriptions, UpcomingPayments, MonthlyExpenditure
+
+3. **Utility Bills Management**
+   - Commands: AddBill, UpdateBill, PayBill, ScheduleReminder
+   - Events: BillAdded, BillUpdated, BillPaid, ReminderScheduled, ReminderSent
+   - Projections: PendingBills, PaymentHistory, UpcomingReminders
+
+4. **Investment Portfolio**
+   - Commands: CreateInvestment, RecordTransaction, UpdateValuation
+   - Events: InvestmentCreated, TransactionRecorded, ValuationUpdated
+   - Projections: PortfolioSummary, InvestmentPerformance (basic ROI)
+
+5. **Job Application Pipeline**
+   - Commands: SubmitApplication, ScheduleInterview, RecordOutcome
+   - Events: ApplicationSubmitted, InterviewScheduled, OutcomeRecorded
+   - Projections: ActiveApplications, InterviewSchedule, ApplicationHistory
+
+6. **Expense Tracking**
+   - Commands: RecordExpense, CategorizeExpense, SetBudget
+   - Events: ExpenseRecorded, ExpenseCategorized, BudgetSet, BudgetExceeded
+   - Projections: MonthlyExpenses, CategorySpending, BudgetPerformance
+
+7. **Dashboard & Analytics**
+   - Cross-domain reporting
+   - Data visualization
+   - Budget performance analysis
+
+### Event Sourcing Implementation
+
+- **Event Store**: Records all domain events as immutable facts
+- **Aggregates**: Domain models that emit and apply events
+- **Projections**: Read models built from event streams
+- **Command Handlers**: Process commands and coordinate domain logic
+- **Real-time Updates**: WebSockets broadcast projection updates to UI
+
+## Implementation Plan
+
+### Phase 1: Foundation
+- Project setup with Laravel, Inertia, React+TypeScript, and Shadcn
+- Event sourcing infrastructure
+- Authentication system
+- Base UI components and layouts
+
+### Phase 2: Core Features
+- Subscription management implementation
+- Utility bills system with reminders
+- Basic expense tracking
+- Dashboard foundation
+
+### Phase 3: Advanced Features
+- Investment portfolio tracking with basic ROI calculations
+- Job application pipeline
+- Budget analysis tools
+- File attachment system
+- WebSocket real-time updates with Laravel Reverb
+
+### Phase 4: Refinement
+- Import/Export functionality
+- UI/UX improvements
+- Performance optimization
+- Reporting enhancements
+- Mobile responsiveness
 
 ## Installation
 
