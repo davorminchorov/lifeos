@@ -1,8 +1,6 @@
 <?php
 
-use App\Http\Controllers\Auth\LoginController;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 /*
 |--------------------------------------------------------------------------
@@ -11,22 +9,11 @@ use Inertia\Inertia;
 |
 | Here is where you can register web routes for your application. These
 | routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group.
+| be assigned to the "web" middleware group. Make something great!
 |
 */
 
-Route::get('/', function () {
-    return Inertia::render('Authentication/UI/Login');
-});
-
-// Authentication routes
-Route::get('/login', [LoginController::class, 'show'])->name('login');
-Route::post('/login', [LoginController::class, 'login']);
-Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
-
-// Dashboard route (protected)
-Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', function () {
-        return Inertia::render('Dashboard/UI/Dashboard');
-    })->name('dashboard');
-});
+// Catch-all route for SPA
+Route::get('/{any?}', function () {
+    return view('app');
+})->where('any', '.*');
