@@ -109,6 +109,19 @@ The application is structured in vertical slices (bounded contexts) where each f
 - Reporting enhancements
 - Mobile responsiveness
 
+## Documentation
+
+### Frontend Development
+- [Frontend Architecture](docs/frontend-architecture.md) - Overview of the vertical slice architecture
+- [Frontend Development Guidelines](docs/frontend-development.md) - Coding standards and patterns
+- [UI Component Development](docs/frontend-components.md) - Component design and implementation
+- [Frontend Implementation Guide](docs/frontend-implementation.md) - Step-by-step implementation instructions
+
+### System Documentation
+- [Design System](docs/design-system.md) - Design tokens, colors, and UI guidelines
+- [Development Guidelines](docs/development-guidelines.md) - General coding standards and practices
+- [Troubleshooting](docs/troubleshooting.md) - Common issues and solutions
+
 ## Installation
 
 ### Prerequisites
