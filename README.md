@@ -133,8 +133,10 @@ The application is structured in vertical slices (bounded contexts) where each f
 ### Real-time Features
 - [Reverb Integration](docs/reverb-integration.md) - Integrating Laravel Reverb with event sourcing for real-time updates
 
+### Design and Frontend
+- [Design System](docs/design-system.md) - Comprehensive design system with color palettes, typography, and components
+
 ### System Documentation
-- [Design System](docs/design-system.md) - Design tokens, colors, and UI guidelines
 - [Development Guidelines](docs/development-guidelines.md) - General coding standards and practices
 - [Troubleshooting](docs/troubleshooting.md) - Common issues and solutions
 
