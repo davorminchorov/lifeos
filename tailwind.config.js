@@ -8,8 +8,22 @@ export default {
     './resources/**/*.ts',
     './resources/**/*.tsx',
   ],
+  safelist: [
+    'bg-background',
+    'text-foreground',
+    'border-border'
+  ],
   theme: {
     extend: {
+      backgroundColor: {
+        background: "hsl(var(--background))",
+      },
+      textColor: {
+        foreground: "hsl(var(--foreground))",
+      },
+      borderColor: {
+        border: "hsl(var(--border))",
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

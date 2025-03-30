@@ -17,7 +17,7 @@ export default function Login() {
 
   return (
     <Layout>
-      <div className="max-w-md mx-auto mt-8 p-6 bg-card rounded-lg shadow-sm border">
+      <div className="max-w-md mx-auto mt-8 p-6 bg-white rounded-lg shadow-sm border border-gray-200">
         <h2 className="text-2xl font-semibold mb-6 text-center">Login</h2>
 
         <form onSubmit={submit}>
@@ -30,11 +30,11 @@ export default function Login() {
               type="email"
               value={data.email}
               onChange={e => setData('email', e.target.value)}
-              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             />
             {errors.email && (
-              <div className="text-destructive text-sm mt-1">{errors.email}</div>
+              <div className="text-red-500 text-sm mt-1">{errors.email}</div>
             )}
           </div>
 
@@ -47,11 +47,11 @@ export default function Login() {
               type="password"
               value={data.password}
               onChange={e => setData('password', e.target.value)}
-              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             />
             {errors.password && (
-              <div className="text-destructive text-sm mt-1">{errors.password}</div>
+              <div className="text-red-500 text-sm mt-1">{errors.password}</div>
             )}
           </div>
 
