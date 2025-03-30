@@ -15,6 +15,7 @@ LifeOS is a personal management system built with Laravel to track and manage va
 - CQRS pattern separating commands and queries
 - Responsive design for mobile support
 - Real-time updates via WebSockets (Laravel Reverb)
+- Domain-Driven Design tactical patterns for domain modeling
 
 ## Core Features
 1. Monthly Subscription Tracking
@@ -63,10 +64,28 @@ LifeOS is a personal management system built with Laravel to track and manage va
 - Secure channel authorization
 - Client reconnection handling with missed event recovery
 
+## Domain-Driven Design Tactical Patterns
+- **Core Domain Patterns**:
+  - Aggregates: SubscriptionAggregate, BillAggregate, InvestmentAggregate, JobApplicationAggregate, ExpenseAggregate
+  - Entities: Core domain objects with identity (Subscription, Bill, Investment, JobApplication, Expense)
+  - Value Objects: Immutable objects representing domain concepts (Money, BillingCycle, DateRange, Category, PaymentStatus)
+- **Behavioral Patterns**:
+  - Domain Events: Immutable past-tense named events (SubscriptionCreated, BillPaid, InvestmentValuationUpdated)
+  - Commands: Imperative verbs representing user intentions (CreateSubscription, PayBill, UpdateInvestmentValuation)
+  - Repositories: Interfaces for aggregate persistence (SubscriptionRepository, BillRepository, InvestmentRepository)
+- **Structural Patterns**:
+  - Domain Services: Cross-aggregate business logic (BudgetAnalysisService, ReminderService, PortfolioAnalysisService)
+  - Application Services: Orchestration layer connecting UI with domain (CommandBus, QueryBus, EventBus)
+  - Factories: Creation logic for complex domain objects (MoneyFactory, AggregateFactory, EventFactory)
+- **Data Access Patterns**:
+  - Projections: Optimized read models for specific query needs (ActiveSubscriptionsProjection, MonthlyExpenseSummaryProjection)
+  - Event Store: System of record for all domain events with versioning and snapshot support
+
 ## Key Documentation Resources
 - [Backend Architecture](docs/backend-architecture.md)
 - [Event Sourcing Guide](docs/event-sourcing.md)
 - [Testing Strategy](docs/testing-strategy.md)
+- [Domain-Driven Design](docs/domain-driven-design.md)
 - [Projection Rebuilding](docs/projection-rebuilding.md)
 - [Reverb Integration](docs/reverb-integration.md)
 - [Design System](docs/design-system.md)
@@ -76,9 +95,16 @@ LifeOS is a personal management system built with Laravel to track and manage va
 
 ## Development Guidelines
 - Follow established architecture patterns
+- Implement DDD tactical patterns consistently across domains
+- Use immutable value objects for domain concepts with validation
+- Define clear aggregate boundaries to protect business invariants
+- Version domain events explicitly for schema evolution
 - Adhere to the design system for visual consistency
 - Write comprehensive tests for all new features
 - Document new components and patterns
 - Optimize for both desktop and mobile experiences
 - Ensure all features are accessible
-- Consider real-time aspects for all state changes 
+- Consider real-time aspects for all state changes
+- Keep aggregates small and focused on core business rules
+- Implement proper command validation before processing
+- Design projections for specific query needs 
