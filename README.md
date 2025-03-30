@@ -138,6 +138,7 @@ The application is structured in vertical slices (bounded contexts) where each f
 
 ### System Documentation
 - [Development Guidelines](docs/development-guidelines.md) - General coding standards and practices
+- [Coding Standards](docs/coding-standards.md) - Detailed coding standards for backend and frontend
 - [Troubleshooting](docs/troubleshooting.md) - Common issues and solutions
 
 ## Installation
