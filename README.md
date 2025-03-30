@@ -123,11 +123,15 @@ The application is structured in vertical slices (bounded contexts) where each f
 - [API Design Guidelines](docs/api-design.md) - RESTful API standards and patterns
 - [Event Sourcing Guide](docs/event-sourcing.md) - Comprehensive guide to event sourcing patterns
 - [Testing Strategy](docs/testing-strategy.md) - Comprehensive testing approach for event-sourced systems
+- [Projection Rebuilding](docs/projection-rebuilding.md) - Zero-downtime projection rebuilding strategy
 
 ### DevOps and Performance
 - [Deployment Guide](docs/deployment-guide.md) - Complete guide for deploying to various environments
 - [Performance Optimization](docs/performance-optimization.md) - Strategies for optimizing application performance
 - [Architecture Diagrams](docs/architecture-diagrams.md) - Visual representations of the system architecture
+
+### Real-time Features
+- [Reverb Integration](docs/reverb-integration.md) - Integrating Laravel Reverb with event sourcing for real-time updates
 
 ### System Documentation
 - [Design System](docs/design-system.md) - Design tokens, colors, and UI guidelines
