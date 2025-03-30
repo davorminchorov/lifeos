@@ -2,47 +2,101 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono&display=swap');
+
 :root {
-  --background: 0 0% 100%;
-  --foreground: 240 10% 3.9%;
+  --background: 210 40% 98%;
+  --foreground: 222 47% 11%;
+
+  /* Card colors */
   --card: 0 0% 100%;
-  --card-foreground: 240 10% 3.9%;
+  --card-foreground: 222 47% 11%;
+
+  /* Popover colors */
   --popover: 0 0% 100%;
-  --popover-foreground: 240 10% 3.9%;
-  --primary: 240 5.9% 10%;
-  --primary-foreground: 0 0% 98%;
-  --secondary: 240 4.8% 95.9%;
-  --secondary-foreground: 240 5.9% 10%;
-  --muted: 240 4.8% 95.9%;
-  --muted-foreground: 240 3.8% 46.1%;
-  --accent: 240 4.8% 95.9%;
-  --accent-foreground: 240 5.9% 10%;
-  --destructive: 0 84.2% 60.2%;
+  --popover-foreground: 222 47% 11%;
+
+  /* Primary: Deep blue */
+  --primary: 221 83% 40%;
+  --primary-foreground: 0 0% 100%;
+
+  /* Secondary: Teal */
+  --secondary: 174 87% 31%;
+  --secondary-foreground: 0 0% 100%;
+
+  /* Accent: Soft Purple */
+  --accent: 263 70% 63%;
+  --accent-foreground: 0 0% 100%;
+
+  /* Muted colors */
+  --muted: 210 40% 96.1%;
+  --muted-foreground: 215 16% 47%;
+
+  /* Destructive colors - for errors */
+  --destructive: 0 84% 60%;
   --destructive-foreground: 0 0% 98%;
-  --border: 240 5.9% 90%;
-  --input: 240 5.9% 90%;
-  --ring: 240 10% 3.9%;
+
+  /* Success color - for positive indicators */
+  --success: 142 76% 45%;
+  --success-foreground: 0 0% 100%;
+
+  /* Warning color */
+  --warning: 38 92% 50%;
+  --warning-foreground: 0 0% 100%;
+
+  /* UI elements */
+  --border: 220 13% 91%;
+  --input: 220 13% 91%;
+  --ring: 221 83% 40%;
+
+  /* Border radius */
   --radius: 0.5rem;
 }
 
 .dark {
-  --background: 240 10% 3.9%;
-  --foreground: 0 0% 98%;
-  --card: 240 10% 3.9%;
-  --card-foreground: 0 0% 98%;
-  --popover: 240 10% 3.9%;
-  --popover-foreground: 0 0% 98%;
-  --primary: 0 0% 98%;
-  --primary-foreground: 240 5.9% 10%;
-  --secondary: 240 3.7% 15.9%;
-  --secondary-foreground: 0 0% 98%;
-  --muted: 240 3.7% 15.9%;
-  --muted-foreground: 240 5% 64.9%;
-  --accent: 240 3.7% 15.9%;
+  --background: 222 47% 11%;
+  --foreground: 210 40% 98%;
+
+  --card: 222 47% 11%;
+  --card-foreground: 210 40% 98%;
+
+  --popover: 222 47% 11%;
+  --popover-foreground: 210 40% 98%;
+
+  /* Primary: Deep blue - slightly lightened for dark mode */
+  --primary: 221 70% 55%;
+  --primary-foreground: 0 0% 100%;
+
+  /* Secondary: Teal - adjusted for dark mode */
+  --secondary: 174 70% 40%;
+  --secondary-foreground: 0 0% 100%;
+
+  /* Accent: Soft Purple - adjusted for dark mode */
+  --accent: 263 60% 75%;
   --accent-foreground: 0 0% 98%;
-  --destructive: 0 62.8% 30.6%;
+
+  --muted: 217 33% 17%;
+  --muted-foreground: 215 20% 65%;
+
+  --destructive: 0 74% 42%;
   --destructive-foreground: 0 0% 98%;
-  --border: 240 3.7% 15.9%;
-  --input: 240 3.7% 15.9%;
-  --ring: 240 4.9% 83.9%;
+
+  --success: 142 76% 36%;
+  --success-foreground: 0 0% 98%;
+
+  --warning: 38 92% 40%;
+  --warning-foreground: 0 0% 98%;
+
+  --border: 217 33% 25%;
+  --input: 217 33% 25%;
+  --ring: 221 70% 55%;
+}
+
+/* Base styling */
+body {
+  font-family: 'Inter', sans-serif;
+}
+
+.monospace {
+  font-family: 'Roboto Mono', monospace;
 }

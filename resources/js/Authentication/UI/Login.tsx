@@ -2,6 +2,8 @@ import React from 'react';
 import { useForm } from '@inertiajs/react';
 import Layout from './Layout';
 import { Button } from '../../components/ui/button';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '../../components/ui/card';
+import { Input, Label, FormGroup } from '../../components/ui/input';
 
 // Let's use a simpler approach that avoids TypeScript errors
 export default function Login() {
@@ -18,67 +20,77 @@ export default function Login() {
 
   return (
     <Layout>
-      <div className="max-w-md mx-auto mt-8 p-6 bg-white rounded-lg shadow-sm border border-gray-200">
-        <h2 className="text-2xl font-semibold mb-6 text-center">Login</h2>
+      <div className="max-w-md mx-auto">
+        <Card>
+          <CardHeader className="space-y-1">
+            <CardTitle className="text-2xl text-center">Login</CardTitle>
+            <CardDescription className="text-center">
+              Enter your credentials to access your account
+            </CardDescription>
+          </CardHeader>
 
-        <form onSubmit={submit}>
-          <div className="mb-4">
-            <label htmlFor="email" className="block text-sm font-medium mb-1">
-              Email
-            </label>
-            <input
-              id="email"
-              type="email"
-              value={data.email}
-              onChange={e => setData('email', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-            {errors.email && (
-              <div className="text-red-500 text-sm mt-1">{errors.email}</div>
-            )}
-          </div>
+          <CardContent>
+            <form onSubmit={submit} className="space-y-4">
+              <FormGroup error={errors.email}>
+                <Label htmlFor="email" required>
+                  Email
+                </Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={data.email}
+                  onChange={e => setData('email', e.target.value)}
+                  error={!!errors.email}
+                  required
+                />
+              </FormGroup>
 
-          <div className="mb-4">
-            <label htmlFor="password" className="block text-sm font-medium mb-1">
-              Password
-            </label>
-            <input
-              id="password"
-              type="password"
-              value={data.password}
-              onChange={e => setData('password', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-            {errors.password && (
-              <div className="text-red-500 text-sm mt-1">{errors.password}</div>
-            )}
-          </div>
+              <FormGroup error={errors.password}>
+                <Label htmlFor="password" required>
+                  Password
+                </Label>
+                <Input
+                  id="password"
+                  type="password"
+                  value={data.password}
+                  onChange={e => setData('password', e.target.value)}
+                  error={!!errors.password}
+                  required
+                />
+              </FormGroup>
 
-          <div className="mb-6">
-            <label className="flex items-center">
-              <input
-                type="checkbox"
-                checked={data.remember}
-                onChange={e => {
-                  // @ts-ignore: Inertia's type is too restrictive for this boolean toggle
-                  setData('remember', e.target.checked);
-                }}
-                className="mr-2"
-              />
-              <span className="text-sm">Remember me</span>
-            </label>
-          </div>
+              <div className="flex items-center">
+                <input
+                  id="remember"
+                  type="checkbox"
+                  checked={data.remember}
+                  onChange={e => {
+                    // @ts-ignore: Inertia's type is too restrictive for this boolean toggle
+                    setData('remember', e.target.checked);
+                  }}
+                  className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                />
+                <label htmlFor="remember" className="ml-2 text-sm text-muted-foreground">
+                  Remember me
+                </label>
+              </div>
 
-          <Button
-            type="submit"
-            className="w-full"
-            disabled={processing}
-          >
-            Login
-          </Button>
-        </form>
+              <Button
+                type="submit"
+                className="w-full mt-6"
+                disabled={processing}
+              >
+                {processing ? 'Signing in...' : 'Sign in'}
+              </Button>
+            </form>
+          </CardContent>
+
+          <CardFooter className="flex flex-col">
+            <Button variant="link" className="text-sm">
+              Forgot your password?
+            </Button>
+          </CardFooter>
+        </Card>
       </div>
     </Layout>
   );
