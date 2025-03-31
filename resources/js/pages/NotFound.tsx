@@ -1,29 +1,32 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
-import { Button } from '../components/ui/button'
+import React from "react"
+import { Link } from "react-router-dom"
+import { Button } from "../ui/Button"
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen bg-[#F8FAFC] flex flex-col justify-center items-center p-4 text-center">
-      <div className="w-full max-w-md">
-        <div className="mb-4 flex justify-center">
-          {/* Logo */}
-          <div className="w-12 h-12 rounded-full bg-[#0F766E] flex items-center justify-center text-white text-lg font-bold">
+    <div className="container flex flex-col items-center justify-center min-h-screen py-12">
+      <div className="w-full max-w-md text-center">
+        {/* Logo */}
+        <div className="mb-8 flex justify-center">
+          <div className="w-12 h-12 rounded-full bg-teal-600 flex items-center justify-center text-white text-lg font-bold">
             L
           </div>
         </div>
 
-        <h1 className="text-6xl font-bold text-[#0F766E] mb-4">404</h1>
-        <h2 className="text-2xl font-semibold text-[#1E293B] mb-4">Page Not Found</h2>
-        <p className="text-[#64748B] mb-8">
-          The page you are looking for doesn't exist or has been moved.
-        </p>
+        <div className="bg-white shadow-md rounded-lg p-8">
+          <h1 className="text-6xl font-bold text-slate-800 mb-2">404</h1>
+          <h2 className="text-2xl font-semibold text-slate-700 mb-4">Page Not Found</h2>
+          <p className="text-slate-600 mb-6">
+            The page you are looking for doesn't exist or has been moved.
+          </p>
 
-        <Link to="/">
-          <Button variant="primary" className="mx-auto">
-            Back to Home
+          <Button
+            onClick={() => window.location.href = '/'}
+            className="w-full"
+          >
+            Go Back Home
           </Button>
-        </Link>
+        </div>
       </div>
     </div>
   )

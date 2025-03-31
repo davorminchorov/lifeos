@@ -1,6 +1,8 @@
 import * as React from "react"
 import { useState } from "react"
 import axios from "axios"
+import { Button } from "../../ui/Button"
+import { Input } from "../../ui/Input"
 
 export function LoginForm() {
   const [email, setEmail] = useState("")
@@ -52,7 +54,7 @@ export function LoginForm() {
           <label htmlFor="email" className="form-label">
             Email
           </label>
-          <input
+          <Input
             id="email"
             type="email"
             value={email}
@@ -61,11 +63,8 @@ export function LoginForm() {
             required
             disabled={isLoading}
             autoComplete="email"
-            className="form-control"
+            error={errors.email}
           />
-          {errors.email && (
-            <p className="text-sm mt-1" style={{ color: '#ef4444' }}>{errors.email}</p>
-          )}
         </div>
 
         <div className="form-group">
@@ -77,7 +76,7 @@ export function LoginForm() {
               Forgot password?
             </a>
           </div>
-          <input
+          <Input
             id="password"
             type="password"
             value={password}
@@ -85,11 +84,8 @@ export function LoginForm() {
             required
             disabled={isLoading}
             autoComplete="current-password"
-            className="form-control"
+            error={errors.password}
           />
-          {errors.password && (
-            <p className="text-sm mt-1" style={{ color: '#ef4444' }}>{errors.password}</p>
-          )}
         </div>
 
         <div className="form-group flex items-center">
@@ -111,13 +107,14 @@ export function LoginForm() {
           </div>
         )}
 
-        <button
+        <Button
           type="submit"
-          className="btn btn-primary btn-block"
+          className="w-full btn btn-primary btn-block"
           disabled={isLoading}
+          isLoading={isLoading}
         >
-          {isLoading ? "Signing in..." : "Sign in"}
-        </button>
+          Sign in
+        </Button>
       </form>
     </div>
   )

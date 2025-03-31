@@ -6,7 +6,8 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import axios from 'axios';
 
 // Import pages
-import Login from './pages/auth/Login';
+import Login from './auth/routes/Login';
+import Dashboard from './dashboard/routes/Dashboard';
 import NotFound from './pages/NotFound';
 
 console.log('LifeOS app initialized with React');
@@ -27,36 +28,7 @@ function App() {
             <Routes>
                 {/* Auth Routes */}
                 <Route path="/login" element={<Login />} />
-
-                {/* Temporarily using a placeholder dashboard redirect */}
-                <Route
-                  path="/dashboard"
-                  element={
-                    <div className="container">
-                      <div className="w-full max-w-4xl">
-                        <div className="w-full h-12 bg-teal-600 flex items-center pl-4 text-white text-lg font-bold">
-                          LifeOS
-                        </div>
-                        <div className="login-box">
-                          <h1 className="text-slate-800">Dashboard</h1>
-                          <p className="text-slate-600 mt-2">
-                            You have successfully logged in. The dashboard will be implemented in the next phase.
-                          </p>
-                          <button
-                            onClick={() => {
-                              axios.post("/api/logout").then(() => {
-                                window.location.href = "/login";
-                              });
-                            }}
-                            className="btn btn-primary mt-4"
-                          >
-                            Logout
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  }
-                />
+                <Route path="/dashboard" element={<Dashboard />} />
 
                 {/* Redirect root to login for now */}
                 <Route path="/" element={<Navigate to="/login" replace />} />
