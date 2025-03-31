@@ -5,6 +5,7 @@ import axios from "axios"
 export function LoginForm() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [remember, setRemember] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [isLoading, setIsLoading] = useState(false)
 
@@ -17,6 +18,7 @@ export function LoginForm() {
       const response = await axios.post("/api/login", {
         email,
         password,
+        remember,
       })
 
       // Redirect on successful login
@@ -90,6 +92,19 @@ export function LoginForm() {
           )}
         </div>
 
+        <div className="form-group flex items-center">
+          <input
+            id="remember"
+            type="checkbox"
+            checked={remember}
+            onChange={(e) => setRemember(e.target.checked)}
+            className="mr-2 h-4 w-4 text-teal-600 border-gray-300 rounded"
+          />
+          <label htmlFor="remember" className="text-sm text-slate-600">
+            Remember me
+          </label>
+        </div>
+
         {errors.general && (
           <div className="rounded-md mb-2" style={{ backgroundColor: '#fef2f2', border: '1px solid #f87171', padding: '0.75rem', color: '#b91c1c', fontSize: '0.875rem' }}>
             {errors.general}
@@ -104,15 +119,6 @@ export function LoginForm() {
           {isLoading ? "Signing in..." : "Sign in"}
         </button>
       </form>
-
-      <div className="mt-6 text-center text-sm text-slate-400">
-        <p>
-          Don't have an account?{" "}
-          <a href="/register" className="text-teal-600 font-medium">
-            Create one
-          </a>
-        </p>
-      </div>
     </div>
   )
 }
