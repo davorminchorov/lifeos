@@ -19,6 +19,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Fix for Vite manifest not found error
+        if (! file_exists(public_path('build/manifest.json')) && file_exists(public_path('build/.vite/manifest.json'))) {
+            copy(public_path('build/.vite/manifest.json'), public_path('build/manifest.json'));
+        }
     }
 }

@@ -5,15 +5,18 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Inertia\Inertia;
+use Illuminate\Validation\ValidationException;
 
 class LoginController extends Controller
 {
-    public function show()
-    {
-        return Inertia::render('Authentication/UI/Login');
-    }
-
+    /**
+     * Handle a login request to the application.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     *
+     * @throws \Illuminate\Validation\ValidationException
+     */
     public function login(Request $request)
     {
         $credentials = $request->validate([
@@ -24,14 +27,23 @@ class LoginController extends Controller
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
 
-            return redirect()->intended('/dashboard');
+            return response()->json([
+                'message' => 'Login successful',
+                'user' => Auth::user()
+            ]);
         }
 
-        return back()->withErrors([
-            'email' => 'The provided credentials do not match our records.',
+        throw ValidationException::withMessages([
+            'email' => ['The provided credentials do not match our records.'],
         ]);
     }
 
+    /**
+     * Log the user out of the application.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
     public function logout(Request $request)
     {
         Auth::logout();
@@ -39,6 +51,6 @@ class LoginController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        return response()->json(['message' => 'Logout successful']);
     }
 }

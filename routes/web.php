@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Catch-all route for SPA
-Route::get('/{any?}', function () {
+// Serve the SPA for any route
+Route::get('/{path?}', function () {
     return view('app');
-})->where('any', '.*');
+})->where('path', '.*');

@@ -1,17 +1,20 @@
 import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
-import { resolve } from 'path';
+import react from '@vitejs/plugin-react';
+import path from 'path';
 
 export default defineConfig({
     plugins: [
         laravel({
-            input: ['resources/css/app.css', 'resources/js/app.js'],
+            input: ['resources/css/app.css', 'resources/js/app.tsx'],
             refresh: true,
+            buildDirectory: 'build',
         }),
+        react(),
     ],
     resolve: {
         alias: {
-            '@': resolve(__dirname, './resources/js'),
+            '@': path.resolve(__dirname, 'resources/js'),
         },
     },
     server: {
@@ -20,11 +23,11 @@ export default defineConfig({
         },
     },
     build: {
-        outDir: 'public/build',
         manifest: true,
         rollupOptions: {
             input: {
-                main: ['resources/css/app.css', 'resources/js/app.js'],
+                app: 'resources/js/app.tsx',
+                styles: 'resources/css/app.css',
             },
         },
     },

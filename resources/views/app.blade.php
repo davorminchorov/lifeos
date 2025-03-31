@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>LifeOS</title>
+        <title>LifeOS - Personal Management System</title>
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -17,9 +17,26 @@
         <meta name="app-url" content="{{ config('app.url') }}">
 
         <!-- Scripts and Styles -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
+        @php
+        $manifestPath = public_path('build/.vite/manifest.json');
+        if (file_exists($manifestPath)) {
+            $manifest = json_decode(file_get_contents($manifestPath), true);
+            echo "<!-- Manifest found at correct path: " . count($manifest) . " entries -->";
+        } else {
+            echo "<!-- Manifest not found at: $manifestPath -->";
+
+            // Check alternative location
+            $altPath = public_path('build/manifest.json');
+            if (file_exists($altPath)) {
+                echo "<!-- But found at: $altPath -->";
+            }
+        }
+        @endphp
+
+        @viteReactRefresh
+        @vite(['resources/css/app.css', 'resources/js/app.tsx'])
     </head>
-    <body class="font-sans antialiased bg-gray-50">
+    <body class="font-sans antialiased bg-[#F8FAFC] text-[#1E293B]">
         <div id="app"></div>
     </body>
 </html>
