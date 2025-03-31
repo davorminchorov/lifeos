@@ -5,9 +5,8 @@ export default function Login() {
   return (
     <div className="container">
       <div className="w-full max-w-md">
-        <div className="mb-8 flex justify-center">
-          {/* Logo */}
-          <div className="w-12 h-12 rounded-full bg-teal-600 flex items-center justify-center text-white text-lg font-bold" style={{ backgroundColor: "#0F766E" }}>
+        <div className="mb-8">
+          <div className="w-full h-12 bg-teal-600 flex items-center pl-4 text-white text-lg font-bold">
             L
           </div>
         </div>
@@ -16,7 +15,7 @@ export default function Login() {
           <LoginForm />
         </div>
 
-        <div className="mt-8 text-center text-xs text-slate-400" style={{ color: "#94A3B8" }}>
+        <div className="mt-6 text-center text-xs text-slate-400">
           <p>&copy; {new Date().getFullYear()} LifeOS. All rights reserved.</p>
         </div>
       </div>

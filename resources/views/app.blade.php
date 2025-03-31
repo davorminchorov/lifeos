@@ -58,6 +58,7 @@
                 border: 1px solid #e2e8f0;
                 border-radius: 0.375rem;
                 font-size: 0.875rem;
+                background-color: #EFF6FF;
             }
             .btn {
                 display: inline-block;
@@ -80,6 +81,33 @@
                 display: block;
                 width: 100%;
             }
+
+            /* Utility Classes */
+            .w-full { width: 100%; }
+            .max-w-md { max-width: 28rem; }
+            .flex { display: flex; }
+            .items-center { align-items: center; }
+            .justify-between { justify-content: space-between; }
+            .text-center { text-align: center; }
+            .mb-8 { margin-bottom: 2rem; }
+            .mb-1 { margin-bottom: 0.25rem; }
+            .mt-2 { margin-top: 0.5rem; }
+            .mt-6 { margin-top: 1.5rem; }
+            .mb-2 { margin-bottom: 0.5rem; }
+            .pl-4 { padding-left: 1rem; }
+            .h-12 { height: 3rem; }
+            .text-lg { font-size: 1.125rem; }
+            .text-sm { font-size: 0.875rem; }
+            .text-xs { font-size: 0.75rem; }
+            .font-bold { font-weight: 700; }
+            .font-medium { font-weight: 500; }
+            .text-slate-800 { color: #1E293B; }
+            .text-slate-600 { color: #475569; }
+            .text-slate-400 { color: #94A3B8; }
+            .text-teal-600 { color: #0F766E; }
+            .bg-teal-600 { background-color: #0F766E; }
+            .text-white { color: white; }
+            .rounded-md { border-radius: 0.375rem; }
         </style>
 
         <!-- Debug Info -->
@@ -87,7 +115,7 @@
         <meta name="app-url" content="{{ config('app.url') }}">
 
         <!-- Direct CSS reference -->
-        <link rel="stylesheet" href="{{ asset('build/assets/styles-IHzpTDQ5.css') }}">
+        <link rel="stylesheet" href="{{ asset('build/assets/styles-Dx-XYl0p.css') }}">
 
         <!-- Scripts and Styles -->
         @php

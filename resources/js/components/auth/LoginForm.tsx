@@ -1,7 +1,5 @@
 import * as React from "react"
 import { useState } from "react"
-import { Button } from "../ui/button"
-import { Input } from "../ui/input"
 import axios from "axios"
 
 export function LoginForm() {
@@ -42,12 +40,12 @@ export function LoginForm() {
 
   return (
     <div className="w-full">
-      <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-        <h1 style={{ color: '#1E293B' }}>Welcome to LifeOS</h1>
-        <p style={{ color: '#475569', marginTop: '0.5rem' }}>Sign in to your account</p>
+      <div className="text-center mb-8">
+        <h1 className="text-slate-800">Welcome to LifeOS</h1>
+        <p className="text-slate-600 mt-2">Sign in to your account</p>
       </div>
 
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+      <form onSubmit={handleSubmit} className="w-full">
         <div className="form-group">
           <label htmlFor="email" className="form-label">
             Email
@@ -64,16 +62,16 @@ export function LoginForm() {
             className="form-control"
           />
           {errors.email && (
-            <p style={{ color: '#ef4444', fontSize: '0.875rem', marginTop: '0.25rem' }}>{errors.email}</p>
+            <p className="text-sm mt-1" style={{ color: '#ef4444' }}>{errors.email}</p>
           )}
         </div>
 
         <div className="form-group">
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
+          <div className="flex justify-between mb-1">
             <label htmlFor="password" className="form-label">
               Password
             </label>
-            <a href="/forgot-password" style={{ fontSize: '0.875rem', color: '#0F766E' }}>
+            <a href="/forgot-password" className="text-sm text-teal-600">
               Forgot password?
             </a>
           </div>
@@ -88,12 +86,12 @@ export function LoginForm() {
             className="form-control"
           />
           {errors.password && (
-            <p style={{ color: '#ef4444', fontSize: '0.875rem', marginTop: '0.25rem' }}>{errors.password}</p>
+            <p className="text-sm mt-1" style={{ color: '#ef4444' }}>{errors.password}</p>
           )}
         </div>
 
         {errors.general && (
-          <div style={{ backgroundColor: '#fef2f2', border: '1px solid #f87171', padding: '0.75rem', borderRadius: '0.375rem', color: '#b91c1c', fontSize: '0.875rem' }}>
+          <div className="rounded-md mb-2" style={{ backgroundColor: '#fef2f2', border: '1px solid #f87171', padding: '0.75rem', color: '#b91c1c', fontSize: '0.875rem' }}>
             {errors.general}
           </div>
         )}
@@ -107,10 +105,10 @@ export function LoginForm() {
         </button>
       </form>
 
-      <div style={{ marginTop: '1.5rem', textAlign: 'center', fontSize: '0.875rem', color: '#94A3B8' }}>
+      <div className="mt-6 text-center text-sm text-slate-400">
         <p>
           Don't have an account?{" "}
-          <a href="/register" style={{ color: '#0F766E', fontWeight: 500 }}>
+          <a href="/register" className="text-teal-600 font-medium">
             Create one
           </a>
         </p>
