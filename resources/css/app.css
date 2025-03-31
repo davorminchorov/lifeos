@@ -1,6 +1,8 @@
 /* Base styles */
 body {
-    font-family: sans-serif;
+    font-family: 'Inter', sans-serif;
     margin: 0;
     padding: 0;
+    background-color: #F8FAFC;
+    color: #1E293B;
 }
