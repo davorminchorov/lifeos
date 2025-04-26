@@ -1,6 +1,6 @@
 import React from "react"
 import { Link } from "react-router-dom"
-import { Button } from "../ui/Button"
+import { Button } from "../components/ui/Button"
 
 export default function NotFound() {
   return (
@@ -20,12 +20,9 @@ export default function NotFound() {
             The page you are looking for doesn't exist or has been moved.
           </p>
 
-          <Button
-            onClick={() => window.location.href = '/'}
-            className="w-full"
-          >
-            Go Back Home
-          </Button>
+          <Link to="/">
+            <Button fullWidth>Go Back Home</Button>
+          </Link>
         </div>
       </div>
     </div>

@@ -22,6 +22,7 @@ export default defineConfig({
             host: 'localhost',
         },
     },
+    // Let PostCSS config be handled by postcss.config.js file
     build: {
         manifest: true,
         rollupOptions: {

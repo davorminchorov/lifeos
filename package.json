@@ -16,6 +16,7 @@
         "vite": "^6.3.3"
     },
     "dependencies": {
+        "@tailwindcss/postcss": "^4.1.4",
         "@types/react": "^19.1.2",
         "@types/react-dom": "^19.1.2",
         "clsx": "^2.1.1",

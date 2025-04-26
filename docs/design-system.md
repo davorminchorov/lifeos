@@ -1,493 +1,327 @@
-# LifeOS Design System
+# LifeOS Design System: Material Design Implementation
 
-This document outlines the comprehensive design system for LifeOS, providing guidelines for visual elements, components, and patterns to ensure consistency across the application.
+This document outlines our implementation of Material Design principles for LifeOS, providing guidelines for visual elements, components, and patterns to ensure consistency across the application.
 
-## Brand Overview
+## Design Philosophy
 
-LifeOS is a life management platform that helps users organize and automate various aspects of their lives including subscriptions, bills, investments, job applications, and expenses. The design system embodies our core values:
+LifeOS is adopting Material Design principles while maintaining our brand identity. This strategic shift provides several advantages:
 
-- **Clarity**: Information is presented clearly and intuitively
-- **Efficiency**: Interactions are streamlined and purposeful
-- **Integration**: Different life areas connect seamlessly
-- **Insight**: Data visualization enhances understanding
+- **User Familiarity**: Leveraging established design patterns that users already understand
+- **Coherent Experience**: Creating a unified and predictable interface across all platforms
+- **Accessibility**: Built on principles that prioritize inclusive design
+- **Scalability**: A comprehensive system that can grow with our product
+
+## Material Design Core Principles
+
+### 1. Material as a Metaphor
+Our interface is based on the tactile reality of paper and ink, with the added benefit of digital capabilities. We use surfaces, edges, shadows, and motion to create intuitive experiences.
+
+### 2. Bold, Graphic, Intentional
+We emphasize user actions through deliberate color choices, edge-to-edge imagery, and intentional whitespace to create hierarchy and meaning.
+
+### 3. Motion Provides Meaning
+Motion is purposeful and reinforces the user's actions, providing feedback and guiding attention appropriately.
 
 ## Color System
 
-Our color palette is designed to be accessible, balanced, and meaningful, with colors that convey specific information and states.
+Our color system applies Material Design color principles while maintaining our brand's teal-focused palette.
 
-### Primary Colors
+### Primary Color and Variants
 
-| Color | Hex | RGB | Usage |
-|-------|-----|-----|-------|
-| Deep Teal | #0F766E | rgb(15, 118, 110) | Primary brand color, buttons, key UI elements |
-| Slate Blue | #1E293B | rgb(30, 41, 59) | Headers, navigation, secondary elements |
-| Warm White | #F8FAFC | rgb(248, 250, 252) | Background color for main content areas |
+| Role | Color | Hex | Usage |
+|------|-------|-----|-------|
+| Primary | Deep Teal | #0F766E | Primary actions, key UI elements |
+| Primary Light | Teal 500 | #14B8A6 | Hover states, secondary emphasis |
+| Primary Dark | Teal 700 | #0D9488 | Active states, contrast elements |
+| Primary Container | Teal 100 | #99F6E4 | Backgrounds for primary content |
+| On Primary | White | #FFFFFF | Text/icons on primary color |
+| On Primary Container | Teal 900 | #022C26 | Text/icons on primary container |
 
-### Accent Colors
+### Secondary Color and Variants
 
-| Color | Hex | RGB | Usage |
-|-------|-----|-----|-------|
-| Sunrise Orange | #F97316 | rgb(249, 115, 22) | Call-to-actions, highlights, important actions |
-| Mint Green | #10B981 | rgb(16, 185, 129) | Success states, positive metrics, growth indicators |
-| Ocean Blue | #3B82F6 | rgb(59, 130, 246) | Interactive elements, links, data visualization |
+| Role | Color | Hex | Usage |
+|------|-------|-----|-------|
+| Secondary | Slate 600 | #475569 | Secondary actions, less emphasis |
+| Secondary Light | Slate 500 | #64748B | Hover states for secondary elements |
+| Secondary Dark | Slate 700 | #334155 | Active states for secondary elements |
+| Secondary Container | Slate 200 | #E2E8F0 | Backgrounds for secondary content |
+| On Secondary | White | #FFFFFF | Text/icons on secondary color |
+| On Secondary Container | Slate 800 | #1E293B | Text/icons on secondary container |
 
-### Functional Colors
+### Surface Colors
 
-| Color | Hex | RGB | Usage |
-|-------|-----|-----|-------|
-| Alert Red | #EF4444 | rgb(239, 68, 68) | Errors, warnings, critical notifications |
-| Notice Yellow | #F59E0B | rgb(245, 158, 11) | Caution states, pending actions |
-| Success Green | #10B981 | rgb(16, 185, 129) | Confirmations, completed tasks |
+| Role | Color | Hex | Usage |
+|------|-------|-----|-------|
+| Surface | White | #FFFFFF | Main content areas, cards |
+| Surface Variant | Slate 50 | #F8FAFC | Alternative surfaces, subtle backgrounds |
+| On Surface | Slate 800 | #1E293B | Primary text on surfaces |
+| On Surface Variant | Slate 600 | #475569 | Secondary text on surfaces |
 
-### Neutral Scale
+### State Colors
 
-| Color | Hex | RGB | Usage |
-|-------|-----|-----|-------|
-| Charcoal | #1E293B | rgb(30, 41, 59) | Primary text, headings |
-| Slate | #475569 | rgb(71, 85, 105) | Secondary text, labels |
-| Silver | #94A3B8 | rgb(148, 163, 184) | Disabled states, tertiary text |
-| Light Gray | #E2E8F0 | rgb(226, 232, 240) | Borders, dividers, subtle backgrounds |
-| Off White | #F8FAFC | rgb(248, 250, 252) | Background variations, cards |
+| Role | Color | Hex | Usage |
+|------|-------|-----|-------|
+| Error | Red 500 | #EF4444 | Error states, destructive actions |
+| Error Container | Red 100 | #FECACA | Error backgrounds |
+| Success | Green 500 | #10B981 | Success states, confirmations |
+| Success Container | Green 100 | #D1FAE5 | Success backgrounds |
+| Warning | Amber 500 | #F59E0B | Warning states, cautionary elements |
+| Warning Container | Amber 100 | #FEF3C7 | Warning backgrounds |
+| Info | Blue 500 | #3B82F6 | Information states, neutral alerts |
+| Info Container | Blue 100 | #DBEAFE | Information backgrounds |
 
 ### Color Usage Guidelines
 
-- Maintain contrast ratios of at least 4.5:1 for normal text and 3:1 for large text
-- Use primary colors for main interface elements
-- Reserve accent colors for emphasis and drawing attention
-- Functional colors should be used consistently for their designated states
-- Limit the use of accent colors to maintain visual hierarchy
+- Follow Material Design's color usage patterns for consistent recognition
+- Maintain the 60-30-10 rule (60% primary surfaces, 30% secondary elements, 10% accent highlights)
+- Ensure all color combinations meet WCAG 2.1 AA standards for contrast (4.5:1 for normal text)
+- Use colors semantically (e.g., red for errors, green for success) to reinforce meaning
+- Apply color to reinforce hierarchy and focus attention
 
 ## Typography
 
-Our typography system uses Inter, a versatile and highly readable typeface that works across all screen sizes and platforms.
-
-### Font Family
-
-```css
-font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-```
+Our typography system follows Material Design type scale while using Inter as our primary typeface.
 
 ### Type Scale
 
-| Name | Size | Line Height | Weight | Usage |
-|------|------|-------------|--------|-------|
-| xs | 12px / 0.75rem | 16px / 1rem | 400, 500 | Small labels, footnotes, metadata |
-| sm | 14px / 0.875rem | 20px / 1.25rem | 400, 500 | Secondary text, table content |
-| base | 16px / 1rem | 24px / 1.5rem | 400, 500 | Body text, form controls |
-| lg | 18px / 1.125rem | 28px / 1.75rem | 500, 600 | Section headings, emphasis |
-| xl | 20px / 1.25rem | 28px / 1.75rem | 600 | Card headings, minor section headers |
-| 2xl | 24px / 1.5rem | 32px / 2rem | 600 | Page headings |
-| 3xl | 30px / 1.875rem | 36px / 2.25rem | 600, 700 | Dashboard main headings |
-| 4xl | 36px / 2.25rem | 40px / 2.5rem | 700 | Welcome screens, major headers |
+| Material Name | Size | Line Height | Weight | Role |
+|---------------|------|-------------|--------|------|
+| Display Large | 57px / 3.56rem | 64px | Light | Hero headers, splash screens |
+| Display Medium | 45px / 2.81rem | 52px | Light | Major feature introductions |
+| Display Small | 36px / 2.25rem | 44px | Regular | Large headlines |
+| Headline Large | 32px / 2rem | 40px | Regular | Main page headings |
+| Headline Medium | 28px / 1.75rem | 36px | Regular | Section headings |
+| Headline Small | 24px / 1.5rem | 32px | Regular | Card headings, minor sections |
+| Title Large | 22px / 1.375rem | 28px | Medium | Major UI elements, dialog titles |
+| Title Medium | 16px / 1rem | 24px | Medium | Button text, emphasized elements |
+| Title Small | 14px / 0.875rem | 20px | Medium | Minor UI elements, section labels |
+| Body Large | 16px / 1rem | 24px | Regular | Primary body text |
+| Body Medium | 14px / 0.875rem | 20px | Regular | Secondary body text |
+| Body Small | 12px / 0.75rem | 16px | Regular | Captions, annotations |
+| Label Large | 14px / 0.875rem | 20px | Medium | Important labels, form fields |
+| Label Medium | 12px / 0.75rem | 16px | Medium | Secondary labels |
+| Label Small | 11px / 0.6875rem | 16px | Medium | Smallest UI text elements |
 
-### Font Weights
-
-- 400 (Regular): Default body text
-- 500 (Medium): Emphasis, interactive elements
-- 600 (Semi-bold): Headings, important text
-- 700 (Bold): Extra emphasis, primary action text
-
-### Text Styles
-
-#### Headings
+### Typography Implementation
 
 ```css
-.heading-4xl {
-  font-size: 2.25rem;
-  line-height: 2.5rem;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  color: #1E293B;
+/* Font families */
+--md-sys-typescale-font-family-base: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+--md-sys-typescale-font-family-brand: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+/* Display styles */
+.display-large {
+  font-family: var(--md-sys-typescale-font-family-brand);
+  font-size: 3.56rem;
+  line-height: 4rem;
+  font-weight: 300;
+  letter-spacing: -0.016em;
 }
 
-.heading-3xl {
-  font-size: 1.875rem;
-  line-height: 2.25rem;
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  color: #1E293B;
+.display-medium {
+  font-family: var(--md-sys-typescale-font-family-brand);
+  font-size: 2.81rem;
+  line-height: 3.25rem;
+  font-weight: 300;
+  letter-spacing: -0.008em;
 }
 
-/* Continue for other heading sizes */
-```
-
-#### Body Text
-
-```css
-.body-base {
-  font-size: 1rem;
-  line-height: 1.5rem;
-  font-weight: 400;
-  color: #1E293B;
-}
-
-.body-base-medium {
-  font-size: 1rem;
-  line-height: 1.5rem;
-  font-weight: 500;
-  color: #1E293B;
-}
-
-/* Continue for other body text styles */
+/* Continue for all other type styles */
 ```
 
 ### Typography Guidelines
 
-- Maintain consistent use of the type scale
-- Use appropriate weights to create hierarchy
-- Ensure proper line height for readability
-- Limit line length to 60-75 characters for optimal readability
-- Maintain sufficient contrast between text and background
+- Use type scale consistently to maintain visual hierarchy
+- Ensure legibility with proper contrast and line spacing
+- Limit to 3 font weights for a clean design (Light 300, Regular 400, Medium 500)
+- Apply proper text alignment principles (typically left-aligned for LTR languages)
+- Maintain optimal line lengths (60-75 characters) for better readability
 
-## Iconography
+## Shape System
 
-LifeOS uses Phosphor Icons, a flexible and consistent icon system that complements our design aesthetic.
+Material Design uses intentional shape to create meaning and hierarchy.
 
-### Icon Styles
-
-- **Regular**: 1.5px stroke weight, used for most UI elements
-- **Bold**: 2px stroke weight, used for emphasis or smaller sizes
-- **Fill**: Solid version, used sparingly for active states or emphasis
-
-### Icon Sizes
-
-| Size | Dimensions | Usage |
-|------|------------|-------|
-| Small | 16 x 16px | Inline text, dense UI areas |
-| Medium | 20 x 20px | Secondary actions, complementary to text |
-| Standard | 24 x 24px | Primary interface elements, navigation |
-| Large | 32 x 32px | Feature introductions, empty states |
-
-### Icon Categories
-
-- **Navigation**: home, menu, arrow-left, arrow-right, etc.
-- **Actions**: plus, minus, edit, trash, download, share, etc.
-- **Financial**: currency-dollar, credit-card, bank, receipt, etc.
-- **Communication**: envelope, chat, bell, etc.
-- **Status**: check, x, warning, info, question, etc.
-- **Time**: calendar, clock, hourglass, etc.
-
-### Icon Usage Guidelines
-
-- Maintain consistent size and style within contexts
-- Use appropriate semantic icons (e.g., trash for delete)
-- Ensure sufficient touch target size (min 44x44px) for interactive icons
-- Pair icons with text for clarity when possible
-- Apply color consistently based on function
-
-## Spacing & Layout
-
-LifeOS uses a consistent spacing system based on a 4px grid to create rhythm and balance in the interface.
-
-### Spacing Scale
+### Corner Radius Scale
 
 | Name | Size | Usage |
 |------|------|-------|
-| xs | 4px | Minimal spacing, tight elements |
-| sm | 8px | Close elements, internal padding |
-| md | 16px | Standard spacing, component padding |
-| lg | 24px | Section separation, generous padding |
-| xl | 32px | Major section separation |
-| 2xl | 48px | Layout-level spacing |
-| 3xl | 64px | Major layout divisions |
+| Extra Small | 4px | Small UI elements, chips |
+| Small | 8px | Cards, dialogs, buttons |
+| Medium | 12px | Large cards, emphasized elements |
+| Large | 16px | Floating action buttons, featured elements |
+| Extra Large | 28px | Large promotional elements |
 
-### Grid System
+### Shape Categories
 
-The LifeOS interface uses a 12-column grid system that adapts to different viewport sizes:
+- **Containers**: Use small radius (8px) for most containers like cards and dialogs
+- **Buttons**: Use pill shape (full rounded) for primary actions, small radius (8px) for secondary actions
+- **Text Fields**: Use small radius (8px) for consistent input styling
+- **Bottom Sheets**: Use medium radius (12px) only on top corners
 
-- **Container width**: Responsive with max-width of 1440px
-- **Columns**: 12 columns
-- **Gutters**: 24px standard (adjusts at different breakpoints)
-- **Margins**: Responsive, minimum 16px on smallest screens
+## Elevation System
 
-### Breakpoints
+Material Design uses elevation (shadows) to establish hierarchy and states.
 
-| Name | Width | Description |
-|------|-------|-------------|
-| xs | <640px | Mobile devices |
-| sm | ≥640px | Small tablets, large mobile |
-| md | ≥768px | Tablets, portrait |
-| lg | ≥1024px | Tablets landscape, small desktops |
-| xl | ≥1280px | Desktops |
-| 2xl | ≥1536px | Large desktops |
+### Elevation Levels
 
-### Layout Guidelines
+| Level | Shadow | Usage |
+|-------|--------|-------|
+| 0 | None | Disabled elements, dividers |
+| 1 | 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.14) | Cards, buttons at rest |
+| 2 | 0 3px 6px rgba(0,0,0,0.12), 0 2px 4px rgba(0,0,0,0.10) | Top app bars, emphasized cards |
+| 3 | 0 10px 20px rgba(0,0,0,0.12), 0 3px 6px rgba(0,0,0,0.10) | Floating action buttons, navigation drawers |
+| 4 | 0 15px 25px rgba(0,0,0,0.12), 0 5px 10px rgba(0,0,0,0.10) | Dialogs, menus, dropdowns |
 
-- Use consistent spacing within component types
-- Maintain alignment with the grid system
-- Allow for proper whitespace to create visual hierarchy
-- Scale spacing appropriately at different breakpoints
-- Use established patterns for common layouts
+### Elevation Guidelines
+
+- Use elevation purposefully to create hierarchy
+- Increase elevation on interaction (hover, focus)
+- Maintain consistent elevations for similar components
+- Consider light source (top-left) for consistent shadows
 
 ## Components
 
+Our components follow Material Design 3 (M3) specifications with customizations to maintain our brand identity.
+
 ### Buttons
 
-Buttons are a key interactive element in LifeOS, with different variants for different purposes.
+Material Design buttons have specific variants for different purposes and emphasis levels.
 
 #### Button Variants
 
 | Variant | Description | Usage |
 |---------|-------------|-------|
-| Primary | Filled Deep Teal background | Main actions, form submissions |
-| Secondary | Outlined with Slate Blue | Alternative actions, secondary options |
-| Tertiary | Text-only with Ocean Blue | Subtle actions, cancel options |
-| Destructive | Alert Red | Delete, remove, cancel subscriptions |
-| Success | Success Green | Complete, confirm, approve |
-
-#### Button Sizes
-
-| Size | Height | Padding | Font Size | Usage |
-|------|--------|---------|-----------|-------|
-| Small | 32px | 12px | 14px | Compact areas, inline actions |
-| Medium | 40px | 16px | 16px | Most interface actions |
-| Large | 48px | 20px | 18px | Primary page actions, CTAs |
+| Contained | Filled with Teal 600, white text | Primary actions, form submissions |
+| Outlined | Teal 600 outline, teal text | Secondary actions, less emphasis |
+| Text | Text only in Teal 600 | Tertiary actions, minimal emphasis |
+| Elevated | White with shadow, teal text | Important actions in busy contexts |
+| Tonal | Teal 100 background, Teal 800 text | Feature-specific actions |
 
 #### Button States
 
-- **Default**: Base styling
-- **Hover**: Slightly darker/lighter background
-- **Active/Pressed**: Deeper color change, slight scale reduction
-- **Focus**: Focus ring (2px) in a complementary color
-- **Disabled**: Reduced opacity, non-interactive styling
-
-#### Button with Icon
-
-```html
-<button class="btn btn-primary btn-icon-right">
-  <span>Add Subscription</span>
-  <PhosphorIcon name="plus" size="20" />
-</button>
-```
-
-### Form Elements
-
-#### Text Inputs
-
-- Height: 40px (medium), 48px (large)
-- Border radius: 8px
-- Border: 1px solid Light Gray (#E2E8F0)
-- Padding: 12px 16px
-- Focus state: Border color changes to Deep Teal (#0F766E)
-
-#### Checkboxes & Radio Buttons
-
-- Size: 20px x 20px
-- Border radius: 4px (checkbox), 50% (radio)
-- Selected state: Deep Teal background (#0F766E)
-- Focus state: 2px Ocean Blue focus ring
-
-#### Toggle Switches
-
-- Height: 24px
-- Width: 44px
-- Border radius: 12px
-- Off state: Light Gray (#E2E8F0)
-- On state: Deep Teal (#0F766E)
-- Transition: Smooth 150ms transition
-
-#### Dropdowns & Select
-
-- Same base styling as text inputs
-- Dropdown icon: Phosphor "caret-down"
-- Open state: Border color Deep Teal (#0F766E)
-- Options: 40px height, highlighted on hover
+- **Enabled**: Base state
+- **Hovered**: Slight background lightening/darkening
+- **Focused**: Shows focus ring
+- **Pressed**: Darker shade, slight scale effect
+- **Disabled**: 38% opacity, no interactions
 
 ### Cards
 
-Cards are container components used throughout LifeOS to group related information.
+Cards contain content and actions about a single subject.
 
-#### Card Variants
+#### Card Types
 
-| Variant | Description | Usage |
-|---------|-------------|-------|
-| Standard | Basic container with padding | Most content grouping |
-| Interactive | Clickable card with hover state | Navigational elements |
-| Featured | Highlighted card with accent border | Drawing attention to specific content |
-| Dashboard | Specialized for metrics display | Key performance indicators |
+| Type | Description | Usage |
+|------|-------------|-------|
+| Elevated | Default card with shadow | Most content grouping |
+| Filled | Solid background without shadow | Secondary information |
+| Outlined | Border with no shadow | Alternative styling |
 
-#### Card Properties
+#### Card Anatomy
 
-- Border radius: 8px (standard), 12px (featured)
-- Padding: 24px standard
-- Background: Off White (#F8FAFC)
-- Shadow: 0 1px 3px rgba(0,0,0,0.1) (light), 0 4px 6px rgba(0,0,0,0.1) (medium)
-- Border: 1px solid Light Gray (#E2E8F0) (optional)
-
-#### Card Structure
-
-```html
-<div class="card card-standard">
-  <div class="card-header">
-    <h3 class="heading-xl">Card Title</h3>
-    <button class="btn btn-tertiary btn-icon-only">
-      <PhosphorIcon name="dots-three-vertical" size="20" />
-    </button>
-  </div>
-  <div class="card-content">
-    <!-- Card content goes here -->
-  </div>
-  <div class="card-footer">
-    <!-- Optional footer content -->
-  </div>
-</div>
-```
+- Container (8px rounded corners)
+- Optional header (title, subtitle, avatar)
+- Media area (optional)
+- Content area
+- Actions area (buttons aligned to end)
 
 ### Navigation
 
-#### Main Navigation
+Following Material Design navigation patterns for consistent and intuitive movement.
 
-- Background: Slate Blue (#1E293B)
-- Text: Off White (#F8FAFC)
-- Active item: Deep Teal (#0F766E) background or indicator
-- Item height: 48px
-- Icon placement: Left of text, 24px size
+#### Navigation Components
 
-#### Tab Navigation
+- **Top App Bar**: Contains title, navigation icon, and actions
+- **Navigation Drawer**: Side panel for main navigation options
+- **Bottom Navigation**: For mobile-focused interfaces with 3-5 destinations
+- **Tabs**: For switching between related content within the same context
 
-- Text: Charcoal (#1E293B)
-- Active tab: Deep Teal (#0F766E) underline, text color
-- Hover: Light gray background
-- Tab padding: 16px 20px
-- Optional icon: Left of text, 20px size
+### Form Elements
 
-#### Breadcrumbs
+Implementing Material Design form controls for consistent user input.
 
-- Text: Slate (#475569)
-- Separator: Custom slash icon or "/"
-- Current page: Charcoal (#1E293B), semi-bold weight
-- Hover: Deep Teal (#0F766E)
+#### Text Fields
 
-### Data Visualization
+- Outlined style with 4px corners
+- Clear labeling that moves above the field on focus/input
+- Supporting text for hints and validation
+- Error states with red color and messaging
 
-#### Charts & Graphs
+#### Selection Controls
 
-- **Color usage**: Primary brand colors for main data, accent colors for emphasis
-- **Typography**: Consistent with main typography system
-- **Legends**: Clear, concise labels in sm (14px) text size
-- **Tooltips**: Appear on hover with detailed information
-- **Empty states**: Helpful messaging when no data is available
+- Checkboxes, radio buttons, and switches with consistent styling
+- Visual feedback on interaction
+- Proper spacing for touch targets (min 48x48px)
 
-#### Data Tables
+## Responsive Layout
 
-- Header background: Light Gray (#E2E8F0)
-- Header text: Charcoal (#1E293B), semi-bold
-- Row height: 48px standard
-- Zebra striping: Alternate rows with Off White (#F8FAFC) and slightly darker shade
-- Borders: 1px solid Light Gray (#E2E8F0)
-- Hover state: Subtle highlight background
+Material Design uses a responsive grid system that adapts to screen size.
 
-## Patterns
+### Breakpoints
 
-### Empty States
+- Extra small: 0-599px (mobile portrait)
+- Small: 600-904px (mobile landscape, small tablet)
+- Medium: 905-1239px (tablet, small desktop)
+- Large: 1240-1439px (desktop)
+- Extra large: 1440px+ (large desktop)
 
-- Illustrated icon (48px or larger)
-- Clear, concise heading (xl or 2xl)
-- Brief explanation text
-- Primary action button when applicable
-- Warm, supportive tone
+### Grid System
 
-### Notifications & Alerts
+- 4px baseline grid for element sizing
+- 8px grid for spacing
+- 12-column layout that resizes at breakpoints
+- Gutters that adjust at different breakpoints (8px-24px)
+- Margins that adapt to screen size
 
-#### Toast Notifications
+## Motion
 
-- Position: Top-right corner
-- Width: 320px max
-- Duration: 5 seconds default (configurable)
-- Variants: Success, Error, Warning, Info
-- Animation: Slide in, fade out
+Material Design uses purposeful motion to guide users and create continuity.
 
-#### Modal Alerts
+### Motion Principles
 
-- Center screen positioning
-- Background overlay: Semi-transparent black
-- Width: 480px standard (responsive)
-- Close methods: X button, overlay click, escape key
-- Focus management: Trap focus within modal
+- **Responsive**: Quick feedback for user interactions
+- **Natural**: Physics-based animations that feel intuitive
+- **Intentional**: Movement with purpose that guides attention
 
-### Loading States
+### Transition Patterns
 
-- **Inline loading**: Small spinner, same height as replaced content
-- **Page loading**: Centered spinner with optional progress indication
-- **Skeleton screens**: Content placeholder animations for perceived speed
-- **Button loading**: Replace text with spinner, maintain button width
+- **Shared axis**: For related content (forward/backward navigation)
+- **Container transform**: For expanding elements to full-screen
+- **Fade through**: For content not directly related
+- **Fade**: For UI elements entering/exiting
 
-### Responsive Patterns
+### Duration Guidelines
 
-- **Navigation**: Collapses to hamburger menu on mobile
-- **Tables**: Horizontal scroll or card layout on small screens
-- **Grids**: Reduce columns on smaller screens
-- **Images**: Appropriately sized for different viewports
+- Small elements: 100-150ms
+- Medium elements: 200-250ms
+- Large elements: 250-300ms
+- Screen transitions: 300-350ms
 
-## Logo & Branding
+## Implementation Phases
 
-### Logo Specifications
+Our migration to Material Design will follow this phased approach:
 
-- **Wordmark**: "LifeOS" in Inter font, semi-bold weight
-- **Symbol**: Overlapping geometric shapes (circle, square) representing different life areas
-- **Colors**: Primary logo uses Deep Teal (#0F766E)
-- **Contrast versions**: White for dark backgrounds, Charcoal for light backgrounds
-- **Clear space**: Minimum padding equal to 'O' height in all directions
-- **Minimum size**: 80px width for digital, 1 inch for print
+### Phase 1: Design Token System (Current)
+- Convert color system to Material Design roles
+- Implement typography scale
+- Define elevation and shape systems
+- Create design tokens in Tailwind config
 
-### Brand Voice
+### Phase 2: Core Component Library
+- Implement Material button components
+- Create form elements based on Material specs
+- Build card components
+- Develop feedback components (snackbars, alerts)
 
-- **Tone**: Supportive, efficient, insightful, organized
-- **Language style**: Clear, concise, friendly but professional
-- **Person**: First-person for user actions, second-person in guidance
-- **Tense**: Present tense, active voice
+### Phase 3: Page Layouts
+- Implement responsive grid system
+- Create consistent page templates
+- Apply proper spacing and alignment
 
-## Accessibility
-
-LifeOS is committed to WCAG 2.1 AA compliance across the application.
-
-### Color & Contrast
-
-- Maintain minimum contrast ratios (4.5:1 for normal text, 3:1 for large text)
-- Don't rely solely on color to convey information
-- Provide sufficient contrast between foreground and background elements
-
-### Keyboard Navigation
-
-- Ensure all interactive elements are keyboard accessible
-- Maintain logical tab order
-- Provide visible focus states for all interactive elements
-- Support standard keyboard shortcuts and patterns
-
-### Screen Readers
-
-- Use semantic HTML elements appropriately
-- Provide alternative text for images and icons
-- Ensure ARIA attributes are used correctly when needed
-- Test with common screen readers (NVDA, JAWS, VoiceOver)
-
-### Motion & Animation
-
-- Respect user preferences for reduced motion
-- Keep animations subtle and purposeful
-- Provide alternatives for motion-based interactions
-
-## Implementation Resources
-
-### Design Assets
-
-- Figma UI Kit: [Link to Figma file]
-- Icon library: [Link to icon package]
-- Color palette: [Link to color system file]
-
-### Code Resources
-
-- CSS variables for theming
-- Component library implementation
-- Utility classes for spacing and typography
-- CSS framework integration (Tailwind configuration)
-
-### Development Guidelines
-
-- Component implementation checklist
-- Accessibility testing procedures
-- Responsive testing guidelines
-- Performance benchmarks
+### Phase 4: Motion and Refinement
+- Add purposeful animations and transitions
+- Fine-tune interaction details
+- Ensure system-wide consistency
 
 ## Version History
 

@@ -6,7 +6,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import axios from 'axios';
 
 // Import pages
-import Login from './auth/routes/Login';
+import { Login } from './pages/auth/Login';
 import Dashboard from './dashboard/routes/Dashboard';
 import NotFound from './pages/NotFound';
 
