@@ -16,38 +16,18 @@ UI components should be structured with:
 
 ```tsx
 import React from 'react'
-import { cva, type VariantProps } from 'class-variance-authority'
-import { cn } from '../utils/cn'
+import { clsx } from 'clsx'
+import { twMerge } from 'tailwind-merge'
 
-// Define variants with class-variance-authority
-const buttonVariants = cva(
-  'inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none',
-  {
-    variants: {
-      variant: {
-        default: 'bg-primary text-white hover:bg-primary-dark',
-        secondary: 'bg-secondary text-white hover:bg-secondary-dark',
-        outline: 'border border-input bg-transparent hover:bg-accent hover:text-accent-foreground',
-        destructive: 'bg-destructive text-white hover:bg-destructive/90',
-        success: 'bg-success text-white hover:bg-success/90',
-      },
-      size: {
-        sm: 'h-8 px-3 text-xs',
-        md: 'h-10 px-4 py-2',
-        lg: 'h-12 px-6 py-3 text-lg',
-      },
-    },
-    defaultVariants: {
-      variant: 'default',
-      size: 'md',
-    },
-  }
-)
+// Utility to merge tailwind classes
+const cn = (...inputs: (string | undefined | null | false)[]) => {
+  return twMerge(clsx(inputs));
+};
 
 // Type definitions
-export interface ButtonProps 
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof buttonVariants> {
+export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: 'default' | 'secondary' | 'outline' | 'destructive' | 'success'
+  size?: 'sm' | 'md' | 'lg'
   isLoading?: boolean
   fullWidth?: boolean
 }
@@ -55,17 +35,38 @@ export interface ButtonProps
 // Component implementation
 export function Button({
   className,
-  variant,
-  size,
+  variant = 'default',
+  size = 'md',
   isLoading = false,
   fullWidth = false,
   children,
   ...props
 }: ButtonProps) {
+  // Base styles
+  const baseStyles = 'inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none';
+  
+  // Variant styles
+  const variantStyles = {
+    default: 'bg-primary text-white hover:bg-primary-dark',
+    secondary: 'bg-secondary text-white hover:bg-secondary-dark',
+    outline: 'border border-input bg-transparent hover:bg-accent hover:text-accent-foreground',
+    destructive: 'bg-destructive text-white hover:bg-destructive/90',
+    success: 'bg-success text-white hover:bg-success/90',
+  };
+  
+  // Size styles
+  const sizeStyles = {
+    sm: 'h-8 px-3 text-xs',
+    md: 'h-10 px-4 py-2',
+    lg: 'h-12 px-6 py-3 text-lg',
+  };
+
   return (
     <button
       className={cn(
-        buttonVariants({ variant, size }),
+        baseStyles,
+        variantStyles[variant],
+        sizeStyles[size],
         fullWidth && 'w-full',
         className
       )}
@@ -165,7 +166,13 @@ module.exports = {
 ```tsx
 // Flexible grid layout component
 import React from 'react'
-import { cn } from '../utils/cn'
+import { clsx } from 'clsx'
+import { twMerge } from 'tailwind-merge'
+
+// Utility to merge tailwind classes
+const cn = (...inputs: (string | undefined | null | false)[]) => {
+  return twMerge(clsx(inputs));
+};
 
 interface GridProps {
   children: React.ReactNode
