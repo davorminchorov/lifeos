@@ -165,6 +165,7 @@ return [
 
         // Application Service Providers...
         App\Providers\AppServiceProvider::class,
+        App\Providers\EventServiceProvider::class,
 
         // Custom Service Providers...
         App\Core\EventSourcing\EventSourcingServiceProvider::class,
