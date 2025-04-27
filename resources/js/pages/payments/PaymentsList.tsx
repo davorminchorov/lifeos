@@ -3,9 +3,12 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { formatCurrency, formatDate } from '../../utils/format';
 import { exportToCsv } from '../../utils/exportData';
-import { Button } from '../../ui/Button/Button';
-import { Card } from '../../ui/Card';
-import PaymentStats from '../../components/payments/PaymentStats';
+import { Button } from '../../ui/Button';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../../ui/Card';
+import { PageContainer, PageSection } from '../../ui/PageContainer';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../ui/Table';
+import { Badge } from '../../ui/Badge';
+import { CreditCard, Download, Filter, Calendar, ArrowUpRight, PlusCircle } from 'lucide-react';
 
 interface Payment {
   id: string;
@@ -209,300 +212,337 @@ const PaymentsList: React.FC = () => {
     fetchPayments();
   };
 
+  const exportData = () => {
+    // Prepare data for export
+    const exportData = payments.map(payment => ({
+      Subscription: payment.subscription_name,
+      Amount: payment.amount,
+      Currency: payment.currency,
+      'Payment Date': formatDate(payment.payment_date),
+      Notes: payment.notes || ''
+    }));
+
+    // Generate filename with current date
+    const date = new Date().toISOString().split('T')[0];
+    const filename = `payment-history-${date}.csv`;
+
+    // Export to CSV
+    exportToCsv(exportData, filename);
+  };
+
+  const monthlyChange = stats.thisMonth - stats.lastMonth;
+  const percentChange = stats.lastMonth > 0 ? (monthlyChange / stats.lastMonth) * 100 : 0;
+
   if (loading && payments?.length === 0) {
     return (
-      <div className="container mx-auto px-4 py-8 max-w-6xl">
-        <h1 className="text-3xl font-bold mb-2">Payment History</h1>
-        <p className="text-gray-600 mb-8">View and analyze your payment history across all subscriptions.</p>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-          {/* Skeleton loaders for stats cards */}
-          {[...Array(4)].map((_, index) => (
-            <Card key={index}>
-              <div className="p-6">
-                <div className="animate-pulse flex justify-between items-start">
-                  <div className="space-y-3 w-2/3">
-                    <div className="h-3 bg-gray-200 rounded w-1/2"></div>
-                    <div className="h-6 bg-gray-200 rounded w-3/4"></div>
-                    <div className="h-3 bg-gray-200 rounded w-4/5"></div>
-                  </div>
-                  <div className="h-10 w-10 bg-gray-200 rounded-md"></div>
-                </div>
-              </div>
-            </Card>
-          ))}
+      <PageContainer title="Payment History">
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
         </div>
-
-        <Card className="mb-6 border border-gray-200 shadow-sm">
-          <div className="animate-pulse p-6">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              {[...Array(4)].map((_, index) => (
-                <div key={index} className="space-y-2">
-                  <div className="h-4 bg-gray-200 rounded w-1/3"></div>
-                  <div className="h-10 bg-gray-200 rounded w-full"></div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="p-8 flex flex-col items-center justify-center">
-            <div className="animate-pulse space-y-4 w-full max-w-3xl">
-              <div className="h-8 bg-gray-200 rounded w-1/3"></div>
-              <div className="h-8 bg-gray-200 rounded w-full"></div>
-              <div className="h-8 bg-gray-200 rounded w-full"></div>
-              <div className="h-8 bg-gray-200 rounded w-full"></div>
-              <div className="h-8 bg-gray-200 rounded w-full"></div>
-            </div>
-            <p className="text-gray-500 mt-4">Loading payment data...</p>
-          </div>
-        </Card>
-      </div>
+      </PageContainer>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-6xl">
-      <div className="flex flex-col space-y-4 mb-8">
-        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-          <div>
-            <h1 className="text-3xl font-bold mb-2 sm:mb-0">Payment History</h1>
-          </div>
+    <PageContainer
+      title="Payment History"
+      subtitle="View and analyze your payment history across all subscriptions"
+      actions={
+        <Button
+          variant="outlined"
+          onClick={exportData}
+          disabled={!payments || payments.length === 0}
+          icon={<Download className="h-4 w-4 mr-2" />}
+        >
+          Export to CSV
+        </Button>
+      }
+    >
+      <PageSection>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {/* Total Spent Card */}
+          <Card variant="elevated">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <div className="flex-shrink-0 p-3 bg-primary/10 rounded-full">
+                    <CreditCard className="h-6 w-6 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-on-surface-variant text-sm mb-1">Total Spent</p>
+                    <p className="text-on-surface text-2xl font-bold">
+                      {formatCurrency(stats.totalSpent, stats.currency)}
+                    </p>
+                  </div>
+                </div>
+                <ArrowUpRight className="h-5 w-5 text-primary" />
+              </div>
+            </CardContent>
+          </Card>
 
-          <Button
-            onClick={() => {
-              // Prepare data for export
-              const exportData = payments.map(payment => ({
-                Subscription: payment.subscription_name,
-                Amount: payment.amount,
-                Currency: payment.currency,
-                'Payment Date': formatDate(payment.payment_date),
-                Notes: payment.notes || ''
-              }));
+          {/* Payment Count Card */}
+          <Card variant="elevated">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <div className="flex-shrink-0 p-3 bg-secondary/10 rounded-full">
+                    <CreditCard className="h-6 w-6 text-secondary" />
+                  </div>
+                  <div>
+                    <p className="text-on-surface-variant text-sm mb-1">Payments Made</p>
+                    <p className="text-on-surface text-2xl font-bold">
+                      {stats.paymentCount}
+                    </p>
+                  </div>
+                </div>
+                <ArrowUpRight className="h-5 w-5 text-secondary" />
+              </div>
+            </CardContent>
+          </Card>
 
-              // Generate filename with current date
-              const date = new Date().toISOString().split('T')[0];
-              const filename = `payment-history-${date}.csv`;
+          {/* Average Payment Card */}
+          <Card variant="elevated">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <div className="flex-shrink-0 p-3 bg-tertiary/10 rounded-full">
+                    <Calendar className="h-6 w-6 text-tertiary" />
+                  </div>
+                  <div>
+                    <p className="text-on-surface-variant text-sm mb-1">Average Payment</p>
+                    <p className="text-on-surface text-2xl font-bold">
+                      {formatCurrency(stats.averagePayment, stats.currency)}
+                    </p>
+                  </div>
+                </div>
+                <ArrowUpRight className="h-5 w-5 text-tertiary" />
+              </div>
+            </CardContent>
+          </Card>
 
-              // Export to CSV
-              exportToCsv(exportData, filename);
-            }}
-            variant="outlined"
-            size="sm"
-            disabled={!payments || payments.length === 0}
-          >
-            Export to CSV
-          </Button>
+          {/* This Month Card */}
+          <Card variant="elevated">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <div className="flex-shrink-0 p-3 bg-success/10 rounded-full">
+                    <Calendar className="h-6 w-6 text-success" />
+                  </div>
+                  <div>
+                    <p className="text-on-surface-variant text-sm mb-1">This Month</p>
+                    <p className="text-on-surface text-2xl font-bold">
+                      {formatCurrency(stats.thisMonth, stats.currency)}
+                    </p>
+                  </div>
+                </div>
+                <div className={`text-xs font-medium ${monthlyChange >= 0 ? 'text-success' : 'text-error'}`}>
+                  {monthlyChange >= 0 ? '+' : ''}{percentChange.toFixed(1)}%
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
+      </PageSection>
 
-        <p className="text-gray-600">View and analyze your payment history across all subscriptions.</p>
-      </div>
+      <PageSection>
+        <Card variant="elevated">
+          <CardHeader>
+            <CardTitle>Filter Payments</CardTitle>
+            <CardDescription>Filter your payment history by subscription and date range</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSearch} className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div>
+                <label htmlFor="subscription_id" className="block text-sm font-medium text-on-surface-variant mb-1">
+                  Subscription
+                </label>
+                <select
+                  id="subscription_id"
+                  name="subscription_id"
+                  value={filters.subscription_id}
+                  onChange={handleFilterChange}
+                  className="block w-full rounded-md border border-outline py-2 px-3 bg-surface text-on-surface shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                >
+                  <option value="">All Subscriptions</option>
+                  <option value="1">Netflix</option>
+                  <option value="2">Spotify</option>
+                  <option value="3">Adobe Creative Cloud</option>
+                  <option value="4">Gym Membership</option>
+                </select>
+              </div>
 
-      <PaymentStats
-        totalSpent={stats.totalSpent}
-        currency={stats.currency}
-        paymentCount={stats.paymentCount}
-        averagePayment={stats.averagePayment}
-        thisMonth={stats.thisMonth}
-        lastMonth={stats.lastMonth}
-      />
+              <div>
+                <label htmlFor="from_date" className="block text-sm font-medium text-on-surface-variant mb-1">
+                  From Date
+                </label>
+                <input
+                  type="date"
+                  id="from_date"
+                  name="from_date"
+                  value={filters.from_date}
+                  onChange={handleFilterChange}
+                  className="block w-full rounded-md border border-outline py-2 px-3 bg-surface text-on-surface shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                />
+              </div>
 
-      <Card className="mb-6 border border-gray-200 shadow-sm">
-        <form onSubmit={handleSearch} className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 bg-gray-50 rounded-t-lg border-b border-gray-200">
-          <div>
-            <label htmlFor="subscription_id" className="block text-sm font-medium text-gray-700 mb-1">
-              Subscription
-            </label>
-            <select
-              id="subscription_id"
-              name="subscription_id"
-              value={filters.subscription_id}
-              onChange={handleFilterChange}
-              className="w-full border border-gray-300 rounded-md shadow-sm p-2 bg-white"
-            >
-              <option value="">All Subscriptions</option>
-              <option value="1">Netflix</option>
-              <option value="2">Spotify</option>
-              <option value="3">Adobe Creative Cloud</option>
-              <option value="4">Gym Membership</option>
-            </select>
-          </div>
+              <div>
+                <label htmlFor="to_date" className="block text-sm font-medium text-on-surface-variant mb-1">
+                  To Date
+                </label>
+                <input
+                  type="date"
+                  id="to_date"
+                  name="to_date"
+                  value={filters.to_date}
+                  onChange={handleFilterChange}
+                  className="block w-full rounded-md border border-outline py-2 px-3 bg-surface text-on-surface shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                />
+              </div>
 
-          <div>
-            <label htmlFor="from_date" className="block text-sm font-medium text-gray-700 mb-1">
-              From Date
-            </label>
-            <input
-              type="date"
-              id="from_date"
-              name="from_date"
-              value={filters.from_date}
-              onChange={handleFilterChange}
-              className="w-full border border-gray-300 rounded-md shadow-sm p-2 bg-white"
-            />
-          </div>
+              <div className="flex items-end">
+                <Button
+                  type="submit"
+                  variant="filled"
+                  className="w-full"
+                  icon={<Filter className="h-4 w-4 mr-2" />}
+                >
+                  Filter
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      </PageSection>
 
-          <div>
-            <label htmlFor="to_date" className="block text-sm font-medium text-gray-700 mb-1">
-              To Date
-            </label>
-            <input
-              type="date"
-              id="to_date"
-              name="to_date"
-              value={filters.to_date}
-              onChange={handleFilterChange}
-              className="w-full border border-gray-300 rounded-md shadow-sm p-2 bg-white"
-            />
-          </div>
+      <PageSection>
+        <Card variant="elevated">
+          <CardHeader>
+            <CardTitle>Payment History</CardTitle>
+            <CardDescription>Your payment records across all subscriptions</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {error && (
+              <div className="bg-error/10 text-error p-4 rounded-lg mb-4">
+                {error}
+              </div>
+            )}
 
-          <div className="flex items-end">
-            <Button type="submit" className="w-full">Filter</Button>
-          </div>
-        </form>
+            {!payments ? (
+              <div className="p-8 flex flex-col items-center justify-center">
+                <div className="animate-pulse space-y-4 w-full max-w-3xl">
+                  <div className="h-8 bg-surface-variant rounded w-1/3"></div>
+                  <div className="h-8 bg-surface-variant rounded w-full"></div>
+                  <div className="h-8 bg-surface-variant rounded w-full"></div>
+                  <div className="h-8 bg-surface-variant rounded w-full"></div>
+                  <div className="h-8 bg-surface-variant rounded w-full"></div>
+                </div>
+                <p className="text-on-surface-variant mt-4">Loading payment data...</p>
+              </div>
+            ) : payments.length === 0 ? (
+              <div className="flex flex-col items-center justify-center p-10">
+                <CreditCard className="h-16 w-16 text-on-surface-variant/20 mb-4" />
+                <p className="text-headline-small text-on-surface font-medium mb-1">No payment records found</p>
+                <p className="text-body-medium text-on-surface-variant text-center mb-4">
+                  Adjust your filters or record a payment for a subscription to see payment history.
+                </p>
+                <Link to="/subscriptions">
+                  <Button
+                    variant="filled"
+                    icon={<PlusCircle className="h-4 w-4 mr-2" />}
+                  >
+                    Go to Subscriptions
+                  </Button>
+                </Link>
+              </div>
+            ) : (
+              <div>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Subscription</TableHead>
+                      <TableHead>Amount</TableHead>
+                      <TableHead>Payment Date</TableHead>
+                      <TableHead>Notes</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {payments.map((payment) => (
+                      <TableRow key={payment.id}>
+                        <TableCell>
+                          <Link
+                            to={`/subscriptions/${payment.subscription_id}`}
+                            className="font-medium text-on-surface hover:text-primary"
+                          >
+                            {payment.subscription_name}
+                          </Link>
+                        </TableCell>
+                        <TableCell className="font-medium">
+                          {formatCurrency(payment.amount, payment.currency)}
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center">
+                            <Calendar className="h-4 w-4 text-on-surface-variant mr-1" />
+                            {formatDate(payment.payment_date)}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          {payment.notes || <span className="text-on-surface-variant">—</span>}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <Link
+                            to={`/subscriptions/${payment.subscription_id}`}
+                            className="text-primary hover:text-primary/80"
+                          >
+                            View Subscription
+                          </Link>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
 
-        {error && (
-          <div className="bg-red-100 border-y border-red-400 text-red-700 px-4 py-3">
-            {error}
-          </div>
-        )}
-
-        {!payments ? (
-          <div className="p-8 flex flex-col items-center justify-center">
-            <div className="animate-pulse space-y-4 w-full max-w-3xl">
-              <div className="h-8 bg-gray-200 rounded w-1/3"></div>
-              <div className="h-8 bg-gray-200 rounded w-full"></div>
-              <div className="h-8 bg-gray-200 rounded w-full"></div>
-              <div className="h-8 bg-gray-200 rounded w-full"></div>
-              <div className="h-8 bg-gray-200 rounded w-full"></div>
-            </div>
-            <p className="text-gray-500 mt-4">Loading payment data...</p>
-          </div>
-        ) : payments.length === 0 ? (
-          <div className="flex flex-col items-center justify-center p-10">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-gray-300 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
-            </svg>
-            <p className="text-lg font-medium text-gray-600 mb-1">No payment records found</p>
-            <p className="text-gray-500 text-center mb-4">Adjust your filters or record a payment for a subscription to see payment history.</p>
-            <Link to="/subscriptions">
-              <Button size="sm">Go to Subscriptions</Button>
-            </Link>
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-full">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Subscription
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Amount
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Payment Date
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Notes
-                  </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {payments.map((payment) => (
-                  <tr key={payment.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <Link to={`/subscriptions/${payment.subscription_id}`} className="font-medium text-gray-900 hover:text-indigo-600">
-                        {payment.subscription_name}
-                      </Link>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap font-medium">
-                      {formatCurrency(payment.amount, payment.currency)}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-400 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
-                        {formatDate(payment.payment_date)}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      {payment.notes || '—'}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <Link
-                        to={`/subscriptions/${payment.subscription_id}`}
-                        className="text-indigo-600 hover:text-indigo-900"
+                {/* Pagination */}
+                {meta && meta.last_page > 1 && (
+                  <div className="flex justify-center mt-6">
+                    <nav className="flex items-center">
+                      <Button
+                        variant="text"
+                        onClick={() => handlePageChange(meta.current_page - 1)}
+                        disabled={meta.current_page === 1}
+                        className="mr-2"
                       >
-                        View Subscription
-                      </Link>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </Card>
+                        Previous
+                      </Button>
 
-      {/* Pagination */}
-      {meta && meta.last_page > 1 && (
-        <div className="flex justify-center mt-6">
-          <nav className="flex items-center shadow-sm rounded-md overflow-hidden border border-gray-200">
-            <button
-              onClick={() => handlePageChange(meta.current_page - 1)}
-              disabled={meta.current_page === 1}
-              className={`px-3 py-2 ${
-                meta.current_page === 1
-                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                  : 'text-gray-700 hover:bg-gray-100'
-              }`}
-            >
-              Previous
-            </button>
+                      {[...Array(meta.last_page)].map((_, i) => (
+                        <Button
+                          key={i}
+                          variant={meta.current_page === i + 1 ? "filled" : "text"}
+                          onClick={() => handlePageChange(i + 1)}
+                          className="mx-1"
+                        >
+                          {i + 1}
+                        </Button>
+                      ))}
 
-            {meta && [...Array(meta.last_page)].map((_, i) => (
-              <button
-                key={i}
-                onClick={() => handlePageChange(i + 1)}
-                className={`px-4 py-2 ${
-                  meta.current_page === i + 1
-                    ? 'bg-indigo-600 text-white'
-                    : 'text-gray-700 hover:bg-gray-100'
-                }`}
-              >
-                {i + 1}
-              </button>
-            ))}
-
-            <button
-              onClick={() => handlePageChange(meta.current_page + 1)}
-              disabled={meta.current_page === meta.last_page}
-              className={`px-3 py-2 ${
-                meta.current_page === meta.last_page
-                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                  : 'text-gray-700 hover:bg-gray-100'
-              }`}
-            >
-              Next
-            </button>
-          </nav>
-        </div>
-      )}
-
-      {!loading && (!payments || payments.length === 0) && (
-        <div className="mt-8 text-center">
-          <p className="text-gray-500 mb-2">Need to record a payment?</p>
-          <p className="text-gray-700 mb-4">Visit your subscriptions to record new payments.</p>
-          <Link to="/subscriptions">
-            <Button variant="outlined">View Subscriptions</Button>
-          </Link>
-        </div>
-      )}
-    </div>
+                      <Button
+                        variant="text"
+                        onClick={() => handlePageChange(meta.current_page + 1)}
+                        disabled={meta.current_page === meta.last_page}
+                        className="ml-2"
+                      >
+                        Next
+                      </Button>
+                    </nav>
+                  </div>
+                )}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </PageSection>
+    </PageContainer>
   );
 };
 

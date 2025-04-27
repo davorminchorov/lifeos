@@ -14,6 +14,7 @@ interface TransactionFormData {
 interface TransactionFormProps {
   onSubmit: (data: TransactionFormData) => void;
   onCancel: () => void;
+  onSuccess?: () => void;
   initialData?: Partial<TransactionFormData>;
   investmentId: string;
 }
@@ -59,6 +60,7 @@ const transactionTypes = [
 const TransactionForm: React.FC<TransactionFormProps> = ({
   onSubmit,
   onCancel,
+  onSuccess,
   initialData,
   investmentId
 }) => {
@@ -79,6 +81,10 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
       type: data.type as 'deposit' | 'withdrawal' | 'dividend' | 'interest' | 'fee',
       amount: Number(data.amount)
     });
+
+    if (onSuccess) {
+      onSuccess();
+    }
   };
 
   return (
@@ -207,7 +213,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
         <CardFooter className="bg-gray-50 px-6 py-4 flex justify-end space-x-3 border-t border-gray-100">
           <Button
             type="button"
-            variant="outline"
+            variant="outlined"
             onClick={onCancel}
             disabled={isSubmitting}
           >

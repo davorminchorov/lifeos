@@ -7,21 +7,23 @@ import { DollarSign } from 'lucide-react';
 
 interface ValuationFormProps {
   investmentId: string;
-  onValuationAdded: () => void;
+  onSuccess?: () => void;
   onCancel: () => void;
+  initialValue?: number;
 }
 
 const ValuationForm: React.FC<ValuationFormProps> = ({
   investmentId,
-  onValuationAdded,
+  onSuccess,
   onCancel,
+  initialValue = 0
 }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
 
   const { register, handleSubmit, formState: { errors } } = useForm({
     defaultValues: {
-      value: '',
+      value: initialValue ? initialValue.toString() : '',
       date: new Date().toISOString().split('T')[0],
       notes: '',
     }
@@ -36,7 +38,9 @@ const ValuationForm: React.FC<ValuationFormProps> = ({
         ...data,
         value: parseFloat(data.value),
       });
-      onValuationAdded();
+      if (onSuccess) {
+        onSuccess();
+      }
     } catch (error: any) {
       console.error('Error adding valuation:', error);
 
@@ -141,8 +145,7 @@ const ValuationForm: React.FC<ValuationFormProps> = ({
           </Button>
           <Button
             type="submit"
-            variant="outlined"
-            color="primary"
+            variant="filled"
             disabled={isSubmitting}
           >
             {isSubmitting ? 'Saving...' : 'Save Valuation'}
