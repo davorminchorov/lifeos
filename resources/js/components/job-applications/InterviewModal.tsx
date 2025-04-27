@@ -6,13 +6,15 @@ import { axiosClient } from '../../lib/axios';
 interface InterviewModalProps {
   applicationId: string;
   onClose: () => void;
-  onSave: () => void;
+  onSuccess: () => void;
+  onSave?: () => void;
 }
 
 const InterviewModal: React.FC<InterviewModalProps> = ({
   applicationId,
   onClose,
-  onSave,
+  onSuccess,
+  onSave
 }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -38,7 +40,8 @@ const InterviewModal: React.FC<InterviewModalProps> = ({
 
     try {
       await axiosClient.post(`/api/job-applications/${applicationId}/interviews`, formData);
-      onSave();
+      onSuccess();
+      if (onSave) onSave();
     } catch (err: any) {
       console.error('Error scheduling interview:', err);
       setError(err.response?.data?.message || 'Failed to schedule interview');

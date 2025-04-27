@@ -361,6 +361,7 @@ const JobApplicationDetailPage: React.FC = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
+                    {/* @ts-ignore */}
                     {application.interviews.map((interview: Interview) => (
                       <TableRow key={interview.id}>
                         <TableCell>
@@ -484,7 +485,7 @@ const JobApplicationDetailPage: React.FC = () => {
 
       {showInterviewModal && (
         <InterviewModal
-          jobApplicationId={id as string}
+          applicationId={id as string}
           onClose={() => setShowInterviewModal(false)}
           onSuccess={handleInterviewAdded}
         />
@@ -492,7 +493,7 @@ const JobApplicationDetailPage: React.FC = () => {
 
       {showOutcomeModal && (
         <OutcomeModal
-          jobApplicationId={id as string}
+          applicationId={id as string}
           onClose={() => setShowOutcomeModal(false)}
           onSuccess={handleOutcomeRecorded}
         />

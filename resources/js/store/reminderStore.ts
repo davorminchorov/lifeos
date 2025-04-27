@@ -1,4 +1,4 @@
-import { createStore } from 'xstate-store';
+import { createStore } from '../utils/xstate-store-adapter';
 import { Reminder, ReminderFormData } from '../queries/reminderQueries';
 
 export interface ReminderState {

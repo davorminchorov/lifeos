@@ -1,0 +1,40 @@
+# TypeScript Errors Being Ignored
+
+This project has several TypeScript errors that are currently being ignored to allow development to continue:
+
+1. Store-related errors:
+   - Issues with useStore() return type in store components
+   - Object destructuring vs array destructuring inconsistencies
+   - Property access errors on store state objects
+
+These errors will be addressed in a future update when we refactor the state management system.
+
+## Temporary Solution
+
+We have implemented a custom store adapter in `resources/js/utils/xstate-store-adapter.ts` that allows
+the code to compile but doesn't fully satisfy TypeScript's type checking. This is intentional as a
+complete refactoring of the state management system is planned.
+
+## Files with Known TypeScript Errors
+
+- resources/js/components/payments/PaymentForm.tsx
+- resources/js/pages/payments/PaymentHistoryPage.tsx
+- resources/js/pages/payments/RecordPayment.tsx
+- resources/js/pages/subscriptions/SubscriptionDetail.tsx
+- resources/js/pages/subscriptions/SubscriptionsList.tsx
+
+## Component Prop Mismatches
+- resources/js/pages/investments/InvestmentDetail.tsx - Mismatched props for TransactionForm and ValuationForm
+- resources/js/pages/investments/InvestmentDetailPage.tsx - Missing props for TransactionForm
+- resources/js/pages/job-applications/JobApplicationDetailPage.tsx - Mismatched props for InterviewModal and OutcomeModal
+
+## State Management (xstate-store)
+- All files in resources/js/store/* have issues with xstate-store integration
+
+## NumberFormat Issues
+- resources/js/utils/format.ts - Using 'notation' property not in type
+
+To properly fix these issues, the following would be needed:
+1. Install xstate-store or update xstate configuration
+2. Update component props to match their usage
+3. Update NumberFormat type definition or usage

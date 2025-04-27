@@ -3,6 +3,8 @@ import { useForm } from 'react-hook-form';
 import { Button } from '../../ui/Button';
 import { Card, CardContent, CardFooter } from '../../ui/Card';
 import { ArrowDownCircle, ArrowUpCircle, PiggyBank, Banknote, AlertCircle } from 'lucide-react';
+import axios from 'axios';
+import { useToast } from '../../ui/Toast';
 
 interface TransactionFormData {
   type: 'deposit' | 'withdrawal' | 'dividend' | 'interest' | 'fee';
@@ -12,11 +14,12 @@ interface TransactionFormData {
 }
 
 interface TransactionFormProps {
-  onSubmit: (data: TransactionFormData) => void;
-  onCancel: () => void;
-  onSuccess?: () => void;
-  initialData?: Partial<TransactionFormData>;
   investmentId: string;
+  onSubmit?: (data: TransactionFormData) => void;
+  onCancel?: () => void;
+  onSuccess?: () => void;
+  onTransactionAdded?: () => void;
+  initialData?: Partial<TransactionFormData>;
 }
 
 const transactionTypes = [
@@ -58,15 +61,18 @@ const transactionTypes = [
 ];
 
 const TransactionForm: React.FC<TransactionFormProps> = ({
+  investmentId,
   onSubmit,
   onCancel,
   onSuccess,
-  initialData,
-  investmentId
+  onTransactionAdded,
+  initialData
 }) => {
   const [selectedType, setSelectedType] = useState<string>(initialData?.type || 'deposit');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { toast } = useToast();
 
-  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<TransactionFormData>({
+  const { register, handleSubmit, formState: { errors } } = useForm<TransactionFormData>({
     defaultValues: {
       type: initialData?.type || 'deposit',
       amount: initialData?.amount || undefined,
@@ -75,15 +81,46 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
     }
   });
 
-  const submitHandler = (data: TransactionFormData) => {
-    onSubmit({
+  const submitHandler = async (data: TransactionFormData) => {
+    const formattedData = {
       ...data,
       type: data.type as 'deposit' | 'withdrawal' | 'dividend' | 'interest' | 'fee',
       amount: Number(data.amount)
-    });
+    };
 
-    if (onSuccess) {
-      onSuccess();
+    if (onSubmit) {
+      onSubmit(formattedData);
+    } else {
+      setIsSubmitting(true);
+
+      try {
+        await axios.post(`/api/investments/${investmentId}/transactions`, formattedData);
+
+        toast?.({
+          title: "Success",
+          description: "Transaction added successfully",
+          variant: "success",
+        });
+
+        if (onSuccess) onSuccess();
+        if (onTransactionAdded) onTransactionAdded();
+
+      } catch (error: any) {
+        console.error('Error adding transaction:', error);
+        toast?.({
+          title: "Error",
+          description: "Failed to add transaction",
+          variant: "destructive",
+        });
+      } finally {
+        setIsSubmitting(false);
+      }
+    }
+  };
+
+  const handleCancel = () => {
+    if (onCancel) {
+      onCancel();
     }
   };
 
@@ -214,7 +251,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
           <Button
             type="button"
             variant="outlined"
-            onClick={onCancel}
+            onClick={handleCancel}
             disabled={isSubmitting}
           >
             Cancel

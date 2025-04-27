@@ -42,7 +42,7 @@ const SubscriptionDetail: React.FC = () => {
   const {
     data: payments = [],
     isLoading: isLoadingPayments
-  } = useSubscriptionPayments(id as string, !!subscription);
+  } = useSubscriptionPayments(id as string);
 
   const {
     mutate: recordPayment,
@@ -56,7 +56,7 @@ const SubscriptionDetail: React.FC = () => {
     error: cancelError
   } = useCancelSubscription();
 
-  const handleCancelSubscription = async () => {
+  const handleCancelSubscription = () => {
     if (!id) return;
 
     cancelSubscription(
@@ -81,7 +81,7 @@ const SubscriptionDetail: React.FC = () => {
     );
   };
 
-  const handleRecordPayment = async (paymentData: RecordPaymentFormData) => {
+  const handleRecordPayment = (paymentData: RecordPaymentFormData) => {
     if (!id) return;
 
     recordPayment(

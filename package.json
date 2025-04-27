@@ -4,7 +4,8 @@
     "scripts": {
         "dev": "vite",
         "build": "vite build",
-        "rebuild": "rm -rf public/build && vite build"
+        "rebuild": "rm -rf public/build && vite build",
+        "typecheck": "node check-ts.cjs"
     },
     "devDependencies": {
         "@vitejs/plugin-react": "^4.4.1",
@@ -13,9 +14,11 @@
         "laravel-vite-plugin": "^1.2.0",
         "postcss": "^8.5.3",
         "tailwindcss": "^4.1.4",
+        "typescript": "^5.8.3",
         "vite": "^6.3.3"
     },
     "dependencies": {
+        "@heroicons/react": "^2.2.0",
         "@radix-ui/react-dialog": "^1.1.11",
         "@radix-ui/react-label": "^2.1.4",
         "@radix-ui/react-select": "^2.2.2",
@@ -39,6 +42,7 @@
         "react-dom": "^19.1.0",
         "react-hook-form": "^7.56.1",
         "react-hot-toast": "^2.5.2",
+        "react-minimal-pie-chart": "^9.1.0",
         "react-router-dom": "^6.30.0",
         "tailwind-merge": "^3.2.0",
         "xstate": "^5.19.2"

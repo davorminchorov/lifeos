@@ -6,13 +6,15 @@ import { axiosClient } from '../../lib/axios';
 interface OutcomeModalProps {
   applicationId: string;
   onClose: () => void;
-  onSave: () => void;
+  onSuccess: () => void;
+  onSave?: () => void;
 }
 
 const OutcomeModal: React.FC<OutcomeModalProps> = ({
   applicationId,
   onClose,
-  onSave,
+  onSuccess,
+  onSave
 }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -37,7 +39,8 @@ const OutcomeModal: React.FC<OutcomeModalProps> = ({
 
     try {
       await axiosClient.post(`/api/job-applications/${applicationId}/outcome`, formData);
-      onSave();
+      onSuccess();
+      if (onSave) onSave();
     } catch (err: any) {
       console.error('Error recording outcome:', err);
       setError(err.response?.data?.message || 'Failed to record outcome');

@@ -45,6 +45,7 @@ interface RecordPaymentParams {
 interface CancelSubscriptionParams {
   id: string;
   end_date: string;
+  subscriptionId?: string;
 }
 
 // Query keys

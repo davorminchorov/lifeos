@@ -22,7 +22,7 @@ import { cn } from '../../utils/cn';
 type LegacyVariant = 'default' | 'primary' | 'secondary' | 'outline' | 'ghost' | 'link' | 'destructive';
 
 // Material Design variant types
-type MaterialVariant = 'contained' | 'outlined' | 'text' | 'elevated' | 'tonal';
+type MaterialVariant = 'contained' | 'outlined' | 'text' | 'elevated' | 'tonal' | 'filled';
 
 // Combined variant type for better developer experience
 export type ButtonVariant = MaterialVariant | LegacyVariant;
@@ -31,7 +31,7 @@ export type ButtonVariant = MaterialVariant | LegacyVariant;
 export type ButtonSize = 'sm' | 'md' | 'lg' | 'default';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'filled' | 'tonal' | 'outlined' | 'text';
+  variant?: ButtonVariant;
   size?: 'sm' | 'md' | 'lg';
   icon?: React.ReactNode;
   iconPosition?: 'left' | 'right';
@@ -53,11 +53,22 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     children,
     ...props
   }, ref) => {
+    // Normalize legacy variants to their modern equivalents
+    const normalizedVariant = variant === 'outline' ? 'outlined' :
+                             (variant === 'default' || variant === 'primary') ? 'contained' :
+                             (variant === 'secondary') ? 'tonal' :
+                             (variant === 'ghost') ? 'text' :
+                             variant;
+
     const variantStyles = {
       filled: 'bg-primary text-on-primary hover:bg-primary/90 active:bg-primary/80 shadow-elevation-1',
+      contained: 'bg-primary text-on-primary hover:bg-primary/90 active:bg-primary/80 shadow-elevation-1',
       tonal: 'bg-primary-container text-on-primary-container hover:bg-primary-container/90 active:bg-primary-container/80 shadow-elevation-1',
       outlined: 'border-2 border-primary bg-transparent text-primary hover:bg-primary/10 active:bg-primary/20',
       text: 'bg-transparent text-primary hover:bg-primary/10 active:bg-primary/20',
+      elevated: 'bg-surface text-on-surface hover:bg-surface/90 active:bg-surface/80 shadow-elevation-2',
+      link: 'bg-transparent text-primary underline hover:text-primary/90',
+      destructive: 'bg-error text-on-error hover:bg-error/90 active:bg-error/80',
     };
 
     const sizeStyles = {
@@ -74,7 +85,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         ...child.props,
         className: cn(
           'inline-flex items-center justify-center font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-primary/25 disabled:opacity-50 disabled:pointer-events-none',
-          variantStyles[variant],
+          variantStyles[normalizedVariant as keyof typeof variantStyles],
           sizeStyles[size],
           fullWidth && 'w-full',
           className,
@@ -88,7 +99,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         className={cn(
           'inline-flex items-center justify-center font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-primary/25 disabled:opacity-50 disabled:pointer-events-none',
-          variantStyles[variant],
+          variantStyles[normalizedVariant as keyof typeof variantStyles],
           sizeStyles[size],
           fullWidth && 'w-full',
           className

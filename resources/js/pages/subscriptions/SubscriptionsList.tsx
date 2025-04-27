@@ -12,6 +12,7 @@ import {
   useCancelSubscription
 } from '../../queries/subscriptionQueries';
 import { Subscription as SubscriptionType } from '../../components/subscriptions/SubscriptionCard';
+import { useToast } from '../../ui/Toast';
 
 interface Meta {
   current_page: number;
@@ -24,6 +25,7 @@ const SubscriptionsList: React.FC = () => {
   const navigate = useNavigate();
   const [state, actions] = useSubscriptionStore();
   const { filters } = state;
+  const { toast } = useToast();
 
   // Convert our store filters to query params
   const queryParams = {
@@ -36,7 +38,8 @@ const SubscriptionsList: React.FC = () => {
   const {
     data: subscriptionsData,
     isLoading,
-    error: queryError
+    error: queryError,
+    refetch
   } = useSubscriptions(queryParams);
 
   const { data: categories = [] } = useSubscriptionCategories();
@@ -97,15 +100,28 @@ const SubscriptionsList: React.FC = () => {
     navigate(`/subscriptions/${subscription.id}`);
   };
 
-  const handleCancelSubscription = async (subscription: SubscriptionType) => {
+  const handleCancelSubscription = (subscription: SubscriptionType) => {
     const endDate = new Date().toISOString().split('T')[0]; // Today's date
 
+    if (!subscription || !endDate) return;
+
     cancelSubscriptionMutation.mutate(
-      { subscriptionId: subscription.id, endDate },
+      { id: subscription.id, end_date: endDate },
       {
-        onError: (error) => {
-          console.error('Error cancelling subscription:', error);
-          actions.setError('Failed to cancel subscription');
+        onSuccess: () => {
+          toast({
+            title: "Success",
+            description: "Subscription cancelled successfully",
+            variant: "success",
+          });
+          refetch();
+        },
+        onError: (err: any) => {
+          toast({
+            title: "Error",
+            description: err?.message || 'Failed to cancel subscription',
+            variant: "destructive",
+          });
         }
       }
     );

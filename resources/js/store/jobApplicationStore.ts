@@ -320,7 +320,6 @@ const actions = {
 };
 
 // Create the store
-// @ts-ignore - Ignore the type issues with the library
 export const jobApplicationStore = createStore({
   name: 'jobApplication',
   initialState,

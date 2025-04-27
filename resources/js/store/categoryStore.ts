@@ -1,4 +1,4 @@
-import { createStore } from 'xstate-store';
+import { createStore } from '../utils/xstate-store-adapter';
 import { Category, CategoryFormData } from '../queries/categoryQueries';
 
 export interface CategoryState {

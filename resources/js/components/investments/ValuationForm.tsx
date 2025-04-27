@@ -6,10 +6,17 @@ import { Button } from '../../ui/Button';
 import { Card, CardContent, CardFooter } from '../../ui/Card';
 import { DollarSign } from 'lucide-react';
 
+interface ValuationFormData {
+  value: number | string;
+  date: string;
+  notes?: string;
+}
+
 interface ValuationFormProps {
   investmentId: string;
   onSuccess?: () => void;
   onCancel?: () => void;
+  onValuationAdded?: () => void;
   initialValue?: number;
 }
 
@@ -17,13 +24,14 @@ const ValuationForm: React.FC<ValuationFormProps> = ({
   investmentId,
   onSuccess,
   onCancel,
+  onValuationAdded,
   initialValue = 0
 }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
   const { toast } = useToast();
 
-  const { register, handleSubmit, formState: { errors } } = useForm({
+  const { register, handleSubmit, formState: { errors } } = useForm<ValuationFormData>({
     defaultValues: {
       value: initialValue ? initialValue.toString() : '',
       date: new Date().toISOString().split('T')[0],
@@ -31,14 +39,14 @@ const ValuationForm: React.FC<ValuationFormProps> = ({
     }
   });
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: ValuationFormData) => {
     setIsSubmitting(true);
     setServerError(null);
 
     try {
       await axios.post(`/api/investments/${investmentId}/valuations`, {
         ...data,
-        value: parseFloat(data.value),
+        value: parseFloat(data.value as string),
       });
 
       toast({
@@ -47,14 +55,12 @@ const ValuationForm: React.FC<ValuationFormProps> = ({
         variant: "success",
       });
 
-      if (onSuccess) {
-        onSuccess();
-      }
+      if (onSuccess) onSuccess();
+      if (onValuationAdded) onValuationAdded();
     } catch (error: any) {
       console.error('Error adding valuation:', error);
 
       if (error.response?.data?.errors) {
-        // Handle field-specific errors if needed
         setServerError('Please check the form for errors and try again.');
         toast({
           title: "Validation Error",
@@ -71,6 +77,12 @@ const ValuationForm: React.FC<ValuationFormProps> = ({
       }
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleCancel = () => {
+    if (onCancel) {
+      onCancel();
     }
   };
 
@@ -157,7 +169,7 @@ const ValuationForm: React.FC<ValuationFormProps> = ({
           <Button
             type="button"
             variant="outlined"
-            onClick={onCancel}
+            onClick={handleCancel}
             disabled={isSubmitting}
           >
             Cancel

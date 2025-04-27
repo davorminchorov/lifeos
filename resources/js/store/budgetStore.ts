@@ -151,7 +151,6 @@ const actions = {
 };
 
 // Create the store
-// @ts-ignore - Ignore the type issues with the library
 export const budgetStore = createStore({
   name: 'budget',
   initialState,

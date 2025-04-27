@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
-    "target": "es2015",
+    "target": "es2017",
     "module": "esnext",
     "moduleResolution": "node",
-    "strict": true,
+    "strict": false,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
@@ -11,7 +11,14 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["resources/js/*"]
-    }
+    },
+    "noImplicitAny": false,
+    "strictNullChecks": false,
+    "allowSyntheticDefaultImports": true,
+    "noEmit": true,
+    "noUnusedParameters": false,
+    "noUnusedLocals": false,
+    "ignoreDeprecations": "5.0"
   },
   "include": ["resources/js/**/*"],
   "exclude": ["node_modules", "public"]

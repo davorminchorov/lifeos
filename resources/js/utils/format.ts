@@ -96,6 +96,7 @@ export const formatCompactCurrency = (amount: number, currency: string): string 
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: currency,
+    // @ts-ignore notation is available in modern browsers but not in TypeScript's default lib
     notation: 'compact',
     compactDisplay: 'short',
     minimumFractionDigits: 1,
