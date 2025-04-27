@@ -5,6 +5,7 @@ import { Button } from '../../ui/Button/Button';
 import { Card } from '../../ui/Card';
 import { FileUpload, FileData } from '../common/FileUpload';
 import { FileList } from '../common/FileList';
+import { useToast } from '../../ui/Toast';
 
 interface ExpenseFormProps {
   initialData?: {
@@ -17,6 +18,7 @@ interface ExpenseFormProps {
     description: string;
     payment_method: string;
     receipt_url?: string;
+    notes?: string;
   };
   isEditing?: boolean;
   categories?: { id: string; name: string }[];
@@ -30,6 +32,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
   onSuccess
 }) => {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [formData, setFormData] = useState({
     title: initialData?.title || '',
     amount: initialData?.amount || 0,
@@ -39,6 +42,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
     description: initialData?.description || '',
     payment_method: initialData?.payment_method || '',
     receipt_url: initialData?.receipt_url || '',
+    notes: initialData?.notes || '',
   });
 
   const [availableCategories, setAvailableCategories] = useState(categories);
@@ -63,6 +67,11 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
     } catch (error) {
       console.error('Failed to fetch categories:', error);
       setSubmitError('Failed to load expense categories. Please try again.');
+      toast({
+        title: "Error",
+        description: "Failed to load expense categories",
+        variant: "destructive",
+      });
     } finally {
       setIsLoadingCategories(false);
     }
@@ -70,7 +79,16 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    // Handle numeric input for the amount field
+    if (name === 'amount') {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value === '' ? 0 : parseFloat(value)
+      }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
 
     // Clear error for this field when user updates it
     if (errors[name]) {
@@ -97,8 +115,8 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
       newErrors.date = 'Date is required';
     }
 
-    if (!formData.category_id) {
-      newErrors.category_id = 'Category is required';
+    if (!formData.currency) {
+      newErrors.currency = 'Currency is required';
     }
 
     setErrors(newErrors);
@@ -119,11 +137,21 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
       if (isEditing && initialData?.id) {
         // Update existing expense
         await axios.put(`/api/expenses/${initialData.id}`, formData);
+        toast({
+          title: "Success",
+          description: "Expense updated successfully",
+          variant: "success",
+        });
         navigate(`/expenses/${initialData.id}`);
       } else {
         // Create new expense
         const response = await axios.post('/api/expenses', formData);
-        navigate(`/expenses/${response.data.expense_id}`);
+        toast({
+          title: "Success",
+          description: "Expense created successfully",
+          variant: "success",
+        });
+        navigate(`/expenses/${response.data.id}`);
       }
       if (onSuccess) {
         onSuccess();
@@ -140,8 +168,18 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
         });
 
         setErrors(formattedErrors);
+        toast({
+          title: "Validation Error",
+          description: "Please correct the errors in the form",
+          variant: "destructive",
+        });
       } else {
         setSubmitError(error.response?.data?.error || 'An unexpected error occurred. Please try again.');
+        toast({
+          title: "Error",
+          description: error.response?.data?.error || 'An unexpected error occurred. Please try again.',
+          variant: "destructive",
+        });
       }
     } finally {
       setIsSubmitting(false);
@@ -252,54 +290,56 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
             </div>
           </div>
 
-          {/* Date */}
-          <div>
-            <label htmlFor="date" className="block text-body-medium font-medium text-on-surface-variant mb-1">
-              Date <span className="text-error">*</span>
-            </label>
-            <input
-              type="date"
-              id="date"
-              name="date"
-              value={formData.date}
-              onChange={handleChange}
-              className={`w-full rounded-md border ${
-                errors.date ? 'border-error' : 'border-outline/50'
-              } shadow-elevation-1 p-2 bg-surface text-on-surface focus:border-primary focus:ring-1 focus:ring-primary`}
-            />
-            {errors.date && (
-              <p className="mt-1 text-body-small text-error">{errors.date}</p>
-            )}
-          </div>
+          {/* Date and Category (side by side) */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label htmlFor="date" className="block text-body-medium font-medium text-on-surface-variant mb-1">
+                Date <span className="text-error">*</span>
+              </label>
+              <input
+                type="date"
+                id="date"
+                name="date"
+                value={formData.date}
+                onChange={handleChange}
+                className={`w-full rounded-md border ${
+                  errors.date ? 'border-error' : 'border-outline/50'
+                } shadow-elevation-1 p-2 bg-surface text-on-surface focus:border-primary focus:ring-1 focus:ring-primary`}
+              />
+              {errors.date && (
+                <p className="mt-1 text-body-small text-error">{errors.date}</p>
+              )}
+            </div>
 
-          {/* Category */}
-          <div>
-            <label htmlFor="category_id" className="block text-body-medium font-medium text-on-surface-variant mb-1">
-              Category <span className="text-error">*</span>
-            </label>
-            <select
-              id="category_id"
-              name="category_id"
-              value={formData.category_id}
-              onChange={handleChange}
-              className={`w-full rounded-md border ${
-                errors.category_id ? 'border-error' : 'border-outline/50'
-              } shadow-elevation-1 p-2 bg-surface text-on-surface focus:border-primary focus:ring-1 focus:ring-primary`}
-              disabled={isLoadingCategories}
-            >
-              <option value="">Select a category</option>
-              {Array.isArray(availableCategories) && availableCategories.map(category => (
-                <option key={category.id} value={category.id}>
-                  {category.name}
-                </option>
-              ))}
-            </select>
-            {errors.category_id && (
-              <p className="mt-1 text-body-small text-error">{errors.category_id}</p>
-            )}
-            {isLoadingCategories && (
-              <p className="mt-1 text-body-small text-on-surface-variant">Loading categories...</p>
-            )}
+            <div>
+              <label htmlFor="category_id" className="block text-body-medium font-medium text-on-surface-variant mb-1">
+                Category
+              </label>
+              <select
+                id="category_id"
+                name="category_id"
+                value={formData.category_id}
+                onChange={handleChange}
+                className={`w-full rounded-md border ${
+                  errors.category_id ? 'border-error' : 'border-outline/50'
+                } shadow-elevation-1 p-2 bg-surface text-on-surface focus:border-primary focus:ring-1 focus:ring-primary`}
+                disabled={isLoadingCategories}
+              >
+                <option value="">Select a category</option>
+                {isLoadingCategories ? (
+                  <option disabled>Loading categories...</option>
+                ) : (
+                  availableCategories.map(category => (
+                    <option key={category.id} value={category.id}>
+                      {category.name}
+                    </option>
+                  ))
+                )}
+              </select>
+              {errors.category_id && (
+                <p className="mt-1 text-body-small text-error">{errors.category_id}</p>
+              )}
+            </div>
           </div>
 
           {/* Payment Method */}
@@ -316,7 +356,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
                 errors.payment_method ? 'border-error' : 'border-outline/50'
               } shadow-elevation-1 p-2 bg-surface text-on-surface focus:border-primary focus:ring-1 focus:ring-primary`}
             >
-              <option value="">Select a payment method</option>
+              <option value="">Select payment method</option>
               {paymentMethodOptions.map(option => (
                 <option key={option.value} value={option.value}>
                   {option.label}
@@ -342,49 +382,63 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
               className={`w-full rounded-md border ${
                 errors.description ? 'border-error' : 'border-outline/50'
               } shadow-elevation-1 p-2 bg-surface text-on-surface focus:border-primary focus:ring-1 focus:ring-primary`}
-              placeholder="Add details about this expense"
+              placeholder="Detailed description of the expense"
             />
             {errors.description && (
               <p className="mt-1 text-body-small text-error">{errors.description}</p>
             )}
           </div>
 
-          {/* Receipt URL */}
-          {isEditing && initialData?.id && (
-            <div className="border-t border-outline-variant/60 pt-4 mt-4">
-              <h3 className="text-title-medium font-medium text-on-surface mb-2">Attached Files</h3>
-              <FileList
-                entityId={initialData.id}
-                entityType="expense"
-                className="mb-4"
-              />
-              <FileUpload
-                entityId={initialData.id}
-                entityType="expense"
-                buttonText="Attach Receipt or Document"
-                allowedTypes={['image/jpeg', 'image/png', 'application/pdf']}
-                maxSize={5}
-                onUploadSuccess={(fileData) => {
-                  // Optional: You can update the UI or show a success message
-                  console.log('File uploaded successfully:', fileData);
-                }}
-              />
-            </div>
-          )}
+          {/* Notes */}
+          <div>
+            <label htmlFor="notes" className="block text-body-medium font-medium text-on-surface-variant mb-1">
+              Notes
+            </label>
+            <textarea
+              id="notes"
+              name="notes"
+              value={formData.notes}
+              onChange={handleChange}
+              rows={2}
+              className={`w-full rounded-md border ${
+                errors.notes ? 'border-error' : 'border-outline/50'
+              } shadow-elevation-1 p-2 bg-surface text-on-surface focus:border-primary focus:ring-1 focus:ring-primary`}
+              placeholder="Any additional notes"
+            />
+            {errors.notes && (
+              <p className="mt-1 text-body-small text-error">{errors.notes}</p>
+            )}
+          </div>
 
-          {!isEditing && (
-            <div className="border-t border-outline-variant/60 pt-4 mt-4">
-              <p className="text-body-small text-on-surface-variant italic">
-                You can upload receipt images and documents after saving the expense.
-              </p>
-            </div>
-          )}
+          {/* Receipt URL */}
+          <div>
+            <label htmlFor="receipt_url" className="block text-body-medium font-medium text-on-surface-variant mb-1">
+              Receipt URL
+            </label>
+            <input
+              type="url"
+              id="receipt_url"
+              name="receipt_url"
+              value={formData.receipt_url}
+              onChange={handleChange}
+              className={`w-full rounded-md border ${
+                errors.receipt_url ? 'border-error' : 'border-outline/50'
+              } shadow-elevation-1 p-2 bg-surface text-on-surface focus:border-primary focus:ring-1 focus:ring-primary`}
+              placeholder="https://example.com/receipt.pdf"
+            />
+            {errors.receipt_url && (
+              <p className="mt-1 text-body-small text-error">{errors.receipt_url}</p>
+            )}
+            <p className="mt-1 text-body-small text-on-surface-variant">
+              Link to an online receipt if available
+            </p>
+          </div>
 
           <div className="flex justify-end space-x-3 pt-4">
             <Button
-              variant="outlined"
-              onClick={() => navigate('/expenses')}
               type="button"
+              onClick={() => navigate('/expenses')}
+              disabled={isSubmitting}
             >
               Cancel
             </Button>
@@ -392,7 +446,9 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
               type="submit"
               disabled={isSubmitting}
             >
-              {isSubmitting ? 'Saving...' : isEditing ? 'Update Expense' : 'Add Expense'}
+              {isSubmitting
+                ? (isEditing ? 'Updating...' : 'Creating...')
+                : (isEditing ? 'Update Expense' : 'Create Expense')}
             </Button>
           </div>
         </div>

@@ -2,45 +2,19 @@
 
 namespace App\Expenses\Queries;
 
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\DB;
+use App\Core\EventSourcing\Query;
 
-class GetExpenses
+class GetExpenses implements Query
 {
-    public function handle(?string $categoryId = null, ?Carbon $startDate = null, ?Carbon $endDate = null, int $limit = 10, int $offset = 0): array
-    {
-        $query = DB::table('expenses');
-
-        if ($categoryId) {
-            $query->where('category_id', $categoryId);
-        }
-
-        if ($startDate) {
-            $query->where('date', '>=', $startDate);
-        }
-
-        if ($endDate) {
-            $query->where('date', '<=', $endDate);
-        }
-
-        $total = $query->count();
-
-        $expenses = $query->orderBy('date', 'desc')
-            ->limit($limit)
-            ->offset($offset)
-            ->get()
-            ->map(function ($expense) {
-                return (array) $expense;
-            })
-            ->toArray();
-
-        return [
-            'data' => $expenses,
-            'meta' => [
-                'total' => $total,
-                'limit' => $limit,
-                'offset' => $offset,
-            ],
-        ];
-    }
+    public function __construct(
+        public readonly ?string $period = null,
+        public readonly ?string $categoryId = null,
+        public readonly ?string $dateFrom = null,
+        public readonly ?string $dateTo = null,
+        public readonly ?string $search = null,
+        public readonly ?string $sortBy = 'date',
+        public readonly ?string $sortOrder = 'desc',
+        public readonly ?int $page = 1,
+        public readonly ?int $perPage = 10
+    ) {}
 }

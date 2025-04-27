@@ -4,6 +4,13 @@ import axios from 'axios';
 import { formatCurrency, formatDate } from '../../utils/format';
 import { Button } from '../../ui/Button/Button';
 import { Card } from '../../ui/Card';
+import { useToast } from '../../ui/Toast';
+
+interface Category {
+  id: string;
+  name: string;
+  color: string;
+}
 
 interface Expense {
   id: string;
@@ -11,12 +18,9 @@ interface Expense {
   amount: number;
   currency: string;
   date: string;
-  category: {
-    id: string;
-    name: string;
-    color: string;
-  };
+  category: Category | null;
   payment_method: string;
+  description: string;
 }
 
 interface Meta {
@@ -27,7 +31,9 @@ interface Meta {
 }
 
 const ExpensesList: React.FC = () => {
+  const { toast } = useToast();
   const [expenses, setExpenses] = useState<Expense[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [meta, setMeta] = useState<Meta>({
     current_page: 1,
     per_page: 10,
@@ -35,6 +41,7 @@ const ExpensesList: React.FC = () => {
     last_page: 1,
   });
   const [loading, setLoading] = useState(true);
+  const [categoriesLoading, setCategoriesLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filters, setFilters] = useState({
     category_id: '',
@@ -45,13 +52,41 @@ const ExpensesList: React.FC = () => {
     sort_order: 'desc',
   });
 
+  useEffect(() => {
+    fetchCategories();
+    fetchExpenses();
+  }, []);
+
+  useEffect(() => {
+    fetchExpenses();
+  }, [filters]);
+
+  const fetchCategories = async () => {
+    setCategoriesLoading(true);
+    try {
+      const response = await axios.get('/api/categories');
+      const categoriesData = response.data.data || [];
+      setCategories(categoriesData);
+    } catch (err) {
+      console.error('Failed to load categories:', err);
+      toast({
+        title: "Error",
+        description: "Failed to load categories",
+        variant: "destructive",
+      });
+    } finally {
+      setCategoriesLoading(false);
+    }
+  };
+
   const fetchExpenses = async (page = 1) => {
     setLoading(true);
     try {
       const params = new URLSearchParams({
         page: page.toString(),
+        per_page: '10',
         ...filters,
-      });
+      }).toString();
 
       const response = await axios.get(`/api/expenses?${params}`);
       setExpenses(response.data.data || []);
@@ -65,14 +100,15 @@ const ExpensesList: React.FC = () => {
     } catch (err) {
       setError('Failed to load expenses');
       console.error(err);
+      toast({
+        title: "Error",
+        description: "Failed to load expenses",
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    fetchExpenses();
-  }, [filters]);
 
   const handlePageChange = (page: number) => {
     fetchExpenses(page);
@@ -120,6 +156,34 @@ const ExpensesList: React.FC = () => {
       : '↓';
   };
 
+  const getCategoryStyle = (category: Expense['category']) => {
+    if (!category) {
+      return {
+        backgroundColor: '#e5e7eb',
+        color: '#374151'
+      };
+    }
+
+    return {
+      backgroundColor: category.color || '#e5e7eb',
+      color: getContrastColor(category.color || '#e5e7eb')
+    };
+  };
+
+  // Helper function to determine text color based on background color
+  const getContrastColor = (hexColor: string) => {
+    // Convert hex to RGB
+    const r = parseInt(hexColor.slice(1, 3), 16);
+    const g = parseInt(hexColor.slice(3, 5), 16);
+    const b = parseInt(hexColor.slice(5, 7), 16);
+
+    // Calculate luminance
+    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+
+    // Return black or white based on luminance
+    return luminance > 0.5 ? '#000000' : '#ffffff';
+  };
+
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl">
       <div className="flex flex-col space-y-4 mb-8">
@@ -148,9 +212,18 @@ const ExpensesList: React.FC = () => {
               value={filters.category_id}
               onChange={handleFilterChange}
               className="w-full border border-gray-300 rounded-md shadow-sm p-2 bg-white"
+              disabled={categoriesLoading}
             >
               <option value="">All Categories</option>
-              {/* We'll populate categories dynamically */}
+              {categoriesLoading ? (
+                <option disabled>Loading categories...</option>
+              ) : (
+                categories.map(category => (
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
+                ))
+              )}
             </select>
           </div>
 
@@ -209,7 +282,7 @@ const ExpensesList: React.FC = () => {
           </div>
         )}
 
-        {loading && expenses.length === 0 ? (
+        {loading ? (
           <div className="p-8 flex flex-col items-center justify-center">
             <div className="animate-pulse space-y-4 w-full max-w-3xl">
               <div className="h-8 bg-gray-200 rounded w-1/3"></div>
@@ -250,18 +323,21 @@ const ExpensesList: React.FC = () => {
                   </th>
                   <th
                     className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                    onClick={() => handleSortChange('category')}
+                    onClick={() => handleSortChange('category_id')}
                   >
-                    Category {getSortIndicator('category')}
+                    Category {getSortIndicator('category_id')}
                   </th>
                   <th
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                    className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
                     onClick={() => handleSortChange('amount')}
                   >
                     Amount {getSortIndicator('amount')}
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Payment Method
+                  <th
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                    onClick={() => handleSortChange('payment_method')}
+                  >
+                    Payment Method {getSortIndicator('payment_method')}
                   </th>
                   <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Actions
@@ -272,39 +348,49 @@ const ExpensesList: React.FC = () => {
                 {expenses.map((expense) => (
                   <tr key={expense.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {formatDate(expense.date)}
+                      {new Date(expense.date).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="font-medium text-gray-900">{expense.title}</div>
+                      <div className="text-sm font-medium text-gray-900">{expense.title}</div>
+                      {expense.description && (
+                        <div className="text-xs text-gray-500 truncate max-w-xs">
+                          {expense.description}
+                        </div>
+                      )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span
-                        className="px-2 py-1 text-xs font-medium rounded-full"
-                        style={{
-                          backgroundColor: `${expense.category.color}20`,
-                          color: expense.category.color,
-                        }}
-                      >
-                        {expense.category.name}
-                      </span>
+                      {expense.category ? (
+                        <span
+                          className="px-2 py-1 text-xs rounded-full"
+                          style={getCategoryStyle(expense.category)}
+                        >
+                          {expense.category.name}
+                        </span>
+                      ) : (
+                        <span className="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-800">
+                          Uncategorized
+                        </span>
+                      )}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">
-                        {formatCurrency(expense.amount, expense.currency)}
-                      </div>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-right font-medium">
+                      {formatCurrency(expense.amount, expense.currency)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {formatPaymentMethod(expense.payment_method)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <div className="flex justify-end space-x-2">
-                        <Link to={`/expenses/${expense.id}`} className="text-indigo-600 hover:text-indigo-900">
-                          View
-                        </Link>
-                        <Link to={`/expenses/${expense.id}/edit`} className="text-indigo-600 hover:text-indigo-900">
-                          Edit
-                        </Link>
-                      </div>
+                      <Link
+                        to={`/expenses/${expense.id}`}
+                        className="text-indigo-600 hover:text-indigo-900 mr-4"
+                      >
+                        View
+                      </Link>
+                      <Link
+                        to={`/expenses/${expense.id}/edit`}
+                        className="text-indigo-600 hover:text-indigo-900"
+                      >
+                        Edit
+                      </Link>
                     </td>
                   </tr>
                 ))}
@@ -313,78 +399,58 @@ const ExpensesList: React.FC = () => {
           </div>
         )}
 
-        {meta.last_page > 1 && (
-          <div className="px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
-            <div className="flex-1 flex justify-between sm:hidden">
+        {/* Pagination */}
+        {!loading && meta.total > 0 && meta.last_page > 1 && (
+          <div className="bg-white px-4 py-3 flex items-center justify-center sm:px-6">
+            <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+              {/* Previous Page */}
               <button
-                onClick={() => handlePageChange(meta.current_page - 1)}
+                onClick={() => meta.current_page > 1 && handlePageChange(meta.current_page - 1)}
                 disabled={meta.current_page === 1}
-                className={`relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md ${
+                className={`relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium ${
                   meta.current_page === 1
-                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                    : 'bg-white text-gray-700 hover:bg-gray-50'
+                    ? 'text-gray-300 cursor-not-allowed'
+                    : 'text-gray-500 hover:bg-gray-50'
                 }`}
               >
-                Previous
+                <span className="sr-only">Previous</span>
+                <svg className="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
+                </svg>
               </button>
+
+              {/* Page Numbers */}
+              {Array.from({ length: meta.last_page }, (_, i) => i + 1).map((page) => (
+                <button
+                  key={page}
+                  onClick={() => handlePageChange(page)}
+                  aria-current={meta.current_page === page ? 'page' : undefined}
+                  className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
+                    meta.current_page === page
+                      ? 'z-10 bg-indigo-50 border-indigo-500 text-indigo-600'
+                      : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
+                  }`}
+                >
+                  {page}
+                </button>
+              ))}
+
+              {/* Next Page */}
               <button
-                onClick={() => handlePageChange(meta.current_page + 1)}
+                onClick={() => meta.current_page < meta.last_page && handlePageChange(meta.current_page + 1)}
                 disabled={meta.current_page === meta.last_page}
-                className={`relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md ${
+                className={`relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium ${
                   meta.current_page === meta.last_page
-                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                    : 'bg-white text-gray-700 hover:bg-gray-50'
+                    ? 'text-gray-300 cursor-not-allowed'
+                    : 'text-gray-500 hover:bg-gray-50'
                 }`}
               >
-                Next
+                <span className="sr-only">Next</span>
+                <svg className="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+                </svg>
               </button>
-            </div>
-            <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-              <div>
-                <p className="text-sm text-gray-700">
-                  Showing <span className="font-medium">{(meta.current_page - 1) * meta.per_page + 1}</span> to{' '}
-                  <span className="font-medium">
-                    {Math.min(meta.current_page * meta.per_page, meta.total)}
-                  </span>{' '}
-                  of <span className="font-medium">{meta.total}</span> results
-                </p>
-              </div>
-              <div>
-                <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
-                  <button
-                    onClick={() => handlePageChange(meta.current_page - 1)}
-                    disabled={meta.current_page === 1}
-                    className={`relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium ${
-                      meta.current_page === 1
-                        ? 'text-gray-300 cursor-not-allowed'
-                        : 'text-gray-500 hover:bg-gray-50'
-                    }`}
-                  >
-                    <span className="sr-only">Previous</span>
-                    <svg className="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                      <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                  </button>
-
-                  {/* Page numbers would go here - simplified for brevity */}
-
-                  <button
-                    onClick={() => handlePageChange(meta.current_page + 1)}
-                    disabled={meta.current_page === meta.last_page}
-                    className={`relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium ${
-                      meta.current_page === meta.last_page
-                        ? 'text-gray-300 cursor-not-allowed'
-                        : 'text-gray-500 hover:bg-gray-50'
-                    }`}
-                  >
-                    <span className="sr-only">Next</span>
-                    <svg className="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                      <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-                    </svg>
-                  </button>
-                </nav>
-              </div>
-            </div>
+            </nav>
           </div>
         )}
       </Card>

@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
-import toast from 'react-hot-toast';
 import { formatCurrency, formatDate } from '../../utils/format';
 import { Button } from '../../ui/Button/Button';
 import { Card } from '../../ui/Card';
-import { FileList } from '../../components/common/FileList';
-import { FileUpload } from '../../components/common/FileUpload';
+import { useToast } from '../../ui/Toast';
+
+interface Category {
+  id: string;
+  name: string;
+  color: string;
+}
 
 interface Expense {
   id: string;
@@ -14,14 +18,10 @@ interface Expense {
   amount: number;
   currency: string;
   date: string;
-  category: {
-    id: string;
-    name: string;
-    color: string;
-  };
+  category: Category | null;
   description: string;
   payment_method: string;
-  receipt_url: string;
+  receipt_url: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -29,6 +29,7 @@ interface Expense {
 const ExpenseDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [expense, setExpense] = useState<Expense | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -39,11 +40,16 @@ const ExpenseDetail: React.FC = () => {
       setLoading(true);
       try {
         const response = await axios.get(`/api/expenses/${id}`);
-        setExpense(response.data);
+        setExpense(response.data.data);
         setError(null);
       } catch (err) {
         setError('Failed to load expense details');
         console.error(err);
+        toast({
+          title: "Error",
+          description: "Failed to load expense details",
+          variant: "destructive",
+        });
       } finally {
         setLoading(false);
       }
@@ -60,10 +66,17 @@ const ExpenseDetail: React.FC = () => {
     setDeleting(true);
     try {
       await axios.delete(`/api/expenses/${id}`);
-      toast.success('Expense deleted successfully');
+      toast({
+        title: "Success",
+        description: "Expense deleted successfully",
+      });
       navigate('/expenses');
     } catch (err) {
-      toast.error('Failed to delete expense');
+      toast({
+        title: "Error",
+        description: "Failed to delete expense",
+        variant: "destructive",
+      });
       console.error(err);
       setDeleting(false);
     }
@@ -72,6 +85,34 @@ const ExpenseDetail: React.FC = () => {
   const formatPaymentMethod = (method: string) => {
     if (!method) return '-';
     return method.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+  };
+
+  const getCategoryStyle = (category: Category | null) => {
+    if (!category) {
+      return {
+        backgroundColor: '#e5e7eb',
+        color: '#374151'
+      };
+    }
+
+    return {
+      backgroundColor: category.color || '#e5e7eb',
+      color: getContrastColor(category.color || '#e5e7eb')
+    };
+  };
+
+  // Helper function to determine text color based on background color
+  const getContrastColor = (hexColor: string) => {
+    // Convert hex to RGB
+    const r = parseInt(hexColor.slice(1, 3), 16);
+    const g = parseInt(hexColor.slice(3, 5), 16);
+    const b = parseInt(hexColor.slice(5, 7), 16);
+
+    // Calculate luminance
+    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+
+    // Return black or white based on luminance
+    return luminance > 0.5 ? '#000000' : '#ffffff';
   };
 
   if (loading) {
@@ -139,7 +180,6 @@ const ExpenseDetail: React.FC = () => {
           </Link>
           <Button
             onClick={handleDelete}
-            variant="contained"
             disabled={deleting}
           >
             {deleting ? 'Deleting...' : 'Delete Expense'}
@@ -161,15 +201,18 @@ const ExpenseDetail: React.FC = () => {
 
           <div>
             <h2 className="font-medium text-gray-500 text-sm mb-1">Category</h2>
-            <span
-              className="inline-flex px-2.5 py-1 text-sm font-medium rounded-full"
-              style={{
-                backgroundColor: `${expense.category.color}20`,
-                color: expense.category.color,
-              }}
-            >
-              {expense.category.name}
-            </span>
+            {expense.category ? (
+              <span
+                className="inline-flex px-2.5 py-1 text-sm font-medium rounded-full"
+                style={getCategoryStyle(expense.category)}
+              >
+                {expense.category.name}
+              </span>
+            ) : (
+              <span className="inline-flex px-2.5 py-1 text-sm font-medium rounded-full bg-gray-100 text-gray-800">
+                Uncategorized
+              </span>
+            )}
           </div>
 
           <div>
@@ -184,32 +227,22 @@ const ExpenseDetail: React.FC = () => {
             </div>
           )}
 
-          {/* File Attachments Section */}
-          <Card className="border border-gray-200 shadow-sm mt-6">
-            <div className="p-6">
-              <h2 className="text-lg font-medium text-gray-900 mb-4">Attachments</h2>
-
-              <div className="space-y-4">
-                <FileList
-                  entityId={id || ''}
-                  entityType="expense"
-                  showEmpty={false}
-                />
-
-                <FileUpload
-                  entityId={id || ''}
-                  entityType="expense"
-                  buttonText="Attach New File"
-                  allowedTypes={['image/jpeg', 'image/png', 'application/pdf']}
-                  maxSize={5}
-                  onUploadSuccess={() => {
-                    // Refresh the page or update the file list
-                    window.location.reload();
-                  }}
-                />
-              </div>
+          {expense.receipt_url && (
+            <div className="col-span-1 md:col-span-2">
+              <h2 className="font-medium text-gray-500 text-sm mb-1">Receipt</h2>
+              <a
+                href={expense.receipt_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center text-indigo-600 hover:text-indigo-800"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                </svg>
+                View Receipt
+              </a>
             </div>
-          </Card>
+          )}
         </div>
       </Card>
 

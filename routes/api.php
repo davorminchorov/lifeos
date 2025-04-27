@@ -77,7 +77,10 @@ Route::middleware('auth:sanctum')->group(function () {
 // Expenses routes
 Route::group(['prefix' => 'expenses', 'namespace' => 'App\Expenses\UI\API'], function () {
     Route::get('/', 'ExpensesController@index');
+    Route::get('/{id}', 'ExpensesController@show');
     Route::post('/', 'ExpensesController@store');
+    Route::put('/{id}', 'ExpensesController@update');
+    Route::delete('/{id}', 'ExpensesController@destroy');
     Route::post('/{expenseId}/categorize', 'ExpensesController@categorize');
 });
 

@@ -39,6 +39,9 @@ import PaymentReports from './pages/reports/PaymentReports';
 import { ExpensesPage } from './pages/ExpensesPage';
 import { BudgetsPage } from './pages/BudgetsPage';
 import { CategoriesPage } from './pages/CategoriesPage';
+import ExpenseDetail from './pages/expenses/ExpenseDetail';
+import CreateExpense from './pages/expenses/CreateExpense';
+import EditExpense from './pages/expenses/EditExpense';
 
 // Utility Bills Pages
 import UtilityBillsPage from './pages/utility-bills/UtilityBillsPage';
@@ -109,7 +112,12 @@ const App: React.FC = () => {
                                     </Route>
 
                                     {/* Expenses Routes */}
-                                    <Route path="expenses" element={<ExpensesPage />} />
+                                    <Route path="expenses">
+                                        <Route index element={<ExpensesPage />} />
+                                        <Route path="create" element={<CreateExpense />} />
+                                        <Route path=":id" element={<ExpenseDetail />} />
+                                        <Route path=":id/edit" element={<EditExpense />} />
+                                    </Route>
                                     <Route path="budgets" element={<BudgetsPage />} />
                                     <Route path="categories" element={<CategoriesPage />} />
 

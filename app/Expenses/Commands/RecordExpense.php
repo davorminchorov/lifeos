@@ -2,18 +2,21 @@
 
 namespace App\Expenses\Commands;
 
-use App\Core\Commands\Command;
-use Illuminate\Support\Carbon;
+use App\Core\EventSourcing\Command;
+use Carbon\Carbon;
 
-class RecordExpense extends Command
+class RecordExpense implements Command
 {
     public function __construct(
         public readonly string $expenseId,
-        public readonly string $description,
+        public readonly string $title,
         public readonly float $amount,
         public readonly ?string $categoryId,
-        public readonly ?Carbon $date,
-        public readonly ?string $notes,
-    ) {
-    }
+        public readonly string $date,
+        public readonly ?string $description = null,
+        public readonly ?string $paymentMethod = null,
+        public readonly ?string $notes = null,
+        public readonly string $currency = 'USD',
+        public readonly ?string $receiptUrl = null
+    ) {}
 }
