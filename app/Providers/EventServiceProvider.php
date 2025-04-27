@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Expenses\Subscribers\ExpenseEventSubscriber;
+use App\JobApplications\Subscribers\JobApplicationEventSubscriber;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
 class EventServiceProvider extends ServiceProvider
@@ -23,6 +24,7 @@ class EventServiceProvider extends ServiceProvider
      */
     protected $subscribe = [
         ExpenseEventSubscriber::class,
+        JobApplicationEventSubscriber::class,
     ];
 
     /**

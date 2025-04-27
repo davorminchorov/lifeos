@@ -39,6 +39,10 @@ import { CategoriesPage } from './pages/CategoriesPage';
 import UtilityBillsPage from './pages/utility-bills/UtilityBillsPage';
 import UtilityBillDetailPage from './pages/utility-bills/UtilityBillDetailPage';
 
+// Job Applications Pages
+import JobApplicationsPage from './pages/job-applications/JobApplicationsPage';
+import JobApplicationDetailPage from './pages/job-applications/JobApplicationDetailPage';
+
 console.log('LifeOS app initialized with React');
 
 // Setup CSRF token for all requests
@@ -97,6 +101,12 @@ const App: React.FC = () => {
                         <Route path="utility-bills">
                             <Route index element={<UtilityBillsPage />} />
                             <Route path=":id" element={<UtilityBillDetailPage />} />
+                        </Route>
+
+                        {/* Job Applications Routes */}
+                        <Route path="job-applications">
+                            <Route index element={<JobApplicationsPage />} />
+                            <Route path=":id" element={<JobApplicationDetailPage />} />
                         </Route>
                     </Route>
 

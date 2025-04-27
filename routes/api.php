@@ -7,6 +7,7 @@ use App\Subscriptions\UI\Api\SubscriptionController;
 use App\UtilityBills\UI\Api\UtilityBillsController;
 use App\Dashboard\UI\Api\DashboardController;
 use App\Investments\UI\Api\InvestmentController;
+use App\JobApplications\UI\Api\JobApplicationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -57,6 +58,16 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/investments/{id}/valuations', [InvestmentController::class, 'updateValuation']);
     Route::get('/investments/{id}/performance', [InvestmentController::class, 'getPerformance']);
     Route::get('/portfolio/summary', [InvestmentController::class, 'getPortfolioSummary']);
+
+    // Job Application routes
+    Route::get('/job-applications', [JobApplicationController::class, 'index']);
+    Route::post('/job-applications', [JobApplicationController::class, 'store']);
+    Route::get('/job-applications/{id}', [JobApplicationController::class, 'show']);
+    Route::put('/job-applications/{id}', [JobApplicationController::class, 'update']);
+    Route::post('/job-applications/{id}/interviews', [JobApplicationController::class, 'scheduleInterview']);
+    Route::post('/job-applications/{id}/outcome', [JobApplicationController::class, 'recordOutcome']);
+    Route::get('/active-applications', [JobApplicationController::class, 'activeApplications']);
+    Route::get('/interview-schedule', [JobApplicationController::class, 'interviewSchedule']);
 });
 
 // Expenses routes
@@ -95,6 +106,7 @@ Route::group(['prefix' => 'expense-exports', 'namespace' => 'App\Expenses\UI\API
 Route::prefix('dashboard')->group(function () {
     Route::get('/subscriptions-summary', App\Dashboard\UI\Api\SubscriptionSummaryController::class);
     Route::get('/utility-bills-summary', App\Dashboard\UI\Api\UtilityBillsSummaryController::class);
+    Route::get('/job-applications-summary', App\Dashboard\UI\Api\JobApplicationsSummaryController::class);
 });
 
 // File attachment routes

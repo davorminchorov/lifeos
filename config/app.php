@@ -172,6 +172,7 @@ return [
         // Custom Service Providers...
         App\Core\EventSourcing\EventSourcingServiceProvider::class,
         App\Core\Files\FileServiceProvider::class,
+        App\JobApplications\JobApplicationServiceProvider::class,
     ])->toArray(),
 
 ];

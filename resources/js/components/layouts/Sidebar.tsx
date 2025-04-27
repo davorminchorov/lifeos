@@ -13,5 +13,12 @@ const navigationItems = [
     ],
   },
 
+  {
+    name: 'Job Applications',
+    icon: 'briefcase', // or any appropriate icon
+    current: false,
+    href: '/job-applications',
+  },
+
   // ... existing navigation items
 ];
