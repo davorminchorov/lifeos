@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { axiosClient } from '../../lib/axios';
 import PaymentForm from '../../components/payments/PaymentForm';
 import { Button } from '../../ui/Button/Button';
 import { Card } from '../../ui/Card';
@@ -29,7 +29,7 @@ const RecordPayment: React.FC = () => {
 
       try {
         setLoading(true);
-        const response = await axios.get(`/api/subscriptions/${subscriptionId}`);
+        const response = await axiosClient.get(`/api/subscriptions/${subscriptionId}`);
         setSubscription({
           id: response.data.id,
           name: response.data.name,

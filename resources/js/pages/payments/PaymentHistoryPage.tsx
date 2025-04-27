@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+import { axiosClient } from '../../lib/axios';
 import { Download, CreditCard, Calendar, ArrowUpRight, TrendingUp, Filter, ExternalLink, AlertCircle } from 'lucide-react';
 import { Button } from '../../ui/Button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../../ui/Card';
@@ -60,7 +60,7 @@ export default function PaymentHistoryPage() {
     setError(null);
 
     try {
-      const response = await axios.get('/api/payment-history', { params: filters });
+      const response = await axiosClient.get('/api/payment-history', { params: filters });
       setPayments(response.data.payments || []);
       setSummary(response.data.summary || {
         total_spent: 0,
@@ -84,7 +84,7 @@ export default function PaymentHistoryPage() {
 
   const fetchSubscriptions = async () => {
     try {
-      const response = await axios.get('/api/subscriptions/list');
+      const response = await axiosClient.get('/api/subscriptions/list');
       setSubscriptions(response.data.subscriptions || []);
     } catch (error) {
       console.error('Error fetching subscriptions:', error);
@@ -104,7 +104,7 @@ export default function PaymentHistoryPage() {
     setExportStatus('loading');
 
     try {
-      const response = await axios.get('/api/payment-history/export', {
+      const response = await axiosClient.get('/api/payment-history/export', {
         params: filters,
         responseType: 'blob'
       });

@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Api\PaymentController;
 use App\Subscriptions\UI\Api\SubscriptionController;
 use App\UtilityBills\UI\Api\UtilityBillsController;
 use App\Dashboard\UI\Api\DashboardController;
@@ -43,6 +44,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/subscriptions/{id}/cancel', [SubscriptionController::class, 'cancel']);
     Route::post('/subscriptions/{id}/payments', [SubscriptionController::class, 'recordPayment']);
     Route::get('/upcoming-payments', [SubscriptionController::class, 'upcomingPayments']);
+
+    // Payment routes
+    Route::get('/payment-history', [PaymentController::class, 'index']);
+    Route::get('/payment-history/export', [PaymentController::class, 'export']);
+    Route::post('/subscriptions/{subscription}/payments', [PaymentController::class, 'store']);
+    Route::get('/subscriptions/list', [PaymentController::class, 'getSubscriptionsList']);
 
     // Utility Bills routes
     Route::get('/utility-bills', [UtilityBillsController::class, 'index']);

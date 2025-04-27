@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { axiosClient } from '../../lib/axios';
 import { Button } from '../../ui/Button/Button';
 import { Card } from '../../ui/Card';
 import { formatCurrency } from '../../utils/format';
@@ -77,7 +77,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
     setSubmitError(null);
 
     try {
-      await axios.post(`/api/subscriptions/${subscriptionId}/payments`, formData);
+      await axiosClient.post(`/api/subscriptions/${subscriptionId}/payments`, formData);
 
       if (onSuccess) {
         onSuccess();
