@@ -5,10 +5,10 @@ export { default as Button } from './Button';
 export { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from './Card';
 export { Badge } from './Badge';
 export { Tabs } from './Tabs';
-export { Dialog } from './Dialog';
+export { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogBody, DialogFooter, DialogTitle, DialogDescription, DialogOverlay, DialogPortal } from './Dialog';
 export { Input } from './Input';
 export { Label } from './Label';
-export { Select } from './Select';
+export { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from './Select';
 export { Separator } from './Separator';
 export { Textarea } from './Textarea';
 export { Table } from './Table';
@@ -24,7 +24,7 @@ export const Spinner = ({ size = 'md' }: { size?: 'sm' | 'md' | 'lg' }) => {
 
   return (
     <div className="flex justify-center items-center">
-      <div className={`animate-spin rounded-full border-t-2 border-primary-500 ${sizeClasses[size]}`}></div>
+      <div className={`animate-spin rounded-full border-t-2 border-primary ${sizeClasses[size]}`}></div>
     </div>
   );
 };
@@ -40,7 +40,7 @@ export const Heading = ({
   className?: string;
   [key: string]: any;
 }) => {
-  const baseClasses = 'font-bold tracking-tight text-gray-900';
+  const baseClasses = 'font-bold tracking-tight text-on-surface';
   const sizeClasses = {
     h1: 'text-2xl sm:text-3xl',
     h2: 'text-xl sm:text-2xl',

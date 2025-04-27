@@ -9,37 +9,40 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Material Design 3 color system
+        // Material Design 3 color system using CSS variables
         primary: {
-          DEFAULT: '#0F766E', // Teal 700
-          container: '#99F6E4', // Teal 200
-          on: '#FFFFFF',
-          'on-container': '#022C26',
+          DEFAULT: 'var(--md-primary)',
+          container: 'var(--md-primary-container)',
+          on: 'var(--md-on-primary)',
+          'on-container': 'var(--md-on-primary-container)',
         },
         secondary: {
-          DEFAULT: '#475569', // Slate 600
-          container: '#E2E8F0', // Slate 200
-          on: '#FFFFFF',
-          'on-container': '#1E293B',
+          DEFAULT: 'var(--md-secondary)',
+          container: 'var(--md-secondary-container)',
+          on: 'var(--md-on-secondary)',
+          'on-container': 'var(--md-on-secondary-container)',
         },
         tertiary: {
-          DEFAULT: '#6D28D9', // Violet 700
-          container: '#DDD6FE', // Violet 200
-          on: '#FFFFFF',
-          'on-container': '#2E1065',
+          DEFAULT: 'var(--md-tertiary)',
+          container: 'var(--md-tertiary-container)',
+          on: 'var(--md-on-tertiary)',
+          'on-container': 'var(--md-on-tertiary-container)',
         },
         surface: {
-          DEFAULT: '#FFFFFF',
-          variant: '#F8FAFC', // Slate 50
-          on: '#1E293B', // Slate 800
-          'on-variant': '#475569', // Slate 600
+          DEFAULT: 'var(--md-surface)',
+          variant: 'var(--md-surface-variant)',
+          on: 'var(--md-on-surface)',
+          'on-variant': 'var(--md-on-surface-variant)',
         },
         error: {
-          DEFAULT: '#EF4444', // Red 500
-          container: '#FECACA', // Red 200
-          on: '#FFFFFF',
-          'on-container': '#7F1D1D',
+          DEFAULT: 'var(--md-error)',
+          container: 'var(--md-error-container)',
+          on: 'var(--md-on-error)',
+          'on-container': 'var(--md-on-error-container)',
         },
+        background: 'var(--md-background)',
+        'on-background': 'var(--md-on-background)',
+        outline: 'var(--md-outline)',
       },
       keyframes: {
         ripple: {

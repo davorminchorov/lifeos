@@ -14,8 +14,9 @@ import NotFound from './pages/NotFound';
 import { AuthProvider } from './store/authContext';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
 
-// Components
-import AppLayout from './components/layouts/AppLayout';
+// Import layouts and theme
+import { ThemeProvider } from './ui/ThemeProvider';
+import UnifiedLayout from './components/layouts/UnifiedLayout';
 
 // Subscription Pages
 import SubscriptionsList from './pages/subscriptions/SubscriptionsList';
@@ -67,63 +68,65 @@ axios.defaults.withCredentials = true;
 const App: React.FC = () => {
     return (
         <BrowserRouter>
-            <AuthProvider>
-                <Routes>
-                    {/* Auth Routes */}
-                    <Route path="/login" element={<Login />} />
+            <ThemeProvider>
+                <AuthProvider>
+                    <Routes>
+                        {/* Auth Routes */}
+                        <Route path="/login" element={<Login />} />
 
-                    {/* Protected Routes */}
-                    <Route path="/" element={<AppLayout />}>
-                        <Route index element={<Navigate to="/dashboard" replace />} />
-                        <Route path="dashboard" element={<Dashboard />} />
+                        {/* Protected Routes */}
+                        <Route path="/" element={<UnifiedLayout />}>
+                            <Route index element={<Navigate to="/dashboard" replace />} />
+                            <Route path="dashboard" element={<Dashboard />} />
 
-                        {/* Subscription Routes */}
-                        <Route path="subscriptions">
-                            <Route index element={<SubscriptionsList />} />
-                            <Route path="create" element={<CreateSubscription />} />
-                            <Route path=":id" element={<SubscriptionDetail />} />
-                            <Route path=":id/edit" element={<EditSubscription />} />
+                            {/* Subscription Routes */}
+                            <Route path="subscriptions">
+                                <Route index element={<SubscriptionsList />} />
+                                <Route path="create" element={<CreateSubscription />} />
+                                <Route path=":id" element={<SubscriptionDetail />} />
+                                <Route path=":id/edit" element={<EditSubscription />} />
+                            </Route>
+
+                            {/* Payment Routes */}
+                            <Route path="payments">
+                                <Route index element={<PaymentsList />} />
+                                <Route path="record/:subscriptionId" element={<RecordPayment />} />
+                            </Route>
+
+                            {/* Report Routes */}
+                            <Route path="reports">
+                                <Route path="payments" element={<PaymentReports />} />
+                            </Route>
+
+                            {/* Expenses Routes */}
+                            <Route path="expenses" element={<ExpensesPage />} />
+                            <Route path="budgets" element={<BudgetsPage />} />
+                            <Route path="categories" element={<CategoriesPage />} />
+
+                            {/* Utility Bills Routes */}
+                            <Route path="utility-bills">
+                                <Route index element={<UtilityBillsPage />} />
+                                <Route path=":id" element={<UtilityBillDetailPage />} />
+                            </Route>
+
+                            {/* Job Applications Routes */}
+                            <Route path="job-applications">
+                                <Route index element={<JobApplicationsPage />} />
+                                <Route path=":id" element={<JobApplicationDetailPage />} />
+                            </Route>
+
+                            {/* Investments Routes */}
+                            <Route path="investments">
+                                <Route index element={<InvestmentsPage />} />
+                                <Route path=":id" element={<InvestmentDetailPage />} />
+                            </Route>
                         </Route>
 
-                        {/* Payment Routes */}
-                        <Route path="payments">
-                            <Route index element={<PaymentsList />} />
-                            <Route path="record/:subscriptionId" element={<RecordPayment />} />
-                        </Route>
-
-                        {/* Report Routes */}
-                        <Route path="reports">
-                            <Route path="payments" element={<PaymentReports />} />
-                        </Route>
-
-                        {/* Expenses Routes */}
-                        <Route path="expenses" element={<ExpensesPage />} />
-                        <Route path="budgets" element={<BudgetsPage />} />
-                        <Route path="categories" element={<CategoriesPage />} />
-
-                        {/* Utility Bills Routes */}
-                        <Route path="utility-bills">
-                            <Route index element={<UtilityBillsPage />} />
-                            <Route path=":id" element={<UtilityBillDetailPage />} />
-                        </Route>
-
-                        {/* Job Applications Routes */}
-                        <Route path="job-applications">
-                            <Route index element={<JobApplicationsPage />} />
-                            <Route path=":id" element={<JobApplicationDetailPage />} />
-                        </Route>
-
-                        {/* Investments Routes */}
-                        <Route path="investments">
-                            <Route index element={<InvestmentsPage />} />
-                            <Route path=":id" element={<InvestmentDetailPage />} />
-                        </Route>
-                    </Route>
-
-                    {/* 404 page */}
-                    <Route path="*" element={<NotFound />} />
-                </Routes>
-            </AuthProvider>
+                        {/* 404 page */}
+                        <Route path="*" element={<NotFound />} />
+                    </Routes>
+                </AuthProvider>
+            </ThemeProvider>
         </BrowserRouter>
     );
 };

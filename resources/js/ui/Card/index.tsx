@@ -2,145 +2,142 @@ import React from 'react';
 import { cn } from '../../utils/cn';
 
 /**
- * Card component following Material Design guidelines
- *
- * Supports the following variants:
- * - elevated: Default card with shadow (elevation level 1)
- * - filled: Solid background without shadow
- * - outlined: Border with no shadow
- *
- * The Card component follows Material Design's 8px border radius for containers
- * and implements proper spacing patterns.
+ * Card component following Material Design 3 guidelines
  */
 
-export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
-  variant?: 'elevated' | 'filled' | 'outlined';
-  padding?: 'none' | 'sm' | 'md' | 'lg';
+interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
+  variant?: 'filled' | 'outlined' | 'elevated';
+  clickable?: boolean;
+  fullWidth?: boolean;
 }
 
-const Card = React.forwardRef<HTMLDivElement, CardProps>(
-  ({ className, variant = 'elevated', padding = 'md', ...props }, ref) => {
-    // Base styles for all cards
-    const baseStyles = 'rounded-sm w-full'; // 8px border radius
+function Card({
+  className,
+  variant = 'elevated',
+  clickable = false,
+  fullWidth = false,
+  ...props
+}: CardProps) {
+  const variantClasses = {
+    elevated: 'bg-surface shadow-elevation-1 hover:shadow-elevation-2',
+    filled: 'bg-surface-variant',
+    outlined: 'border border-outline bg-surface',
+  };
 
-    // Variant-specific styles
-    const variantStyles = {
-      elevated: 'bg-surface shadow-elevation-1 hover:shadow-elevation-2 text-surface-on border border-transparent',
-      filled: 'bg-surface-variant text-surface-on-variant border border-transparent',
-      outlined: 'bg-surface text-surface-on border border-slate-200',
-    };
+  return (
+    <div
+      className={cn(
+        'rounded-lg overflow-hidden',
+        variantClasses[variant],
+        clickable && 'cursor-pointer transition-shadow',
+        fullWidth ? 'w-full' : '',
+        className
+      )}
+      {...props}
+    />
+  );
+}
 
-    // Padding options
-    const paddingStyles = {
-      none: '',
-      sm: 'p-3',
-      md: 'p-4',
-      lg: 'p-6',
-    };
+interface CardHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
+  withBorder?: boolean;
+}
 
-    return (
-      <div
-        ref={ref}
-        className={cn(
-          baseStyles,
-          variantStyles[variant],
-          paddingStyles[padding],
-          className
-        )}
-        {...props}
-      />
-    );
-  }
-);
+function CardHeader({
+  className,
+  withBorder = false,
+  ...props
+}: CardHeaderProps) {
+  return (
+    <div
+      className={cn(
+        'px-6 py-4',
+        withBorder && 'border-b border-outline/20',
+        className
+      )}
+      {...props}
+    />
+  );
+}
 
-Card.displayName = "Card";
+function CardTitle({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLHeadingElement>) {
+  return (
+    <h3
+      className={cn(
+        'text-title-medium font-medium text-on-surface leading-none',
+        className
+      )}
+      {...props}
+    />
+  );
+}
 
-/**
- * Card header component with proper spacing according to Material Design
- */
-const CardHeader = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn("flex flex-col space-y-1.5 p-4", className)}
-    {...props}
-  />
-));
-CardHeader.displayName = "CardHeader";
+function CardDescription({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLParagraphElement>) {
+  return (
+    <p
+      className={cn(
+        'text-body-medium text-on-surface-variant mt-1',
+        className
+      )}
+      {...props}
+    />
+  );
+}
 
-/**
- * Card title using the Material Design typography system
- */
-const CardTitle = React.forwardRef<
-  HTMLParagraphElement,
-  React.HTMLAttributes<HTMLHeadingElement>
->(({ className, ...props }, ref) => (
-  <h3
-    ref={ref}
-    className={cn("text-headline-small font-medium", className)}
-    {...props}
-  />
-));
-CardTitle.displayName = "CardTitle";
+function CardContent({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div
+      className={cn('px-6 py-4', className)}
+      {...props}
+    />
+  );
+}
 
-/**
- * Card description with proper text styling
- */
-const CardDescription = React.forwardRef<
-  HTMLParagraphElement,
-  React.HTMLAttributes<HTMLParagraphElement>
->(({ className, ...props }, ref) => (
-  <p
-    ref={ref}
-    className={cn("text-body-medium text-surface-on-variant", className)}
-    {...props}
-  />
-));
-CardDescription.displayName = "CardDescription";
+function CardFooter({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div
+      className={cn(
+        'px-6 py-4 flex items-center border-t border-outline/20',
+        className
+      )}
+      {...props}
+    />
+  );
+}
 
-/**
- * Card content area with proper spacing
- */
-const CardContent = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn("p-4 pt-0", className)} {...props} />
-));
-CardContent.displayName = "CardContent";
+function CardActions({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div
+      className={cn(
+        'flex items-center justify-end space-x-2 px-6 py-4',
+        className
+      )}
+      {...props}
+    />
+  );
+}
 
-/**
- * Card footer with actions aligned to the end
- */
-const CardFooter = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn("flex items-center justify-end gap-2 p-4 pt-0", className)}
-    {...props}
-  />
-));
-CardFooter.displayName = "CardFooter";
-
-// Create a compound component for easier usage
-const CardComponent = Object.assign(Card, {
-  Header: CardHeader,
-  Title: CardTitle,
-  Description: CardDescription,
-  Content: CardContent,
-  Footer: CardFooter
-});
-
-// Export both individually and as a compound component
+// Export all components
 export {
-  CardComponent as Card,
+  Card,
   CardHeader,
   CardTitle,
   CardDescription,
   CardContent,
-  CardFooter
+  CardFooter,
+  CardActions
 };

@@ -37,7 +37,7 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
   fullWidth?: boolean;
   startIcon?: React.ReactNode;
   endIcon?: React.ReactNode;
-  asChild?: boolean; // For backward compatibility
+  asChild?: boolean; // For compatibility with wrapping Link components
 }
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
@@ -52,7 +52,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     children,
     disabled,
     onClick,
-    asChild, // Ignored, for backward compatibility
+    asChild, // Ignored for now, but allows for Link compatibility
     ...props
   }, ref) => {
     // For ripple effect
@@ -71,11 +71,11 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 
     // Variant styles based on Material Design Button variants
     const variantStyles = {
-      contained: 'bg-teal-600 text-white hover:bg-teal-700 active:bg-teal-800 shadow-sm focus:ring-teal-500 disabled:bg-teal-600/40',
-      outlined: 'border border-teal-600 text-teal-600 hover:bg-teal-50 active:bg-teal-100 focus:ring-teal-500 disabled:border-teal-600/40 disabled:text-teal-600/40',
-      text: 'text-teal-600 hover:bg-teal-50 active:bg-teal-100 focus:ring-teal-500 disabled:text-teal-600/40',
-      elevated: 'bg-white text-teal-600 shadow hover:shadow-md active:shadow-inner focus:ring-teal-500 disabled:text-teal-600/40',
-      tonal: 'bg-teal-100 text-teal-800 hover:bg-teal-200 active:bg-teal-300 focus:ring-teal-500 disabled:bg-teal-100/40 disabled:text-teal-800/40',
+      contained: 'bg-primary text-on-primary hover:shadow-elevation-2 active:bg-primary/90 focus:ring-primary/50 disabled:bg-primary/40',
+      outlined: 'border border-outline text-primary hover:bg-primary/5 active:bg-primary/10 focus:ring-primary/50 disabled:border-outline/40 disabled:text-primary/40',
+      text: 'text-primary hover:bg-primary/5 active:bg-primary/10 focus:ring-primary/50 disabled:text-primary/40',
+      elevated: 'bg-surface text-primary shadow-elevation-1 hover:shadow-elevation-2 active:shadow-elevation-1 focus:ring-primary/50 disabled:text-primary/40',
+      tonal: 'bg-primary-container text-on-primary-container hover:bg-primary-container/90 active:bg-primary-container/80 focus:ring-primary/50 disabled:bg-primary-container/40 disabled:text-on-primary-container/40',
 
       // Special legacy variants that don't map directly
       secondary: 'bg-slate-600 text-white hover:bg-slate-700 active:bg-slate-800 shadow-sm focus:ring-slate-500 disabled:bg-slate-600/40',
@@ -86,9 +86,9 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 
     // Size styles with Material Design touch target sizing
     const sizeStyles = {
-      sm: 'h-9 text-sm px-4 min-w-[64px]',
-      md: 'h-10 px-6 min-w-[80px]',
-      lg: 'h-12 px-8 text-base min-w-[96px]',
+      sm: 'h-9 text-sm px-3 py-2 min-w-[64px]',
+      md: 'h-10 px-6 py-2.5 min-w-[80px]',
+      lg: 'h-12 px-8 py-3 text-base min-w-[96px]',
     };
 
     // Handle ripple effect
@@ -118,7 +118,12 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 
     return (
       <button
-        ref={buttonRef}
+        ref={(node) => {
+          // Handle both our internal ref and the forwarded ref
+          buttonRef.current = node;
+          if (typeof ref === 'function') ref(node);
+          else if (ref) ref.current = node;
+        }}
         className={cn(
           baseStyles,
           variantStyles[normalizedVariant as keyof typeof variantStyles],
@@ -134,7 +139,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         {/* Material Design ripple effect */}
         {isRippling && (
           <span
-            className="absolute block rounded-full bg-white bg-opacity-30 animate-ripple"
+            className="absolute block rounded-full bg-current opacity-25 animate-ripple"
             style={rippleStyle}
           />
         )}
