@@ -243,12 +243,19 @@ export default function UtilityBillDetailPage() {
       subtitle={`${bill.provider} - ${renderStatusBadge(bill.status)}`}
       actions={
         <div className="flex space-x-2">
+          <Button
+            variant="outlined"
+            icon={<Edit className="h-4 w-4 mr-2" />}
+            onClick={handleEdit}
+          >
+            Edit Bill
+          </Button>
           {bill.status === 'pending' && (
             <>
               <Dialog open={showPaymentDialog} onOpenChange={setShowPaymentDialog}>
                 <DialogTrigger asChild>
                   <Button variant="filled" icon={<CreditCard className="h-4 w-4 mr-2" />}>
-                    Record Payment
+                    Pay Bill
                   </Button>
                 </DialogTrigger>
                 <DialogContent>
@@ -316,57 +323,53 @@ export default function UtilityBillDetailPage() {
                   </form>
                 </DialogContent>
               </Dialog>
-
-              <Dialog open={showReminderDialog} onOpenChange={setShowReminderDialog}>
-                <DialogTrigger asChild>
-                  <Button variant="outlined" icon={<Bell className="h-4 w-4 mr-2" />}>
-                    Schedule Reminder
-                  </Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <form onSubmit={handleScheduleReminder}>
-                    <DialogHeader>
-                      <DialogTitle>Schedule Bill Reminder</DialogTitle>
-                      <DialogDescription>Set a reminder for this bill payment.</DialogDescription>
-                    </DialogHeader>
-                    <div className="grid gap-4 py-4">
-                      <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="reminder-date" className="text-right">Date</Label>
-                        <Input
-                          id="reminder-date"
-                          type="date"
-                          value={reminderDate}
-                          onChange={(e) => setReminderDate(e.target.value)}
-                          required
-                          className="col-span-3"
-                        />
-                      </div>
-                      <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="reminder-message" className="text-right">Message</Label>
-                        <Textarea
-                          id="reminder-message"
-                          value={reminderMessage}
-                          onChange={(e) => setReminderMessage(e.target.value)}
-                          placeholder="Don't forget to pay your bill!"
-                          className="col-span-3"
-                          rows={3}
-                        />
-                      </div>
-                    </div>
-                    <DialogFooter>
-                      <Button type="button" variant="outlined" onClick={() => setShowReminderDialog(false)}>Cancel</Button>
-                      <Button type="submit" disabled={reminderProcessing}>
-                        {reminderProcessing ? 'Processing...' : 'Schedule Reminder'}
-                      </Button>
-                    </DialogFooter>
-                  </form>
-                </DialogContent>
-              </Dialog>
             </>
           )}
-          <Button variant="outlined" onClick={handleEdit} icon={<Edit className="h-4 w-4 mr-2" />}>
-            Edit Bill
-          </Button>
+          <Dialog open={showReminderDialog} onOpenChange={setShowReminderDialog}>
+            <DialogTrigger asChild>
+              <Button variant="outlined" icon={<Bell className="h-4 w-4 mr-2" />}>
+                Schedule Reminder
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <form onSubmit={handleScheduleReminder}>
+                <DialogHeader>
+                  <DialogTitle>Schedule Bill Reminder</DialogTitle>
+                  <DialogDescription>Set a reminder for this bill payment.</DialogDescription>
+                </DialogHeader>
+                <div className="grid gap-4 py-4">
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="reminder-date" className="text-right">Date</Label>
+                    <Input
+                      id="reminder-date"
+                      type="date"
+                      value={reminderDate}
+                      onChange={(e) => setReminderDate(e.target.value)}
+                      required
+                      className="col-span-3"
+                    />
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="reminder-message" className="text-right">Message</Label>
+                    <Textarea
+                      id="reminder-message"
+                      value={reminderMessage}
+                      onChange={(e) => setReminderMessage(e.target.value)}
+                      placeholder="Don't forget to pay your bill!"
+                      className="col-span-3"
+                      rows={3}
+                    />
+                  </div>
+                </div>
+                <DialogFooter>
+                  <Button type="button" variant="outlined" onClick={() => setShowReminderDialog(false)}>Cancel</Button>
+                  <Button type="submit" disabled={reminderProcessing}>
+                    {reminderProcessing ? 'Processing...' : 'Schedule Reminder'}
+                  </Button>
+                </DialogFooter>
+              </form>
+            </DialogContent>
+          </Dialog>
         </div>
       }
     >
