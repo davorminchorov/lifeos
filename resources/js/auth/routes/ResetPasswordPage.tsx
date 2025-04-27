@@ -1,39 +1,32 @@
 import React from 'react';
 import { ResetPasswordForm } from '../components/ResetPasswordForm';
-import { useNavigate } from 'react-router-dom';
-import { useTheme } from '../../ui/ThemeProvider';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 export function ResetPasswordPage() {
   const navigate = useNavigate();
-  const { isDark } = useTheme();
+  const [searchParams] = useSearchParams();
+
+  const token = searchParams.get('token') || '';
+  const email = searchParams.get('email') || '';
 
   const handleSuccess = () => {
     // No need to navigate away as the component handles its own success state
   };
 
-  return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-background">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <div className="flex justify-center mb-4">
-            <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center text-2xl font-bold text-on-primary">
-              L
-            </div>
-          </div>
-          <h1 className="text-display-small text-primary font-brand mb-2">LifeOS</h1>
-          <p className="text-on-surface-variant">Manage your life in one place</p>
-        </div>
-
-        <ResetPasswordForm onSuccess={handleSuccess} />
-
-        <div className="mt-8 text-center text-sm text-on-surface-variant">
-          Trouble signing in? Contact your administrator
-        </div>
-
-        <div className="mt-4 text-center text-xs text-on-surface-variant">
-          © {new Date().getFullYear()} LifeOS. All rights reserved.
-        </div>
+  if (!token || !email) {
+    return (
+      <div className="p-6 bg-error-container text-on-error-container rounded-md">
+        <h2 className="text-title-large font-bold mb-4">Invalid password reset link</h2>
+        <p className="mb-4">The password reset link is invalid or has expired.</p>
+        <button
+          onClick={() => navigate('/auth/login')}
+          className="px-4 py-2 bg-primary text-on-primary rounded-md"
+        >
+          Return to login
+        </button>
       </div>
-    </div>
-  );
+    );
+  }
+
+  return <ResetPasswordForm token={token} email={email} onSuccess={handleSuccess} />;
 }

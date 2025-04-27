@@ -17,6 +17,7 @@ import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import { LoginPage } from './auth/routes/LoginPage';
 import { ForgotPasswordPage } from './auth/routes/ForgotPasswordPage';
 import { ResetPasswordPage } from './auth/routes/ResetPasswordPage';
+import { AuthLayout } from './auth/components/AuthLayout';
 
 // Import layouts and theme
 import { ThemeProvider } from './ui/ThemeProvider';
@@ -91,9 +92,12 @@ const App: React.FC = () => {
                             <Routes>
                                 {/* Auth Routes */}
                                 <Route path="/login" element={<Navigate to="/auth/login" replace />} />
-                                <Route path="/auth/login" element={<LoginPage />} />
-                                <Route path="/auth/forgot-password" element={<ForgotPasswordPage />} />
-                                <Route path="/auth/reset-password" element={<ResetPasswordPage />} />
+                                <Route path="/auth" element={<AuthLayout />}>
+                                    <Route index element={<Navigate to="/auth/login" replace />} />
+                                    <Route path="login" element={<LoginPage />} />
+                                    <Route path="forgot-password" element={<ForgotPasswordPage />} />
+                                    <Route path="reset-password" element={<ResetPasswordPage />} />
+                                </Route>
 
                                 {/* Protected Routes */}
                                 <Route element={<ProtectedRoute />}>
