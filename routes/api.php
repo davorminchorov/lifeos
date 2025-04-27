@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Subscriptions\UI\Api\SubscriptionController;
 use App\UtilityBills\UI\Api\UtilityBillsController;
+use App\Dashboard\UI\Api\DashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,6 +27,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 // Subscription routes (protected by auth middleware)
 Route::middleware('auth:sanctum')->group(function () {
+    // Dashboard route
+    Route::get('/dashboard/summary', [DashboardController::class, 'summary']);
+
     Route::get('/subscriptions', [SubscriptionController::class, 'index']);
     Route::post('/subscriptions', [SubscriptionController::class, 'store']);
     Route::get('/subscriptions/{id}', [SubscriptionController::class, 'show']);

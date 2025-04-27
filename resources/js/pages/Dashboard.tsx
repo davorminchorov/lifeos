@@ -29,18 +29,10 @@ const Dashboard: React.FC = () => {
         setLoading(true);
         const response = await axios.get('/api/dashboard/summary');
         setSummary(response.data);
+        setError('');
       } catch (err) {
         console.error('Failed to fetch dashboard data', err);
         setError('Failed to load dashboard data. Please try again later.');
-        // Use mock data for now until we implement the API
-        setSummary({
-          totalSubscriptions: 5,
-          activeSubscriptions: 4,
-          upcomingPayments: 2,
-          monthlyCost: 45.99,
-          pendingBills: 3,
-          upcomingReminders: 2
-        });
       } finally {
         setLoading(false);
       }
@@ -187,6 +179,12 @@ const Dashboard: React.FC = () => {
         </div>
       </div>
 
+      {error && (
+        <div className="mt-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative" role="alert">
+          <span className="block sm:inline">{error}</span>
+        </div>
+      )}
+
       <div className="mt-8">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-medium text-gray-900">Quick Actions</h2>
@@ -198,65 +196,31 @@ const Dashboard: React.FC = () => {
             </div>
             <div className="px-4 py-5 sm:p-6">
               <p className="text-sm text-gray-500">Keep track of your recurring subscriptions and payments.</p>
-              <div className="mt-4 flex">
-                <Link
-                  to="/subscriptions/create"
-                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                >
-                  Add New Subscription
-                </Link>
-              </div>
+            </div>
+            <div className="px-4 py-4 sm:px-6">
+              <Link
+                to="/subscriptions"
+                className="text-sm font-medium text-indigo-600 hover:text-indigo-500"
+              >
+                Go to Subscriptions
+              </Link>
             </div>
           </div>
 
           <div className="bg-white overflow-hidden shadow rounded-lg divide-y divide-gray-200">
             <div className="px-4 py-5 sm:px-6">
-              <h3 className="text-lg font-medium text-gray-900">Manage Utility Bills</h3>
+              <h3 className="text-lg font-medium text-gray-900">Utility Bills</h3>
             </div>
             <div className="px-4 py-5 sm:p-6">
-              <p className="text-sm text-gray-500">Track and pay your utility bills on time and set reminders.</p>
-              <div className="mt-4 flex">
-                <Link
-                  to="/utility-bills"
-                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                >
-                  View Utility Bills
-                </Link>
-              </div>
+              <p className="text-sm text-gray-500">Manage your utility bills and set up payment reminders.</p>
             </div>
-          </div>
-
-          <div className="bg-white overflow-hidden shadow rounded-lg divide-y divide-gray-200">
-            <div className="px-4 py-5 sm:px-6">
-              <h3 className="text-lg font-medium text-gray-900">Upcoming Payments</h3>
-            </div>
-            <div className="px-4 py-5 sm:p-6">
-              <p className="text-sm text-gray-500">View your upcoming subscription payments for the next 30 days.</p>
-              <div className="mt-4 flex">
-                <Link
-                  to="/payments"
-                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                >
-                  View Payments History
-                </Link>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white overflow-hidden shadow rounded-lg divide-y divide-gray-200">
-            <div className="px-4 py-5 sm:px-6">
-              <h3 className="text-lg font-medium text-gray-900">Bill Reminders</h3>
-            </div>
-            <div className="px-4 py-5 sm:p-6">
-              <p className="text-sm text-gray-500">View upcoming reminders for your utility bill payments.</p>
-              <div className="mt-4 flex">
-                <Link
-                  to="/utility-bills"
-                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                >
-                  View Reminders
-                </Link>
-              </div>
+            <div className="px-4 py-4 sm:px-6">
+              <Link
+                to="/utility-bills"
+                className="text-sm font-medium text-indigo-600 hover:text-indigo-500"
+              >
+                Go to Utility Bills
+              </Link>
             </div>
           </div>
 
@@ -265,32 +229,15 @@ const Dashboard: React.FC = () => {
               <h3 className="text-lg font-medium text-gray-900">Track Expenses</h3>
             </div>
             <div className="px-4 py-5 sm:p-6">
-              <p className="text-sm text-gray-500">Track your daily expenses and manage your budget.</p>
-              <div className="mt-4 flex">
-                <Link
-                  to="/expenses"
-                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                >
-                  Manage Expenses
-                </Link>
-              </div>
+              <p className="text-sm text-gray-500">Record and categorize your daily expenses.</p>
             </div>
-          </div>
-
-          <div className="bg-white overflow-hidden shadow rounded-lg divide-y divide-gray-200">
-            <div className="px-4 py-5 sm:px-6">
-              <h3 className="text-lg font-medium text-gray-900">View Reports</h3>
-            </div>
-            <div className="px-4 py-5 sm:p-6">
-              <p className="text-sm text-gray-500">Analyze your spending with visualized reports and insights.</p>
-              <div className="mt-4 flex">
-                <Link
-                  to="/reports/payments"
-                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                >
-                  View Reports
-                </Link>
-              </div>
+            <div className="px-4 py-4 sm:px-6">
+              <Link
+                to="/expenses"
+                className="text-sm font-medium text-indigo-600 hover:text-indigo-500"
+              >
+                Go to Expenses
+              </Link>
             </div>
           </div>
         </div>
