@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import PageContainer, { PageSection, PageGrid } from '../ui/PageContainer';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '../ui/Card';
 import { Button } from '../ui/Button';
+import { Tabs, TabsList, TabsTrigger } from '../ui/Tabs';
+import { BarChart, Settings, PieChart } from 'lucide-react';
 
 interface DashboardSummary {
   totalSubscriptions: number;
@@ -15,6 +17,7 @@ interface DashboardSummary {
 }
 
 const Dashboard: React.FC = () => {
+  const navigate = useNavigate();
   const [summary, setSummary] = useState<DashboardSummary>({
     totalSubscriptions: 0,
     activeSubscriptions: 0,
@@ -65,6 +68,26 @@ const Dashboard: React.FC = () => {
           {error}
         </div>
       )}
+
+      <div className="mb-6">
+        <Tabs defaultValue="overview" className="w-full">
+          <TabsList className="mb-4">
+            <TabsTrigger value="overview" onClick={() => navigate('/dashboard')}>Overview</TabsTrigger>
+            <TabsTrigger value="financial" onClick={() => navigate('/dashboard/financial')}>
+              <BarChart className="h-4 w-4 mr-2" />
+              Financial
+            </TabsTrigger>
+            <TabsTrigger value="customize" onClick={() => navigate('/dashboard/customize')}>
+              <PieChart className="h-4 w-4 mr-2" />
+              Customize
+            </TabsTrigger>
+            <TabsTrigger value="settings" onClick={() => navigate('/dashboard/settings')}>
+              <Settings className="h-4 w-4 mr-2" />
+              Settings
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
+      </div>
 
       <PageSection title="Overview">
         <PageGrid columns={4}>

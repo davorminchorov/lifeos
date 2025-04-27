@@ -8,6 +8,7 @@ import axios from 'axios';
 // Import pages
 import { Login } from './pages/auth/Login';
 import Dashboard from './pages/Dashboard';
+import DashboardPage from './pages/DashboardPage';
 import NotFound from './pages/NotFound';
 
 // Import auth components
@@ -98,7 +99,14 @@ const App: React.FC = () => {
                                 <Route element={<ProtectedRoute />}>
                                     <Route path="/" element={<UnifiedLayout />}>
                                         <Route index element={<Navigate to="/dashboard" replace />} />
-                                        <Route path="dashboard" element={<Dashboard />} />
+
+                                        {/* Dashboard Routes */}
+                                        <Route path="dashboard">
+                                            <Route index element={<Dashboard />} />
+                                            <Route path="financial" element={<DashboardPage />} />
+                                            <Route path="customize" element={<Dashboard />} />
+                                            <Route path="settings" element={<Dashboard />} />
+                                        </Route>
 
                                         {/* Subscription Routes */}
                                         <Route path="subscriptions">
