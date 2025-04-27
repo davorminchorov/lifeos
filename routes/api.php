@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Subscriptions\UI\Api\SubscriptionController;
 use App\UtilityBills\UI\Api\UtilityBillsController;
 use App\Dashboard\UI\Api\DashboardController;
+use App\Investments\UI\Api\InvestmentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -47,6 +48,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/utility-bills/{id}/remind', [UtilityBillsController::class, 'scheduleReminder']);
     Route::get('/pending-bills', [UtilityBillsController::class, 'pendingBills']);
     Route::get('/upcoming-reminders', [UtilityBillsController::class, 'upcomingReminders']);
+
+    // Investment routes
+    Route::get('/investments', [InvestmentController::class, 'index']);
+    Route::post('/investments', [InvestmentController::class, 'store']);
+    Route::get('/investments/{id}', [InvestmentController::class, 'show']);
+    Route::post('/investments/{id}/transactions', [InvestmentController::class, 'recordTransaction']);
+    Route::post('/investments/{id}/valuations', [InvestmentController::class, 'updateValuation']);
+    Route::get('/investments/{id}/performance', [InvestmentController::class, 'getPerformance']);
+    Route::get('/portfolio/summary', [InvestmentController::class, 'getPortfolioSummary']);
 });
 
 // Expenses routes
