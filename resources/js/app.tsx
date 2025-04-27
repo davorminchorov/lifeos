@@ -1,18 +1,34 @@
 // App.js
 import '../css/app.css';
-import * as React from 'react';
-import * as ReactDOM from 'react-dom/client';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import React from 'react';
+import { createRoot } from 'react-dom/client';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import axios from 'axios';
 
 // Import pages
 import { Login } from './pages/auth/Login';
-import Dashboard from './dashboard/routes/Dashboard';
+import Dashboard from './pages/Dashboard';
 import NotFound from './pages/NotFound';
 
 // Import auth components
 import { AuthProvider } from './store/authContext';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
+
+// Components
+import AppLayout from './components/layouts/AppLayout';
+
+// Subscription Pages
+import SubscriptionsList from './pages/subscriptions/SubscriptionsList';
+import SubscriptionDetail from './pages/subscriptions/SubscriptionDetail';
+import CreateSubscription from './pages/subscriptions/CreateSubscription';
+import EditSubscription from './pages/subscriptions/EditSubscription';
+
+// Payment Pages
+import RecordPayment from './pages/payments/RecordPayment';
+import PaymentsList from './pages/payments/PaymentsList';
+
+// Report Pages
+import PaymentReports from './pages/reports/PaymentReports';
 
 console.log('LifeOS app initialized with React');
 
@@ -23,39 +39,60 @@ if (token) {
     axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 }
 
+// Set up axios defaults
+axios.defaults.baseURL = '/';
+axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+axios.defaults.withCredentials = true;
+
 /**
  * Root App Component
  */
-function App() {
+const App: React.FC = () => {
     return (
-        <BrowserRouter>
+        <Router>
             <AuthProvider>
                 <Routes>
-                    {/* Public Routes */}
+                    {/* Auth Routes */}
                     <Route path="/login" element={<Login />} />
 
                     {/* Protected Routes */}
-                    <Route element={<ProtectedRoute />}>
-                        <Route path="/dashboard" element={<Dashboard />} />
-                        {/* Add other protected routes here */}
-                    </Route>
+                    <Route path="/" element={<AppLayout />}>
+                        <Route index element={<Navigate to="/dashboard" replace />} />
+                        <Route path="dashboard" element={<Dashboard />} />
 
-                    {/* Redirect root to login for now */}
-                    <Route path="/" element={<Navigate to="/login" replace />} />
+                        {/* Subscription Routes */}
+                        <Route path="subscriptions">
+                            <Route index element={<SubscriptionsList />} />
+                            <Route path="create" element={<CreateSubscription />} />
+                            <Route path=":id" element={<SubscriptionDetail />} />
+                            <Route path=":id/edit" element={<EditSubscription />} />
+                        </Route>
+
+                        {/* Payment Routes */}
+                        <Route path="payments">
+                            <Route index element={<PaymentsList />} />
+                            <Route path="record/:subscriptionId" element={<RecordPayment />} />
+                        </Route>
+
+                        {/* Report Routes */}
+                        <Route path="reports">
+                            <Route path="payments" element={<PaymentReports />} />
+                        </Route>
+                    </Route>
 
                     {/* 404 page */}
                     <Route path="*" element={<NotFound />} />
                 </Routes>
             </AuthProvider>
-        </BrowserRouter>
+        </Router>
     );
-}
+};
 
 // Initialize the application
 const container = document.getElementById('app');
 
 if (container) {
-    const root = ReactDOM.createRoot(container);
+    const root = createRoot(container);
     root.render(
         <React.StrictMode>
             <App />
