@@ -90,3 +90,9 @@ Route::group(['prefix' => 'expense-reports', 'namespace' => 'App\Expenses\UI\API
 Route::group(['prefix' => 'expense-exports', 'namespace' => 'App\Expenses\UI\API'], function () {
     Route::get('/csv', 'ExportsController@exportExpenses');
 });
+
+// Dashboard routes
+Route::prefix('dashboard')->group(function () {
+    Route::get('/subscriptions-summary', App\Dashboard\UI\Api\SubscriptionSummaryController::class);
+    Route::get('/utility-bills-summary', App\Dashboard\UI\Api\UtilityBillsSummaryController::class);
+});
