@@ -33,3 +33,16 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/subscriptions/{id}/payments', [SubscriptionController::class, 'recordPayment']);
     Route::get('/upcoming-payments', [SubscriptionController::class, 'upcomingPayments']);
 });
+
+// Expenses routes
+Route::group(['prefix' => 'expenses', 'namespace' => 'App\Expenses\UI\API'], function () {
+    Route::get('/', 'ExpensesController@index');
+    Route::post('/', 'ExpensesController@store');
+    Route::post('/{expenseId}/categorize', 'ExpensesController@categorize');
+});
+
+// Budgets routes
+Route::group(['prefix' => 'budgets', 'namespace' => 'App\Expenses\UI\API'], function () {
+    Route::get('/', 'BudgetsController@index');
+    Route::post('/', 'BudgetsController@store');
+});

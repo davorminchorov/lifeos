@@ -1,0 +1,53 @@
+import React, { useState } from 'react';
+import { ExpenseForm } from '../components/expenses/ExpenseForm';
+import { ExpensesList } from '../components/expenses/ExpensesList';
+
+export const ExpensesPage: React.FC = () => {
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [showAddForm, setShowAddForm] = useState(false);
+
+  const handleExpenseAdded = () => {
+    setRefreshTrigger(prev => prev + 1);
+    setShowAddForm(false);
+  };
+
+  return (
+    <div className="container mx-auto p-4">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold text-gray-800">Expense Tracking</h1>
+        <button
+          className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md"
+          onClick={() => setShowAddForm(!showAddForm)}
+        >
+          {showAddForm ? 'Cancel' : 'Add New Expense'}
+        </button>
+      </div>
+
+      {showAddForm && (
+        <div className="mb-6">
+          <ExpenseForm onSuccess={handleExpenseAdded} />
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div className="lg:col-span-8">
+          <ExpensesList refreshTrigger={refreshTrigger} />
+        </div>
+
+        <div className="lg:col-span-4">
+          <div className="bg-white rounded-lg shadow p-4 mb-6">
+            <h2 className="text-xl font-semibold mb-4">Monthly Summary</h2>
+            {/* Monthly summary will be implemented here */}
+            <p className="text-gray-500">Monthly summary will be displayed here</p>
+          </div>
+
+          <div className="bg-white rounded-lg shadow p-4">
+            <h2 className="text-xl font-semibold mb-4">Budget Status</h2>
+            {/* Budget status will be implemented here */}
+            <p className="text-gray-500">Budget status will be displayed here</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
