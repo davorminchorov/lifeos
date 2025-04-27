@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../../ui/Card';
-import { Button } from '../../ui/Button/Button';
+import { Button } from '../../ui';
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '../../ui/Table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../ui/Tabs';
 import { Badge } from '../../ui/Badge';

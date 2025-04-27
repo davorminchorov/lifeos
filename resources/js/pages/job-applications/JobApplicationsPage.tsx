@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button, Card, Heading, Spinner, Table } from '../../ui';
 import { Alert } from '../../components/ui/Alert';
 import { formatDate } from '../../utils/dates';
-import { PlusIcon } from '../../ui/icons/PlusIcon';
+import { PlusIcon } from '../../ui/icons';
 import { axiosClient } from '../../lib/axios';
 import { JobApplication } from '../../types/job-applications';
 import JobApplicationModal from '../../components/job-applications/JobApplicationModal';

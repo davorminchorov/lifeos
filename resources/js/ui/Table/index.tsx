@@ -1,7 +1,7 @@
 import React from 'react';
 import { cn } from '../../utils/cn';
 
-const Table = React.forwardRef<
+const TableComponent = React.forwardRef<
   HTMLTableElement,
   React.HTMLAttributes<HTMLTableElement>
 >(({ className, ...props }, ref) => (
@@ -13,7 +13,7 @@ const Table = React.forwardRef<
     />
   </div>
 ));
-Table.displayName = "Table";
+TableComponent.displayName = "Table";
 
 const TableHeader = React.forwardRef<
   HTMLTableSectionElement,
@@ -50,7 +50,8 @@ const TableRow = React.forwardRef<
 ));
 TableRow.displayName = "TableRow";
 
-const TableHead = React.forwardRef<
+// Renamed to HeaderCell to match usage in JobApplicationsPage
+const TableHeaderCell = React.forwardRef<
   HTMLTableCellElement,
   React.ThHTMLAttributes<HTMLTableCellElement>
 >(({ className, ...props }, ref) => (
@@ -63,7 +64,10 @@ const TableHead = React.forwardRef<
     {...props}
   />
 ));
-TableHead.displayName = "TableHead";
+TableHeaderCell.displayName = "TableHeaderCell";
+
+// Keep the original TableHead for backwards compatibility
+const TableHead = TableHeaderCell;
 
 const TableCell = React.forwardRef<
   HTMLTableCellElement,
@@ -77,11 +81,23 @@ const TableCell = React.forwardRef<
 ));
 TableCell.displayName = "TableCell";
 
+// Create a Table object with all components as properties
+const Table = Object.assign(TableComponent, {
+  Header: TableHeader,
+  Body: TableBody,
+  Row: TableRow,
+  HeaderCell: TableHeaderCell,
+  Cell: TableCell,
+  Head: TableHead, // Also add the Head alias for backward compatibility
+});
+
+// Export both the compound component and individual components
 export {
   Table,
   TableHeader,
   TableBody,
   TableRow,
   TableHead,
+  TableHeaderCell,
   TableCell
 };
