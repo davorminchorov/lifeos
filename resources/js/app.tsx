@@ -30,6 +30,11 @@ import PaymentsList from './pages/payments/PaymentsList';
 // Report Pages
 import PaymentReports from './pages/reports/PaymentReports';
 
+// Expenses Pages
+import { ExpensesPage } from './pages/ExpensesPage';
+import { BudgetsPage } from './pages/BudgetsPage';
+import { CategoriesPage } from './pages/CategoriesPage';
+
 console.log('LifeOS app initialized with React');
 
 // Setup CSRF token for all requests
@@ -78,6 +83,11 @@ const App: React.FC = () => {
                         <Route path="reports">
                             <Route path="payments" element={<PaymentReports />} />
                         </Route>
+
+                        {/* Expenses Routes */}
+                        <Route path="expenses" element={<ExpensesPage />} />
+                        <Route path="budgets" element={<BudgetsPage />} />
+                        <Route path="categories" element={<CategoriesPage />} />
                     </Route>
 
                     {/* 404 page */}

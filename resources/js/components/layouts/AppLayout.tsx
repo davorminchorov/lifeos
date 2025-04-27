@@ -101,6 +101,27 @@ const AppLayout: React.FC = () => {
                 </Link>
 
                 <Link
+                  to="/expenses"
+                  className={`${isActive('/expenses')} text-white group flex items-center px-2 py-2 text-sm font-medium rounded-md`}
+                >
+                  <svg
+                    className="mr-3 h-6 w-6 text-indigo-300"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"
+                    />
+                  </svg>
+                  Expenses
+                </Link>
+
+                <Link
                   to="/reports/payments"
                   className={`${isActive('/reports')} text-white group flex items-center px-2 py-2 text-sm font-medium rounded-md`}
                 >
@@ -208,6 +229,13 @@ const AppLayout: React.FC = () => {
               onClick={() => setIsMobileMenuOpen(false)}
             >
               Payments
+            </Link>
+            <Link
+              to="/expenses"
+              className={`${isActive('/expenses')} text-white block px-3 py-2 rounded-md text-base font-medium`}
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              Expenses
             </Link>
             <Link
               to="/reports/payments"

@@ -46,3 +46,11 @@ Route::group(['prefix' => 'budgets', 'namespace' => 'App\Expenses\UI\API'], func
     Route::get('/', 'BudgetsController@index');
     Route::post('/', 'BudgetsController@store');
 });
+
+// Categories routes
+Route::group(['prefix' => 'categories', 'namespace' => 'App\Expenses\UI\API'], function () {
+    Route::get('/', 'CategoriesController@index');
+    Route::post('/', 'CategoriesController@store');
+    Route::put('/{categoryId}', 'CategoriesController@update');
+    Route::delete('/{categoryId}', 'CategoriesController@destroy');
+});

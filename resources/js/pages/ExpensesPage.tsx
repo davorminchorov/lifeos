@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { ExpenseForm } from '../components/expenses/ExpenseForm';
 import { ExpensesList } from '../components/expenses/ExpensesList';
 
@@ -14,7 +15,17 @@ export const ExpensesPage: React.FC = () => {
   return (
     <div className="container mx-auto p-4">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">Expense Tracking</h1>
+        <div>
+          <h1 className="text-2xl font-bold text-gray-800">Expense Tracking</h1>
+          <div className="mt-2 flex space-x-4">
+            <Link to="/budgets" className="text-blue-600 hover:text-blue-800">
+              Manage Budgets
+            </Link>
+            <Link to="/categories" className="text-blue-600 hover:text-blue-800">
+              Manage Categories
+            </Link>
+          </div>
+        </div>
         <button
           className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md"
           onClick={() => setShowAddForm(!showAddForm)}
