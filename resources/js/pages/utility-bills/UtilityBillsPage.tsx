@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../ui/Tabs';
 import { Badge } from '../../ui/Badge';
 import { PlusCircle, AlertTriangle, CheckCircle, CalendarClock } from 'lucide-react';
 import { formatCurrency } from '../../utils/format';
+import { PageContainer, PageSection } from '../../ui/PageContainer';
 
 interface UtilityBill {
   id: string;
@@ -67,7 +68,7 @@ export default function UtilityBillsPage() {
         const [billsRes, pendingRes, historyRes, remindersRes] = await Promise.all([
           axios.get('/api/utility-bills'),
           axios.get('/api/pending-bills'),
-          axios.get('/api/payment-history'), // Assume this endpoint exists
+          axios.get('/api/payment-history'),
           axios.get('/api/upcoming-reminders')
         ]);
 
@@ -130,15 +131,19 @@ export default function UtilityBillsPage() {
   };
 
   return (
-    <div className="container mx-auto p-4 space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">Utility Bills</h1>
-        <Button onClick={handleAddNew} className="bg-primary">
-          <PlusCircle className="h-4 w-4 mr-2" />
+    <PageContainer
+      title="Utility Bills"
+      subtitle="Manage and track your recurring utility bills and payments"
+      actions={
+        <Button
+          onClick={handleAddNew}
+          variant="filled"
+          icon={<PlusCircle className="h-4 w-4 mr-2" />}
+        >
           Add New Bill
         </Button>
-      </div>
-
+      }
+    >
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid grid-cols-4">
           <TabsTrigger value="all">All Bills</TabsTrigger>
@@ -162,14 +167,16 @@ export default function UtilityBillsPage() {
         </TabsList>
 
         <TabsContent value="all" className="mt-4">
-          <Card>
+          <Card variant="elevated">
             <CardHeader>
               <CardTitle>All Utility Bills</CardTitle>
               <CardDescription>View and manage all your utility bills</CardDescription>
             </CardHeader>
             <CardContent>
               {loading ? (
-                <p>Loading bills...</p>
+                <div className="flex justify-center items-center h-64">
+                  <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+                </div>
               ) : (
                 <Table>
                   <TableHeader>
@@ -205,7 +212,7 @@ export default function UtilityBillsPage() {
                           <TableCell>{bill.category}</TableCell>
                           <TableCell>{renderStatusBadge(bill.status)}</TableCell>
                           <TableCell>
-                            <Button variant="outline" size="sm" onClick={() => handleViewDetails(bill.id)}>
+                            <Button variant="outlined" size="sm" onClick={() => handleViewDetails(bill.id)}>
                               View
                             </Button>
                           </TableCell>
@@ -220,14 +227,16 @@ export default function UtilityBillsPage() {
         </TabsContent>
 
         <TabsContent value="pending" className="mt-4">
-          <Card>
+          <Card variant="elevated">
             <CardHeader>
               <CardTitle>Pending Bills</CardTitle>
               <CardDescription>Bills that require your attention</CardDescription>
             </CardHeader>
             <CardContent>
               {loading ? (
-                <p>Loading pending bills...</p>
+                <div className="flex justify-center items-center h-64">
+                  <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+                </div>
               ) : (
                 <Table>
                   <TableHeader>
@@ -262,7 +271,7 @@ export default function UtilityBillsPage() {
                           </TableCell>
                           <TableCell>{bill.category}</TableCell>
                           <TableCell>
-                            <Button variant="outline" size="sm" onClick={() => handleViewDetails(bill.bill_id)}>
+                            <Button variant="outlined" size="sm" onClick={() => handleViewDetails(bill.bill_id)}>
                               View
                             </Button>
                           </TableCell>
@@ -277,31 +286,32 @@ export default function UtilityBillsPage() {
         </TabsContent>
 
         <TabsContent value="history" className="mt-4">
-          <Card>
+          <Card variant="elevated">
             <CardHeader>
               <CardTitle>Payment History</CardTitle>
-              <CardDescription>Record of all your bill payments</CardDescription>
+              <CardDescription>Record of your past utility bill payments</CardDescription>
             </CardHeader>
             <CardContent>
               {loading ? (
-                <p>Loading payment history...</p>
+                <div className="flex justify-center items-center h-64">
+                  <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+                </div>
               ) : (
                 <Table>
                   <TableHeader>
                     <TableRow>
                       <TableHead>Bill Name</TableHead>
                       <TableHead>Provider</TableHead>
-                      <TableHead>Payment Date</TableHead>
                       <TableHead>Amount</TableHead>
+                      <TableHead>Payment Date</TableHead>
                       <TableHead>Method</TableHead>
-                      <TableHead>Category</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {paymentHistory.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={6} className="text-center py-4">
-                          No payment records found.
+                        <TableCell colSpan={5} className="text-center py-4">
+                          No payment history found.
                         </TableCell>
                       </TableRow>
                     ) : (
@@ -309,10 +319,9 @@ export default function UtilityBillsPage() {
                         <TableRow key={payment.id}>
                           <TableCell>{payment.bill_name}</TableCell>
                           <TableCell>{payment.provider}</TableCell>
-                          <TableCell>{new Date(payment.payment_date).toLocaleDateString()}</TableCell>
                           <TableCell>{formatCurrency(payment.payment_amount, 'USD')}</TableCell>
+                          <TableCell>{new Date(payment.payment_date).toLocaleDateString()}</TableCell>
                           <TableCell>{payment.payment_method}</TableCell>
-                          <TableCell>{payment.category}</TableCell>
                         </TableRow>
                       ))
                     )}
@@ -324,22 +333,24 @@ export default function UtilityBillsPage() {
         </TabsContent>
 
         <TabsContent value="reminders" className="mt-4">
-          <Card>
+          <Card variant="elevated">
             <CardHeader>
               <CardTitle>Upcoming Reminders</CardTitle>
-              <CardDescription>Scheduled reminders for bill payments</CardDescription>
+              <CardDescription>Scheduled notifications for upcoming bill payments</CardDescription>
             </CardHeader>
             <CardContent>
               {loading ? (
-                <p>Loading reminders...</p>
+                <div className="flex justify-center items-center h-64">
+                  <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+                </div>
               ) : (
                 <Table>
                   <TableHeader>
                     <TableRow>
                       <TableHead>Bill Name</TableHead>
                       <TableHead>Provider</TableHead>
-                      <TableHead>Bill Due Date</TableHead>
                       <TableHead>Amount</TableHead>
+                      <TableHead>Due Date</TableHead>
                       <TableHead>Reminder Date</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -356,8 +367,8 @@ export default function UtilityBillsPage() {
                         <TableRow key={reminder.id}>
                           <TableCell>{reminder.bill_name}</TableCell>
                           <TableCell>{reminder.provider}</TableCell>
-                          <TableCell>{new Date(reminder.due_date).toLocaleDateString()}</TableCell>
                           <TableCell>{formatCurrency(reminder.amount, 'USD')}</TableCell>
+                          <TableCell>{new Date(reminder.due_date).toLocaleDateString()}</TableCell>
                           <TableCell>{new Date(reminder.reminder_date).toLocaleDateString()}</TableCell>
                         </TableRow>
                       ))
@@ -369,6 +380,16 @@ export default function UtilityBillsPage() {
           </Card>
         </TabsContent>
       </Tabs>
-    </div>
+
+      {!loading && bills.length > 0 && (
+        <div className="mt-8 text-center">
+          <p className="text-on-surface-variant mb-2">Want to analyze your utility spending?</p>
+          <p className="text-on-surface mb-4">View reports to see trends and patterns in your utility bills.</p>
+          <Button variant="outlined" onClick={() => navigate('/reports/utility-bills')}>
+            View Reports
+          </Button>
+        </div>
+      )}
+    </PageContainer>
   );
 }
