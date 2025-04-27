@@ -48,7 +48,7 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = ({
     <div className="space-y-8">
       {activeSubscriptions.length > 0 && (
         <div>
-          <h2 className="text-2xl font-semibold text-on-surface mb-4">Active Subscriptions</h2>
+          <h2 className="text-headline-medium font-medium text-on-surface mb-4">Active Subscriptions</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {activeSubscriptions.map(subscription => (
               <SubscriptionCard
@@ -64,7 +64,7 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = ({
 
       {inactiveSubscriptions.length > 0 && (
         <div>
-          <h2 className="text-2xl font-semibold text-on-surface mb-4">Inactive Subscriptions</h2>
+          <h2 className="text-headline-medium font-medium text-on-surface mb-4">Inactive Subscriptions</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {inactiveSubscriptions.map(subscription => (
               <SubscriptionCard
@@ -79,9 +79,9 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = ({
       )}
 
       {activeSubscriptions.length === 0 && inactiveSubscriptions.length === 0 && (
-        <div className="text-center py-8">
-          <p className="text-xl text-on-surface-variant">You don't have any subscriptions yet.</p>
-          <button className="mt-4 px-6 py-3 bg-primary text-on-primary rounded-full font-medium">
+        <div className="text-center py-8 p-10 bg-surface-container rounded-lg border border-outline/40 shadow-elevation-1">
+          <p className="text-headline-small text-on-surface-variant mb-4">You don't have any subscriptions yet.</p>
+          <button className="px-6 py-3 bg-primary text-on-primary rounded-full font-medium shadow-elevation-1 hover:shadow-elevation-2">
             Browse Plans
           </button>
         </div>

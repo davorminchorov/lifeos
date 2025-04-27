@@ -27,6 +27,7 @@ import EditSubscription from './pages/subscriptions/EditSubscription';
 // Payment Pages
 import RecordPayment from './pages/payments/RecordPayment';
 import PaymentsList from './pages/payments/PaymentsList';
+import PaymentHistoryPage from './pages/payments/PaymentHistoryPage';
 
 // Report Pages
 import PaymentReports from './pages/reports/PaymentReports';
@@ -91,6 +92,7 @@ const App: React.FC = () => {
                             <Route path="payments">
                                 <Route index element={<PaymentsList />} />
                                 <Route path="record/:subscriptionId" element={<RecordPayment />} />
+                                <Route path="history" element={<PaymentHistoryPage />} />
                             </Route>
 
                             {/* Report Routes */}

@@ -47,14 +47,14 @@ const SubscriptionCard: React.FC<SubscriptionCardProps> = ({
     switch (status) {
       case 'active':
       case 'trialing':
-        return 'text-success';
+        return 'bg-tertiary-container text-on-tertiary-container';
       case 'past_due':
-        return 'text-warning';
+        return 'bg-secondary-container text-on-secondary-container';
       case 'canceled':
       case 'inactive':
-        return 'text-error';
+        return 'bg-error-container text-on-error-container';
       default:
-        return 'text-on-surface-variant';
+        return 'bg-surface-variant text-on-surface-variant';
     }
   };
 
@@ -106,38 +106,38 @@ const SubscriptionCard: React.FC<SubscriptionCardProps> = ({
   const isActive = status === 'active' || status === 'trialing';
 
   return (
-    <div className="bg-surface rounded-lg shadow-elevation-1 overflow-hidden">
+    <div className="bg-surface rounded-lg shadow-elevation-2 border border-outline/40 overflow-hidden">
       <div className="p-6">
         <div className="flex justify-between items-start">
           <div>
-            <h3 className="text-xl font-semibold text-on-surface">{name}</h3>
-            {description && <p className="mt-1 text-on-surface-variant">{description}</p>}
+            <h3 className="text-headline-small font-medium text-on-surface">{name}</h3>
+            {description && <p className="mt-1 text-body-medium text-on-surface-variant">{description}</p>}
           </div>
-          <div className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(status)}`}>
+          <span className={`px-3 py-1 rounded-full text-label-small font-medium shadow-elevation-1 ${getStatusColor(status)}`}>
             {getStatusLabel(status)}
-          </div>
+          </span>
         </div>
 
         <div className="mt-4 flex flex-wrap gap-5">
           <div>
-            <p className="text-sm text-on-surface-variant">Price</p>
-            <p className="font-medium text-on-surface">{formatInterval(price, interval)}</p>
+            <p className="text-body-small text-on-surface-variant">Price</p>
+            <p className="text-body-large font-medium text-on-surface">{formatInterval(price, interval)}</p>
           </div>
 
           {currentPeriodEnd && isActive && (
             <div>
-              <p className="text-sm text-on-surface-variant">Renews on</p>
-              <p className="font-medium text-on-surface">{formatDate(currentPeriodEnd)}</p>
+              <p className="text-body-small text-on-surface-variant">Renews on</p>
+              <p className="text-body-large font-medium text-on-surface">{formatDate(currentPeriodEnd)}</p>
             </div>
           )}
         </div>
 
         {features && features.length > 0 && (
           <div className="mt-5">
-            <p className="text-sm font-medium text-on-surface-variant mb-2">Included Features</p>
+            <p className="text-body-small font-medium text-on-surface-variant mb-2">Included Features</p>
             <ul className="list-disc list-inside text-on-surface space-y-1">
               {features.map((feature, index) => (
-                <li key={index} className="text-sm">{feature}</li>
+                <li key={index} className="text-body-medium">{feature}</li>
               ))}
             </ul>
           </div>
@@ -147,7 +147,7 @@ const SubscriptionCard: React.FC<SubscriptionCardProps> = ({
           {onManage && (
             <button
               onClick={onManage}
-              className="px-4 py-2 bg-primary text-on-primary rounded-full text-sm font-medium"
+              className="px-4 py-2 bg-primary text-on-primary rounded-full text-label-large font-medium shadow-elevation-1 hover:shadow-elevation-2"
             >
               Manage Subscription
             </button>
@@ -156,7 +156,7 @@ const SubscriptionCard: React.FC<SubscriptionCardProps> = ({
           {isActive && onCancel && (
             <button
               onClick={onCancel}
-              className="px-4 py-2 border border-outline text-on-surface rounded-full text-sm font-medium"
+              className="px-4 py-2 border border-outline/50 text-on-surface rounded-full text-label-large font-medium hover:bg-surface-variant/20"
             >
               Cancel Subscription
             </button>
@@ -165,7 +165,7 @@ const SubscriptionCard: React.FC<SubscriptionCardProps> = ({
           {!isActive && onRenew && (
             <button
               onClick={onRenew}
-              className="px-4 py-2 bg-primary text-on-primary rounded-full text-sm font-medium"
+              className="px-4 py-2 bg-primary text-on-primary rounded-full text-label-large font-medium shadow-elevation-1 hover:shadow-elevation-2"
             >
               Renew Subscription
             </button>

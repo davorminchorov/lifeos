@@ -151,16 +151,16 @@ const UtilityBillForm: React.FC<UtilityBillFormProps> = ({
   ];
 
   return (
-    <Card className="max-w-2xl mx-auto">
-      <div className="px-6 py-4 border-b border-gray-200">
-        <h2 className="text-lg font-medium text-gray-900">
+    <Card className="max-w-2xl mx-auto bg-surface shadow-elevation-1">
+      <div className="px-6 py-4 border-b border-outline-variant">
+        <h2 className="text-headline-small text-on-surface font-medium">
           {isEditing ? 'Edit Utility Bill' : 'Add New Utility Bill'}
         </h2>
       </div>
 
       <form onSubmit={handleSubmit} className="p-6">
         {submitError && (
-          <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+          <div className="mb-4 p-3 bg-error-container border border-error text-on-error-container rounded">
             {submitError}
           </div>
         )}
@@ -168,8 +168,8 @@ const UtilityBillForm: React.FC<UtilityBillFormProps> = ({
         <div className="space-y-6">
           {/* Name */}
           <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-              Name <span className="text-red-500">*</span>
+            <label htmlFor="name" className="block text-label-large text-on-surface-variant font-medium mb-1">
+              Name <span className="text-error">*</span>
             </label>
             <input
               type="text"
@@ -178,19 +178,19 @@ const UtilityBillForm: React.FC<UtilityBillFormProps> = ({
               value={formData.name}
               onChange={handleChange}
               className={`w-full rounded-md border ${
-                errors.name ? 'border-red-500' : 'border-gray-300'
-              } shadow-sm p-2`}
+                errors.name ? 'border-error' : 'border-outline'
+              } shadow-sm p-2 bg-surface-variant text-on-surface-variant focus:border-primary focus:ring focus:ring-primary/20`}
               placeholder="e.g. Electric Bill, Water Bill, etc."
             />
             {errors.name && (
-              <p className="mt-1 text-sm text-red-600">{errors.name}</p>
+              <p className="mt-1 text-body-small text-error">{errors.name}</p>
             )}
           </div>
 
           {/* Category */}
           <div>
-            <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">
-              Category <span className="text-red-500">*</span>
+            <label htmlFor="category" className="block text-label-large text-on-surface-variant font-medium mb-1">
+              Category <span className="text-error">*</span>
             </label>
             <select
               id="category"
@@ -198,8 +198,8 @@ const UtilityBillForm: React.FC<UtilityBillFormProps> = ({
               value={formData.category}
               onChange={handleChange}
               className={`w-full rounded-md border ${
-                errors.category ? 'border-red-500' : 'border-gray-300'
-              } shadow-sm p-2`}
+                errors.category ? 'border-error' : 'border-outline'
+              } shadow-sm p-2 bg-surface-variant text-on-surface-variant focus:border-primary focus:ring focus:ring-primary/20`}
             >
               {categoryOptions.map(option => (
                 <option key={option.value} value={option.value}>
@@ -208,14 +208,14 @@ const UtilityBillForm: React.FC<UtilityBillFormProps> = ({
               ))}
             </select>
             {errors.category && (
-              <p className="mt-1 text-sm text-red-600">{errors.category}</p>
+              <p className="mt-1 text-body-small text-error">{errors.category}</p>
             )}
           </div>
 
           {/* Provider */}
           <div>
-            <label htmlFor="provider" className="block text-sm font-medium text-gray-700 mb-1">
-              Provider <span className="text-red-500">*</span>
+            <label htmlFor="provider" className="block text-label-large text-on-surface-variant font-medium mb-1">
+              Provider <span className="text-error">*</span>
             </label>
             <input
               type="text"
@@ -224,18 +224,18 @@ const UtilityBillForm: React.FC<UtilityBillFormProps> = ({
               value={formData.provider}
               onChange={handleChange}
               className={`w-full rounded-md border ${
-                errors.provider ? 'border-red-500' : 'border-gray-300'
-              } shadow-sm p-2`}
+                errors.provider ? 'border-error' : 'border-outline'
+              } shadow-sm p-2 bg-surface-variant text-on-surface-variant focus:border-primary focus:ring focus:ring-primary/20`}
               placeholder="e.g. Electric Company, Water Authority"
             />
             {errors.provider && (
-              <p className="mt-1 text-sm text-red-600">{errors.provider}</p>
+              <p className="mt-1 text-body-small text-error">{errors.provider}</p>
             )}
           </div>
 
           {/* Account Number */}
           <div>
-            <label htmlFor="account_number" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="account_number" className="block text-label-large text-on-surface-variant font-medium mb-1">
               Account Number
             </label>
             <input
@@ -245,18 +245,18 @@ const UtilityBillForm: React.FC<UtilityBillFormProps> = ({
               value={formData.account_number}
               onChange={handleChange}
               className={`w-full rounded-md border ${
-                errors.account_number ? 'border-red-500' : 'border-gray-300'
-              } shadow-sm p-2`}
+                errors.account_number ? 'border-error' : 'border-outline'
+              } shadow-sm p-2 bg-surface-variant text-on-surface-variant focus:border-primary focus:ring focus:ring-primary/20`}
               placeholder="Your account/customer number"
             />
             {errors.account_number && (
-              <p className="mt-1 text-sm text-red-600">{errors.account_number}</p>
+              <p className="mt-1 text-body-small text-error">{errors.account_number}</p>
             )}
           </div>
 
           {/* Description */}
           <div>
-            <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="description" className="block text-label-large text-on-surface-variant font-medium mb-1">
               Description
             </label>
             <textarea
@@ -266,19 +266,19 @@ const UtilityBillForm: React.FC<UtilityBillFormProps> = ({
               onChange={handleChange}
               rows={3}
               className={`w-full rounded-md border ${
-                errors.description ? 'border-red-500' : 'border-gray-300'
-              } shadow-sm p-2`}
+                errors.description ? 'border-error' : 'border-outline'
+              } shadow-sm p-2 bg-surface-variant text-on-surface-variant focus:border-primary focus:ring focus:ring-primary/20`}
               placeholder="Add details about this bill"
             />
             {errors.description && (
-              <p className="mt-1 text-sm text-red-600">{errors.description}</p>
+              <p className="mt-1 text-body-small text-error">{errors.description}</p>
             )}
           </div>
 
           {/* Amount and Currency (side by side) */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label htmlFor="amount" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="amount" className="block text-label-large text-on-surface-variant font-medium mb-1">
                 Amount (leave empty if variable)
               </label>
               <input
@@ -290,18 +290,18 @@ const UtilityBillForm: React.FC<UtilityBillFormProps> = ({
                 min="0.01"
                 step="0.01"
                 className={`w-full rounded-md border ${
-                  errors.amount ? 'border-red-500' : 'border-gray-300'
-                } shadow-sm p-2`}
+                  errors.amount ? 'border-error' : 'border-outline'
+                } shadow-sm p-2 bg-surface-variant text-on-surface-variant focus:border-primary focus:ring focus:ring-primary/20`}
                 placeholder="0.00"
               />
               {errors.amount && (
-                <p className="mt-1 text-sm text-red-600">{errors.amount}</p>
+                <p className="mt-1 text-body-small text-error">{errors.amount}</p>
               )}
             </div>
 
             <div>
-              <label htmlFor="currency" className="block text-sm font-medium text-gray-700 mb-1">
-                Currency <span className="text-red-500">*</span>
+              <label htmlFor="currency" className="block text-label-large text-on-surface-variant font-medium mb-1">
+                Currency <span className="text-error">*</span>
               </label>
               <select
                 id="currency"
@@ -309,8 +309,8 @@ const UtilityBillForm: React.FC<UtilityBillFormProps> = ({
                 value={formData.currency}
                 onChange={handleChange}
                 className={`w-full rounded-md border ${
-                  errors.currency ? 'border-red-500' : 'border-gray-300'
-                } shadow-sm p-2`}
+                  errors.currency ? 'border-error' : 'border-outline'
+                } shadow-sm p-2 bg-surface-variant text-on-surface-variant focus:border-primary focus:ring focus:ring-primary/20`}
               >
                 {currencyOptions.map(option => (
                   <option key={option.value} value={option.value}>
@@ -319,15 +319,15 @@ const UtilityBillForm: React.FC<UtilityBillFormProps> = ({
                 ))}
               </select>
               {errors.currency && (
-                <p className="mt-1 text-sm text-red-600">{errors.currency}</p>
+                <p className="mt-1 text-body-small text-error">{errors.currency}</p>
               )}
             </div>
           </div>
 
           {/* Due Date */}
           <div>
-            <label htmlFor="due_date" className="block text-sm font-medium text-gray-700 mb-1">
-              Due Date <span className="text-red-500">*</span>
+            <label htmlFor="due_date" className="block text-label-large text-on-surface-variant font-medium mb-1">
+              Due Date <span className="text-error">*</span>
             </label>
             <input
               type="date"
@@ -336,17 +336,17 @@ const UtilityBillForm: React.FC<UtilityBillFormProps> = ({
               value={formData.due_date}
               onChange={handleChange}
               className={`w-full rounded-md border ${
-                errors.due_date ? 'border-red-500' : 'border-gray-300'
-              } shadow-sm p-2`}
+                errors.due_date ? 'border-error' : 'border-outline'
+              } shadow-sm p-2 bg-surface-variant text-on-surface-variant focus:border-primary focus:ring focus:ring-primary/20`}
             />
             {errors.due_date && (
-              <p className="mt-1 text-sm text-red-600">{errors.due_date}</p>
+              <p className="mt-1 text-body-small text-error">{errors.due_date}</p>
             )}
           </div>
 
           {/* Payment Method */}
           <div>
-            <label htmlFor="payment_method" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="payment_method" className="block text-label-large text-on-surface-variant font-medium mb-1">
               Preferred Payment Method
             </label>
             <select
@@ -355,8 +355,8 @@ const UtilityBillForm: React.FC<UtilityBillFormProps> = ({
               value={formData.payment_method}
               onChange={handleChange}
               className={`w-full rounded-md border ${
-                errors.payment_method ? 'border-red-500' : 'border-gray-300'
-              } shadow-sm p-2`}
+                errors.payment_method ? 'border-error' : 'border-outline'
+              } shadow-sm p-2 bg-surface-variant text-on-surface-variant focus:border-primary focus:ring focus:ring-primary/20`}
             >
               <option value="">Select a payment method</option>
               {paymentMethodOptions.map(option => (
@@ -366,14 +366,14 @@ const UtilityBillForm: React.FC<UtilityBillFormProps> = ({
               ))}
             </select>
             {errors.payment_method && (
-              <p className="mt-1 text-sm text-red-600">{errors.payment_method}</p>
+              <p className="mt-1 text-body-small text-error">{errors.payment_method}</p>
             )}
           </div>
 
           {/* Reminder Days */}
           <div>
-            <label htmlFor="reminder_days" className="block text-sm font-medium text-gray-700 mb-1">
-              Reminder (days before due date) <span className="text-red-500">*</span>
+            <label htmlFor="reminder_days" className="block text-label-large text-on-surface-variant font-medium mb-1">
+              Reminder (days before due date) <span className="text-error">*</span>
             </label>
             <input
               type="number"
@@ -384,13 +384,13 @@ const UtilityBillForm: React.FC<UtilityBillFormProps> = ({
               min="0"
               max="30"
               className={`w-full rounded-md border ${
-                errors.reminder_days ? 'border-red-500' : 'border-gray-300'
-              } shadow-sm p-2`}
+                errors.reminder_days ? 'border-error' : 'border-outline'
+              } shadow-sm p-2 bg-surface-variant text-on-surface-variant focus:border-primary focus:ring focus:ring-primary/20`}
             />
             {errors.reminder_days && (
-              <p className="mt-1 text-sm text-red-600">{errors.reminder_days}</p>
+              <p className="mt-1 text-body-small text-error">{errors.reminder_days}</p>
             )}
-            <p className="mt-1 text-xs text-gray-500">
+            <p className="mt-1 text-body-small text-on-surface-variant/75">
               Set to 0 if you don't want a reminder
             </p>
           </div>
@@ -400,12 +400,14 @@ const UtilityBillForm: React.FC<UtilityBillFormProps> = ({
               variant="outlined"
               onClick={() => navigate('/utility-bills')}
               type="button"
+              className="text-primary border-primary hover:bg-primary/10"
             >
               Cancel
             </Button>
             <Button
               type="submit"
               disabled={isSubmitting}
+              className="bg-primary text-on-primary hover:bg-primary/90"
             >
               {isSubmitting ? 'Saving...' : isEditing ? 'Update Bill' : 'Add Bill'}
             </Button>

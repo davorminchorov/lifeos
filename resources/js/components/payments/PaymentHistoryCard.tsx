@@ -3,29 +3,31 @@ import { formatCurrency, formatDate } from '../../utils/format';
 import { Card } from '../../ui/Card';
 import { Button } from '../../ui/Button/Button';
 
-interface BillPayment {
+interface Payment {
   id: string;
   amount: number;
   currency: string;
   payment_date: string;
   payment_method: string;
-  reference_number?: string;
+  category: string;
   notes?: string;
   created_at: string;
 }
 
-interface BillPaymentHistoryCardProps {
-  payments: BillPayment[];
+interface PaymentHistoryCardProps {
+  payments: Payment[];
   currency: string;
-  onRecordPayment: () => void;
+  onAddPayment?: () => void;
   showEmptyState?: boolean;
+  title?: string;
 }
 
-const BillPaymentHistoryCard: React.FC<BillPaymentHistoryCardProps> = ({
+const PaymentHistoryCard: React.FC<PaymentHistoryCardProps> = ({
   payments,
   currency,
-  onRecordPayment,
+  onAddPayment,
   showEmptyState = true,
+  title = 'Payment History',
 }) => {
   const sortedPayments = [...payments].sort(
     (a, b) => new Date(b.payment_date).getTime() - new Date(a.payment_date).getTime()
@@ -38,10 +40,12 @@ const BillPaymentHistoryCard: React.FC<BillPaymentHistoryCardProps> = ({
   return (
     <Card className="shadow-elevation-2 border border-outline/40">
       <div className="px-6 py-4 border-b border-outline-variant/60 flex justify-between items-center">
-        <h3 className="text-headline-small font-medium text-on-surface">Payment History</h3>
-        <Button onClick={onRecordPayment} size="sm">
-          Record Payment
-        </Button>
+        <h3 className="text-headline-small font-medium text-on-surface">{title}</h3>
+        {onAddPayment && (
+          <Button onClick={onAddPayment} size="sm">
+            Add Payment
+          </Button>
+        )}
       </div>
 
       <div className="p-6">
@@ -63,9 +67,11 @@ const BillPaymentHistoryCard: React.FC<BillPaymentHistoryCardProps> = ({
                 />
               </svg>
               <p className="text-body-medium text-on-surface-variant mb-4">No payment records found</p>
-              <Button onClick={onRecordPayment} size="sm">
-                Record Your First Payment
-              </Button>
+              {onAddPayment && (
+                <Button onClick={onAddPayment} size="sm">
+                  Record Your First Payment
+                </Button>
+              )}
             </div>
           ) : (
             <div className="p-6 text-center text-body-medium text-on-surface-variant">No payment records available.</div>
@@ -78,9 +84,7 @@ const BillPaymentHistoryCard: React.FC<BillPaymentHistoryCardProps> = ({
                   <div className="space-y-1">
                     <p className="text-body-large font-medium text-on-surface">{formatDate(payment.payment_date)}</p>
                     <p className="text-body-small text-on-surface-variant">{formatPaymentMethod(payment.payment_method)}</p>
-                    {payment.reference_number && (
-                      <p className="text-body-small text-on-surface-variant">Ref: {payment.reference_number}</p>
-                    )}
+                    <p className="text-body-small text-on-surface-variant">{payment.category}</p>
                   </div>
                   <div className="text-right space-y-1">
                     <p className="text-body-large font-medium text-on-surface">{formatCurrency(payment.amount, currency)}</p>
@@ -98,4 +102,4 @@ const BillPaymentHistoryCard: React.FC<BillPaymentHistoryCardProps> = ({
   );
 };
 
-export default BillPaymentHistoryCard;
+export default PaymentHistoryCard;

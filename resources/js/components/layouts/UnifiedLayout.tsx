@@ -9,6 +9,7 @@ interface UnifiedLayoutProps {
 
 export default function UnifiedLayout({}: UnifiedLayoutProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [expandedItems, setExpandedItems] = useState<string[]>([]);
   const location = useLocation();
   const navigate = useNavigate();
   const { isDark, toggleTheme } = useTheme();
@@ -50,7 +51,11 @@ export default function UnifiedLayout({}: UnifiedLayoutProps) {
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M19 14V6C19 4.9 18.1 4 17 4H3C1.9 4 1 4.9 1 6V14C1 15.1 1.9 16 3 16H17C18.1 16 19 15.1 19 14ZM17 14H3V6H17V14ZM10 7C8.34 7 7 8.34 7 10C7 11.66 8.34 13 10 13C11.66 13 13 11.66 13 10C13 8.34 11.66 7 10 7ZM23 7V18C23 19.1 22.1 20 21 20H4C4 19 4 19.1 4 18H21V7C22.1 7 22 7 23 7Z" fill="currentColor"/>
         </svg>
-      )
+      ),
+      children: [
+        { name: 'Payment List', path: '/payments' },
+        { name: 'Payment History', path: '/payments/history' }
+      ]
     },
     {
       name: 'Utility Bills',
@@ -87,6 +92,18 @@ export default function UnifiedLayout({}: UnifiedLayoutProps) {
     return location.pathname.startsWith(path);
   };
 
+  const toggleExpand = (name: string) => {
+    setExpandedItems(prev =>
+      prev.includes(name)
+        ? prev.filter(item => item !== name)
+        : [...prev, name]
+    );
+  };
+
+  const isExpanded = (name: string) => {
+    return expandedItems.includes(name);
+  };
+
   const handleLogout = async () => {
     try {
       await fetch('/api/logout', {
@@ -101,6 +118,78 @@ export default function UnifiedLayout({}: UnifiedLayoutProps) {
     } catch (error) {
       console.error('Logout failed', error);
     }
+  };
+
+  // Render navigation items recursively
+  const renderNavItem = (item: any) => {
+    const hasChildren = item.children && item.children.length > 0;
+    const isItemActive = hasChildren
+      ? item.children.some((child: any) => isActive(child.path))
+      : isActive(item.path);
+
+    if (hasChildren) {
+      return (
+        <div key={item.name} className="flex flex-col">
+          <button
+            onClick={() => toggleExpand(item.name)}
+            className={`
+              flex items-center justify-between px-3 py-3 rounded-md transition-colors
+              ${isItemActive ? 'bg-primary text-on-primary shadow-elevation-1' : 'text-on-surface hover:bg-surface-variant'}
+            `}
+          >
+            <div className="flex items-center">
+              <span className="w-6 h-6 mr-3">{item.icon}</span>
+              <span className="text-body-large font-medium">{item.name}</span>
+            </div>
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              className={`transform transition-transform ${isExpanded(item.name) ? 'rotate-180' : ''}`}
+            >
+              <path d="M7 10L12 15L17 10H7Z" fill="currentColor"/>
+            </svg>
+          </button>
+
+          {isExpanded(item.name) && (
+            <div className="ml-6 mt-1 space-y-1">
+              {item.children.map((child: any) => (
+                <Link
+                  key={child.path}
+                  to={child.path}
+                  className={`
+                    flex items-center px-3 py-2 rounded-md transition-colors text-sm
+                    ${isActive(child.path)
+                      ? 'bg-primary/10 text-primary font-medium'
+                      : 'text-on-surface-variant hover:bg-surface-variant'}
+                  `}
+                >
+                  <span>{child.name}</span>
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    return (
+      <Link
+        key={item.path}
+        to={item.path}
+        className={`
+          flex items-center px-3 py-3 rounded-md transition-colors
+          ${isActive(item.path)
+            ? 'bg-primary text-on-primary shadow-elevation-1'
+            : 'text-on-surface hover:bg-surface-variant'}
+        `}
+      >
+        <span className="w-6 h-6 mr-3">{item.icon}</span>
+        <span className="text-body-large font-medium">{item.name}</span>
+      </Link>
+    );
   };
 
   return (
@@ -192,21 +281,7 @@ export default function UnifiedLayout({}: UnifiedLayoutProps) {
         <aside className="hidden md:block w-64 flex-shrink-0 bg-surface shadow-elevation-2 border-r border-outline border-opacity-20 h-[calc(100vh-64px)] overflow-y-auto">
           <nav className="p-2">
             <div className="flex flex-col py-2 space-y-1">
-              {navItems.map((item) => (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  className={`
-                    flex items-center px-3 py-3 rounded-md transition-colors
-                    ${isActive(item.path)
-                      ? 'bg-primary text-on-primary shadow-elevation-1'
-                      : 'text-on-surface hover:bg-surface-variant'}
-                  `}
-                >
-                  <span className="w-6 h-6 mr-3">{item.icon}</span>
-                  <span className="text-body-large font-medium">{item.name}</span>
-                </Link>
-              ))}
+              {navItems.map(item => renderNavItem(item))}
             </div>
           </nav>
         </aside>
@@ -238,22 +313,7 @@ export default function UnifiedLayout({}: UnifiedLayoutProps) {
               {/* Navigation items */}
               <nav className="p-2">
                 <div className="flex flex-col py-2 space-y-1">
-                  {navItems.map((item) => (
-                    <Link
-                      key={item.path}
-                      to={item.path}
-                      className={`
-                        flex items-center px-3 py-3 rounded-md transition-colors
-                        ${isActive(item.path)
-                          ? 'bg-primary text-on-primary'
-                          : 'text-on-surface hover:bg-surface-variant'}
-                      `}
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      <span className="w-6 h-6 mr-3">{item.icon}</span>
-                      <span className="text-body-large font-medium">{item.name}</span>
-                    </Link>
-                  ))}
+                  {navItems.map(item => renderNavItem(item))}
                 </div>
               </nav>
 

@@ -27,6 +27,7 @@ interface UtilityBill {
   notes: string | null;
   payments: Payment[];
   reminders: Reminder[];
+  currency: string;
 }
 
 interface Payment {
@@ -505,71 +506,118 @@ export default function UtilityBillDetailPage() {
       </div>
 
       <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Payment History</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {bill.payments && bill.payments.length > 0 ? (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Amount</TableHead>
-                    <TableHead>Method</TableHead>
-                    <TableHead>Notes</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
+        <div className="space-y-4">
+          <div className="bg-surface rounded-lg shadow-elevation-2 border border-outline/40 overflow-hidden">
+            <div className="px-6 py-4 border-b border-outline-variant/60 flex justify-between items-center">
+              <h3 className="text-headline-small font-medium text-on-surface">Payment History</h3>
+              {bill.status === 'pending' && (
+                <Button onClick={() => setShowPaymentDialog(true)} size="sm" className="bg-primary text-on-primary shadow-elevation-1 hover:shadow-elevation-2">
+                  <CreditCard className="h-4 w-4 mr-2" />
+                  Record Payment
+                </Button>
+              )}
+            </div>
+            <div className="p-6">
+              {bill.payments.length === 0 ? (
+                <div className="py-8 flex flex-col items-center justify-center text-center border-2 border-dashed border-outline/40 rounded-lg bg-surface-container">
+                  <CreditCard className="h-12 w-12 text-on-surface-variant/40 mb-4" />
+                  <p className="text-body-medium text-on-surface-variant mb-4">No payment records found</p>
+                  {bill.status === 'pending' && (
+                    <Button onClick={() => setShowPaymentDialog(true)} size="sm" className="bg-primary text-on-primary shadow-elevation-1 hover:shadow-elevation-2">
+                      Record Your First Payment
+                    </Button>
+                  )}
+                </div>
+              ) : (
+                <div className="divide-y divide-outline/40">
                   {bill.payments.map((payment) => (
-                    <TableRow key={payment.id}>
-                      <TableCell>{new Date(payment.payment_date).toLocaleDateString()}</TableCell>
-                      <TableCell>{formatCurrency(payment.payment_amount, 'USD')}</TableCell>
-                      <TableCell>{payment.payment_method}</TableCell>
-                      <TableCell>{payment.notes || '-'}</TableCell>
-                    </TableRow>
+                    <div key={payment.id} className="py-4 first:pt-0 last:pb-0">
+                      <div className="flex justify-between items-center">
+                        <div className="space-y-1">
+                          <p className="text-body-large font-medium text-on-surface">
+                            {new Date(payment.payment_date).toLocaleDateString('en-US', {
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric',
+                            })}
+                          </p>
+                          <p className="text-body-small text-on-surface-variant">
+                            {payment.payment_method.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+                          </p>
+                        </div>
+                        <div className="text-right space-y-1">
+                          <p className="text-body-large font-medium text-on-surface">
+                            {formatCurrency(payment.payment_amount, bill.currency)}
+                          </p>
+                          {payment.notes && (
+                            <p className="text-body-small text-on-surface-variant line-clamp-2">
+                              {payment.notes}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
                   ))}
-                </TableBody>
-              </Table>
-            ) : (
-              <p className="text-center py-8 text-muted-foreground">No payment records found</p>
-            )}
-          </CardContent>
-        </Card>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Reminders</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {bill.reminders && bill.reminders.length > 0 ? (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Message</TableHead>
-                    <TableHead>Status</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
+        <div className="space-y-4">
+          <div className="bg-surface rounded-lg shadow-elevation-2 border border-outline/40 overflow-hidden">
+            <div className="px-6 py-4 border-b border-outline-variant/60 flex justify-between items-center">
+              <h3 className="text-headline-small font-medium text-on-surface">Reminders</h3>
+              {bill.status === 'pending' && (
+                <Button onClick={() => setShowReminderDialog(true)} size="sm" className="bg-secondary text-on-secondary shadow-elevation-1 hover:shadow-elevation-2">
+                  <Bell className="h-4 w-4 mr-2" />
+                  Add Reminder
+                </Button>
+              )}
+            </div>
+            <div className="p-6">
+              {bill.reminders && bill.reminders.length > 0 ? (
+                <div className="divide-y divide-outline/40">
                   {bill.reminders.map((reminder) => (
-                    <TableRow key={reminder.id}>
-                      <TableCell>{new Date(reminder.reminder_date).toLocaleDateString()}</TableCell>
-                      <TableCell>{reminder.reminder_message}</TableCell>
-                      <TableCell>
-                        <Badge variant={reminder.status === 'sent' ? 'success' : 'outline'}>
+                    <div key={reminder.id} className="py-4 first:pt-0 last:pb-0">
+                      <div className="flex justify-between items-center">
+                        <div className="space-y-1">
+                          <p className="text-body-large font-medium text-on-surface">
+                            {new Date(reminder.reminder_date).toLocaleDateString('en-US', {
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric',
+                            })}
+                          </p>
+                          <p className="text-body-medium text-on-surface">
+                            {reminder.reminder_message}
+                          </p>
+                        </div>
+                        <span className={`text-label-small px-3 py-1 rounded-full font-medium inline-block shadow-elevation-1 ${
+                          reminder.status === 'sent'
+                            ? 'bg-tertiary-container text-on-tertiary-container'
+                            : 'bg-secondary-container text-on-secondary-container'
+                        }`}>
                           {reminder.status === 'sent' ? 'Sent' : 'Scheduled'}
-                        </Badge>
-                      </TableCell>
-                    </TableRow>
+                        </span>
+                      </div>
+                    </div>
                   ))}
-                </TableBody>
-              </Table>
-            ) : (
-              <p className="text-center py-8 text-muted-foreground">No reminders scheduled</p>
-            )}
-          </CardContent>
-        </Card>
+                </div>
+              ) : (
+                <div className="py-8 flex flex-col items-center justify-center text-center border-2 border-dashed border-outline/40 rounded-lg bg-surface-container">
+                  <Bell className="h-12 w-12 text-on-surface-variant/40 mb-4" />
+                  <p className="text-body-medium text-on-surface-variant mb-4">No reminders scheduled</p>
+                  {bill.status === 'pending' && (
+                    <Button onClick={() => setShowReminderDialog(true)} size="sm" className="bg-secondary text-on-secondary shadow-elevation-1 hover:shadow-elevation-2">
+                      Schedule a Reminder
+                    </Button>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
