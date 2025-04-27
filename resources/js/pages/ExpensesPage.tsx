@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ExpenseForm } from '../components/expenses/ExpenseForm';
 import { ExpensesList } from '../components/expenses/ExpensesList';
+import { MonthlySummaryCard } from '../components/expenses/MonthlySummaryCard';
+import { BudgetStatusCard } from '../components/expenses/BudgetStatusCard';
 
 export const ExpensesPage: React.FC = () => {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
@@ -48,14 +50,12 @@ export const ExpensesPage: React.FC = () => {
         <div className="lg:col-span-4">
           <div className="bg-white rounded-lg shadow p-4 mb-6">
             <h2 className="text-xl font-semibold mb-4">Monthly Summary</h2>
-            {/* Monthly summary will be implemented here */}
-            <p className="text-gray-500">Monthly summary will be displayed here</p>
+            <MonthlySummaryCard />
           </div>
 
           <div className="bg-white rounded-lg shadow p-4">
             <h2 className="text-xl font-semibold mb-4">Budget Status</h2>
-            {/* Budget status will be implemented here */}
-            <p className="text-gray-500">Budget status will be displayed here</p>
+            <BudgetStatusCard />
           </div>
         </div>
       </div>

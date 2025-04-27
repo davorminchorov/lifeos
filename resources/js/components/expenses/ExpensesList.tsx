@@ -117,6 +117,30 @@ export const ExpensesList: React.FC<ExpensesListProps> = ({ refreshTrigger = 0 }
     return format(new Date(dateString), 'MMM d, yyyy');
   };
 
+  // Add export function
+  const handleExport = () => {
+    let url = '/api/expense-exports/csv';
+
+    // Add any filters that are currently applied
+    const params: string[] = [];
+    if (filterCategory) {
+      params.push(`category_id=${filterCategory}`);
+    }
+    if (startDate) {
+      params.push(`start_date=${startDate}`);
+    }
+    if (endDate) {
+      params.push(`end_date=${endDate}`);
+    }
+
+    if (params.length > 0) {
+      url += '?' + params.join('&');
+    }
+
+    // Open in a new tab
+    window.open(url, '_blank');
+  };
+
   if (loading && expenses.length === 0) {
     return <div className="flex justify-center py-8">Loading expenses...</div>;
   }
@@ -128,7 +152,18 @@ export const ExpensesList: React.FC<ExpensesListProps> = ({ refreshTrigger = 0 }
   return (
     <div className="bg-white rounded-lg shadow">
       <div className="p-4 border-b">
-        <h2 className="text-xl font-semibold">Your Expenses</h2>
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-semibold">Your Expenses</h2>
+          <button
+            onClick={handleExport}
+            className="text-blue-600 hover:text-blue-800 flex items-center"
+          >
+            <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+            Export CSV
+          </button>
+        </div>
 
         <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>

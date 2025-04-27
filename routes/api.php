@@ -54,3 +54,14 @@ Route::group(['prefix' => 'categories', 'namespace' => 'App\Expenses\UI\API'], f
     Route::put('/{categoryId}', 'CategoriesController@update');
     Route::delete('/{categoryId}', 'CategoriesController@destroy');
 });
+
+// Expense Reports routes
+Route::group(['prefix' => 'expense-reports', 'namespace' => 'App\Expenses\UI\API'], function () {
+    Route::get('/monthly-summary', 'ReportsController@monthlySummary');
+    Route::get('/category-distribution', 'ReportsController@categoryDistribution');
+});
+
+// Expense Exports routes
+Route::group(['prefix' => 'expense-exports', 'namespace' => 'App\Expenses\UI\API'], function () {
+    Route::get('/csv', 'ExportsController@exportExpenses');
+});
