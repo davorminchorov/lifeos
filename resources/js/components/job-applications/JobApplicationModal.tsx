@@ -1,7 +1,13 @@
 import React, { useState } from 'react';
-import { Modal, Button, Input, Select, Textarea } from '../../ui';
+import { Button } from '../../ui';
 import { JobApplication, JobApplicationFormData } from '../../types/job-applications';
 import { axiosClient } from '../../lib/axios';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '../../ui/Dialog';
+import { Input } from '../../ui/Input';
+import { Textarea } from '../../ui/Textarea';
+import { Label } from '../../ui/Label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../ui/Select';
+import { Building, Briefcase, Calendar, DollarSign, Link, User, Mail, FileText, MessageSquare } from 'lucide-react';
 
 interface JobApplicationModalProps {
   application?: JobApplication;
@@ -31,9 +37,13 @@ const JobApplicationModal: React.FC<JobApplicationModalProps> = ({
     notes: application?.notes || '',
   });
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleStatusChange = (value: string) => {
+    setFormData((prev) => ({ ...prev, status: value as JobApplicationFormData['status'] }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -57,115 +67,189 @@ const JobApplicationModal: React.FC<JobApplicationModalProps> = ({
   };
 
   return (
-    <Modal
-      title={isEditing ? 'Edit Job Application' : 'Add Job Application'}
-      onClose={onClose}
-      size="lg"
-    >
-      <form onSubmit={handleSubmit}>
-        <div className="space-y-4 mb-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Input
-              label="Company Name"
-              name="company_name"
-              value={formData.company_name}
-              onChange={handleInputChange}
-              required
-            />
-            <Input
-              label="Position"
-              name="position"
-              value={formData.position}
-              onChange={handleInputChange}
-              required
-            />
+    <Dialog open={true} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="sm:max-w-[600px]">
+        <form onSubmit={handleSubmit}>
+          <DialogHeader>
+            <DialogTitle>{isEditing ? 'Edit Job Application' : 'Add Job Application'}</DialogTitle>
+            <DialogDescription>
+              {isEditing ? 'Update the details of your job application.' : 'Enter the details of your job application.'}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="grid gap-6 py-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="company_name" className="flex items-center">
+                  <Building className="h-4 w-4 mr-2" />
+                  Company Name
+                </Label>
+                <Input
+                  id="company_name"
+                  name="company_name"
+                  value={formData.company_name}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="position" className="flex items-center">
+                  <Briefcase className="h-4 w-4 mr-2" />
+                  Position
+                </Label>
+                <Input
+                  id="position"
+                  name="position"
+                  value={formData.position}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="application_date" className="flex items-center">
+                  <Calendar className="h-4 w-4 mr-2" />
+                  Application Date
+                </Label>
+                <Input
+                  id="application_date"
+                  name="application_date"
+                  type="date"
+                  value={formData.application_date}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="status" className="flex items-center">
+                  Status
+                </Label>
+                <Select
+                  value={formData.status}
+                  onValueChange={handleStatusChange}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="applied">Applied</SelectItem>
+                    <SelectItem value="interviewing">Interviewing</SelectItem>
+                    <SelectItem value="offered">Offered</SelectItem>
+                    <SelectItem value="rejected">Rejected</SelectItem>
+                    <SelectItem value="withdrawn">Withdrawn</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="salary_range" className="flex items-center">
+                  <DollarSign className="h-4 w-4 mr-2" />
+                  Salary Range (optional)
+                </Label>
+                <Input
+                  id="salary_range"
+                  name="salary_range"
+                  value={formData.salary_range || ''}
+                  onChange={handleInputChange}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="application_url" className="flex items-center">
+                  <Link className="h-4 w-4 mr-2" />
+                  Application URL (optional)
+                </Label>
+                <Input
+                  id="application_url"
+                  name="application_url"
+                  type="url"
+                  value={formData.application_url || ''}
+                  onChange={handleInputChange}
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="contact_person" className="flex items-center">
+                  <User className="h-4 w-4 mr-2" />
+                  Contact Person (optional)
+                </Label>
+                <Input
+                  id="contact_person"
+                  name="contact_person"
+                  value={formData.contact_person || ''}
+                  onChange={handleInputChange}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="contact_email" className="flex items-center">
+                  <Mail className="h-4 w-4 mr-2" />
+                  Contact Email (optional)
+                </Label>
+                <Input
+                  id="contact_email"
+                  name="contact_email"
+                  type="email"
+                  value={formData.contact_email || ''}
+                  onChange={handleInputChange}
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="job_description" className="flex items-center">
+                <FileText className="h-4 w-4 mr-2" />
+                Job Description (optional)
+              </Label>
+              <Textarea
+                id="job_description"
+                name="job_description"
+                value={formData.job_description || ''}
+                onChange={handleInputChange}
+                rows={3}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="notes" className="flex items-center">
+                <MessageSquare className="h-4 w-4 mr-2" />
+                Notes (optional)
+              </Label>
+              <Textarea
+                id="notes"
+                name="notes"
+                value={formData.notes || ''}
+                onChange={handleInputChange}
+                rows={3}
+              />
+            </div>
+
+            {error && (
+              <div className="bg-error/10 text-error p-4 rounded-lg">
+                {error}
+              </div>
+            )}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Input
-              label="Application Date"
-              name="application_date"
-              type="date"
-              value={formData.application_date}
-              onChange={handleInputChange}
-              required
-            />
-            <Select
-              label="Status"
-              name="status"
-              value={formData.status}
-              onChange={handleInputChange}
-              required
-            >
-              <option value="applied">Applied</option>
-              <option value="interviewing">Interviewing</option>
-              <option value="offered">Offered</option>
-              <option value="rejected">Rejected</option>
-              <option value="withdrawn">Withdrawn</option>
-            </Select>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Input
-              label="Salary Range (optional)"
-              name="salary_range"
-              value={formData.salary_range || ''}
-              onChange={handleInputChange}
-            />
-            <Input
-              label="Application URL (optional)"
-              name="application_url"
-              type="url"
-              value={formData.application_url || ''}
-              onChange={handleInputChange}
-            />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Input
-              label="Contact Person (optional)"
-              name="contact_person"
-              value={formData.contact_person || ''}
-              onChange={handleInputChange}
-            />
-            <Input
-              label="Contact Email (optional)"
-              name="contact_email"
-              type="email"
-              value={formData.contact_email || ''}
-              onChange={handleInputChange}
-            />
-          </div>
-
-          <Textarea
-            label="Job Description (optional)"
-            name="job_description"
-            value={formData.job_description || ''}
-            onChange={handleInputChange}
-            rows={3}
-          />
-
-          <Textarea
-            label="Notes (optional)"
-            name="notes"
-            value={formData.notes || ''}
-            onChange={handleInputChange}
-            rows={3}
-          />
-        </div>
-
-        {error && <p className="text-red-500 mb-4">{error}</p>}
-
-        <div className="flex justify-end gap-2">
-          <Button variant="outline" onClick={onClose} type="button">
-            Cancel
-          </Button>
-          <Button type="submit" disabled={loading}>
-            {loading ? 'Saving...' : isEditing ? 'Update' : 'Save'}
-          </Button>
-        </div>
-      </form>
-    </Modal>
+          <DialogFooter>
+            <Button variant="outlined" onClick={onClose} type="button">
+              Cancel
+            </Button>
+            <Button variant="filled" type="submit" disabled={loading}>
+              {loading ? 'Saving...' : isEditing ? 'Update' : 'Save'}
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 };
 

@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Card, Heading, Spinner, Table } from '../../ui';
-import { Alert } from '../../components/ui/Alert';
-import { formatDate } from '../../utils/dates';
-import { PlusIcon } from '../../ui/icons';
+import { Link } from 'react-router-dom';
 import { axiosClient } from '../../lib/axios';
+import { Button } from '../../ui';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../../ui/Card';
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '../../ui/Table';
+import { Badge } from '../../ui/Badge';
+import { PageContainer, PageSection } from '../../ui/PageContainer';
+import { formatDate } from '../../utils/dates';
+import { PlusCircle } from 'lucide-react';
 import { JobApplication } from '../../types/job-applications';
 import JobApplicationModal from '../../components/job-applications/JobApplicationModal';
-import { Link } from 'react-router-dom';
 
 const JobApplicationsPage: React.FC = () => {
   const [applications, setApplications] = useState<JobApplication[]>([]);
@@ -37,83 +40,108 @@ const JobApplicationsPage: React.FC = () => {
     fetchApplications();
   };
 
-  const getStatusColor = (status: string) => {
+  const getStatusBadge = (status: string) => {
     switch (status) {
       case 'applied':
-        return 'bg-blue-100 text-blue-800';
+        return <Badge variant="secondary">Applied</Badge>;
       case 'interviewing':
-        return 'bg-purple-100 text-purple-800';
+        return <Badge variant="warning">Interviewing</Badge>;
       case 'offered':
-        return 'bg-green-100 text-green-800';
+        return <Badge variant="success">Offered</Badge>;
       case 'rejected':
-        return 'bg-red-100 text-red-800';
+        return <Badge variant="danger">Rejected</Badge>;
       case 'withdrawn':
-        return 'bg-gray-100 text-gray-800';
+        return <Badge variant="outline">Withdrawn</Badge>;
       default:
-        return 'bg-gray-100 text-gray-800';
+        return <Badge variant="default">{status}</Badge>;
     }
   };
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
-        <Heading as="h1">Job Applications</Heading>
-        <Button onClick={() => setShowModal(true)} className="flex items-center gap-2">
-          <PlusIcon className="w-4 h-4" />
+    <PageContainer
+      title="Job Applications"
+      subtitle="Track and manage your job search applications"
+      actions={
+        <Button
+          onClick={() => setShowModal(true)}
+          variant="filled"
+          icon={<PlusCircle className="h-4 w-4 mr-2" />}
+        >
           Add Application
         </Button>
-      </div>
+      }
+    >
+      {error && (
+        <div className="mb-6">
+          <Card variant="elevated">
+            <CardContent>
+              <div className="bg-error/10 text-error p-4 rounded-lg">
+                {error}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
 
-      {error && <Alert type="error" message={error} className="mb-4" />}
-
-      <Card className="overflow-hidden">
-        {loading ? (
-          <div className="flex justify-center p-8">
-            <Spinner size="lg" />
-          </div>
-        ) : applications.length === 0 ? (
-          <div className="p-8 text-center">
-            <p className="text-gray-500 mb-4">No job applications found</p>
-            <Button onClick={() => setShowModal(true)}>Add Your First Application</Button>
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <Table>
-              <Table.Header>
-                <Table.Row>
-                  <Table.HeaderCell>Company</Table.HeaderCell>
-                  <Table.HeaderCell>Position</Table.HeaderCell>
-                  <Table.HeaderCell>Applied</Table.HeaderCell>
-                  <Table.HeaderCell>Status</Table.HeaderCell>
-                  <Table.HeaderCell>Actions</Table.HeaderCell>
-                </Table.Row>
-              </Table.Header>
-              <Table.Body>
-                {applications.map((application) => (
-                  <Table.Row key={application.id}>
-                    <Table.Cell>{application.company_name}</Table.Cell>
-                    <Table.Cell>{application.position}</Table.Cell>
-                    <Table.Cell>{formatDate(application.application_date)}</Table.Cell>
-                    <Table.Cell>
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(application.status)}`}>
-                        {application.status.charAt(0).toUpperCase() + application.status.slice(1)}
-                      </span>
-                    </Table.Cell>
-                    <Table.Cell>
-                      <Link
-                        to={`/job-applications/${application.id}`}
-                        className="text-primary-600 hover:text-primary-800 font-medium"
-                      >
-                        View
-                      </Link>
-                    </Table.Cell>
-                  </Table.Row>
-                ))}
-              </Table.Body>
-            </Table>
-          </div>
-        )}
+      <Card variant="elevated">
+        <CardHeader>
+          <CardTitle>All Applications</CardTitle>
+          <CardDescription>Track the status of all your job applications</CardDescription>
+        </CardHeader>
+        <CardContent>
+          {loading ? (
+            <div className="flex justify-center items-center h-64">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+            </div>
+          ) : applications.length === 0 ? (
+            <div className="text-center py-8">
+              <p className="text-on-surface-variant mb-4">No job applications found</p>
+              <Button onClick={() => setShowModal(true)} variant="filled">Add Your First Application</Button>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Company</TableHead>
+                    <TableHead>Position</TableHead>
+                    <TableHead>Applied On</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {applications.map((application) => (
+                    <TableRow key={application.id}>
+                      <TableCell>{application.company_name}</TableCell>
+                      <TableCell>{application.position}</TableCell>
+                      <TableCell>{formatDate(application.application_date)}</TableCell>
+                      <TableCell>{getStatusBadge(application.status)}</TableCell>
+                      <TableCell>
+                        <Link to={`/job-applications/${application.id}`}>
+                          <Button variant="outlined" size="sm">
+                            View
+                          </Button>
+                        </Link>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
+        </CardContent>
       </Card>
+
+      {applications.length > 0 && (
+        <div className="mt-8 text-center">
+          <p className="text-on-surface-variant mb-2">Need help organizing your job search?</p>
+          <p className="text-on-surface mb-4">Check out our tips for effective job application tracking.</p>
+          <Button variant="outlined" onClick={() => window.open('/resources/job-search-tips', '_blank')}>
+            View Job Search Tips
+          </Button>
+        </div>
+      )}
 
       {showModal && (
         <JobApplicationModal
@@ -121,7 +149,7 @@ const JobApplicationsPage: React.FC = () => {
           onSave={handleApplicationAdded}
         />
       )}
-    </div>
+    </PageContainer>
   );
 };
 

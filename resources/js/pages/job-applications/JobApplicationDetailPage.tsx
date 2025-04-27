@@ -1,10 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { axiosClient } from '../../lib/axios';
-import { Button, Card, Heading, Spinner, Tabs, Badge } from '../../ui';
-import { Alert } from '../../components/ui/Alert';
+import { Button } from '../../ui';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../../ui/Card';
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '../../ui/Table';
+import { Badge } from '../../ui/Badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../ui/Tabs';
+import { Separator } from '../../ui/Separator';
+import { PageContainer, PageSection } from '../../ui/PageContainer';
 import { formatDate } from '../../utils/dates';
-import { ChevronLeftIcon, CalendarIcon, BuildingIcon } from '../../ui/icons';
+import { ArrowLeft, Edit, Calendar, Building, Clock, MessageSquare, User, Mail, Link as LinkIcon, FileText } from 'lucide-react';
 import { JobApplication, Interview } from '../../types/job-applications';
 import JobApplicationModal from '../../components/job-applications/JobApplicationModal';
 import InterviewModal from '../../components/job-applications/InterviewModal';
@@ -19,6 +24,7 @@ const JobApplicationDetailPage: React.FC = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showInterviewModal, setShowInterviewModal] = useState(false);
   const [showOutcomeModal, setShowOutcomeModal] = useState(false);
+  const [activeTab, setActiveTab] = useState('details');
 
   const fetchApplication = async () => {
     try {
@@ -55,298 +61,408 @@ const JobApplicationDetailPage: React.FC = () => {
     fetchApplication();
   };
 
-  const getStatusColor = (status: string) => {
+  const getStatusBadge = (status: string) => {
     switch (status) {
       case 'applied':
-        return 'bg-blue-100 text-blue-800';
+        return <Badge variant="secondary">Applied</Badge>;
       case 'interviewing':
-        return 'bg-purple-100 text-purple-800';
+        return <Badge variant="warning">Interviewing</Badge>;
       case 'offered':
-        return 'bg-green-100 text-green-800';
+        return <Badge variant="success">Offered</Badge>;
       case 'rejected':
-        return 'bg-red-100 text-red-800';
+        return <Badge variant="danger">Rejected</Badge>;
       case 'withdrawn':
-        return 'bg-gray-100 text-gray-800';
+        return <Badge variant="outline">Withdrawn</Badge>;
       default:
-        return 'bg-gray-100 text-gray-800';
+        return <Badge variant="default">{status}</Badge>;
     }
   };
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center p-12">
-        <Spinner size="lg" />
-      </div>
+      <PageContainer title="Application Details">
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+        </div>
+      </PageContainer>
     );
   }
 
   if (error || !application) {
     return (
-      <div className="p-6">
-        <Alert type="error" message={error || 'Job application not found'} />
-        <div className="mt-4">
-          <Button onClick={() => navigate('/job-applications')}>Back to Applications</Button>
-        </div>
-      </div>
+      <PageContainer title="Error">
+        <Card variant="elevated">
+          <CardContent>
+            <div className="bg-error/10 text-error p-4 rounded-lg mb-4">
+              {error || 'Job application not found'}
+            </div>
+            <Button variant="outlined" onClick={() => navigate('/job-applications')}>Back to Applications</Button>
+          </CardContent>
+        </Card>
+      </PageContainer>
     );
   }
 
   return (
-    <div className="p-6">
-      <div className="mb-6">
-        <Link
-          to="/job-applications"
-          className="inline-flex items-center text-gray-600 hover:text-gray-900"
-        >
-          <ChevronLeftIcon className="w-4 h-4 mr-1" />
-          Back to Applications
-        </Link>
-      </div>
-
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-        <div>
-          <Heading as="h1" className="mb-1">{application.position}</Heading>
-          <div className="flex items-center text-gray-600">
-            <BuildingIcon className="w-4 h-4 mr-1" />
-            <span>{application.company_name}</span>
-            <span className="mx-2">•</span>
-            <CalendarIcon className="w-4 h-4 mr-1" />
-            <span>Applied on {formatDate(application.application_date)}</span>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <Badge className={getStatusColor(application.status)}>
-            {application.status.charAt(0).toUpperCase() + application.status.slice(1)}
-          </Badge>
-          <Button onClick={() => setShowEditModal(true)} variant="outline" size="sm">
+    <PageContainer
+      title={application.position}
+      subtitle={`${application.company_name} - Applied on ${formatDate(application.application_date)}`}
+      actions={
+        <div className="flex space-x-2">
+          <Button variant="outlined" onClick={() => setShowEditModal(true)} icon={<Edit className="h-4 w-4 mr-2" />}>
             Edit
           </Button>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-        <Card className="col-span-2">
-          <Card.Header>
-            <Card.Title>Application Details</Card.Title>
-          </Card.Header>
-          <Card.Content>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <h3 className="text-sm font-medium text-gray-500">Company</h3>
-                <p className="mt-1">{application.company_name}</p>
-              </div>
-              <div>
-                <h3 className="text-sm font-medium text-gray-500">Position</h3>
-                <p className="mt-1">{application.position}</p>
-              </div>
-              <div>
-                <h3 className="text-sm font-medium text-gray-500">Application Date</h3>
-                <p className="mt-1">{formatDate(application.application_date)}</p>
-              </div>
-              <div>
-                <h3 className="text-sm font-medium text-gray-500">Salary Range</h3>
-                <p className="mt-1">{application.salary_range || 'Not specified'}</p>
-              </div>
-              <div>
-                <h3 className="text-sm font-medium text-gray-500">Contact Person</h3>
-                <p className="mt-1">{application.contact_person || 'Not specified'}</p>
-              </div>
-              <div>
-                <h3 className="text-sm font-medium text-gray-500">Contact Email</h3>
-                <p className="mt-1">
-                  {application.contact_email ? (
-                    <a href={`mailto:${application.contact_email}`} className="text-primary-600 hover:underline">
-                      {application.contact_email}
-                    </a>
-                  ) : (
-                    'Not specified'
-                  )}
-                </p>
-              </div>
-              {application.application_url && (
-                <div className="md:col-span-2">
-                  <h3 className="text-sm font-medium text-gray-500">Application URL</h3>
-                  <p className="mt-1">
-                    <a
-                      href={application.application_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-primary-600 hover:underline"
-                    >
-                      {application.application_url}
-                    </a>
-                  </p>
-                </div>
-              )}
-              {application.job_description && (
-                <div className="md:col-span-2">
-                  <h3 className="text-sm font-medium text-gray-500">Job Description</h3>
-                  <p className="mt-1 whitespace-pre-line">{application.job_description}</p>
-                </div>
-              )}
-              {application.notes && (
-                <div className="md:col-span-2">
-                  <h3 className="text-sm font-medium text-gray-500">Notes</h3>
-                  <p className="mt-1 whitespace-pre-line">{application.notes}</p>
-                </div>
-              )}
-            </div>
-          </Card.Content>
-        </Card>
-
-        <Card>
-          <Card.Header>
-            <Card.Title>Actions</Card.Title>
-          </Card.Header>
-          <Card.Content>
-            <div className="space-y-4">
+          {!['offered', 'rejected', 'withdrawn'].includes(application.status) && (
+            <>
               <Button
+                variant="filled"
                 onClick={() => setShowInterviewModal(true)}
-                className="w-full"
-                disabled={['offered', 'rejected', 'withdrawn'].includes(application.status)}
+                icon={<Calendar className="h-4 w-4 mr-2" />}
               >
                 Schedule Interview
               </Button>
-
               <Button
+                variant="outlined"
                 onClick={() => setShowOutcomeModal(true)}
-                className="w-full"
-                variant="outline"
-                disabled={['offered', 'rejected', 'withdrawn'].includes(application.status)}
               >
                 Record Outcome
               </Button>
-            </div>
-          </Card.Content>
-        </Card>
-      </div>
-
-      <Tabs defaultValue="interviews">
-        <Tabs.List>
-          <Tabs.Trigger value="interviews">
+            </>
+          )}
+        </div>
+      }
+    >
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full mb-6">
+        <TabsList className="grid grid-cols-3">
+          <TabsTrigger value="details">Details</TabsTrigger>
+          <TabsTrigger value="interviews">
             Interviews
             {application.interviews.length > 0 && (
               <Badge variant="secondary" className="ml-2">
                 {application.interviews.length}
               </Badge>
             )}
-          </Tabs.Trigger>
-          <Tabs.Trigger value="outcome" disabled={!application.outcome}>
+          </TabsTrigger>
+          <TabsTrigger value="outcome" disabled={!application.outcome}>
             Outcome
-          </Tabs.Trigger>
-        </Tabs.List>
+          </TabsTrigger>
+        </TabsList>
 
-        <Tabs.Content value="interviews" className="p-4">
-          {application.interviews.length === 0 ? (
-            <div className="text-center py-8">
-              <p className="text-gray-500 mb-4">No interviews scheduled yet</p>
-              <Button
-                onClick={() => setShowInterviewModal(true)}
-                disabled={['offered', 'rejected', 'withdrawn'].includes(application.status)}
-              >
-                Schedule Interview
-              </Button>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {application.interviews.map((interview: Interview) => (
-                <Card key={interview.id}>
-                  <Card.Content className="p-4">
-                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
-                      <div>
-                        <h3 className="font-medium text-lg">
-                          {formatDate(interview.interview_date)} at {interview.interview_time}
-                        </h3>
-                        <p className="text-gray-600">
-                          {interview.interview_type.charAt(0).toUpperCase() + interview.interview_type.slice(1)} interview with {interview.with_person}
-                        </p>
-                        {interview.location && (
-                          <p className="text-gray-600 mt-1">Location: {interview.location}</p>
-                        )}
-                        {interview.notes && (
-                          <div className="mt-2">
-                            <h4 className="text-sm font-medium text-gray-500">Notes</h4>
-                            <p className="whitespace-pre-line">{interview.notes}</p>
-                          </div>
-                        )}
-                      </div>
-                      <Badge
-                        variant={
-                          new Date(interview.interview_date) > new Date()
-                            ? 'default'
-                            : 'outline'
-                        }
-                      >
-                        {new Date(interview.interview_date) > new Date() ? 'Upcoming' : 'Past'}
-                      </Badge>
+        <TabsContent value="details" className="mt-4">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+            <div className="md:col-span-8">
+              <Card variant="elevated">
+                <CardHeader>
+                  <CardTitle>Application Details</CardTitle>
+                  <CardDescription>Information about your job application</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <dl className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                      <dt className="text-on-surface-variant text-sm flex items-center">
+                        <Building className="h-4 w-4 mr-1" />
+                        Company
+                      </dt>
+                      <dd className="text-on-surface font-medium">{application.company_name}</dd>
                     </div>
-                  </Card.Content>
-                </Card>
-              ))}
-            </div>
-          )}
-        </Tabs.Content>
+                    <div className="space-y-1">
+                      <dt className="text-on-surface-variant text-sm flex items-center">
+                        <User className="h-4 w-4 mr-1" />
+                        Position
+                      </dt>
+                      <dd className="text-on-surface font-medium">{application.position}</dd>
+                    </div>
+                    <div className="space-y-1">
+                      <dt className="text-on-surface-variant text-sm flex items-center">
+                        <Calendar className="h-4 w-4 mr-1" />
+                        Application Date
+                      </dt>
+                      <dd className="text-on-surface font-medium">{formatDate(application.application_date)}</dd>
+                    </div>
+                    <div className="space-y-1">
+                      <dt className="text-on-surface-variant text-sm">
+                        Salary Range
+                      </dt>
+                      <dd className="text-on-surface font-medium">{application.salary_range || 'Not specified'}</dd>
+                    </div>
+                    <div className="space-y-1">
+                      <dt className="text-on-surface-variant text-sm flex items-center">
+                        <User className="h-4 w-4 mr-1" />
+                        Contact Person
+                      </dt>
+                      <dd className="text-on-surface font-medium">{application.contact_person || 'Not specified'}</dd>
+                    </div>
+                    <div className="space-y-1">
+                      <dt className="text-on-surface-variant text-sm flex items-center">
+                        <Mail className="h-4 w-4 mr-1" />
+                        Contact Email
+                      </dt>
+                      <dd className="text-on-surface font-medium">
+                        {application.contact_email ? (
+                          <a href={`mailto:${application.contact_email}`} className="text-primary hover:underline">
+                            {application.contact_email}
+                          </a>
+                        ) : (
+                          'Not specified'
+                        )}
+                      </dd>
+                    </div>
+                    {application.application_url && (
+                      <div className="md:col-span-2 space-y-1">
+                        <dt className="text-on-surface-variant text-sm flex items-center">
+                          <LinkIcon className="h-4 w-4 mr-1" />
+                          Application URL
+                        </dt>
+                        <dd className="text-on-surface font-medium">
+                          <a
+                            href={application.application_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-primary hover:underline"
+                          >
+                            {application.application_url}
+                          </a>
+                        </dd>
+                      </div>
+                    )}
+                  </dl>
 
-        <Tabs.Content value="outcome" className="p-4">
-          {application.outcome ? (
-            <Card>
-              <Card.Content className="p-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-500">Outcome</h3>
-                    <p className="mt-1">
-                      <Badge
-                        className={
-                          application.outcome.outcome === 'offered'
-                            ? 'bg-green-100 text-green-800'
-                            : application.outcome.outcome === 'rejected'
-                            ? 'bg-red-100 text-red-800'
-                            : 'bg-gray-100 text-gray-800'
-                        }
-                      >
-                        {application.outcome.outcome.charAt(0).toUpperCase() + application.outcome.outcome.slice(1)}
-                      </Badge>
+                  {application.job_description && (
+                    <div className="mt-6">
+                      <h4 className="text-on-surface-variant text-sm flex items-center mb-2">
+                        <FileText className="h-4 w-4 mr-1" />
+                        Job Description
+                      </h4>
+                      <p className="text-on-surface bg-surface-variant p-3 rounded-md whitespace-pre-line">
+                        {application.job_description}
+                      </p>
+                    </div>
+                  )}
+
+                  {application.notes && (
+                    <div className="mt-6">
+                      <h4 className="text-on-surface-variant text-sm flex items-center mb-2">
+                        <MessageSquare className="h-4 w-4 mr-1" />
+                        Notes
+                      </h4>
+                      <p className="text-on-surface bg-surface-variant p-3 rounded-md whitespace-pre-line">
+                        {application.notes}
+                      </p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+
+            <div className="md:col-span-4">
+              <Card variant="filled">
+                <CardHeader>
+                  <CardTitle>Status</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex flex-col items-center py-4">
+                    <div className="bg-surface-variant w-16 h-16 rounded-full flex items-center justify-center mb-3">
+                      {getStatusBadge(application.status)}
+                    </div>
+                    <h3 className="text-lg font-medium mb-2">
+                      {application.status.charAt(0).toUpperCase() + application.status.slice(1)}
+                    </h3>
+                    <p className="text-on-surface-variant text-center">
+                      {application.status === 'applied' && 'Your application has been submitted.'}
+                      {application.status === 'interviewing' && 'You are in the interview process.'}
+                      {application.status === 'offered' && 'Congratulations! You have received an offer.'}
+                      {application.status === 'rejected' && 'This application was not successful.'}
+                      {application.status === 'withdrawn' && 'You have withdrawn this application.'}
                     </p>
                   </div>
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-500">Date</h3>
-                    <p className="mt-1">{formatDate(application.outcome.outcome_date)}</p>
+                </CardContent>
+              </Card>
+
+              <Card variant="outlined" className="mt-6">
+                <CardHeader>
+                  <CardTitle>Quick Actions</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {!['offered', 'rejected', 'withdrawn'].includes(application.status) && (
+                      <>
+                        <Button
+                          variant="filled"
+                          className="w-full"
+                          onClick={() => setShowInterviewModal(true)}
+                          icon={<Calendar className="h-4 w-4 mr-2" />}
+                        >
+                          Schedule Interview
+                        </Button>
+                        <Button
+                          variant="outlined"
+                          className="w-full"
+                          onClick={() => setShowOutcomeModal(true)}
+                        >
+                          Record Outcome
+                        </Button>
+                      </>
+                    )}
+                    <Button
+                      variant="text"
+                      className="w-full"
+                      onClick={() => setShowEditModal(true)}
+                    >
+                      Edit Application
+                    </Button>
                   </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="interviews" className="mt-4">
+          <Card variant="elevated">
+            <CardHeader>
+              <CardTitle>Interviews</CardTitle>
+              <CardDescription>Track your interviews for this application</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {application.interviews.length === 0 ? (
+                <div className="text-center py-8">
+                  <Clock className="h-12 w-12 text-on-surface-variant mx-auto mb-2 opacity-50" />
+                  <p className="text-on-surface-variant mb-4">No interviews scheduled yet</p>
+                  {!['offered', 'rejected', 'withdrawn'].includes(application.status) && (
+                    <Button
+                      variant="filled"
+                      onClick={() => setShowInterviewModal(true)}
+                      icon={<Calendar className="h-4 w-4 mr-2" />}
+                    >
+                      Schedule Interview
+                    </Button>
+                  )}
+                </div>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Date & Time</TableHead>
+                      <TableHead>Type</TableHead>
+                      <TableHead>With</TableHead>
+                      <TableHead>Location</TableHead>
+                      <TableHead>Notes</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {application.interviews.map((interview: Interview) => (
+                      <TableRow key={interview.id}>
+                        <TableCell>
+                          <div className="font-medium">{formatDate(interview.interview_date)}</div>
+                          <div className="text-on-surface-variant text-sm">{interview.interview_time}</div>
+                        </TableCell>
+                        <TableCell>{interview.interview_type}</TableCell>
+                        <TableCell>{interview.with_person || 'Not specified'}</TableCell>
+                        <TableCell>{interview.location || 'Not specified'}</TableCell>
+                        <TableCell>
+                          {interview.notes ? (
+                            <button
+                              onClick={() => alert(interview.notes)}
+                              className="text-primary hover:underline text-sm"
+                            >
+                              View Notes
+                            </button>
+                          ) : (
+                            'No notes'
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
+
+              {application.interviews.length > 0 && !['offered', 'rejected', 'withdrawn'].includes(application.status) && (
+                <div className="mt-6 flex justify-end">
+                  <Button
+                    variant="filled"
+                    onClick={() => setShowInterviewModal(true)}
+                    icon={<Calendar className="h-4 w-4 mr-2" />}
+                  >
+                    Add Another Interview
+                  </Button>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="outcome" className="mt-4">
+          {application.outcome ? (
+            <Card variant="elevated">
+              <CardHeader>
+                <CardTitle>Application Outcome</CardTitle>
+                <CardDescription>Final result of your application</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <h4 className="font-medium text-on-surface-variant mb-2">Outcome</h4>
+                    <div className="flex items-center">
+                      {getStatusBadge(application.status)}
+                      <span className="ml-2 font-medium">
+                        {application.status.charAt(0).toUpperCase() + application.status.slice(1)}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h4 className="font-medium text-on-surface-variant mb-2">Date Recorded</h4>
+                    <p>{formatDate(application.outcome.outcome_date)}</p>
+                  </div>
+
                   {application.outcome.salary_offered && (
                     <div>
-                      <h3 className="text-sm font-medium text-gray-500">Salary Offered</h3>
-                      <p className="mt-1">{application.outcome.salary_offered}</p>
+                      <h4 className="font-medium text-on-surface-variant mb-2">Salary Offered</h4>
+                      <p>{application.outcome.salary_offered}</p>
                     </div>
                   )}
+
                   {application.outcome.feedback && (
-                    <div className="md:col-span-2">
-                      <h3 className="text-sm font-medium text-gray-500">Feedback</h3>
-                      <p className="mt-1 whitespace-pre-line">{application.outcome.feedback}</p>
-                    </div>
-                  )}
-                  {application.outcome.notes && (
-                    <div className="md:col-span-2">
-                      <h3 className="text-sm font-medium text-gray-500">Notes</h3>
-                      <p className="mt-1 whitespace-pre-line">{application.outcome.notes}</p>
+                    <div>
+                      <h4 className="font-medium text-on-surface-variant mb-2">Feedback</h4>
+                      <p>{application.outcome.feedback}</p>
                     </div>
                   )}
                 </div>
-              </Card.Content>
+
+                {application.outcome.notes && (
+                  <div className="mt-6">
+                    <h4 className="font-medium text-on-surface-variant mb-2">Additional Notes</h4>
+                    <p className="text-on-surface bg-surface-variant p-3 rounded-md whitespace-pre-line">
+                      {application.outcome.notes}
+                    </p>
+                  </div>
+                )}
+              </CardContent>
             </Card>
           ) : (
-            <div className="text-center py-8">
-              <p className="text-gray-500 mb-4">No outcome recorded yet</p>
-              <Button
-                onClick={() => setShowOutcomeModal(true)}
-                disabled={['offered', 'rejected', 'withdrawn'].includes(application.status)}
-              >
-                Record Outcome
-              </Button>
-            </div>
+            <Card variant="elevated">
+              <CardContent>
+                <div className="text-center py-8">
+                  <p className="text-on-surface-variant mb-4">No outcome has been recorded yet</p>
+                  {!['offered', 'rejected', 'withdrawn'].includes(application.status) && (
+                    <Button onClick={() => setShowOutcomeModal(true)} variant="filled">
+                      Record Outcome
+                    </Button>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
           )}
-        </Tabs.Content>
+        </TabsContent>
       </Tabs>
+
+      <div className="flex justify-between mt-8">
+        <Button variant="outlined" onClick={() => navigate('/job-applications')} icon={<ArrowLeft className="h-4 w-4 mr-2" />}>
+          Back to Applications
+        </Button>
+      </div>
 
       {showEditModal && (
         <JobApplicationModal
@@ -371,7 +487,7 @@ const JobApplicationDetailPage: React.FC = () => {
           onSave={handleOutcomeRecorded}
         />
       )}
-    </div>
+    </PageContainer>
   );
 };
 
