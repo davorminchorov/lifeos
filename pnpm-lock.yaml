@@ -86,9 +86,6 @@ importers:
       xstate:
         specifier: ^5.19.2
         version: 5.19.2
-      xstate-store:
-        specifier: ^1.2.0
-        version: 1.2.0(@xstate/react@5.0.3(@types/react@19.1.2)(react@19.1.0)(xstate@5.19.2))(react@19.1.0)(xstate@5.19.2)
     devDependencies:
       '@vitejs/plugin-react':
         specifier: ^4.4.1
@@ -1496,13 +1493,6 @@ packages:
       yaml:
         optional: true
 
-  xstate-store@1.2.0:
-    resolution: {integrity: sha512-qpcrhTIINFYrfQj9avLgzzuZu6nwRkd0QGBxGSl/TZBKh9bC7b87ZggG5/23NbSfT8fkwyI49YMHuKGZjU6Beg==}
-    peerDependencies:
-      '@xstate/react': ^3.0.0
-      react: ^17.0.0 || ^18.0.0
-      xstate: ^4.32.1
-
   xstate@5.19.2:
     resolution: {integrity: sha512-B8fL2aP0ogn5aviAXFzI5oZseAMqN00fg/TeDa3ZtatyDcViYLIfuQl4y8qmHCiKZgGEzmnTyNtNQL9oeJE2gw==}
 
@@ -2683,12 +2673,6 @@ snapshots:
       fsevents: 2.3.3
       jiti: 2.4.2
       lightningcss: 1.29.2
-
-  xstate-store@1.2.0(@xstate/react@5.0.3(@types/react@19.1.2)(react@19.1.0)(xstate@5.19.2))(react@19.1.0)(xstate@5.19.2):
-    dependencies:
-      '@xstate/react': 5.0.3(@types/react@19.1.2)(react@19.1.0)(xstate@5.19.2)
-      react: 19.1.0
-      xstate: 5.19.2
 
   xstate@5.19.2: {}
 
