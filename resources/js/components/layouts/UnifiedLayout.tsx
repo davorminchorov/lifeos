@@ -53,8 +53,7 @@ export default function UnifiedLayout({}: UnifiedLayoutProps) {
         </svg>
       ),
       children: [
-        { name: 'Payment List', path: '/payments' },
-        { name: 'Payment History', path: '/payments/history' }
+        { name: 'Payment History', path: '/payments' }
       ]
     },
     {
