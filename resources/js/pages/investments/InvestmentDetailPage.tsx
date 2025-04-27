@@ -1,6 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../../ui/Card';
+import { Button } from '../../ui';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../ui/Tabs';
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '../../ui/Table';
+import { Badge } from '../../ui/Badge';
+import { PageContainer, PageSection } from '../../ui/PageContainer';
+import { formatCurrency } from '../../utils/format';
+import { ArrowLeft, Edit, PlusCircle, TrendingUp, DollarSign, Calendar, FileText, BarChart, LineChart, ArrowUp, ArrowDown } from 'lucide-react';
+import TransactionForm from '../../components/investments/TransactionForm';
+import ValuationForm from '../../components/investments/ValuationForm';
 
 interface Investment {
   id: string;
@@ -71,12 +81,21 @@ const transactionTypeLabels: Record<string, string> = {
   interest: 'Interest',
 };
 
-const transactionTypeColors: Record<string, string> = {
-  deposit: 'bg-green-100 text-green-800',
-  withdrawal: 'bg-red-100 text-red-800',
-  dividend: 'bg-blue-100 text-blue-800',
-  fee: 'bg-orange-100 text-orange-800',
-  interest: 'bg-purple-100 text-purple-800',
+const getTransactionBadge = (type: string) => {
+  switch (type) {
+    case 'deposit':
+      return <Badge variant="success">Deposit</Badge>;
+    case 'withdrawal':
+      return <Badge variant="danger">Withdrawal</Badge>;
+    case 'dividend':
+      return <Badge variant="secondary">Dividend</Badge>;
+    case 'fee':
+      return <Badge variant="warning">Fee</Badge>;
+    case 'interest':
+      return <Badge variant="outline">Interest</Badge>;
+    default:
+      return <Badge variant="default">{type}</Badge>;
+  }
 };
 
 const InvestmentDetailPage: React.FC = () => {
@@ -128,344 +147,482 @@ const InvestmentDetailPage: React.FC = () => {
     navigate('/investments');
   };
 
+  // Define fetchData function outside of useEffect for reuse
+  const refreshData = async () => {
+    if (!id) return;
+
+    try {
+      setLoading(true);
+      setError('');
+
+      // Fetch investment details
+      const detailsResponse = await axios.get(`/api/investments/${id}`);
+      setInvestment(detailsResponse.data.investment);
+      setTransactions(detailsResponse.data.transactions);
+      setValuations(detailsResponse.data.valuations);
+
+      // Fetch performance data
+      const performanceResponse = await axios.get(`/api/investments/${id}/performance`);
+      setPerformance(performanceResponse.data);
+    } catch (err) {
+      console.error('Failed to load investment data', err);
+      setError('Failed to load investment data. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (loading) {
     return (
-      <div className="p-6">
-        <div className="animate-pulse space-y-4">
-          <div className="h-4 bg-gray-200 rounded w-1/4"></div>
-          <div className="h-8 bg-gray-200 rounded w-3/4"></div>
-          <div className="h-64 bg-gray-200 rounded"></div>
+      <PageContainer title="Investment Details">
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
         </div>
-      </div>
+      </PageContainer>
     );
   }
 
   if (error || !investment) {
     return (
-      <div className="p-6">
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4" role="alert">
-          <span className="block sm:inline">{error || 'Investment not found'}</span>
-        </div>
-        <button
-          onClick={handleBack}
-          className="mt-4 bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 px-4 rounded inline-flex items-center"
-        >
-          <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-          </svg>
-          Back to Investments
-        </button>
-      </div>
+      <PageContainer title="Error">
+        <Card variant="elevated">
+          <CardContent>
+            <div className="bg-error/10 text-error p-4 rounded-lg mb-4">
+              {error || 'Investment not found'}
+            </div>
+            <Button variant="outlined" onClick={handleBack}>Back to Investments</Button>
+          </CardContent>
+        </Card>
+      </PageContainer>
     );
   }
 
   return (
-    <div className="container mx-auto p-4">
-      {/* Header */}
-      <div className="mb-6">
-        <button
-          onClick={handleBack}
-          className="text-gray-600 hover:text-gray-900 mb-2 inline-flex items-center"
-        >
-          <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-          </svg>
-          Back to Investments
-        </button>
-
-        <div className="flex justify-between items-start">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-800">{investment.name}</h1>
-            <div className="flex items-center mt-1">
-              <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800`}>
-                {typeLabels[investment.type] || investment.type}
-              </span>
-              <span className="ml-2 text-sm text-gray-500">{investment.institution}</span>
-              {investment.account_number && (
-                <span className="ml-2 text-sm text-gray-500">• Account #{investment.account_number}</span>
-              )}
-            </div>
-          </div>
-
-          <div className="flex space-x-3">
-            <button
-              onClick={() => setShowAddTransactionForm(true)}
-              className="bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded text-sm"
-            >
-              Record Transaction
-            </button>
-            <button
-              onClick={() => setShowAddValuationForm(true)}
-              className="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded text-sm"
-            >
-              Update Valuation
-            </button>
-          </div>
+    <PageContainer
+      title={investment.name}
+      subtitle={`${typeLabels[investment.type] || investment.type} • ${investment.institution}`}
+      actions={
+        <div className="flex space-x-3">
+          <Button
+            variant="outlined"
+            onClick={() => navigate(`/investments/${id}/edit`)}
+            icon={<Edit className="h-4 w-4 mr-2" />}
+          >
+            Edit
+          </Button>
+          <Button
+            variant="filled"
+            onClick={() => setShowAddTransactionForm(true)}
+            icon={<PlusCircle className="h-4 w-4 mr-2" />}
+          >
+            Record Transaction
+          </Button>
+          <Button
+            variant="outlined"
+            onClick={() => setShowAddValuationForm(true)}
+            icon={<TrendingUp className="h-4 w-4 mr-2" />}
+          >
+            Update Valuation
+          </Button>
         </div>
-      </div>
-
-      {/* Tabs */}
-      <div className="mb-6 border-b border-gray-200">
-        <nav className="-mb-px flex">
-          <button
-            onClick={() => setActiveTab('overview')}
-            className={`${
-              activeTab === 'overview'
-                ? 'border-indigo-500 text-indigo-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-            } whitespace-nowrap py-4 px-4 border-b-2 font-medium text-sm`}
-          >
-            Overview
-          </button>
-          <button
-            onClick={() => setActiveTab('transactions')}
-            className={`${
-              activeTab === 'transactions'
-                ? 'border-indigo-500 text-indigo-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-            } whitespace-nowrap py-4 px-4 border-b-2 font-medium text-sm`}
-          >
+      }
+    >
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full mb-6">
+        <TabsList className="grid grid-cols-3">
+          <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="transactions">
             Transactions
-          </button>
-          <button
-            onClick={() => setActiveTab('valuations')}
-            className={`${
-              activeTab === 'valuations'
-                ? 'border-indigo-500 text-indigo-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-            } whitespace-nowrap py-4 px-4 border-b-2 font-medium text-sm`}
-          >
-            Valuations
-          </button>
-        </nav>
-      </div>
-
-      {/* Tab Content */}
-      <div className="bg-white shadow-md rounded-lg overflow-hidden">
-        {activeTab === 'overview' && (
-          <div className="p-6">
-            {/* Performance Summary */}
-            {performance && (
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-                <div className="bg-gray-50 p-4 rounded-md">
-                  <p className="text-sm text-gray-500">Current Value</p>
-                  <p className="text-2xl font-bold">${performance.current_value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
-                </div>
-                <div className="bg-gray-50 p-4 rounded-md">
-                  <p className="text-sm text-gray-500">Initial Investment</p>
-                  <p className="text-2xl font-bold">${performance.initial_value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
-                </div>
-                <div className="bg-gray-50 p-4 rounded-md">
-                  <p className="text-sm text-gray-500">Total Invested</p>
-                  <p className="text-2xl font-bold">${performance.total_invested.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
-                </div>
-                <div className="bg-gray-50 p-4 rounded-md">
-                  <p className="text-sm text-gray-500">ROI</p>
-                  <p className={`text-2xl font-bold ${performance.roi >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                    {performance.roi >= 0 ? '+' : ''}{performance.roi.toFixed(2)}%
-                  </p>
-                </div>
-              </div>
+            {transactions.length > 0 && (
+              <Badge variant="secondary" className="ml-2">
+                {transactions.length}
+              </Badge>
             )}
+          </TabsTrigger>
+          <TabsTrigger value="valuations">
+            Valuations
+            {valuations.length > 0 && (
+              <Badge variant="secondary" className="ml-2">
+                {valuations.length}
+              </Badge>
+            )}
+          </TabsTrigger>
+        </TabsList>
 
-            {/* Investment Details */}
-            <div className="mb-8">
-              <h3 className="text-lg font-medium mb-4">Investment Details</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
-                <div>
-                  <p className="text-sm text-gray-500">Start Date</p>
-                  <p className="font-medium">{new Date(investment.start_date).toLocaleDateString()}</p>
-                </div>
-                {investment.end_date && (
-                  <div>
-                    <p className="text-sm text-gray-500">End Date</p>
-                    <p className="font-medium">{new Date(investment.end_date).toLocaleDateString()}</p>
-                  </div>
-                )}
-                <div>
-                  <p className="text-sm text-gray-500">Last Valuation Date</p>
-                  <p className="font-medium">{new Date(investment.last_valuation_date).toLocaleDateString()}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Total Withdrawn</p>
-                  <p className="font-medium">${investment.total_withdrawn.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
-                </div>
-              </div>
+        <TabsContent value="overview" className="mt-4">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+            <div className="md:col-span-8">
+              <Card variant="elevated">
+                <CardHeader>
+                  <CardTitle>Investment Details</CardTitle>
+                  <CardDescription>Summary of your investment information</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <dl className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                      <dt className="text-on-surface-variant text-sm flex items-center">
+                        <Calendar className="h-4 w-4 mr-1" />
+                        Start Date
+                      </dt>
+                      <dd className="text-on-surface font-medium">
+                        {new Date(investment.start_date).toLocaleDateString()}
+                      </dd>
+                    </div>
 
-              {investment.description && (
-                <div className="mt-4">
-                  <p className="text-sm text-gray-500">Description</p>
-                  <p className="mt-1">{investment.description}</p>
-                </div>
-              )}
-            </div>
-
-            {/* Recent Activity */}
-            <div>
-              <h3 className="text-lg font-medium mb-4">Recent Activity</h3>
-              <div className="space-y-4">
-                {transactions.length === 0 && valuations.length === 0 ? (
-                  <p className="text-gray-500">No recent activity recorded.</p>
-                ) : (
-                  <>
-                    {/* Recent Transactions */}
-                    {transactions.slice(0, 3).map(transaction => (
-                      <div key={transaction.id} className="flex justify-between items-center border-b border-gray-200 pb-3">
-                        <div>
-                          <span className={`inline-flex px-2 py-1 text-xs rounded-full ${transactionTypeColors[transaction.type]}`}>
-                            {transactionTypeLabels[transaction.type] || transaction.type}
-                          </span>
-                          <p className="text-sm text-gray-500 mt-1">{new Date(transaction.date).toLocaleDateString()}</p>
-                        </div>
-                        <div className="text-right">
-                          <p className={`font-medium ${transaction.type === 'withdrawal' || transaction.type === 'fee' ? 'text-red-600' : 'text-green-600'}`}>
-                            {transaction.type === 'withdrawal' || transaction.type === 'fee' ? '-' : '+'}${transaction.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                          </p>
-                          {transaction.notes && <p className="text-sm text-gray-500">{transaction.notes}</p>}
-                        </div>
-                      </div>
-                    ))}
-
-                    {/* View More Link */}
-                    {transactions.length > 3 && (
-                      <div className="text-center mt-4">
-                        <button
-                          onClick={() => setActiveTab('transactions')}
-                          className="text-indigo-600 hover:text-indigo-900 text-sm font-medium"
-                        >
-                          View All Transactions
-                        </button>
+                    {investment.end_date && (
+                      <div className="space-y-1">
+                        <dt className="text-on-surface-variant text-sm flex items-center">
+                          <Calendar className="h-4 w-4 mr-1" />
+                          End Date
+                        </dt>
+                        <dd className="text-on-surface font-medium">
+                          {new Date(investment.end_date).toLocaleDateString()}
+                        </dd>
                       </div>
                     )}
-                  </>
-                )}
-              </div>
+
+                    <div className="space-y-1">
+                      <dt className="text-on-surface-variant text-sm flex items-center">
+                        <DollarSign className="h-4 w-4 mr-1" />
+                        Initial Investment
+                      </dt>
+                      <dd className="text-on-surface font-medium">
+                        {formatCurrency(investment.initial_investment, 'USD')}
+                      </dd>
+                    </div>
+
+                    <div className="space-y-1">
+                      <dt className="text-on-surface-variant text-sm flex items-center">
+                        <DollarSign className="h-4 w-4 mr-1" />
+                        Current Value
+                      </dt>
+                      <dd className="text-on-surface font-medium">
+                        {formatCurrency(investment.current_value, 'USD')}
+                      </dd>
+                    </div>
+
+                    <div className="space-y-1">
+                      <dt className="text-on-surface-variant text-sm flex items-center">
+                        <ArrowUp className="h-4 w-4 mr-1" />
+                        Total Deposited
+                      </dt>
+                      <dd className="text-on-surface font-medium">
+                        {formatCurrency(investment.total_invested, 'USD')}
+                      </dd>
+                    </div>
+
+                    <div className="space-y-1">
+                      <dt className="text-on-surface-variant text-sm flex items-center">
+                        <ArrowDown className="h-4 w-4 mr-1" />
+                        Total Withdrawn
+                      </dt>
+                      <dd className="text-on-surface font-medium">
+                        {formatCurrency(investment.total_withdrawn, 'USD')}
+                      </dd>
+                    </div>
+
+                    {investment.account_number && (
+                      <div className="space-y-1">
+                        <dt className="text-on-surface-variant text-sm">Account Number</dt>
+                        <dd className="text-on-surface font-medium">{investment.account_number}</dd>
+                      </div>
+                    )}
+
+                    <div className="space-y-1">
+                      <dt className="text-on-surface-variant text-sm">Last Updated</dt>
+                      <dd className="text-on-surface font-medium">
+                        {new Date(investment.last_valuation_date).toLocaleDateString()}
+                      </dd>
+                    </div>
+                  </dl>
+
+                  {investment.description && (
+                    <div className="mt-6">
+                      <h4 className="text-on-surface-variant text-sm flex items-center mb-2">
+                        <FileText className="h-4 w-4 mr-1" />
+                        Description
+                      </h4>
+                      <p className="text-on-surface bg-surface-variant p-3 rounded-md">
+                        {investment.description}
+                      </p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              {performance && (
+                <Card variant="elevated" className="mt-6">
+                  <CardHeader>
+                    <CardTitle>Performance</CardTitle>
+                    <CardDescription>Value trends and returns</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="h-48 flex items-center justify-center mb-6">
+                      <LineChart className="h-full w-full text-primary opacity-20" />
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                      <div className="space-y-1">
+                        <span className="text-on-surface-variant text-sm">Return on Investment</span>
+                        <p className={`text-xl font-semibold ${performance.roi >= 0 ? 'text-success' : 'text-error'}`}>
+                          {performance.roi >= 0 ? '+' : ''}{performance.roi.toFixed(2)}%
+                        </p>
+                      </div>
+                      <div className="space-y-1">
+                        <span className="text-on-surface-variant text-sm">Total Return</span>
+                        <p className="text-xl font-semibold">
+                          {formatCurrency(performance.total_return, 'USD')}
+                        </p>
+                      </div>
+                      <div className="space-y-1">
+                        <span className="text-on-surface-variant text-sm">Growth</span>
+                        <p className="text-xl font-semibold">
+                          {formatCurrency(performance.current_value - performance.initial_value, 'USD')}
+                        </p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+
+            <div className="md:col-span-4">
+              <Card variant="filled">
+                <CardHeader>
+                  <CardTitle>Current Value</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex flex-col items-center py-4">
+                    <div className="text-4xl font-bold mb-4">
+                      {formatCurrency(investment.current_value, 'USD')}
+                    </div>
+                    <div className="flex items-center space-x-1">
+                      <div className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${investment.roi >= 0 ? 'bg-success/10 text-success' : 'bg-error/10 text-error'}`}>
+                        {investment.roi >= 0 ? (
+                          <ArrowUp className="h-3 w-3 mr-1" />
+                        ) : (
+                          <ArrowDown className="h-3 w-3 mr-1" />
+                        )}
+                        {Math.abs(investment.roi).toFixed(2)}%
+                      </div>
+                      <span className="text-on-surface-variant text-xs">since initial investment</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card variant="outlined" className="mt-6">
+                <CardHeader>
+                  <CardTitle>Quick Actions</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    <Button
+                      variant="filled"
+                      className="w-full"
+                      onClick={() => setShowAddTransactionForm(true)}
+                      icon={<PlusCircle className="h-4 w-4 mr-2" />}
+                    >
+                      Record Transaction
+                    </Button>
+                    <Button
+                      variant="outlined"
+                      className="w-full"
+                      onClick={() => setShowAddValuationForm(true)}
+                      icon={<TrendingUp className="h-4 w-4 mr-2" />}
+                    >
+                      Update Valuation
+                    </Button>
+                    <Button
+                      variant="text"
+                      className="w-full"
+                      onClick={() => navigate(`/investments/${id}/edit`)}
+                    >
+                      Edit Investment
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           </div>
-        )}
+        </TabsContent>
 
-        {activeTab === 'transactions' && (
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Notes</th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {transactions.length === 0 ? (
-                  <tr>
-                    <td colSpan={4} className="px-6 py-4 text-center text-sm text-gray-500">
-                      No transactions recorded. Use the "Record Transaction" button to add one.
-                    </td>
-                  </tr>
-                ) : (
-                  transactions.map(transaction => (
-                    <tr key={transaction.id}>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {new Date(transaction.date).toLocaleDateString()}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${transactionTypeColors[transaction.type]}`}>
-                          {transactionTypeLabels[transaction.type] || transaction.type}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm">
-                        <span className={`font-medium ${transaction.type === 'withdrawal' || transaction.type === 'fee' ? 'text-red-600' : 'text-green-600'}`}>
-                          {transaction.type === 'withdrawal' || transaction.type === 'fee' ? '-' : '+'}${transaction.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-500">
-                        {transaction.notes || '-'}
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        )}
+        <TabsContent value="transactions" className="mt-4">
+          <Card variant="elevated">
+            <CardHeader>
+              <CardTitle>Transaction History</CardTitle>
+              <CardDescription>Record of deposits, withdrawals, and other transactions</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {transactions.length === 0 ? (
+                <div className="text-center py-8">
+                  <DollarSign className="h-12 w-12 text-on-surface-variant mx-auto mb-2 opacity-50" />
+                  <p className="text-on-surface-variant mb-4">No transactions recorded yet</p>
+                  <Button
+                    variant="filled"
+                    onClick={() => setShowAddTransactionForm(true)}
+                    icon={<PlusCircle className="h-4 w-4 mr-2" />}
+                  >
+                    Record Transaction
+                  </Button>
+                </div>
+              ) : (
+                <>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Date</TableHead>
+                        <TableHead>Type</TableHead>
+                        <TableHead>Amount</TableHead>
+                        <TableHead>Notes</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {transactions
+                        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+                        .map((transaction) => (
+                          <TableRow key={transaction.id}>
+                            <TableCell>
+                              {new Date(transaction.date).toLocaleDateString()}
+                            </TableCell>
+                            <TableCell>
+                              {getTransactionBadge(transaction.type)}
+                            </TableCell>
+                            <TableCell className={`font-medium ${
+                              transaction.type === 'withdrawal' || transaction.type === 'fee'
+                                ? 'text-error'
+                                : 'text-success'
+                            }`}>
+                              {transaction.type === 'withdrawal' || transaction.type === 'fee'
+                                ? '-'
+                                : '+'}{formatCurrency(transaction.amount, 'USD')}
+                            </TableCell>
+                            <TableCell>{transaction.notes || '-'}</TableCell>
+                          </TableRow>
+                        ))}
+                    </TableBody>
+                  </Table>
+                  <div className="mt-6 flex justify-end">
+                    <Button
+                      variant="filled"
+                      onClick={() => setShowAddTransactionForm(true)}
+                      icon={<PlusCircle className="h-4 w-4 mr-2" />}
+                    >
+                      Add New Transaction
+                    </Button>
+                  </div>
+                </>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-        {activeTab === 'valuations' && (
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Value</th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Notes</th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {valuations.length === 0 ? (
-                  <tr>
-                    <td colSpan={3} className="px-6 py-4 text-center text-sm text-gray-500">
-                      No valuations recorded. Use the "Update Valuation" button to add one.
-                    </td>
-                  </tr>
-                ) : (
-                  valuations.map(valuation => (
-                    <tr key={valuation.id}>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {new Date(valuation.date).toLocaleDateString()}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                        ${valuation.value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-500">
-                        {valuation.notes || '-'}
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        )}
+        <TabsContent value="valuations" className="mt-4">
+          <Card variant="elevated">
+            <CardHeader>
+              <CardTitle>Valuation History</CardTitle>
+              <CardDescription>Record of value changes over time</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {valuations.length === 0 ? (
+                <div className="text-center py-8">
+                  <TrendingUp className="h-12 w-12 text-on-surface-variant mx-auto mb-2 opacity-50" />
+                  <p className="text-on-surface-variant mb-4">No valuations recorded yet</p>
+                  <Button
+                    variant="filled"
+                    onClick={() => setShowAddValuationForm(true)}
+                    icon={<TrendingUp className="h-4 w-4 mr-2" />}
+                  >
+                    Record Valuation
+                  </Button>
+                </div>
+              ) : (
+                <>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Date</TableHead>
+                        <TableHead>Value</TableHead>
+                        <TableHead>Change</TableHead>
+                        <TableHead>Notes</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {valuations
+                        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+                        .map((valuation, index, arr) => {
+                          const prevValue = index < arr.length - 1 ? arr[index + 1].value : null;
+                          const change = prevValue !== null ? ((valuation.value - prevValue) / prevValue) * 100 : null;
+
+                          return (
+                            <TableRow key={valuation.id}>
+                              <TableCell>
+                                {new Date(valuation.date).toLocaleDateString()}
+                              </TableCell>
+                              <TableCell className="font-medium">
+                                {formatCurrency(valuation.value, 'USD')}
+                              </TableCell>
+                              <TableCell>
+                                {change !== null ? (
+                                  <span className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${change >= 0 ? 'bg-success/10 text-success' : 'bg-error/10 text-error'}`}>
+                                    {change >= 0 ? (
+                                      <ArrowUp className="h-3 w-3 mr-1" />
+                                    ) : (
+                                      <ArrowDown className="h-3 w-3 mr-1" />
+                                    )}
+                                    {Math.abs(change).toFixed(2)}%
+                                  </span>
+                                ) : (
+                                  'Initial'
+                                )}
+                              </TableCell>
+                              <TableCell>{valuation.notes || '-'}</TableCell>
+                            </TableRow>
+                          );
+                        })}
+                    </TableBody>
+                  </Table>
+                  <div className="mt-6 flex justify-end">
+                    <Button
+                      variant="filled"
+                      onClick={() => setShowAddValuationForm(true)}
+                      icon={<TrendingUp className="h-4 w-4 mr-2" />}
+                    >
+                      Add New Valuation
+                    </Button>
+                  </div>
+                </>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+
+      <div className="flex justify-between mt-8">
+        <Button variant="outlined" onClick={handleBack} icon={<ArrowLeft className="h-4 w-4 mr-2" />}>
+          Back to Investments
+        </Button>
       </div>
 
-      {/* Modal placeholders for adding transactions and valuations */}
-      {showAddTransactionForm && (
-        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-medium">Record Transaction</h3>
-              <button
-                onClick={() => setShowAddTransactionForm(false)}
-                className="text-gray-500 hover:text-gray-700"
-              >
-                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-            <p className="text-center text-gray-500 mt-4">Transaction form placeholder - will be implemented separately</p>
-          </div>
-        </div>
+      {showAddTransactionForm && investment && (
+        <TransactionForm
+          investmentId={investment.id}
+          onSuccess={() => {
+            setShowAddTransactionForm(false);
+            refreshData();
+          }}
+        />
       )}
 
-      {showAddValuationForm && (
-        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-medium">Update Valuation</h3>
-              <button
-                onClick={() => setShowAddValuationForm(false)}
-                className="text-gray-500 hover:text-gray-700"
-              >
-                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-            <p className="text-center text-gray-500 mt-4">Valuation form placeholder - will be implemented separately</p>
-          </div>
-        </div>
+      {showAddValuationForm && investment && (
+        <ValuationForm
+          investmentId={investment.id}
+          initialValue={investment.current_value}
+          onSuccess={() => {
+            setShowAddValuationForm(false);
+            refreshData();
+          }}
+        />
       )}
-    </div>
+    </PageContainer>
   );
 };
 

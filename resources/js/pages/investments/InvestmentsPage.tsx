@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import { Card, CardContent } from '../../ui/Card';
-import { Button } from '../../ui/Button';
-import { PlusCircle } from 'lucide-react';
+import { Card, CardHeader, CardTitle, CardContent } from '../../ui/Card';
+import { Button } from '../../ui';
+import { PageContainer, PageSection } from '../../ui/PageContainer';
 import { formatCurrency } from '../../utils/format';
-import { ArrowUpRight, DollarSign, PercentIcon, Briefcase, PieChart } from 'lucide-react';
+import { PlusCircle, ArrowUpRight, DollarSign, PercentIcon, Briefcase, PieChart, BarChart, ArrowRight } from 'lucide-react';
 
 interface PortfolioSummary {
   total_invested: number;
@@ -39,113 +39,205 @@ const InvestmentsPage: React.FC = () => {
   }, []);
 
   return (
-    <div className="space-y-10 max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold tracking-tight text-gray-900">Investments</h1>
-        <Button asChild>
-          <Link to="/investments/new" className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-5 rounded-lg flex items-center gap-3 shadow-sm transition duration-150 ease-in-out">
-            <PlusCircle className="h-5 w-5" />
-            Add Investment
-          </Link>
+    <PageContainer
+      title="Investments"
+      subtitle="Manage and track your investments portfolio"
+      actions={
+        <Button
+          variant="filled"
+          icon={<PlusCircle className="h-4 w-4 mr-2" />}
+        >
+          <Link to="/investments/new">Add Investment</Link>
         </Button>
-      </div>
+      }
+    >
+      {error && (
+        <div className="mb-6">
+          <Card variant="elevated">
+            <CardContent>
+              <div className="bg-error/10 text-error p-4 rounded-lg">
+                {error}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
 
       {loading ? (
-        <div className="flex justify-center items-center py-20">
-          <div className="w-12 h-12 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
-        </div>
-      ) : error ? (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-8 py-6 rounded-lg my-6" role="alert">
-          <span className="font-medium">{error}</span>
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <Card className="bg-white shadow-md hover:shadow-lg transition-shadow rounded-xl overflow-hidden">
-              <CardContent className="p-7">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-5">
-                    <div className="flex-shrink-0 p-3 bg-indigo-50 rounded-full">
-                      <DollarSign className="h-7 w-7 text-indigo-600" />
+          <PageSection>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <Card variant="elevated">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-4">
+                      <div className="flex-shrink-0 p-3 bg-primary/10 rounded-full">
+                        <DollarSign className="h-6 w-6 text-primary" />
+                      </div>
+                      <div>
+                        <p className="text-on-surface-variant text-sm mb-1">Total Invested</p>
+                        <p className="text-on-surface text-2xl font-bold">
+                          {formatCurrency(summary?.total_invested || 0, 'USD')}
+                        </p>
+                      </div>
+                    </div>
+                    <ArrowUpRight className="h-5 w-5 text-primary" />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card variant="elevated">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-4">
+                      <div className="flex-shrink-0 p-3 bg-success/10 rounded-full">
+                        <DollarSign className="h-6 w-6 text-success" />
+                      </div>
+                      <div>
+                        <p className="text-on-surface-variant text-sm mb-1">Current Value</p>
+                        <p className="text-on-surface text-2xl font-bold">
+                          {formatCurrency(summary?.total_current_value || 0, 'USD')}
+                        </p>
+                      </div>
+                    </div>
+                    <ArrowUpRight className="h-5 w-5 text-success" />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card variant="elevated">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-4">
+                      <div className="flex-shrink-0 p-3 bg-warning/10 rounded-full">
+                        <PercentIcon className="h-6 w-6 text-warning" />
+                      </div>
+                      <div>
+                        <p className="text-on-surface-variant text-sm mb-1">Overall ROI</p>
+                        <p className="text-on-surface text-2xl font-bold">
+                          {summary && summary.overall_roi !== undefined ? (summary.overall_roi > 0 ? '+' : '') + summary.overall_roi.toFixed(2) + '%' : '0.00%'}
+                        </p>
+                      </div>
+                    </div>
+                    <ArrowUpRight className="h-5 w-5 text-warning" />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card variant="elevated">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-4">
+                      <div className="flex-shrink-0 p-3 bg-secondary/10 rounded-full">
+                        <Briefcase className="h-6 w-6 text-secondary" />
+                      </div>
+                      <div>
+                        <p className="text-on-surface-variant text-sm mb-1">Total Investments</p>
+                        <p className="text-on-surface text-2xl font-bold">
+                          {summary?.total_investments ?? 0}
+                        </p>
+                      </div>
+                    </div>
+                    <ArrowUpRight className="h-5 w-5 text-secondary" />
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </PageSection>
+
+          {summary && summary.by_type && Object.keys(summary.by_type).length > 0 && (
+            <PageSection title="Portfolio Allocation" className="mt-8">
+              <Card variant="outlined">
+                <CardContent className="p-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="flex items-center justify-center">
+                      <PieChart className="h-48 w-48 text-primary opacity-20" />
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-gray-500 mb-1">Total Invested</p>
-                      <p className="text-3xl font-bold">
-                        {formatCurrency(summary?.total_invested || 0, 'USD')}
-                      </p>
+                      <h3 className="text-lg font-semibold mb-4">Asset Allocation</h3>
+                      <div className="space-y-4">
+                        {Object.entries(summary.by_type).map(([type, data]) => (
+                          <div key={type} className="flex items-center">
+                            <div
+                              className="w-3 h-3 rounded-full mr-3"
+                              style={{
+                                backgroundColor: getColorForAssetType(type)
+                              }}
+                            ></div>
+                            <div className="flex-1">
+                              <div className="flex justify-between items-center">
+                                <span className="text-sm font-medium">{formatAssetType(type)}</span>
+                                <span className="text-sm text-on-surface-variant">{data.percentage.toFixed(1)}%</span>
+                              </div>
+                              <div className="w-full bg-surface-variant h-1.5 rounded-full mt-1">
+                                <div
+                                  className="h-full rounded-full"
+                                  style={{
+                                    width: `${data.percentage}%`,
+                                    backgroundColor: getColorForAssetType(type)
+                                  }}
+                                ></div>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </div>
-                  <ArrowUpRight className="h-5 w-5 text-indigo-600" />
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </PageSection>
+          )}
 
-            <Card className="bg-white shadow-md hover:shadow-lg transition-shadow rounded-xl overflow-hidden">
-              <CardContent className="p-7">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-5">
-                    <div className="flex-shrink-0 p-3 bg-green-50 rounded-full">
-                      <DollarSign className="h-7 w-7 text-green-600" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-500 mb-1">Current Value</p>
-                      <p className="text-3xl font-bold">
-                        {formatCurrency(summary?.total_current_value || 0, 'USD')}
-                      </p>
-                    </div>
-                  </div>
-                  <ArrowUpRight className="h-5 w-5 text-green-600" />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-white shadow-md hover:shadow-lg transition-shadow rounded-xl overflow-hidden">
-              <CardContent className="p-7">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-5">
-                    <div className="flex-shrink-0 p-3 bg-blue-50 rounded-full">
-                      <PercentIcon className="h-7 w-7 text-blue-600" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-500 mb-1">Overall ROI</p>
-                      <h3 className="text-2xl font-bold text-gray-900">{summary && summary.overall_roi !== undefined ? (summary.overall_roi > 0 ? '+' : '') + summary.overall_roi.toFixed(2) + '%' : '0.00%'}</h3>
-                    </div>
-                  </div>
-                  <ArrowUpRight className="h-5 w-5 text-blue-600" />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-white shadow-md hover:shadow-lg transition-shadow rounded-xl overflow-hidden">
-              <CardContent className="p-7">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-5">
-                    <div className="flex-shrink-0 p-3 bg-purple-50 rounded-full">
-                      <Briefcase className="h-7 w-7 text-purple-600" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-500 mb-1">Total Investments</p>
-                      <h3 className="text-2xl font-bold text-gray-900">{summary?.total_investments ?? 0}</h3>
-                    </div>
-                  </div>
-                  <ArrowUpRight className="h-5 w-5 text-purple-600" />
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          <div className="mt-10 pb-4">
-            <Link to="/investments/list" className="inline-flex items-center text-indigo-600 hover:text-indigo-800 font-medium text-lg transition duration-150 ease-in-out">
-              View All Investments
-              <svg className="ml-3 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </Link>
+          <div className="mt-8 text-center">
+            <Button
+              variant="outlined"
+              onClick={() => {}}
+              icon={<ArrowRight className="h-4 w-4 ml-2" />}
+              className="ml-auto"
+            >
+              <Link to="/investments/list">View All Investments</Link>
+            </Button>
           </div>
         </>
       )}
-    </div>
+    </PageContainer>
   );
 };
+
+// Helper functions for asset types
+function formatAssetType(type: string): string {
+  const typeMap: Record<string, string> = {
+    stock: 'Stocks',
+    bond: 'Bonds',
+    mutual_fund: 'Mutual Funds',
+    etf: 'ETFs',
+    real_estate: 'Real Estate',
+    retirement: 'Retirement',
+    crypto: 'Cryptocurrency',
+    cash: 'Cash & Savings',
+    other: 'Other',
+  };
+  return typeMap[type] || type.charAt(0).toUpperCase() + type.slice(1);
+}
+
+function getColorForAssetType(type: string): string {
+  const colorMap: Record<string, string> = {
+    stock: '#4F46E5', // indigo
+    bond: '#0891B2', // cyan
+    mutual_fund: '#7C3AED', // violet
+    etf: '#2563EB', // blue
+    real_estate: '#16A34A', // green
+    retirement: '#EA580C', // orange
+    crypto: '#9333EA', // purple
+    cash: '#65A30D', // lime
+    other: '#94A3B8', // slate
+  };
+  return colorMap[type] || '#94A3B8';
+}
 
 export default InvestmentsPage;
