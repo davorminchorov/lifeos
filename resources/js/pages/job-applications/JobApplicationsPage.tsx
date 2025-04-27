@@ -18,7 +18,7 @@ const JobApplicationsPage: React.FC = () => {
     try {
       setLoading(true);
       const response = await axiosClient.get('/api/job-applications');
-      setApplications(response.data);
+      setApplications(Array.isArray(response.data) ? response.data : []);
       setError(null);
     } catch (err) {
       setError('Failed to load job applications');

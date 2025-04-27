@@ -71,10 +71,10 @@ export default function UtilityBillsPage() {
           axios.get('/api/upcoming-reminders')
         ]);
 
-        setBills(billsRes.data);
-        setPendingBills(pendingRes.data);
-        setPaymentHistory(historyRes.data || []);
-        setUpcomingReminders(remindersRes.data);
+        setBills(Array.isArray(billsRes.data) ? billsRes.data : []);
+        setPendingBills(Array.isArray(pendingRes.data) ? pendingRes.data : []);
+        setPaymentHistory(Array.isArray(historyRes.data) ? historyRes.data : []);
+        setUpcomingReminders(Array.isArray(remindersRes.data) ? remindersRes.data : []);
       } catch (error) {
         console.error('Error fetching utility bills data:', error);
       } finally {
@@ -205,7 +205,7 @@ export default function UtilityBillsPage() {
                           <TableCell>{bill.category}</TableCell>
                           <TableCell>{renderStatusBadge(bill.status)}</TableCell>
                           <TableCell>
-                            <Button variant="outlined" size="sm" onClick={() => handleViewDetails(bill.id)}>
+                            <Button variant="outline" size="sm" onClick={() => handleViewDetails(bill.id)}>
                               View
                             </Button>
                           </TableCell>
@@ -262,7 +262,7 @@ export default function UtilityBillsPage() {
                           </TableCell>
                           <TableCell>{bill.category}</TableCell>
                           <TableCell>
-                            <Button variant="outlined" size="sm" onClick={() => handleViewDetails(bill.bill_id)}>
+                            <Button variant="outline" size="sm" onClick={() => handleViewDetails(bill.bill_id)}>
                               View
                             </Button>
                           </TableCell>

@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import InvestmentForm from '../../components/investments/InvestmentForm';
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '../../ui/Table';
+import { Badge } from '../../ui/Badge';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../../ui/Card';
 
 interface Investment {
   id: string;
@@ -49,7 +52,6 @@ const InvestmentsListPage: React.FC = () => {
   const [summary, setSummary] = useState<PortfolioSummary | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [showAddForm, setShowAddForm] = useState(false);
 
   const fetchData = async () => {
     try {
@@ -58,7 +60,7 @@ const InvestmentsListPage: React.FC = () => {
 
       // Fetch investments list
       const investmentsResponse = await axios.get('/api/investments');
-      setInvestments(investmentsResponse.data);
+      setInvestments(Array.isArray(investmentsResponse.data) ? investmentsResponse.data : []);
 
       // Fetch portfolio summary
       const summaryResponse = await axios.get('/api/portfolio/summary');
@@ -75,182 +77,134 @@ const InvestmentsListPage: React.FC = () => {
     fetchData();
   }, []);
 
-  const handleInvestmentAdded = () => {
-    setShowAddForm(false);
-    fetchData();
-  };
-
   if (loading) {
     return (
-      <div className="p-4">
-        <div className="animate-pulse flex space-x-4">
-          <div className="flex-1 space-y-6 py-1">
-            <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-            <div className="space-y-3">
-              <div className="grid grid-cols-3 gap-4">
-                <div className="h-20 bg-gray-200 rounded col-span-1"></div>
-                <div className="h-20 bg-gray-200 rounded col-span-1"></div>
-                <div className="h-20 bg-gray-200 rounded col-span-1"></div>
-              </div>
-              <div className="h-4 bg-gray-200 rounded w-5/6"></div>
-            </div>
-          </div>
-        </div>
+      <div className="p-8 flex justify-center">
+        <div className="w-10 h-10 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto p-4">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">Investment Portfolio</h1>
-        <button
-          className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded"
-          onClick={() => setShowAddForm(!showAddForm)}
-        >
-          {showAddForm ? 'Cancel' : 'Add Investment'}
-        </button>
-      </div>
-
+    <div>
       {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4" role="alert">
-          <span className="block sm:inline">{error}</span>
+        <div className="bg-red-50 border border-red-200 text-red-700 px-6 py-4 rounded-lg mb-6" role="alert">
+          <span className="block sm:inline font-medium">{error}</span>
         </div>
       )}
 
       {summary && (
         <div className="mb-8">
-          <div className="bg-white shadow-md rounded-lg p-6 mb-6">
-            <h2 className="text-xl font-semibold mb-4">Portfolio Summary</h2>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div className="bg-gray-50 p-4 rounded-md">
-                <p className="text-sm text-gray-500">Total Value</p>
-                <p className="text-2xl font-bold">${summary.total_current_value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
-              </div>
-              <div className="bg-gray-50 p-4 rounded-md">
-                <p className="text-sm text-gray-500">Total Invested</p>
-                <p className="text-2xl font-bold">${summary.total_invested.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
-              </div>
-              <div className="bg-gray-50 p-4 rounded-md">
-                <p className="text-sm text-gray-500">Overall ROI</p>
-                <p className={`text-2xl font-bold ${summary.overall_roi >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                  {summary.overall_roi >= 0 ? '+' : ''}{summary.overall_roi.toFixed(2)}%
-                </p>
-              </div>
-              <div className="bg-gray-50 p-4 rounded-md">
-                <p className="text-sm text-gray-500">Total Investments</p>
-                <p className="text-2xl font-bold">{summary.total_investments}</p>
-              </div>
+          <Card className="bg-white rounded-xl shadow-sm overflow-hidden">
+            <div className="border-b border-gray-100 px-6 py-4">
+              <h3 className="text-lg font-semibold text-gray-800">Portfolio Allocation</h3>
+              <p className="text-sm text-gray-500 mt-1">Distribution of your investments by type</p>
             </div>
-          </div>
-
-          {Object.keys(summary.by_type).length > 0 && (
-            <div className="bg-white shadow-md rounded-lg p-6">
-              <h2 className="text-xl font-semibold mb-4">Allocation by Type</h2>
-              <div className="flex h-4 w-full rounded-full overflow-hidden mb-4">
-                {Object.entries(summary.by_type).map(([type, data]) => (
-                  <div
-                    key={type}
-                    className={`${typeColors[type] || 'bg-gray-600'}`}
-                    style={{ width: `${data.percentage}%` }}
-                    title={`${typeLabels[type] || type}: ${data.percentage.toFixed(1)}%`}
-                  ></div>
-                ))}
-              </div>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {Object.entries(summary.by_type).map(([type, data]) => (
-                  <div key={type} className="flex items-center">
-                    <div className={`w-3 h-3 rounded-full ${typeColors[type] || 'bg-gray-600'} mr-2`}></div>
-                    <div>
-                      <p className="text-sm font-medium">{typeLabels[type] || type}</p>
-                      <p className="text-xs text-gray-500">${data.value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ({data.percentage.toFixed(1)}%)</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-      )}
-
-      <div className="bg-white shadow-md rounded-lg overflow-hidden">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Institution</th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Current Value</th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ROI</th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Valuation</th>
-              <th scope="col" className="relative px-6 py-3">
-                <span className="sr-only">Actions</span>
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {investments.length === 0 ? (
-              <tr>
-                <td colSpan={7} className="px-6 py-4 text-center text-sm text-gray-500">
-                  No investments found. Add your first investment to get started.
-                </td>
-              </tr>
-            ) : (
-              investments.map((investment) => (
-                <tr key={investment.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-gray-900">{investment.name}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${typeColors[investment.type] ? `${typeColors[investment.type]} text-white` : 'bg-gray-100 text-gray-800'}`}>
-                      {typeLabels[investment.type] || investment.type}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{investment.institution}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${investment.current_value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`text-sm ${investment.roi >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                      {investment.roi >= 0 ? '+' : ''}{investment.roi.toFixed(2)}%
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {new Date(investment.last_valuation_date).toLocaleDateString()}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <Link to={`/investments/${investment.id}`} className="text-indigo-600 hover:text-indigo-900 mr-4">
-                      Details
-                    </Link>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
-
-      {showAddForm && (
-        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-screen overflow-y-auto">
             <div className="p-6">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-medium">Add New Investment</h3>
-                <button
-                  onClick={() => setShowAddForm(false)}
-                  className="text-gray-500 hover:text-gray-700"
-                >
-                  <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              {summary && summary.by_type && Object.keys(summary.by_type).length > 0 ? (
+                <>
+                  <div className="flex h-6 w-full rounded-md overflow-hidden mb-6">
+                    {Object.entries(summary.by_type).map(([type, data]) => (
+                      <div
+                        key={type}
+                        className={`${typeColors[type] || 'bg-gray-600'}`}
+                        style={{ width: `${data.percentage}%` }}
+                        title={`${typeLabels[type] || type}: ${data.percentage.toFixed(1)}%`}
+                      ></div>
+                    ))}
+                  </div>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    {Object.entries(summary.by_type).map(([type, data]) => (
+                      <div key={type} className="flex items-center p-3 bg-gray-50 rounded-lg">
+                        <div className={`w-4 h-4 rounded-full ${typeColors[type] || 'bg-gray-600'} mr-3`}></div>
+                        <div>
+                          <p className="text-sm font-medium text-gray-800">{typeLabels[type] || type}</p>
+                          <p className="text-xs text-gray-500 mt-1">${data.value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ({data.percentage.toFixed(1)}%)</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <div className="py-12 text-center">
+                  <svg className="mx-auto h-16 w-16 text-gray-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" />
                   </svg>
-                </button>
-              </div>
-              <InvestmentForm
-                onSuccess={handleInvestmentAdded}
-                onCancel={() => setShowAddForm(false)}
-              />
+                  <h3 className="mt-4 text-lg font-medium text-gray-900">No allocation data</h3>
+                  <p className="mt-1 text-sm text-gray-500">Add your first investment to see your portfolio allocation.</p>
+                </div>
+              )}
             </div>
-          </div>
+          </Card>
         </div>
       )}
+
+      <Card className="bg-white rounded-xl shadow-sm overflow-hidden">
+        <div className="border-b border-gray-100 px-6 py-4">
+          <h3 className="text-lg font-semibold text-gray-800">Your Investments</h3>
+          <p className="text-sm text-gray-500 mt-1">Manage your investment portfolio</p>
+        </div>
+        <div className="p-0">
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-gray-50 border-b border-gray-100">
+                  <TableHead className="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</TableHead>
+                  <TableHead className="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</TableHead>
+                  <TableHead className="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Institution</TableHead>
+                  <TableHead className="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Current Value</TableHead>
+                  <TableHead className="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ROI</TableHead>
+                  <TableHead className="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Valuation</TableHead>
+                  <TableHead className="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {investments.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={7} className="text-center py-16 px-6">
+                      <div className="flex flex-col items-center justify-center">
+                        <svg className="h-16 w-16 text-gray-200 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <h3 className="text-lg font-medium text-gray-900">No investments found</h3>
+                        <p className="mt-1 text-sm text-gray-500 max-w-sm text-center">Click "Add Investment" to start building your portfolio.</p>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  investments.map((investment) => (
+                    <TableRow key={investment.id} className="hover:bg-gray-50 border-b border-gray-100">
+                      <TableCell className="py-4 px-6 font-medium text-gray-900">{investment.name}</TableCell>
+                      <TableCell className="py-4 px-6">
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-800">
+                          {typeLabels[investment.type] || investment.type}
+                        </span>
+                      </TableCell>
+                      <TableCell className="py-4 px-6 text-gray-500">{investment.institution}</TableCell>
+                      <TableCell className="py-4 px-6 font-medium text-gray-900">${investment.current_value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
+                      <TableCell className="py-4 px-6">
+                        <span className={`${investment.roi > 0 ? 'text-green-600' : investment.roi < 0 ? 'text-red-600' : 'text-gray-600'} font-medium`}>
+                          {investment.roi > 0 ? '+' : (investment.roi < 0 ? '' : '')}
+                          {investment.roi.toFixed(2)}%
+                        </span>
+                      </TableCell>
+                      <TableCell className="py-4 px-6 text-gray-500">
+                        {new Date(investment.last_valuation_date).toLocaleDateString()}
+                      </TableCell>
+                      <TableCell className="py-4 px-6">
+                        <Link to={`/investments/${investment.id}`} className="text-indigo-600 hover:text-indigo-900 font-medium text-sm">
+                          View Details
+                        </Link>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        </div>
+      </Card>
     </div>
   );
 };
