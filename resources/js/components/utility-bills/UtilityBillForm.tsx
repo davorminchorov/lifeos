@@ -110,7 +110,7 @@ const UtilityBillForm: React.FC<UtilityBillFormProps> = ({
           description: "Utility bill created successfully",
           variant: "success",
         });
-        navigate(`/utility-bills/${response.data.utility_bill_id}`);
+        navigate(`/utility-bills/${response.data.id}`);
       }
     } catch (error: any) {
       console.error('Submission error:', error);

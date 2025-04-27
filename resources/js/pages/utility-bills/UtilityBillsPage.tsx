@@ -67,9 +67,9 @@ export default function UtilityBillsPage() {
       try {
         const [billsRes, pendingRes, historyRes, remindersRes] = await Promise.all([
           axios.get('/api/utility-bills'),
-          axios.get('/api/pending-bills'),
-          axios.get('/api/payment-history'),
-          axios.get('/api/upcoming-reminders')
+          axios.get('/api/utility-bills/pending'),
+          axios.get('/api/utility-bills/payments'),
+          axios.get('/api/utility-bills/reminders')
         ]);
 
         setBills(Array.isArray(billsRes.data) ? billsRes.data : []);
@@ -87,7 +87,7 @@ export default function UtilityBillsPage() {
   }, []);
 
   const handleAddNew = () => {
-    navigate('/utility-bills/new');
+    navigate('/utility-bills/create');
   };
 
   const handleViewDetails = (id: string) => {

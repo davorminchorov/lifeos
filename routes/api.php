@@ -51,8 +51,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/utility-bills/{id}', [UtilityBillsController::class, 'update']);
     Route::post('/utility-bills/{id}/pay', [UtilityBillsController::class, 'pay']);
     Route::post('/utility-bills/{id}/remind', [UtilityBillsController::class, 'scheduleReminder']);
-    Route::get('/pending-bills', [UtilityBillsController::class, 'pendingBills']);
-    Route::get('/upcoming-reminders', [UtilityBillsController::class, 'upcomingReminders']);
+    Route::get('/utility-bills/pending', [UtilityBillsController::class, 'pendingBills']);
+    Route::get('/utility-bills/reminders', [UtilityBillsController::class, 'upcomingReminders']);
+    Route::get('/utility-bills/payments', [UtilityBillsController::class, 'paymentHistory']);
 
     // Investment routes
     Route::get('/investments', [InvestmentController::class, 'index']);

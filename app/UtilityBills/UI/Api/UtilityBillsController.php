@@ -162,4 +162,39 @@ class UtilityBillsController extends Controller
 
         return response()->json($reminders);
     }
+
+    public function paymentHistory()
+    {
+        // This is a placeholder implementation. In a real app you would:
+        // 1. Create a proper Query class like GetPaymentHistory
+        // 2. Implement a QueryHandler for it
+        // 3. Use the QueryBus to handle the query
+
+        // For now, we'll return a simplified response
+        return response()->json([
+            'data' => [
+                // Sample payment history data
+                [
+                    'id' => 1,
+                    'bill_id' => '550e8400-e29b-41d4-a716-446655440000',
+                    'bill_name' => 'Electricity Bill',
+                    'provider' => 'Power Company',
+                    'payment_date' => '2023-07-15',
+                    'payment_amount' => 125.50,
+                    'payment_method' => 'credit_card',
+                    'category' => 'electricity'
+                ],
+                [
+                    'id' => 2,
+                    'bill_id' => '550e8400-e29b-41d4-a716-446655440001',
+                    'bill_name' => 'Water Bill',
+                    'provider' => 'City Water',
+                    'payment_date' => '2023-07-10',
+                    'payment_amount' => 45.75,
+                    'payment_method' => 'bank_transfer',
+                    'category' => 'water'
+                ]
+            ]
+        ]);
+    }
 }

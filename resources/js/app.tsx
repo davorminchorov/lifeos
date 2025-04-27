@@ -46,6 +46,8 @@ import EditExpense from './pages/expenses/EditExpense';
 // Utility Bills Pages
 import UtilityBillsPage from './pages/utility-bills/UtilityBillsPage';
 import UtilityBillDetailPage from './pages/utility-bills/UtilityBillDetailPage';
+import CreateUtilityBill from './pages/utility-bills/CreateUtilityBill';
+import EditUtilityBill from './pages/utility-bills/EditUtilityBill';
 
 // Job Applications Pages
 import JobApplicationsPage from './pages/job-applications/JobApplicationsPage';
@@ -124,7 +126,9 @@ const App: React.FC = () => {
                                     {/* Utility Bills Routes */}
                                     <Route path="utility-bills">
                                         <Route index element={<UtilityBillsPage />} />
+                                        <Route path="create" element={<CreateUtilityBill />} />
                                         <Route path=":id" element={<UtilityBillDetailPage />} />
+                                        <Route path=":id/edit" element={<EditUtilityBill />} />
                                     </Route>
 
                                     {/* Job Applications Routes */}
