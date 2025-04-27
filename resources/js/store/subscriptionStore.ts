@@ -1,4 +1,4 @@
-import { createStore } from 'xstate-store';
+import { createStore } from '../utils/xstate-store-adapter';
 
 // Define TypeScript interfaces for subscription state
 export interface Subscription {
