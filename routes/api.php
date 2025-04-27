@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Subscriptions\UI\Api\SubscriptionController;
+use App\UtilityBills\UI\Api\UtilityBillsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,6 +33,16 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/subscriptions/{id}/cancel', [SubscriptionController::class, 'cancel']);
     Route::post('/subscriptions/{id}/payments', [SubscriptionController::class, 'recordPayment']);
     Route::get('/upcoming-payments', [SubscriptionController::class, 'upcomingPayments']);
+
+    // Utility Bills routes
+    Route::get('/utility-bills', [UtilityBillsController::class, 'index']);
+    Route::post('/utility-bills', [UtilityBillsController::class, 'store']);
+    Route::get('/utility-bills/{id}', [UtilityBillsController::class, 'show']);
+    Route::put('/utility-bills/{id}', [UtilityBillsController::class, 'update']);
+    Route::post('/utility-bills/{id}/pay', [UtilityBillsController::class, 'pay']);
+    Route::post('/utility-bills/{id}/remind', [UtilityBillsController::class, 'scheduleReminder']);
+    Route::get('/pending-bills', [UtilityBillsController::class, 'pendingBills']);
+    Route::get('/upcoming-reminders', [UtilityBillsController::class, 'upcomingReminders']);
 });
 
 // Expenses routes

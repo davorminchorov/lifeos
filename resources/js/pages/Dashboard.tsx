@@ -7,6 +7,8 @@ interface DashboardSummary {
   activeSubscriptions: number;
   upcomingPayments: number;
   monthlyCost: number;
+  pendingBills: number;
+  upcomingReminders: number;
 }
 
 const Dashboard: React.FC = () => {
@@ -14,7 +16,9 @@ const Dashboard: React.FC = () => {
     totalSubscriptions: 0,
     activeSubscriptions: 0,
     upcomingPayments: 0,
-    monthlyCost: 0
+    monthlyCost: 0,
+    pendingBills: 0,
+    upcomingReminders: 0
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -33,7 +37,9 @@ const Dashboard: React.FC = () => {
           totalSubscriptions: 5,
           activeSubscriptions: 4,
           upcomingPayments: 2,
-          monthlyCost: 45.99
+          monthlyCost: 45.99,
+          pendingBills: 3,
+          upcomingReminders: 2
         });
       } finally {
         setLoading(false);
@@ -124,20 +130,20 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
 
-        {/* Card: Upcoming Payments */}
+        {/* Card: Pending Bills */}
         <div className="bg-white overflow-hidden shadow rounded-lg">
           <div className="px-4 py-5 sm:p-6">
             <div className="flex items-center">
-              <div className="flex-shrink-0 bg-yellow-500 rounded-md p-3">
+              <div className="flex-shrink-0 bg-orange-500 rounded-md p-3">
                 <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
               </div>
               <div className="ml-5 w-0 flex-1">
                 <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">Upcoming Payments (30 days)</dt>
+                  <dt className="text-sm font-medium text-gray-500 truncate">Pending Bills</dt>
                   <dd>
-                    <div className="text-lg font-medium text-gray-900">{summary.upcomingPayments}</div>
+                    <div className="text-lg font-medium text-gray-900">{summary.pendingBills}</div>
                   </dd>
                 </dl>
               </div>
@@ -145,8 +151,8 @@ const Dashboard: React.FC = () => {
           </div>
           <div className="bg-gray-50 px-4 py-4 sm:px-6">
             <div className="text-sm">
-              <Link to="/payments" className="font-medium text-indigo-600 hover:text-indigo-500">
-                View Payments History<span className="sr-only"> for upcoming payments</span>
+              <Link to="/utility-bills" className="font-medium text-indigo-600 hover:text-indigo-500">
+                View bills<span className="sr-only"> pending</span>
               </Link>
             </div>
           </div>
@@ -205,6 +211,23 @@ const Dashboard: React.FC = () => {
 
           <div className="bg-white overflow-hidden shadow rounded-lg divide-y divide-gray-200">
             <div className="px-4 py-5 sm:px-6">
+              <h3 className="text-lg font-medium text-gray-900">Manage Utility Bills</h3>
+            </div>
+            <div className="px-4 py-5 sm:p-6">
+              <p className="text-sm text-gray-500">Track and pay your utility bills on time and set reminders.</p>
+              <div className="mt-4 flex">
+                <Link
+                  to="/utility-bills"
+                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                >
+                  View Utility Bills
+                </Link>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white overflow-hidden shadow rounded-lg divide-y divide-gray-200">
+            <div className="px-4 py-5 sm:px-6">
               <h3 className="text-lg font-medium text-gray-900">Upcoming Payments</h3>
             </div>
             <div className="px-4 py-5 sm:p-6">
@@ -222,16 +245,33 @@ const Dashboard: React.FC = () => {
 
           <div className="bg-white overflow-hidden shadow rounded-lg divide-y divide-gray-200">
             <div className="px-4 py-5 sm:px-6">
-              <h3 className="text-lg font-medium text-gray-900">Record a Payment</h3>
+              <h3 className="text-lg font-medium text-gray-900">Bill Reminders</h3>
             </div>
             <div className="px-4 py-5 sm:p-6">
-              <p className="text-sm text-gray-500">Manually record a subscription payment that has been made.</p>
+              <p className="text-sm text-gray-500">View upcoming reminders for your utility bill payments.</p>
               <div className="mt-4 flex">
                 <Link
-                  to="/payments"
+                  to="/utility-bills"
                   className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                 >
-                  View Payments History
+                  View Reminders
+                </Link>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white overflow-hidden shadow rounded-lg divide-y divide-gray-200">
+            <div className="px-4 py-5 sm:px-6">
+              <h3 className="text-lg font-medium text-gray-900">Track Expenses</h3>
+            </div>
+            <div className="px-4 py-5 sm:p-6">
+              <p className="text-sm text-gray-500">Track your daily expenses and manage your budget.</p>
+              <div className="mt-4 flex">
+                <Link
+                  to="/expenses"
+                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                >
+                  Manage Expenses
                 </Link>
               </div>
             </div>
@@ -242,7 +282,7 @@ const Dashboard: React.FC = () => {
               <h3 className="text-lg font-medium text-gray-900">View Reports</h3>
             </div>
             <div className="px-4 py-5 sm:p-6">
-              <p className="text-sm text-gray-500">Analyze your subscription spending with visualized reports and insights.</p>
+              <p className="text-sm text-gray-500">Analyze your spending with visualized reports and insights.</p>
               <div className="mt-4 flex">
                 <Link
                   to="/reports/payments"
