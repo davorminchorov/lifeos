@@ -142,6 +142,69 @@ const AppLayout: React.FC = () => {
                   Reports
                 </Link>
 
+                <Link
+                  to="/utility-bills"
+                  className={`${isActive('/utility-bills')} text-white group flex items-center px-2 py-2 text-sm font-medium rounded-md`}
+                >
+                  <svg
+                    className="mr-3 h-6 w-6 text-indigo-300"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                    />
+                  </svg>
+                  Utility Bills
+                </Link>
+
+                <Link
+                  to="/investments"
+                  className={`${isActive('/investments')} text-white group flex items-center px-2 py-2 text-sm font-medium rounded-md`}
+                >
+                  <svg
+                    className="mr-3 h-6 w-6 text-indigo-300"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+                    />
+                  </svg>
+                  Investments
+                </Link>
+
+                <Link
+                  to="/job-applications"
+                  className={`${isActive('/job-applications')} text-white group flex items-center px-2 py-2 text-sm font-medium rounded-md`}
+                >
+                  <svg
+                    className="mr-3 h-6 w-6 text-indigo-300"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                    />
+                  </svg>
+                  Job Applications
+                </Link>
+
                 {/* Add more menu items for UtilityBills, Investments, etc. */}
               </nav>
             </div>
@@ -243,6 +306,27 @@ const AppLayout: React.FC = () => {
               onClick={() => setIsMobileMenuOpen(false)}
             >
               Reports
+            </Link>
+            <Link
+              to="/utility-bills"
+              className={`${isActive('/utility-bills')} text-white block px-3 py-2 rounded-md text-base font-medium`}
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              Utility Bills
+            </Link>
+            <Link
+              to="/investments"
+              className={`${isActive('/investments')} text-white block px-3 py-2 rounded-md text-base font-medium`}
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              Investments
+            </Link>
+            <Link
+              to="/job-applications"
+              className={`${isActive('/job-applications')} text-white block px-3 py-2 rounded-md text-base font-medium`}
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              Job Applications
             </Link>
             <button
               onClick={handleLogout}

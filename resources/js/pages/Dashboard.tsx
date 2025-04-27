@@ -189,7 +189,7 @@ const Dashboard: React.FC = () => {
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-medium text-gray-900">Quick Actions</h2>
         </div>
-        <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
           <div className="bg-white overflow-hidden shadow rounded-lg divide-y divide-gray-200">
             <div className="px-4 py-5 sm:px-6">
               <h3 className="text-lg font-medium text-gray-900">Manage Subscriptions</h3>
@@ -237,6 +237,40 @@ const Dashboard: React.FC = () => {
                 className="text-sm font-medium text-indigo-600 hover:text-indigo-500"
               >
                 Go to Expenses
+              </Link>
+            </div>
+          </div>
+
+          <div className="bg-white overflow-hidden shadow rounded-lg divide-y divide-gray-200">
+            <div className="px-4 py-5 sm:px-6">
+              <h3 className="text-lg font-medium text-gray-900">Investments</h3>
+            </div>
+            <div className="px-4 py-5 sm:p-6">
+              <p className="text-sm text-gray-500">Monitor your investment portfolio and track performance.</p>
+            </div>
+            <div className="px-4 py-4 sm:px-6">
+              <Link
+                to="/investments"
+                className="text-sm font-medium text-indigo-600 hover:text-indigo-500"
+              >
+                Go to Investments
+              </Link>
+            </div>
+          </div>
+
+          <div className="bg-white overflow-hidden shadow rounded-lg divide-y divide-gray-200">
+            <div className="px-4 py-5 sm:px-6">
+              <h3 className="text-lg font-medium text-gray-900">Job Applications</h3>
+            </div>
+            <div className="px-4 py-5 sm:p-6">
+              <p className="text-sm text-gray-500">Track job applications, interviews, and follow-ups.</p>
+            </div>
+            <div className="px-4 py-4 sm:px-6">
+              <Link
+                to="/job-applications"
+                className="text-sm font-medium text-indigo-600 hover:text-indigo-500"
+              >
+                Go to Job Applications
               </Link>
             </div>
           </div>
