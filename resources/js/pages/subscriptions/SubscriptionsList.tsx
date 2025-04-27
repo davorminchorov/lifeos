@@ -51,47 +51,23 @@ const SubscriptionsList: React.FC = () => {
     try {
       const params = new URLSearchParams({
         page: page.toString(),
+        per_page: '10',
+        sort_by: 'name',
+        sort_direction: 'asc',
         ...filters,
-      });
+      }).toString();
 
-      // Uncomment for actual API usage:
-      // const response = await axios.get(`/api/subscriptions?${params}`);
-      // const apiData = response.data.data || [];
-
-      // For demo purposes - using mock data
-      const apiData: SubscriptionAPI[] = [
-        {
-          id: '1',
-          name: 'Netflix',
-          description: 'Premium streaming service',
-          amount: 15.99,
-          currency: 'USD',
-          billing_cycle: 'monthly',
-          start_date: '2023-01-15',
-          end_date: null,
-          status: 'active',
-          website: 'https://netflix.com',
-          category: 'streaming',
-          next_payment_date: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000).toISOString(),
-        },
-        {
-          id: '2',
-          name: 'Spotify',
-          description: 'Music streaming service',
-          amount: 9.99,
-          currency: 'USD',
-          billing_cycle: 'monthly',
-          start_date: '2022-03-10',
-          end_date: '2023-11-10',
-          status: 'cancelled',
-          website: 'https://spotify.com',
-          category: 'streaming',
-          next_payment_date: null,
-        }
-      ];
+      const response = await axios.get(`/api/subscriptions?${params}`);
+      const apiData = response.data.data || [];
+      const metaData = response.data.meta || {
+        current_page: 1,
+        per_page: 10,
+        total: 0,
+        last_page: 1,
+      };
 
       // Transform API data to SubscriptionType
-      const transformedData: SubscriptionType[] = apiData.map(sub => ({
+      const transformedData: SubscriptionType[] = apiData.map((sub: SubscriptionAPI) => ({
         id: sub.id,
         name: sub.name,
         description: sub.description,
@@ -101,22 +77,14 @@ const SubscriptionsList: React.FC = () => {
         currentPeriodEnd: sub.next_payment_date || undefined,
         price: sub.amount,
         interval: sub.billing_cycle === 'monthly' ? 'month' :
-                  sub.billing_cycle === 'yearly' ? 'year' :
+                  sub.billing_cycle === 'annually' ? 'year' :
                   sub.billing_cycle === 'weekly' ? 'week' : 'day',
         currency: sub.currency,
         features: sub.category ? [sub.category] : undefined
       }));
 
       setSubscriptions(transformedData);
-
-      // Mock meta data
-      setMeta({
-        current_page: page,
-        per_page: 10,
-        total: transformedData.length,
-        last_page: 1,
-      });
-
+      setMeta(metaData);
       setError(null);
     } catch (err) {
       setError('Failed to load subscriptions');
@@ -145,33 +113,46 @@ const SubscriptionsList: React.FC = () => {
   };
 
   const handleManageSubscription = (subscription: SubscriptionType) => {
-    console.log('Managing subscription:', subscription);
     // Navigate to subscription detail page
     window.location.href = `/subscriptions/${subscription.id}`;
   };
 
-  const handleCancelSubscription = (subscription: SubscriptionType) => {
-    console.log('Canceling subscription:', subscription);
-    // For demo, just update the local state
-    setSubscriptions(prevSubscriptions =>
-      prevSubscriptions.map(sub =>
-        sub.id === subscription.id
-          ? {...sub, status: 'canceled'}
-          : sub
-      )
-    );
+  const handleCancelSubscription = async (subscription: SubscriptionType) => {
+    try {
+      const endDate = new Date().toISOString().split('T')[0]; // Today's date
+      await axios.post(`/api/subscriptions/${subscription.id}/cancel`, { end_date: endDate });
+
+      // Refresh subscriptions after cancellation
+      fetchSubscriptions();
+    } catch (err) {
+      console.error('Error cancelling subscription:', err);
+      setError('Failed to cancel subscription');
+    }
   };
 
-  const handleRenewSubscription = (subscription: SubscriptionType) => {
-    console.log('Renewing subscription:', subscription);
-    // For demo, just update the local state
-    setSubscriptions(prevSubscriptions =>
-      prevSubscriptions.map(sub =>
-        sub.id === subscription.id
-          ? {...sub, status: 'active', currentPeriodEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()}
-          : sub
-      )
-    );
+  const handleRenewSubscription = async (subscription: SubscriptionType) => {
+    try {
+      // For a basic renewal, we'll update the subscription with a new start date
+      const startDate = new Date().toISOString().split('T')[0]; // Today's date
+
+      // Get current subscription details first
+      const response = await axios.get(`/api/subscriptions/${subscription.id}`);
+      const currentData = response.data;
+
+      // Update with new values while keeping most properties the same
+      await axios.put(`/api/subscriptions/${subscription.id}`, {
+        ...currentData,
+        start_date: startDate,
+        status: 'active',
+        end_date: null
+      });
+
+      // Refresh subscriptions after renewal
+      fetchSubscriptions();
+    } catch (err) {
+      console.error('Error renewing subscription:', err);
+      setError('Failed to renew subscription');
+    }
   };
 
   return (
@@ -223,6 +204,8 @@ const SubscriptionsList: React.FC = () => {
                 <option value="streaming">Streaming</option>
                 <option value="software">Software</option>
                 <option value="hosting">Hosting</option>
+                <option value="utilities">Utilities</option>
+                <option value="memberships">Memberships</option>
                 <option value="other">Other</option>
               </select>
             </div>
@@ -249,56 +232,56 @@ const SubscriptionsList: React.FC = () => {
         </CardContent>
       </Card>
 
-      {error && (
-        <div className="bg-error-container text-on-error-container p-4 rounded-lg mb-6">
+      {loading ? (
+        <div className="flex justify-center py-10">
+          <div className="animate-pulse text-center">
+            <div className="h-10 w-40 bg-surface-variant rounded mx-auto mb-4"></div>
+            <div className="h-4 w-60 bg-surface-variant rounded mx-auto"></div>
+          </div>
+        </div>
+      ) : error ? (
+        <div className="bg-error-container border border-error text-on-error-container p-4 rounded-lg">
           {error}
         </div>
-      )}
-
-      {loading ? (
-        <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-        </div>
       ) : (
-        <SubscriptionManager
-          subscriptions={subscriptions}
-          onManageSubscription={handleManageSubscription}
-          onCancelSubscription={handleCancelSubscription}
-          onRenewSubscription={handleRenewSubscription}
-        />
-      )}
+        <>
+          <SubscriptionManager
+            subscriptions={subscriptions}
+            onManageSubscription={handleManageSubscription}
+            onCancelSubscription={handleCancelSubscription}
+            onRenewSubscription={handleRenewSubscription}
+          />
 
-      {/* Pagination controls */}
-      {meta.last_page > 1 && (
-        <div className="flex justify-center mt-6">
-          <nav className="flex items-center space-x-2">
-            <Button
-              variant="text"
-              disabled={meta.current_page === 1}
-              onClick={() => handlePageChange(meta.current_page - 1)}
-            >
-              Previous
-            </Button>
+          {/* Pagination */}
+          {meta.total > 0 && meta.last_page > 1 && (
+            <div className="mt-8 flex justify-center">
+              <div className="flex space-x-2">
+                {Array.from({ length: meta.last_page }, (_, i) => i + 1).map(page => (
+                  <button
+                    key={page}
+                    onClick={() => handlePageChange(page)}
+                    className={`px-3 py-1 rounded-md ${
+                      meta.current_page === page
+                        ? 'bg-primary text-on-primary'
+                        : 'bg-surface-variant text-on-surface-variant'
+                    }`}
+                  >
+                    {page}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
-            {Array.from({ length: meta.last_page }, (_, i) => i + 1).map(page => (
-              <Button
-                key={page}
-                variant={meta.current_page === page ? "filled" : "text"}
-                onClick={() => handlePageChange(page)}
-              >
-                {page}
-              </Button>
-            ))}
-
-            <Button
-              variant="text"
-              disabled={meta.current_page === meta.last_page}
-              onClick={() => handlePageChange(meta.current_page + 1)}
-            >
-              Next
-            </Button>
-          </nav>
-        </div>
+          {subscriptions.length === 0 && (
+            <div className="text-center py-8 p-10 bg-surface-container rounded-lg border border-outline/40 shadow-elevation-1">
+              <p className="text-headline-small text-on-surface-variant mb-4">You don't have any subscriptions yet.</p>
+              <Link to="/subscriptions/create">
+                <Button variant="filled">Add Subscription</Button>
+              </Link>
+            </div>
+          )}
+        </>
       )}
     </PageContainer>
   );

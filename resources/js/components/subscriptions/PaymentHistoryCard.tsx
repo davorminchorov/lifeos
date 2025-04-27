@@ -3,7 +3,7 @@ import { formatCurrency, formatDate } from '../../utils/format';
 import { Card } from '../../ui/Card';
 
 export interface Payment {
-  id: number;
+  id: string | number;
   amount: number;
   date: string;
   status: string;

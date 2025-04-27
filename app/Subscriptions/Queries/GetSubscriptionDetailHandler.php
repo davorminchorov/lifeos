@@ -9,6 +9,7 @@ class GetSubscriptionDetailHandler implements QueryHandler
 {
     public function handle(GetSubscriptionDetail $query): ?array
     {
+        // Get the subscription
         $subscription = DB::table('subscriptions')
             ->where('id', $query->subscriptionId)
             ->first();
@@ -17,12 +18,7 @@ class GetSubscriptionDetailHandler implements QueryHandler
             return null;
         }
 
-        // Get the upcoming payment date if it exists
-        $upcomingPayment = DB::table('upcoming_payments')
-            ->where('subscription_id', $query->subscriptionId)
-            ->first();
-
-        // Get payment history
+        // Get subscription payments
         $payments = DB::table('payments')
             ->where('subscription_id', $query->subscriptionId)
             ->orderBy('payment_date', 'desc')
@@ -38,9 +34,17 @@ class GetSubscriptionDetailHandler implements QueryHandler
             })
             ->toArray();
 
-        // Calculate total amount paid
-        $totalPaid = array_sum(array_column($payments, 'amount'));
+        // Get upcoming payment information
+        $upcomingPayment = DB::table('upcoming_payments')
+            ->where('subscription_id', $query->subscriptionId)
+            ->first();
 
+        // Calculate the total payments made
+        $totalPaid = array_reduce($payments, function ($carry, $payment) {
+            return $carry + $payment['amount'];
+        }, 0);
+
+        // Format the response
         return [
             'id' => $subscription->id,
             'name' => $subscription->name,
@@ -54,8 +58,8 @@ class GetSubscriptionDetailHandler implements QueryHandler
             'website' => $subscription->website,
             'category' => $subscription->category,
             'next_payment_date' => $upcomingPayment ? $upcomingPayment->expected_date : null,
-            'payments' => $payments,
             'total_paid' => $totalPaid,
+            'payments' => $payments,
             'created_at' => $subscription->created_at,
             'updated_at' => $subscription->updated_at,
         ];

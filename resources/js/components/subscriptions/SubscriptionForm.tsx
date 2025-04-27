@@ -43,7 +43,16 @@ const SubscriptionForm: React.FC<SubscriptionFormProps> = ({
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    // Handle numeric input for the amount field
+    if (name === 'amount') {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value === '' ? 0 : parseFloat(value)
+      }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
 
     // Clear error for this field when user updates it
     if (errors[name]) {
@@ -273,7 +282,7 @@ const SubscriptionForm: React.FC<SubscriptionFormProps> = ({
                     errors.currency ? 'border-error' : 'border-outline border-opacity-30'
                   } shadow-sm p-2 bg-surface text-on-surface`}
                 >
-                  {currencyOptions.map((option) => (
+                  {currencyOptions.map(option => (
                     <option key={option.value} value={option.value}>
                       {option.label}
                     </option>
@@ -300,7 +309,7 @@ const SubscriptionForm: React.FC<SubscriptionFormProps> = ({
                     errors.billing_cycle ? 'border-error' : 'border-outline border-opacity-30'
                   } shadow-sm p-2 bg-surface text-on-surface`}
                 >
-                  {billingCycleOptions.map((option) => (
+                  {billingCycleOptions.map(option => (
                     <option key={option.value} value={option.value}>
                       {option.label}
                     </option>
@@ -331,13 +340,39 @@ const SubscriptionForm: React.FC<SubscriptionFormProps> = ({
               </div>
             </div>
 
+            {/* Category */}
+            <div>
+              <label htmlFor="category" className="block text-sm font-medium text-on-surface-variant mb-1">
+                Category
+              </label>
+              <select
+                id="category"
+                name="category"
+                value={formData.category}
+                onChange={handleChange}
+                className={`w-full rounded-md border ${
+                  errors.category ? 'border-error' : 'border-outline border-opacity-30'
+                } shadow-sm p-2 bg-surface text-on-surface`}
+              >
+                <option value="">Select a category</option>
+                {categoryOptions.map(option => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+              {errors.category && (
+                <p className="mt-1 text-sm text-error">{errors.category}</p>
+              )}
+            </div>
+
             {/* Website */}
             <div>
               <label htmlFor="website" className="block text-sm font-medium text-on-surface-variant mb-1">
-                Website (Optional)
+                Website
               </label>
               <input
-                type="text"
+                type="url"
                 id="website"
                 name="website"
                 value={formData.website}
@@ -350,36 +385,12 @@ const SubscriptionForm: React.FC<SubscriptionFormProps> = ({
               {errors.website && (
                 <p className="mt-1 text-sm text-error">{errors.website}</p>
               )}
+              <p className="mt-1 text-xs text-on-surface-variant">
+                Optional: Enter the website URL for this subscription service
+              </p>
             </div>
 
-            {/* Category */}
-            <div>
-              <label htmlFor="category" className="block text-sm font-medium text-on-surface-variant mb-1">
-                Category (Optional)
-              </label>
-              <select
-                id="category"
-                name="category"
-                value={formData.category}
-                onChange={handleChange}
-                className={`w-full rounded-md border ${
-                  errors.category ? 'border-error' : 'border-outline border-opacity-30'
-                } shadow-sm p-2 bg-surface text-on-surface`}
-              >
-                <option value="">Select a category</option>
-                {categoryOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-              {errors.category && (
-                <p className="mt-1 text-sm text-error">{errors.category}</p>
-              )}
-            </div>
-
-            {/* Form Actions */}
-            <div className="flex justify-end space-x-3 pt-6">
+            <div className="flex justify-end space-x-3 pt-4">
               <Button
                 type="button"
                 variant="text"
@@ -393,7 +404,9 @@ const SubscriptionForm: React.FC<SubscriptionFormProps> = ({
                 variant="filled"
                 disabled={isSubmitting}
               >
-                {isSubmitting ? 'Saving...' : isEditing ? 'Update Subscription' : 'Create Subscription'}
+                {isSubmitting
+                  ? (isEditing ? 'Updating...' : 'Creating...')
+                  : (isEditing ? 'Update Subscription' : 'Create Subscription')}
               </Button>
             </div>
           </div>

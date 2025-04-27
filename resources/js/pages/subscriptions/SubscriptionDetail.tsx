@@ -7,6 +7,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '../../ui';
 import PaymentHistoryCard from '../../components/subscriptions/PaymentHistoryCard';
 import PaymentSummaryCard from '../../components/subscriptions/PaymentSummaryCard';
 import RecordPaymentModal, { RecordPaymentFormData } from '../../components/subscriptions/RecordPaymentModal';
+import { useToast } from '../../ui/Toast';
 
 interface Subscription {
   id: string;
@@ -37,6 +38,7 @@ interface SubscriptionPayment {
 const SubscriptionDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [subscription, setSubscription] = useState<Subscription | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -55,13 +57,15 @@ const SubscriptionDetail: React.FC = () => {
   }, [id]);
 
   const fetchSubscription = async () => {
+    if (!id) return;
+
     setLoading(true);
     try {
       const response = await axios.get(`/api/subscriptions/${id}`);
       setSubscription(response.data);
       setError(null);
-    } catch (err) {
-      setError('Failed to load subscription details');
+    } catch (err: any) {
+      setError(err.response?.data?.error || 'Failed to load subscription details');
       console.error(err);
     } finally {
       setLoading(false);
@@ -69,6 +73,8 @@ const SubscriptionDetail: React.FC = () => {
   };
 
   const handleCancelSubscription = async () => {
+    if (!id) return;
+
     setIsCancelling(true);
     setCancelError(null);
 
@@ -76,10 +82,25 @@ const SubscriptionDetail: React.FC = () => {
       await axios.post(`/api/subscriptions/${id}/cancel`, {
         end_date: cancelDate,
       });
+
+      toast({
+        title: "Success",
+        description: "Subscription cancelled successfully",
+        variant: "success",
+      });
+
       setShowCancelModal(false);
       fetchSubscription(); // Refresh data
     } catch (err: any) {
-      setCancelError(err.response?.data?.error || 'Failed to cancel subscription');
+      const errorMessage = err.response?.data?.error || 'Failed to cancel subscription';
+      setCancelError(errorMessage);
+
+      toast({
+        title: "Error",
+        description: errorMessage,
+        variant: "destructive",
+      });
+
       console.error(err);
     } finally {
       setIsCancelling(false);
@@ -87,15 +108,32 @@ const SubscriptionDetail: React.FC = () => {
   };
 
   const handleRecordPayment = async (paymentData: RecordPaymentFormData) => {
+    if (!id) return;
+
     setIsRecordingPayment(true);
     setPaymentError(null);
 
     try {
       await axios.post(`/api/subscriptions/${id}/payments`, paymentData);
+
+      toast({
+        title: "Success",
+        description: "Payment recorded successfully",
+        variant: "success",
+      });
+
       setShowPaymentModal(false);
       fetchSubscription(); // Refresh data
     } catch (err: any) {
-      setPaymentError(err.response?.data?.error || 'Failed to record payment');
+      const errorMessage = err.response?.data?.error || 'Failed to record payment';
+      setPaymentError(errorMessage);
+
+      toast({
+        title: "Error",
+        description: errorMessage,
+        variant: "destructive",
+      });
+
       console.error(err);
     } finally {
       setIsRecordingPayment(false);
@@ -128,8 +166,10 @@ const SubscriptionDetail: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+      <div className="container mx-auto px-4 py-8 max-w-6xl">
+        <div className="flex justify-center items-center h-64">
+          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+        </div>
       </div>
     );
   }
@@ -147,10 +187,13 @@ const SubscriptionDetail: React.FC = () => {
     );
   }
 
-  // Prepare data for payment history component
-  const paymentHistoryData = subscription.payments.map(payment => ({
-    ...payment,
-    currency: subscription.currency  // Ensure currency is passed to each payment
+  // Transform payments to the format expected by PaymentHistoryCard
+  const formattedPayments = subscription.payments.map(payment => ({
+    id: payment.id,
+    amount: payment.amount,
+    date: payment.payment_date,
+    status: 'paid', // Assuming all recorded payments are paid
+    reference: payment.notes || undefined
   }));
 
   return (
@@ -250,10 +293,22 @@ const SubscriptionDetail: React.FC = () => {
                 )}
               </div>
             </div>
+
+            <div className="mt-6 pt-6 border-t border-outline border-opacity-20">
+              <div className="flex justify-end">
+                <Button
+                  variant="filled"
+                  onClick={() => setShowPaymentModal(true)}
+                  disabled={subscription.status !== 'active'}
+                >
+                  Record Payment
+                </Button>
+              </div>
+            </div>
           </CardContent>
         </Card>
 
-        <Card variant="filled">
+        <Card variant="elevated">
           <CardHeader>
             <CardTitle>Payment Summary</CardTitle>
           </CardHeader>
@@ -267,37 +322,39 @@ const SubscriptionDetail: React.FC = () => {
               startDate={subscription.start_date}
               paymentCount={subscription.payments?.length || 0}
             />
-            <div className="mt-6">
-              <Button
-                variant="tonal"
-                onClick={() => setShowPaymentModal(true)}
-                className="w-full"
-                disabled={subscription.status !== 'active'}
-              >
-                Record Payment
-              </Button>
-            </div>
           </CardContent>
         </Card>
       </div>
 
-      {subscription.payments && subscription.payments.length > 0 && (
+      {subscription.payments && subscription.payments.length > 0 ? (
         <Card variant="elevated" className="mb-6">
           <CardHeader>
             <CardTitle>Payment History</CardTitle>
           </CardHeader>
           <CardContent>
-            <PaymentHistoryCard payments={paymentHistoryData} currency={subscription.currency} />
+            <PaymentHistoryCard
+              payments={formattedPayments}
+              currency={subscription.currency}
+            />
+          </CardContent>
+        </Card>
+      ) : (
+        <Card variant="elevated" className="mb-6">
+          <CardContent className="py-8">
+            <p className="text-center text-on-surface-variant">No payment history available.</p>
           </CardContent>
         </Card>
       )}
 
-      {/* Cancel Subscription Modal */}
+      {/* Cancel subscription modal */}
       {showCancelModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-surface rounded-lg shadow-elevation-3 max-w-md w-full">
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center p-4">
+          <div className="bg-surface rounded-xl shadow-elevation-3 max-w-md w-full mx-auto">
             <div className="p-6">
-              <h3 className="text-lg font-medium text-on-surface mb-4">Cancel Subscription</h3>
+              <h3 className="text-headline-small font-medium text-on-surface mb-2">Cancel Subscription</h3>
+              <p className="text-body-medium text-on-surface-variant mb-6">
+                Are you sure you want to cancel your subscription to {subscription.name}?
+              </p>
 
               {cancelError && (
                 <div className="mb-4 p-3 bg-error-container text-on-error-container rounded">
@@ -305,31 +362,24 @@ const SubscriptionDetail: React.FC = () => {
                 </div>
               )}
 
-              <p className="text-on-surface-variant mb-4">
-                Are you sure you want to cancel your {subscription.name} subscription?
-              </p>
-
-              <div className="mb-4">
-                <label htmlFor="cancelDate" className="block text-sm font-medium text-on-surface-variant mb-1">
-                  End Date
+              <div className="mb-6">
+                <label htmlFor="cancel-date" className="block text-sm font-medium text-on-surface-variant mb-1">
+                  Cancellation Date
                 </label>
                 <input
                   type="date"
-                  id="cancelDate"
+                  id="cancel-date"
+                  name="cancel-date"
                   value={cancelDate}
                   onChange={(e) => setCancelDate(e.target.value)}
-                  className="w-full rounded-md border border-outline border-opacity-30 shadow-sm p-2 bg-surface text-on-surface"
+                  className="w-full border border-outline border-opacity-30 rounded-md shadow-sm p-2 bg-surface text-on-surface"
                   min={new Date().toISOString().split('T')[0]}
                 />
               </div>
 
               <div className="flex justify-end space-x-3">
-                <Button
-                  variant="text"
-                  onClick={() => setShowCancelModal(false)}
-                  disabled={isCancelling}
-                >
-                  Keep Subscription
+                <Button variant="text" onClick={() => setShowCancelModal(false)} disabled={isCancelling}>
+                  Cancel
                 </Button>
                 <Button
                   variant="filled"
@@ -345,15 +395,15 @@ const SubscriptionDetail: React.FC = () => {
         </div>
       )}
 
-      {/* Record Payment Modal */}
+      {/* Record payment modal */}
       {showPaymentModal && (
         <RecordPaymentModal
           onClose={() => setShowPaymentModal(false)}
           onSubmit={handleRecordPayment}
           isSubmitting={isRecordingPayment}
           error={paymentError}
-          defaultAmount={subscription.amount}
           defaultCurrency={subscription.currency}
+          defaultAmount={subscription.amount}
         />
       )}
     </div>
