@@ -3,6 +3,7 @@ import axios from 'axios';
 import { formatCurrency } from '../../utils/format';
 import { Button } from '../../ui/Button/Button';
 import { Card } from '../../ui/Card';
+import { Link } from 'react-router-dom';
 
 // Simple line chart component
 const LineChart: React.FC<{
@@ -472,152 +473,230 @@ const PaymentReports: React.FC = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Payment Reports</h1>
+    <div className="container mx-auto px-4 py-8 max-w-6xl">
+      <div className="flex flex-col space-y-4 mb-8">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+          <h1 className="text-3xl font-bold mb-2 sm:mb-0">Payment Reports</h1>
 
-        <div className="flex space-x-2">
-          <Button
-            variant={timeRange === '3m' ? 'contained' : 'outlined'}
-            size="sm"
-            onClick={() => setTimeRange('3m')}
-          >
-            3 Months
-          </Button>
-          <Button
-            variant={timeRange === '6m' ? 'contained' : 'outlined'}
-            size="sm"
-            onClick={() => setTimeRange('6m')}
-          >
-            6 Months
-          </Button>
-          <Button
-            variant={timeRange === '1y' ? 'contained' : 'outlined'}
-            size="sm"
-            onClick={() => setTimeRange('1y')}
-          >
-            1 Year
-          </Button>
-          <Button
-            variant={timeRange === 'all' ? 'contained' : 'outlined'}
-            size="sm"
-            onClick={() => setTimeRange('all')}
-          >
-            All Time
-          </Button>
+          <div className="inline-flex p-1 bg-gray-100 rounded-lg shadow-sm sm:ml-6">
+            <Button
+              variant={timeRange === '3m' ? 'contained' : 'outlined'}
+              size="sm"
+              onClick={() => setTimeRange('3m')}
+              className="rounded-md"
+            >
+              3 Months
+            </Button>
+            <Button
+              variant={timeRange === '6m' ? 'contained' : 'outlined'}
+              size="sm"
+              onClick={() => setTimeRange('6m')}
+              className="rounded-md"
+            >
+              6 Months
+            </Button>
+            <Button
+              variant={timeRange === '1y' ? 'contained' : 'outlined'}
+              size="sm"
+              onClick={() => setTimeRange('1y')}
+              className="rounded-md"
+            >
+              1 Year
+            </Button>
+            <Button
+              variant={timeRange === 'all' ? 'contained' : 'outlined'}
+              size="sm"
+              onClick={() => setTimeRange('all')}
+              className="rounded-md"
+            >
+              All Time
+            </Button>
+          </div>
         </div>
+
+        <p className="text-gray-600">View your payment history and spending patterns over time.</p>
       </div>
 
       {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
           {error}
         </div>
       )}
 
-      {/* Summary Card */}
-      <Card className="mb-6">
-        <div className="p-6">
-          <h2 className="text-xl font-semibold mb-4">Summary</h2>
-          <div className="flex flex-wrap gap-6">
-            <div>
-              <p className="text-sm text-gray-500">Total Spending</p>
-              <p className="text-2xl font-bold">{formatCurrency(totalSpending, currency)}</p>
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Number of Payments</p>
-              <p className="text-2xl font-bold">{payments.length}</p>
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Average Payment</p>
-              <p className="text-2xl font-bold">
-                {formatCurrency(payments.length ? totalSpending / payments.length : 0, currency)}
-              </p>
-            </div>
-          </div>
-        </div>
-      </Card>
-
-      {/* Monthly Spending Chart */}
-      <Card className="mb-6">
-        <div className="p-6">
-          <h2 className="text-xl font-semibold mb-4">Monthly Spending</h2>
-          <div className="overflow-x-auto">
-            <div className="min-w-max">
-              <LineChart
-                data={getMonthlySpendingData()}
-                height={200}
-                width={Math.max(600, getMonthlySpendingData().length * 80)}
-                color="#4f46e5"
-              />
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+        {/* Summary Card */}
+        <Card className="border border-gray-200 shadow-sm md:col-span-12">
+          <div className="p-6">
+            <h2 className="text-xl font-semibold mb-4">Summary</h2>
+            <div className="flex flex-wrap gap-6">
+              <div className="flex-1 min-w-[150px]">
+                <p className="text-sm text-gray-500">Total Spending</p>
+                <p className="text-2xl font-bold">{formatCurrency(totalSpending, currency)}</p>
+              </div>
+              <div className="flex-1 min-w-[150px]">
+                <p className="text-sm text-gray-500">Number of Payments</p>
+                <p className="text-2xl font-bold">{payments.length}</p>
+              </div>
+              <div className="flex-1 min-w-[150px]">
+                <p className="text-sm text-gray-500">Average Payment</p>
+                <p className="text-2xl font-bold">
+                  {formatCurrency(payments.length ? totalSpending / payments.length : 0, currency)}
+                </p>
+              </div>
             </div>
           </div>
-        </div>
-      </Card>
+        </Card>
 
-      {/* Category Breakdown and Top Subscriptions */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        {/* Monthly Spending Chart */}
+        <Card className="border border-gray-200 shadow-sm md:col-span-12">
+          <div className="p-6">
+            <h2 className="text-xl font-semibold mb-4">Monthly Spending</h2>
+            {getMonthlySpendingData().length === 0 || totalSpending === 0 ? (
+              <div className="flex flex-col items-center justify-center p-10 bg-gray-50 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-gray-300 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+                <p className="text-lg font-medium text-gray-600 mb-1">No spending data yet</p>
+                <p className="text-gray-500 text-center mb-4">Start recording payments to visualize your spending patterns over time.</p>
+                <Link to="/payments/record">
+                  <Button size="sm">Record Your First Payment</Button>
+                </Link>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <div className="min-w-max">
+                  <LineChart
+                    data={getMonthlySpendingData()}
+                    height={200}
+                    width={Math.max(600, getMonthlySpendingData().length * 80)}
+                    color="#4f46e5"
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+        </Card>
+
         {/* Category Breakdown */}
-        <Card>
+        <Card className="border border-gray-200 shadow-sm md:col-span-6">
           <div className="p-6">
             <h2 className="text-xl font-semibold mb-4">Spending by Category</h2>
-            <div className="flex justify-center">
-              <DonutChart
-                data={getCategoryData()}
-                size={250}
-              />
-            </div>
+            {getCategoryData().length === 0 || totalSpending === 0 ? (
+              <div className="flex flex-col items-center justify-center p-8 bg-gray-50 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-gray-300 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" />
+                </svg>
+                <p className="text-gray-500 text-center">No category data available</p>
+                <p className="text-sm text-gray-400 text-center mt-1">
+                  Categories will appear as you record payments
+                </p>
+              </div>
+            ) : (
+              <div className="flex justify-center">
+                <DonutChart
+                  data={getCategoryData()}
+                  size={250}
+                />
+              </div>
+            )}
           </div>
         </Card>
 
         {/* Top Subscriptions */}
-        <Card>
+        <Card className="border border-gray-200 shadow-sm md:col-span-6">
           <div className="p-6">
             <h2 className="text-xl font-semibold mb-4">Top Subscriptions</h2>
-            <BarChart
-              data={getSubscriptionData()}
-              height={250}
-              width={500}
-              color="#8b5cf6"
-            />
+            {getSubscriptionData().length === 0 || totalSpending === 0 ? (
+              <div className="flex flex-col items-center justify-center p-8 bg-gray-50 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-gray-300 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
+                </svg>
+                <p className="text-gray-500 text-center">No subscription data available</p>
+                <p className="text-sm text-gray-400 text-center mt-1">
+                  Add subscriptions in the subscription section
+                </p>
+              </div>
+            ) : (
+              <BarChart
+                data={getSubscriptionData()}
+                height={250}
+                width={500}
+                color="#8b5cf6"
+              />
+            )}
+          </div>
+        </Card>
+
+        {/* Subscription Analysis */}
+        <Card className="border border-gray-200 shadow-sm md:col-span-12">
+          <div className="p-6">
+            <h2 className="text-xl font-semibold mb-4">Subscription Analysis</h2>
+            {payments.length === 0 ? (
+              <div className="flex flex-col items-center justify-center p-8 bg-gray-50 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-gray-300 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                </svg>
+                <p className="text-lg font-medium text-gray-600 mb-1">Ready for your insights</p>
+                <p className="text-gray-500 text-center mb-4">We'll analyze your spending once you start recording payments.</p>
+                <div className="flex space-x-3">
+                  <Link to="/subscriptions">
+                    <Button variant="outlined" size="sm">Manage Subscriptions</Button>
+                  </Link>
+                  <Link to="/payments/record">
+                    <Button size="sm">Record Payment</Button>
+                  </Link>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <p className="text-gray-700">
+                  Based on your spending history, here are some insights and suggestions:
+                </p>
+                <ul className="list-disc pl-5 space-y-2 text-gray-700">
+                  <li>
+                    Your highest spending category is{' '}
+                    <span className="font-medium">
+                      {getCategoryData().sort((a, b) => b.value - a.value)[0]?.label || 'N/A'}
+                    </span>
+                    {' '}at{' '}
+                    {formatCurrency(getCategoryData().sort((a, b) => b.value - a.value)[0]?.value || 0, currency)}
+                  </li>
+                  <li>
+                    Your most expensive subscription is{' '}
+                    <span className="font-medium">
+                      {getSubscriptionData().sort((a, b) => b.value - a.value)[0]?.label || 'N/A'}
+                    </span>
+                  </li>
+                  <li>
+                    Average monthly spending:{' '}
+                    {formatCurrency(
+                      getMonthlySpendingData().reduce((sum, month) => sum + month.value, 0) /
+                      Math.max(getMonthlySpendingData().length, 1),
+                      currency
+                    )}
+                  </li>
+                </ul>
+              </div>
+            )}
           </div>
         </Card>
       </div>
 
-      {/* Subscription Analysis */}
-      <Card>
-        <div className="p-6">
-          <h2 className="text-xl font-semibold mb-4">Subscription Analysis</h2>
-          <div className="space-y-4">
-            <p className="text-gray-700">
-              Based on your spending history, here are some insights and suggestions:
-            </p>
-            <ul className="list-disc pl-5 space-y-2 text-gray-700">
-              <li>
-                Your highest spending category is{' '}
-                <span className="font-medium">
-                  {getCategoryData().sort((a, b) => b.value - a.value)[0]?.label || 'N/A'}
-                </span>
-                {' '}at{' '}
-                {formatCurrency(getCategoryData().sort((a, b) => b.value - a.value)[0]?.value || 0, currency)}
-              </li>
-              <li>
-                Your most expensive subscription is{' '}
-                <span className="font-medium">
-                  {getSubscriptionData().sort((a, b) => b.value - a.value)[0]?.label || 'N/A'}
-                </span>
-              </li>
-              <li>
-                Average monthly spending:{' '}
-                {formatCurrency(
-                  getMonthlySpendingData().reduce((sum, month) => sum + month.value, 0) /
-                  Math.max(getMonthlySpendingData().length, 1),
-                  currency
-                )}
-              </li>
-            </ul>
+      {payments.length === 0 && (
+        <div className="mt-8 text-center">
+          <p className="text-gray-500 mb-2">Don't see any data?</p>
+          <p className="text-gray-700 mb-4">Start by recording payments for your subscriptions and bills.</p>
+          <div className="flex justify-center space-x-4">
+            <Link to="/subscriptions">
+              <Button variant="outlined">Manage Subscriptions</Button>
+            </Link>
+            <Link to="/payments/record">
+              <Button>Record a Payment</Button>
+            </Link>
           </div>
         </div>
-      </Card>
+      )}
     </div>
   );
 };
