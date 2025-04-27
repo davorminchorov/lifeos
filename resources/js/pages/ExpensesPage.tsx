@@ -20,12 +20,12 @@ export const ExpensesPage: React.FC = () => {
       <div className="flex flex-col space-y-4 mb-8">
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
           <div>
-            <h1 className="text-3xl font-bold mb-2 sm:mb-0">Expense Tracking</h1>
+            <h1 className="text-3xl font-bold mb-2 sm:mb-0 text-on-surface">Expense Tracking</h1>
             <div className="flex space-x-4 mt-2">
-              <Link to="/budgets" className="text-blue-600 hover:text-blue-800">
+              <Link to="/budgets" className="text-primary hover:text-primary/80 font-medium">
                 Manage Budgets
               </Link>
-              <Link to="/categories" className="text-blue-600 hover:text-blue-800">
+              <Link to="/categories" className="text-primary hover:text-primary/80 font-medium">
                 Manage Categories
               </Link>
             </div>
@@ -33,13 +33,14 @@ export const ExpensesPage: React.FC = () => {
 
           <Button
             onClick={() => setShowAddForm(!showAddForm)}
+            variant="filled"
             className="whitespace-nowrap"
           >
             {showAddForm ? 'Cancel' : 'Add New Expense'}
           </Button>
         </div>
 
-        <p className="text-gray-600">Track, categorize and analyze your expenses to manage your finances better.</p>
+        <p className="text-on-surface-variant">Track, categorize and analyze your expenses to manage your finances better.</p>
       </div>
 
       {showAddForm && (
@@ -53,6 +54,9 @@ export const ExpensesPage: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
         <div className="md:col-span-8">
           <Card variant="elevated">
+            <CardHeader>
+              <CardTitle>Expenses List</CardTitle>
+            </CardHeader>
             <CardContent>
               <ExpensesList refreshTrigger={refreshTrigger} />
             </CardContent>
@@ -82,8 +86,8 @@ export const ExpensesPage: React.FC = () => {
 
       {!showAddForm && (
         <div className="mt-8 text-center">
-          <p className="text-gray-500 mb-2">Want to see more detailed analytics?</p>
-          <p className="text-gray-700 mb-4">Visit the reports section for comprehensive spending analysis.</p>
+          <p className="text-on-surface-variant mb-2">Want to see more detailed analytics?</p>
+          <p className="text-on-surface mb-4">Visit the reports section for comprehensive spending analysis.</p>
           <Link to="/reports">
             <Button variant="outlined">View Reports</Button>
           </Link>

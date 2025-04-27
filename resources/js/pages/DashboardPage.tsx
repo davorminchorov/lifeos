@@ -41,18 +41,18 @@ const DashboardPage: React.FC = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <div className="w-12 h-12 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+        <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="p-6 bg-red-50 border border-red-200 rounded-lg text-red-700">
+      <div className="p-6 bg-error-container text-on-error-container border border-error rounded-lg">
         <p>{error}</p>
         <Button
           onClick={() => window.location.reload()}
-          variant="outline"
+          variant="outlined"
           className="mt-4"
         >
           Retry
@@ -64,15 +64,15 @@ const DashboardPage: React.FC = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Financial Dashboard</h1>
+        <h1 className="text-3xl font-bold text-on-surface">Financial Dashboard</h1>
         <div className="space-x-3">
-          <Button asChild variant="outline" className="flex items-center gap-2">
+          <Button asChild variant="outlined" className="flex items-center gap-2">
             <Link to="/investments">
               <PiggyBank className="h-4 w-4" />
               Investments
             </Link>
           </Button>
-          <Button asChild className="bg-indigo-600 hover:bg-indigo-700 text-white flex items-center gap-2">
+          <Button asChild variant="filled" className="flex items-center gap-2">
             <Link to="/investments/new">
               <Plus className="h-4 w-4" />
               Add Investment
@@ -83,29 +83,29 @@ const DashboardPage: React.FC = () => {
 
       {/* Overview Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <Card className="bg-white shadow-md rounded-xl overflow-hidden">
+        <Card className="overflow-hidden">
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-medium text-gray-700">Total Portfolio</h3>
-              <div className="p-2 bg-indigo-50 rounded-full">
-                <CircleDollarSign className="h-6 w-6 text-indigo-600" />
+              <h3 className="text-lg font-medium text-on-surface">Total Portfolio</h3>
+              <div className="p-2 bg-primary-container rounded-full">
+                <CircleDollarSign className="h-6 w-6 text-on-primary-container" />
               </div>
             </div>
             <div className="space-y-1">
-              <p className="text-2xl font-bold text-gray-900">
+              <p className="text-2xl font-bold text-on-surface">
                 {portfolioSummary ? formatCurrency(portfolioSummary.total_current_value || 0, 'USD') : '$0.00'}
               </p>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-on-surface-variant">
                 {portfolioSummary && portfolioSummary.total_current_value > portfolioSummary.total_invested ? (
-                  <span className="text-green-600 font-medium">
+                  <span className="text-tertiary font-medium">
                     +{formatCurrency((portfolioSummary.total_current_value || 0) - (portfolioSummary.total_invested || 0), 'USD')}
                   </span>
                 ) : portfolioSummary && portfolioSummary.total_current_value < portfolioSummary.total_invested ? (
-                  <span className="text-red-600 font-medium">
+                  <span className="text-error font-medium">
                     -{formatCurrency((portfolioSummary.total_invested || 0) - (portfolioSummary.total_current_value || 0), 'USD')}
                   </span>
                 ) : (
-                  <span className="text-gray-600">$0.00</span>
+                  <span className="text-on-surface-variant">$0.00</span>
                 )}
                 {' '}since inception
               </p>
@@ -113,59 +113,59 @@ const DashboardPage: React.FC = () => {
           </CardContent>
         </Card>
 
-        <Card className="bg-white shadow-md rounded-xl overflow-hidden">
+        <Card className="overflow-hidden">
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-medium text-gray-700">Overall Return</h3>
-              <div className="p-2 bg-green-50 rounded-full">
-                <TrendingUp className="h-6 w-6 text-green-600" />
+              <h3 className="text-lg font-medium text-on-surface">Overall Return</h3>
+              <div className="p-2 bg-tertiary-container rounded-full">
+                <TrendingUp className="h-6 w-6 text-on-tertiary-container" />
               </div>
             </div>
             <div className="space-y-1">
-              <p className="text-2xl font-bold text-gray-900">
+              <p className="text-2xl font-bold text-on-surface">
                 {portfolioSummary ?
                   (portfolioSummary.overall_roi > 0 ? '+' : '') + portfolioSummary.overall_roi.toFixed(2) + '%'
                   : '0.00%'}
               </p>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-on-surface-variant">
                 Based on {portfolioSummary?.total_investments || 0} investments
               </p>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-white shadow-md rounded-xl overflow-hidden">
+        <Card className="overflow-hidden">
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-medium text-gray-700">Total Invested</h3>
-              <div className="p-2 bg-blue-50 rounded-full">
-                <PiggyBank className="h-6 w-6 text-blue-600" />
+              <h3 className="text-lg font-medium text-on-surface">Total Invested</h3>
+              <div className="p-2 bg-secondary-container rounded-full">
+                <PiggyBank className="h-6 w-6 text-on-secondary-container" />
               </div>
             </div>
             <div className="space-y-1">
-              <p className="text-2xl font-bold text-gray-900">
+              <p className="text-2xl font-bold text-on-surface">
                 {portfolioSummary ? formatCurrency(portfolioSummary.total_invested || 0, 'USD') : '$0.00'}
               </p>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-on-surface-variant">
                 Across {portfolioSummary?.total_investments || 0} investments
               </p>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-white shadow-md rounded-xl overflow-hidden">
+        <Card className="overflow-hidden">
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-medium text-gray-700">Withdrawals</h3>
-              <div className="p-2 bg-purple-50 rounded-full">
-                <LineChart className="h-6 w-6 text-purple-600" />
+              <h3 className="text-lg font-medium text-on-surface">Withdrawals</h3>
+              <div className="p-2 bg-secondary-container rounded-full">
+                <LineChart className="h-6 w-6 text-on-secondary-container" />
               </div>
             </div>
             <div className="space-y-1">
-              <p className="text-2xl font-bold text-gray-900">
+              <p className="text-2xl font-bold text-on-surface">
                 {portfolioSummary ? formatCurrency(portfolioSummary.total_withdrawn || 0, 'USD') : '$0.00'}
               </p>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-on-surface-variant">
                 Total withdrawn amount
               </p>
             </div>
@@ -175,27 +175,27 @@ const DashboardPage: React.FC = () => {
 
       {/* Tabs for Recent Activity and Portfolio Details */}
       <Tabs defaultValue="activity" className="mb-8">
-        <TabsList className="mb-6 bg-gray-100 p-1 rounded-lg">
+        <TabsList className="mb-6 bg-surface-variant p-1 rounded-lg">
           <TabsTrigger value="activity" className="rounded-md px-4 py-2">Recent Activity</TabsTrigger>
           <TabsTrigger value="allocation" className="rounded-md px-4 py-2">Portfolio Allocation</TabsTrigger>
         </TabsList>
 
         <TabsContent value="activity" className="mt-0">
-          <Card className="bg-white shadow-md rounded-xl overflow-hidden">
-            <CardHeader className="bg-gray-50 px-6 py-4 border-b border-gray-100">
+          <Card variant="elevated" className="overflow-hidden">
+            <CardHeader className="bg-surface-variant px-6 py-4 border-b border-outline border-opacity-20">
               <CardTitle>Recent Transactions</CardTitle>
               <CardDescription>Latest updates to your investments</CardDescription>
             </CardHeader>
             <CardContent className="p-0">
               {recentTransactions.length === 0 ? (
                 <div className="py-12 text-center">
-                  <p className="text-gray-500">No recent transactions found.</p>
-                  <Button asChild variant="outline" className="mt-4">
+                  <p className="text-on-surface-variant">No recent transactions found.</p>
+                  <Button asChild variant="tonal" className="mt-4">
                     <Link to="/investments/transactions">Add Transaction</Link>
                   </Button>
                 </div>
               ) : (
-                <div className="divide-y divide-gray-100">
+                <div className="divide-y divide-outline divide-opacity-20">
                   {recentTransactions.map(transaction => (
                     <div key={transaction.id} className="px-6 py-4 flex items-center justify-between">
                       <div className="flex items-center space-x-4">

@@ -1,109 +1,72 @@
 import React from 'react';
 import { formatCurrency, formatDate } from '../../utils/format';
-import { Card } from '../../ui/Card';
-import { Button } from '../../ui/Button/Button';
 
-interface Payment {
-  id: string;
+export interface Payment {
+  id: number;
   amount: number;
-  currency: string;
-  payment_date: string;
-  notes: string | null;
-  created_at: string;
+  date: string;
+  status: string;
+  reference?: string;
 }
 
 interface PaymentHistoryCardProps {
   payments: Payment[];
   currency: string;
-  onRecordPayment: () => void;
-  showEmptyState?: boolean;
 }
 
-const PaymentHistoryCard: React.FC<PaymentHistoryCardProps> = ({
-  payments,
-  currency,
-  onRecordPayment,
-  showEmptyState = true,
-}) => {
-  const sortedPayments = [...payments].sort(
-    (a, b) => new Date(b.payment_date).getTime() - new Date(a.payment_date).getTime()
-  );
+const PaymentHistoryCard: React.FC<PaymentHistoryCardProps> = ({ payments, currency }) => {
+  const getStatusColor = (status: string) => {
+    switch (status.toLowerCase()) {
+      case 'paid':
+      case 'completed':
+        return 'text-tertiary';
+      case 'pending':
+        return 'text-secondary';
+      case 'failed':
+      case 'declined':
+        return 'text-error';
+      default:
+        return 'text-on-surface-variant';
+    }
+  };
 
   return (
-    <Card>
-      <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-        <h3 className="text-lg font-medium text-gray-900">Payment History</h3>
-        <Button onClick={onRecordPayment} size="sm">
-          Record Payment
-        </Button>
-      </div>
+    <div className="space-y-4">
+      <h3 className="text-xl font-semibold text-on-surface">Payment History</h3>
 
       {payments.length === 0 ? (
-        showEmptyState ? (
-          <div className="p-6 flex flex-col items-center justify-center text-center">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-12 w-12 text-gray-300 mb-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1.5}
-                d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2z"
-              />
-            </svg>
-            <p className="text-gray-500 mb-4">No payment records found</p>
-            <Button onClick={onRecordPayment} size="sm">
-              Record Your First Payment
-            </Button>
-          </div>
-        ) : (
-          <div className="p-6 text-center text-gray-500">No payment records available.</div>
-        )
+        <div className="py-8 flex flex-col items-center justify-center text-center border-2 border-dashed border-outline/30 rounded-lg">
+          <p className="text-on-surface-variant">No payment records found</p>
+        </div>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Date
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Amount
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Notes
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Recorded On
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {sortedPayments.map((payment) => (
-                <tr key={payment.id}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {formatDate(payment.payment_date)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+        <div className="divide-y divide-outline/20">
+          {payments.map((payment) => (
+            <div key={payment.id} className="py-3 first:pt-0 last:pb-0">
+              <div className="flex justify-between items-center">
+                <div className="space-y-1">
+                  <p className="font-medium text-on-surface">
+                    {formatDate(payment.date)}
+                  </p>
+                  {payment.reference && (
+                    <p className="text-sm text-on-surface-variant">
+                      Ref: {payment.reference}
+                    </p>
+                  )}
+                </div>
+                <div className="text-right space-y-1">
+                  <p className="font-semibold text-on-surface">
                     {formatCurrency(payment.amount, currency)}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-500">
-                    {payment.notes || '-'}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {formatDate(payment.created_at)}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                  </p>
+                  <p className={`text-sm ${getStatusColor(payment.status)}`}>
+                    {payment.status}
+                  </p>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       )}
-    </Card>
+    </div>
   );
 };
 

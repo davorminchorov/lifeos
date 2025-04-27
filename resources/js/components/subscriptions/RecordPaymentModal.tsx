@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import { Button } from '../../ui/Button/Button';
+import { Button } from '../../ui';
 
 interface RecordPaymentModalProps {
-  isOpen: boolean;
   onClose: () => void;
   onSubmit: (data: RecordPaymentFormData) => void;
-  initialAmount: number;
-  isLoading: boolean;
-  error: string | null;
+  defaultAmount: number;
+  defaultCurrency?: string;
+  isSubmitting?: boolean;
+  error?: string | null;
 }
 
 export interface RecordPaymentFormData {
@@ -17,20 +17,18 @@ export interface RecordPaymentFormData {
 }
 
 const RecordPaymentModal: React.FC<RecordPaymentModalProps> = ({
-  isOpen,
   onClose,
   onSubmit,
-  initialAmount,
-  isLoading,
-  error,
+  defaultAmount,
+  defaultCurrency,
+  isSubmitting = false,
+  error = null,
 }) => {
   const [formData, setFormData] = useState<RecordPaymentFormData>({
-    amount: initialAmount,
+    amount: defaultAmount,
     payment_date: new Date().toISOString().split('T')[0],
     notes: '',
   });
-
-  if (!isOpen) return null;
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -49,12 +47,12 @@ const RecordPaymentModal: React.FC<RecordPaymentModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
-        <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200">
-          <h3 className="text-lg font-medium text-gray-900">Record Payment</h3>
+      <div className="bg-surface rounded-lg shadow-elevation-3 w-full max-w-md">
+        <div className="flex justify-between items-center px-6 py-4 border-b border-outline border-opacity-20">
+          <h3 className="text-lg font-medium text-on-surface">Record Payment</h3>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-500 focus:outline-none"
+            className="text-on-surface-variant hover:text-on-surface focus:outline-none"
           >
             <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path
@@ -69,15 +67,15 @@ const RecordPaymentModal: React.FC<RecordPaymentModalProps> = ({
 
         <form onSubmit={handleSubmit} className="p-6">
           {error && (
-            <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+            <div className="mb-4 p-3 bg-error-container border border-error text-on-error-container rounded">
               {error}
             </div>
           )}
 
           <div className="space-y-4">
             <div>
-              <label htmlFor="amount" className="block text-sm font-medium text-gray-700 mb-1">
-                Payment Amount
+              <label htmlFor="amount" className="block text-sm font-medium text-on-surface-variant mb-1">
+                Payment Amount {defaultCurrency && `(${defaultCurrency})`}
               </label>
               <input
                 type="number"
@@ -87,13 +85,13 @@ const RecordPaymentModal: React.FC<RecordPaymentModalProps> = ({
                 onChange={handleChange}
                 min="0.01"
                 step="0.01"
-                className="w-full rounded-md border border-gray-300 shadow-sm p-2"
+                className="w-full rounded-md border border-outline border-opacity-30 shadow-sm p-2 bg-surface text-on-surface"
                 required
               />
             </div>
 
             <div>
-              <label htmlFor="payment_date" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="payment_date" className="block text-sm font-medium text-on-surface-variant mb-1">
                 Payment Date
               </label>
               <input
@@ -102,13 +100,13 @@ const RecordPaymentModal: React.FC<RecordPaymentModalProps> = ({
                 name="payment_date"
                 value={formData.payment_date}
                 onChange={handleChange}
-                className="w-full rounded-md border border-gray-300 shadow-sm p-2"
+                className="w-full rounded-md border border-outline border-opacity-30 shadow-sm p-2 bg-surface text-on-surface"
                 required
               />
             </div>
 
             <div>
-              <label htmlFor="notes" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="notes" className="block text-sm font-medium text-on-surface-variant mb-1">
                 Notes (Optional)
               </label>
               <textarea
@@ -117,18 +115,18 @@ const RecordPaymentModal: React.FC<RecordPaymentModalProps> = ({
                 value={formData.notes}
                 onChange={handleChange}
                 rows={3}
-                className="w-full rounded-md border border-gray-300 shadow-sm p-2"
+                className="w-full rounded-md border border-outline border-opacity-30 shadow-sm p-2 bg-surface text-on-surface"
                 placeholder="Add any notes about this payment"
               />
             </div>
           </div>
 
           <div className="mt-6 flex justify-end space-x-3">
-            <Button variant="outlined" onClick={onClose} disabled={isLoading}>
+            <Button variant="text" onClick={onClose} disabled={isSubmitting}>
               Cancel
             </Button>
-            <Button type="submit" disabled={isLoading}>
-              {isLoading ? 'Recording...' : 'Record Payment'}
+            <Button variant="filled" type="submit" disabled={isSubmitting}>
+              {isSubmitting ? 'Recording...' : 'Record Payment'}
             </Button>
           </div>
         </form>

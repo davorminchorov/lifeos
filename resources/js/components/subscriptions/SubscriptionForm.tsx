@@ -1,8 +1,8 @@
 import React, { useState, FormEvent, ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { Button } from '../../ui/Button/Button';
-import { Card } from '../../ui/Card';
+import { Button } from '../../ui';
+import { Card, CardHeader, CardTitle, CardContent } from '../../ui';
 
 interface SubscriptionFormProps {
   initialData?: {
@@ -158,182 +158,181 @@ const SubscriptionForm: React.FC<SubscriptionFormProps> = ({
   ];
 
   return (
-    <Card className="max-w-2xl mx-auto">
-      <div className="px-6 py-4 border-b border-gray-200">
-        <h2 className="text-lg font-medium text-gray-900">
-          {isEditing ? 'Edit Subscription' : 'Add New Subscription'}
-        </h2>
-      </div>
+    <Card variant="elevated" className="max-w-2xl mx-auto">
+      <CardHeader>
+        <CardTitle>{isEditing ? 'Edit Subscription' : 'Add New Subscription'}</CardTitle>
+      </CardHeader>
 
-      <form onSubmit={handleSubmit} className="p-6">
-        {submitError && (
-          <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
-            {submitError}
-          </div>
-        )}
+      <CardContent>
+        <form onSubmit={handleSubmit}>
+          {submitError && (
+            <div className="mb-6 p-3 bg-error-container border border-error text-on-error-container rounded">
+              {submitError}
+            </div>
+          )}
 
-        <div className="space-y-6">
-          {/* Name */}
-          <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-              Name <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              className={`w-full rounded-md border ${
-                errors.name ? 'border-red-500' : 'border-gray-300'
-              } shadow-sm p-2`}
-              placeholder="e.g. Netflix, Spotify, etc."
-            />
-            {errors.name && (
-              <p className="mt-1 text-sm text-red-600">{errors.name}</p>
-            )}
-          </div>
-
-          {/* Description */}
-          <div>
-            <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
-              Description <span className="text-red-500">*</span>
-            </label>
-            <textarea
-              id="description"
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              rows={3}
-              className={`w-full rounded-md border ${
-                errors.description ? 'border-red-500' : 'border-gray-300'
-              } shadow-sm p-2`}
-              placeholder="Add details about this subscription"
-            />
-            {errors.description && (
-              <p className="mt-1 text-sm text-red-600">{errors.description}</p>
-            )}
-          </div>
-
-          {/* Amount and Currency (side by side) */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-6">
+            {/* Name */}
             <div>
-              <label htmlFor="amount" className="block text-sm font-medium text-gray-700 mb-1">
-                Amount <span className="text-red-500">*</span>
+              <label htmlFor="name" className="block text-sm font-medium text-on-surface-variant mb-1">
+                Name <span className="text-error">*</span>
               </label>
               <input
-                type="number"
-                id="amount"
-                name="amount"
-                value={formData.amount}
+                type="text"
+                id="name"
+                name="name"
+                value={formData.name}
                 onChange={handleChange}
-                min="0.01"
-                step="0.01"
                 className={`w-full rounded-md border ${
-                  errors.amount ? 'border-red-500' : 'border-gray-300'
-                } shadow-sm p-2`}
-                placeholder="0.00"
+                  errors.name ? 'border-error' : 'border-outline border-opacity-30'
+                } shadow-sm p-2 bg-surface text-on-surface`}
+                placeholder="e.g. Netflix, Spotify, etc."
               />
-              {errors.amount && (
-                <p className="mt-1 text-sm text-red-600">{errors.amount}</p>
+              {errors.name && (
+                <p className="mt-1 text-sm text-error">{errors.name}</p>
               )}
             </div>
 
+            {/* Description */}
             <div>
-              <label htmlFor="currency" className="block text-sm font-medium text-gray-700 mb-1">
-                Currency <span className="text-red-500">*</span>
+              <label htmlFor="description" className="block text-sm font-medium text-on-surface-variant mb-1">
+                Description <span className="text-error">*</span>
               </label>
-              <select
-                id="currency"
-                name="currency"
-                value={formData.currency}
+              <textarea
+                id="description"
+                name="description"
+                value={formData.description}
                 onChange={handleChange}
+                rows={3}
                 className={`w-full rounded-md border ${
-                  errors.currency ? 'border-red-500' : 'border-gray-300'
-                } shadow-sm p-2`}
-              >
-                {currencyOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-              {errors.currency && (
-                <p className="mt-1 text-sm text-red-600">{errors.currency}</p>
-              )}
-            </div>
-          </div>
-
-          {/* Billing Cycle and Start Date (side by side) */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="billing_cycle" className="block text-sm font-medium text-gray-700 mb-1">
-                Billing Cycle <span className="text-red-500">*</span>
-              </label>
-              <select
-                id="billing_cycle"
-                name="billing_cycle"
-                value={formData.billing_cycle}
-                onChange={handleChange}
-                className={`w-full rounded-md border ${
-                  errors.billing_cycle ? 'border-red-500' : 'border-gray-300'
-                } shadow-sm p-2`}
-              >
-                {billingCycleOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-              {errors.billing_cycle && (
-                <p className="mt-1 text-sm text-red-600">{errors.billing_cycle}</p>
-              )}
-            </div>
-
-            <div>
-              <label htmlFor="start_date" className="block text-sm font-medium text-gray-700 mb-1">
-                Start Date <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="date"
-                id="start_date"
-                name="start_date"
-                value={formData.start_date}
-                onChange={handleChange}
-                className={`w-full rounded-md border ${
-                  errors.start_date ? 'border-red-500' : 'border-gray-300'
-                } shadow-sm p-2`}
+                  errors.description ? 'border-error' : 'border-outline border-opacity-30'
+                } shadow-sm p-2 bg-surface text-on-surface`}
+                placeholder="Brief description of the subscription"
               />
-              {errors.start_date && (
-                <p className="mt-1 text-sm text-red-600">{errors.start_date}</p>
+              {errors.description && (
+                <p className="mt-1 text-sm text-error">{errors.description}</p>
               )}
             </div>
-          </div>
 
-          {/* Website and Category (side by side) */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Amount and Currency */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label htmlFor="amount" className="block text-sm font-medium text-on-surface-variant mb-1">
+                  Amount <span className="text-error">*</span>
+                </label>
+                <input
+                  type="number"
+                  id="amount"
+                  name="amount"
+                  value={formData.amount}
+                  onChange={handleChange}
+                  min="0.01"
+                  step="0.01"
+                  className={`w-full rounded-md border ${
+                    errors.amount ? 'border-error' : 'border-outline border-opacity-30'
+                  } shadow-sm p-2 bg-surface text-on-surface`}
+                  placeholder="0.00"
+                />
+                {errors.amount && (
+                  <p className="mt-1 text-sm text-error">{errors.amount}</p>
+                )}
+              </div>
+
+              <div>
+                <label htmlFor="currency" className="block text-sm font-medium text-on-surface-variant mb-1">
+                  Currency <span className="text-error">*</span>
+                </label>
+                <select
+                  id="currency"
+                  name="currency"
+                  value={formData.currency}
+                  onChange={handleChange}
+                  className={`w-full rounded-md border ${
+                    errors.currency ? 'border-error' : 'border-outline border-opacity-30'
+                  } shadow-sm p-2 bg-surface text-on-surface`}
+                >
+                  {currencyOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+                {errors.currency && (
+                  <p className="mt-1 text-sm text-error">{errors.currency}</p>
+                )}
+              </div>
+            </div>
+
+            {/* Billing Cycle and Start Date */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label htmlFor="billing_cycle" className="block text-sm font-medium text-on-surface-variant mb-1">
+                  Billing Cycle <span className="text-error">*</span>
+                </label>
+                <select
+                  id="billing_cycle"
+                  name="billing_cycle"
+                  value={formData.billing_cycle}
+                  onChange={handleChange}
+                  className={`w-full rounded-md border ${
+                    errors.billing_cycle ? 'border-error' : 'border-outline border-opacity-30'
+                  } shadow-sm p-2 bg-surface text-on-surface`}
+                >
+                  {billingCycleOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+                {errors.billing_cycle && (
+                  <p className="mt-1 text-sm text-error">{errors.billing_cycle}</p>
+                )}
+              </div>
+
+              <div>
+                <label htmlFor="start_date" className="block text-sm font-medium text-on-surface-variant mb-1">
+                  Start Date <span className="text-error">*</span>
+                </label>
+                <input
+                  type="date"
+                  id="start_date"
+                  name="start_date"
+                  value={formData.start_date}
+                  onChange={handleChange}
+                  className={`w-full rounded-md border ${
+                    errors.start_date ? 'border-error' : 'border-outline border-opacity-30'
+                  } shadow-sm p-2 bg-surface text-on-surface`}
+                />
+                {errors.start_date && (
+                  <p className="mt-1 text-sm text-error">{errors.start_date}</p>
+                )}
+              </div>
+            </div>
+
+            {/* Website */}
             <div>
-              <label htmlFor="website" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="website" className="block text-sm font-medium text-on-surface-variant mb-1">
                 Website (Optional)
               </label>
               <input
-                type="url"
+                type="text"
                 id="website"
                 name="website"
                 value={formData.website}
                 onChange={handleChange}
                 className={`w-full rounded-md border ${
-                  errors.website ? 'border-red-500' : 'border-gray-300'
-                } shadow-sm p-2`}
+                  errors.website ? 'border-error' : 'border-outline border-opacity-30'
+                } shadow-sm p-2 bg-surface text-on-surface`}
                 placeholder="https://example.com"
               />
               {errors.website && (
-                <p className="mt-1 text-sm text-red-600">{errors.website}</p>
+                <p className="mt-1 text-sm text-error">{errors.website}</p>
               )}
             </div>
 
+            {/* Category */}
             <div>
-              <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="category" className="block text-sm font-medium text-on-surface-variant mb-1">
                 Category (Optional)
               </label>
               <select
@@ -342,8 +341,8 @@ const SubscriptionForm: React.FC<SubscriptionFormProps> = ({
                 value={formData.category}
                 onChange={handleChange}
                 className={`w-full rounded-md border ${
-                  errors.category ? 'border-red-500' : 'border-gray-300'
-                } shadow-sm p-2`}
+                  errors.category ? 'border-error' : 'border-outline border-opacity-30'
+                } shadow-sm p-2 bg-surface text-on-surface`}
               >
                 <option value="">Select a category</option>
                 {categoryOptions.map((option) => (
@@ -353,29 +352,31 @@ const SubscriptionForm: React.FC<SubscriptionFormProps> = ({
                 ))}
               </select>
               {errors.category && (
-                <p className="mt-1 text-sm text-red-600">{errors.category}</p>
+                <p className="mt-1 text-sm text-error">{errors.category}</p>
               )}
             </div>
-          </div>
-        </div>
 
-        <div className="mt-8 flex justify-end space-x-3">
-          <Button
-            variant="outlined"
-            onClick={() => navigate('/subscriptions')}
-            type="button"
-          >
-            Cancel
-          </Button>
-          <Button
-            type="submit"
-            isLoading={isSubmitting}
-            disabled={isSubmitting}
-          >
-            {isEditing ? 'Update Subscription' : 'Create Subscription'}
-          </Button>
-        </div>
-      </form>
+            {/* Form Actions */}
+            <div className="flex justify-end space-x-3 pt-6">
+              <Button
+                type="button"
+                variant="text"
+                onClick={() => navigate('/subscriptions')}
+                disabled={isSubmitting}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                variant="filled"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? 'Saving...' : isEditing ? 'Update Subscription' : 'Create Subscription'}
+              </Button>
+            </div>
+          </div>
+        </form>
+      </CardContent>
     </Card>
   );
 };

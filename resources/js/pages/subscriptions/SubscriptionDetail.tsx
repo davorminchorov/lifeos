@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { formatCurrency, formatDate } from '../../utils/format';
-import { Button } from '../../ui/Button/Button';
-import { Card } from '../../ui/Card';
+import { Button } from '../../ui';
+import { Card, CardHeader, CardTitle, CardContent } from '../../ui';
 import PaymentHistoryCard from '../../components/subscriptions/PaymentHistoryCard';
 import PaymentSummaryCard from '../../components/subscriptions/PaymentSummaryCard';
 import RecordPaymentModal, { RecordPaymentFormData } from '../../components/subscriptions/RecordPaymentModal';
@@ -107,16 +107,16 @@ const SubscriptionDetail: React.FC = () => {
 
     switch (status) {
       case 'active':
-        className = 'bg-green-100 text-green-800';
+        className = 'bg-tertiary-container text-on-tertiary-container';
         break;
       case 'cancelled':
-        className = 'bg-red-100 text-red-800';
+        className = 'bg-error-container text-on-error-container';
         break;
       case 'paused':
-        className = 'bg-yellow-100 text-yellow-800';
+        className = 'bg-secondary-container text-on-secondary-container';
         break;
       default:
-        className = 'bg-gray-100 text-gray-800';
+        className = 'bg-surface-variant text-on-surface-variant';
     }
 
     return (
@@ -127,17 +127,21 @@ const SubscriptionDetail: React.FC = () => {
   };
 
   if (loading) {
-    return <div className="flex justify-center items-center h-64">Loading...</div>;
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
   }
 
   if (error || !subscription) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+      <div className="container mx-auto px-4 py-8 max-w-6xl">
+        <div className="bg-error-container border border-error text-on-error-container px-4 py-3 rounded">
           {error || 'Subscription not found'}
         </div>
         <div className="mt-4">
-          <Button onClick={() => navigate('/subscriptions')}>Back to subscriptions</Button>
+          <Button onClick={() => navigate('/subscriptions')} variant="filled">Back to subscriptions</Button>
         </div>
       </div>
     );
@@ -150,9 +154,9 @@ const SubscriptionDetail: React.FC = () => {
   }));
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8 max-w-6xl">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">{subscription.name}</h1>
+        <h1 className="text-3xl font-bold text-on-surface">{subscription.name}</h1>
         <div className="flex space-x-3">
           <Link to={`/subscriptions/${id}/edit`}>
             <Button variant="outlined">Edit</Button>
@@ -170,174 +174,166 @@ const SubscriptionDetail: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-        <Card className="md:col-span-2">
-          <div className="p-6">
+        <Card variant="elevated" className="md:col-span-2">
+          <CardHeader>
+            <CardTitle>Subscription Details</CardTitle>
+          </CardHeader>
+          <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <h2 className="text-xl font-semibold mb-4">Subscription Details</h2>
+              <div className="space-y-4">
+                <div>
+                  <p className="text-sm text-on-surface-variant">Status</p>
+                  <p className="mt-1">{renderStatusBadge(subscription.status)}</p>
+                </div>
 
-                <div className="space-y-3">
-                  <div>
-                    <p className="text-sm text-gray-500">Status</p>
-                    <p>{renderStatusBadge(subscription.status)}</p>
-                  </div>
+                <div>
+                  <p className="text-sm text-on-surface-variant">Description</p>
+                  <p className="mt-1 text-on-surface">{subscription.description}</p>
+                </div>
 
-                  <div>
-                    <p className="text-sm text-gray-500">Description</p>
-                    <p>{subscription.description}</p>
-                  </div>
+                <div>
+                  <p className="text-sm text-on-surface-variant">Amount</p>
+                  <p className="mt-1 font-semibold text-on-surface">
+                    {formatCurrency(subscription.amount, subscription.currency)}
+                  </p>
+                </div>
 
-                  <div>
-                    <p className="text-sm text-gray-500">Amount</p>
-                    <p className="font-semibold">
-                      {formatCurrency(subscription.amount, subscription.currency)}
-                    </p>
-                  </div>
-
-                  <div>
-                    <p className="text-sm text-gray-500">Billing Cycle</p>
-                    <p>{subscription.billing_cycle.charAt(0).toUpperCase() + subscription.billing_cycle.slice(1)}</p>
-                  </div>
-
-                  {subscription.category && (
-                    <div>
-                      <p className="text-sm text-gray-500">Category</p>
-                      <p>{subscription.category}</p>
-                    </div>
-                  )}
-
-                  {subscription.website && (
-                    <div>
-                      <p className="text-sm text-gray-500">Website</p>
-                      <a
-                        href={subscription.website}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-indigo-600 hover:text-indigo-800"
-                      >
-                        {subscription.website}
-                      </a>
-                    </div>
-                  )}
+                <div>
+                  <p className="text-sm text-on-surface-variant">Billing Cycle</p>
+                  <p className="mt-1 text-on-surface">{subscription.billing_cycle.charAt(0).toUpperCase() + subscription.billing_cycle.slice(1)}</p>
                 </div>
               </div>
 
-              <div>
-                <h2 className="text-xl font-semibold mb-4">Payment Information</h2>
-
-                <div className="space-y-3">
-                  <div>
-                    <p className="text-sm text-gray-500">Start Date</p>
-                    <p>{formatDate(subscription.start_date)}</p>
-                  </div>
-
-                  {subscription.end_date && (
-                    <div>
-                      <p className="text-sm text-gray-500">End Date</p>
-                      <p>{formatDate(subscription.end_date)}</p>
-                    </div>
-                  )}
-
-                  {subscription.next_payment_date && (
-                    <div>
-                      <p className="text-sm text-gray-500">Next Payment</p>
-                      <p className="font-semibold">{formatDate(subscription.next_payment_date)}</p>
-                    </div>
-                  )}
-
-                  <div>
-                    <p className="text-sm text-gray-500">Total Paid</p>
-                    <p className="font-semibold">
-                      {formatCurrency(subscription.total_paid, subscription.currency)}
-                    </p>
-                  </div>
-
-                  {subscription.status === 'active' && (
-                    <div className="pt-2">
-                      <Link to={`/payments/record/${subscription.id}`}>
-                        <Button size="sm">
-                          Record Payment
-                        </Button>
-                      </Link>
-                    </div>
-                  )}
+              <div className="space-y-4">
+                <div>
+                  <p className="text-sm text-on-surface-variant">Category</p>
+                  <p className="mt-1 text-on-surface">
+                    {subscription.category
+                      ? subscription.category.charAt(0).toUpperCase() + subscription.category.slice(1)
+                      : 'Not categorized'}
+                  </p>
                 </div>
+
+                <div>
+                  <p className="text-sm text-on-surface-variant">Start Date</p>
+                  <p className="mt-1 text-on-surface">{new Date(subscription.start_date).toLocaleDateString()}</p>
+                </div>
+
+                {subscription.end_date && (
+                  <div>
+                    <p className="text-sm text-on-surface-variant">End Date</p>
+                    <p className="mt-1 text-on-surface">{new Date(subscription.end_date).toLocaleDateString()}</p>
+                  </div>
+                )}
+
+                <div>
+                  <p className="text-sm text-on-surface-variant">Next Payment</p>
+                  <p className="mt-1 text-on-surface">
+                    {subscription.next_payment_date
+                      ? new Date(subscription.next_payment_date).toLocaleDateString()
+                      : 'Not scheduled'}
+                  </p>
+                </div>
+
+                {subscription.website && (
+                  <div>
+                    <p className="text-sm text-on-surface-variant">Website</p>
+                    <a
+                      href={subscription.website}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-1 block text-primary hover:text-primary/80"
+                    >
+                      {subscription.website}
+                    </a>
+                  </div>
+                )}
               </div>
             </div>
-          </div>
+          </CardContent>
         </Card>
 
-        <div className="md:col-span-1">
-          <PaymentSummaryCard
-            startDate={subscription.start_date}
-            nextPaymentDate={subscription.next_payment_date}
-            amount={subscription.amount}
-            currency={subscription.currency}
-            billingCycle={subscription.billing_cycle}
-            totalPaid={subscription.total_paid}
-            paymentCount={subscription.payments?.length || 0}
-          />
-        </div>
+        <Card variant="filled">
+          <CardHeader>
+            <CardTitle>Payment Summary</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <PaymentSummaryCard
+              amount={subscription.amount}
+              currency={subscription.currency}
+              billingCycle={subscription.billing_cycle}
+              nextPaymentDate={subscription.next_payment_date}
+              totalPaid={subscription.total_paid || 0}
+              startDate={subscription.start_date}
+              paymentCount={subscription.payments?.length || 0}
+            />
+            <div className="mt-6">
+              <Button
+                variant="tonal"
+                onClick={() => setShowPaymentModal(true)}
+                className="w-full"
+                disabled={subscription.status !== 'active'}
+              >
+                Record Payment
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
-      <div className="mb-6">
-        <PaymentHistoryCard
-          payments={paymentHistoryData}
-          currency={subscription.currency}
-          onRecordPayment={() => setShowPaymentModal(true)}
-        />
-      </div>
+      {subscription.payments && subscription.payments.length > 0 && (
+        <Card variant="elevated" className="mb-6">
+          <CardHeader>
+            <CardTitle>Payment History</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <PaymentHistoryCard payments={paymentHistoryData} currency={subscription.currency} />
+          </CardContent>
+        </Card>
+      )}
 
-      <RecordPaymentModal
-        isOpen={showPaymentModal}
-        onClose={() => setShowPaymentModal(false)}
-        onSubmit={handleRecordPayment}
-        initialAmount={subscription.amount}
-        isLoading={isRecordingPayment}
-        error={paymentError}
-      />
-
+      {/* Cancel Subscription Modal */}
       {showCancelModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <Card className="w-full max-w-md">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-surface rounded-lg shadow-elevation-3 max-w-md w-full">
             <div className="p-6">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">Cancel Subscription</h3>
+              <h3 className="text-lg font-medium text-on-surface mb-4">Cancel Subscription</h3>
 
               {cancelError && (
-                <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+                <div className="mb-4 p-3 bg-error-container text-on-error-container rounded">
                   {cancelError}
                 </div>
               )}
 
-              <p className="mb-4 text-gray-700">
-                Are you sure you want to cancel your subscription to <strong>{subscription.name}</strong>?
+              <p className="text-on-surface-variant mb-4">
+                Are you sure you want to cancel your {subscription.name} subscription?
               </p>
 
-              <div className="mb-6">
-                <label htmlFor="end_date" className="block text-sm font-medium text-gray-700 mb-1">
+              <div className="mb-4">
+                <label htmlFor="cancelDate" className="block text-sm font-medium text-on-surface-variant mb-1">
                   End Date
                 </label>
                 <input
                   type="date"
-                  id="end_date"
+                  id="cancelDate"
                   value={cancelDate}
                   onChange={(e) => setCancelDate(e.target.value)}
+                  className="w-full rounded-md border border-outline border-opacity-30 shadow-sm p-2 bg-surface text-on-surface"
                   min={new Date().toISOString().split('T')[0]}
-                  className="w-full border border-gray-300 rounded-md shadow-sm p-2"
                 />
               </div>
 
               <div className="flex justify-end space-x-3">
                 <Button
-                  variant="outlined"
+                  variant="text"
                   onClick={() => setShowCancelModal(false)}
                   disabled={isCancelling}
                 >
-                  Nevermind
+                  Keep Subscription
                 </Button>
                 <Button
-                  variant="outlined"
-                  className="text-red-600 border-red-600 hover:bg-red-50"
+                  variant="filled"
+                  className="bg-error text-on-error"
                   onClick={handleCancelSubscription}
                   disabled={isCancelling}
                 >
@@ -345,8 +341,20 @@ const SubscriptionDetail: React.FC = () => {
                 </Button>
               </div>
             </div>
-          </Card>
+          </div>
         </div>
+      )}
+
+      {/* Record Payment Modal */}
+      {showPaymentModal && (
+        <RecordPaymentModal
+          onClose={() => setShowPaymentModal(false)}
+          onSubmit={handleRecordPayment}
+          isSubmitting={isRecordingPayment}
+          error={paymentError}
+          defaultAmount={subscription.amount}
+          defaultCurrency={subscription.currency}
+        />
       )}
     </div>
   );
