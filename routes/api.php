@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
+use App\Subscriptions\UI\Api\SubscriptionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,4 +21,15 @@ Route::post('/login', [LoginController::class, 'login']);
 Route::post('/logout', [LoginController::class, 'logout'])->middleware('auth:sanctum');
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
+});
+
+// Subscription routes (protected by auth middleware)
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/subscriptions', [SubscriptionController::class, 'index']);
+    Route::post('/subscriptions', [SubscriptionController::class, 'store']);
+    Route::get('/subscriptions/{id}', [SubscriptionController::class, 'show']);
+    Route::put('/subscriptions/{id}', [SubscriptionController::class, 'update']);
+    Route::post('/subscriptions/{id}/cancel', [SubscriptionController::class, 'cancel']);
+    Route::post('/subscriptions/{id}/payments', [SubscriptionController::class, 'recordPayment']);
+    Route::get('/upcoming-payments', [SubscriptionController::class, 'upcomingPayments']);
 });
