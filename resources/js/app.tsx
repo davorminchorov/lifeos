@@ -59,6 +59,9 @@ import EditJobApplication from './pages/job-applications/EditJobApplication';
 // Investments Pages
 import InvestmentsPage from './pages/investments/InvestmentsPage';
 import InvestmentDetailPage from './pages/investments/InvestmentDetailPage';
+import InvestmentCreatePage from './pages/investments/InvestmentCreatePage';
+import InvestmentEditPage from './pages/investments/InvestmentEditPage';
+import TransactionsPage from './pages/investments/TransactionsPage';
 
 console.log('LifeOS app initialized with React');
 
@@ -146,7 +149,10 @@ const App: React.FC = () => {
                                         {/* Investments Routes */}
                                         <Route path="investments">
                                             <Route index element={<InvestmentsPage />} />
+                                            <Route path="create" element={<InvestmentCreatePage />} />
                                             <Route path=":id" element={<InvestmentDetailPage />} />
+                                            <Route path=":id/edit" element={<InvestmentEditPage />} />
+                                            <Route path=":id/transactions" element={<TransactionsPage />} />
                                         </Route>
                                     </Route>
                                 </Route>
