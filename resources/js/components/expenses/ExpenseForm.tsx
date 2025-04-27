@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Button } from '../../ui/Button/Button';
 import { Card } from '../../ui/Card';
+import { FileUpload, FileData } from '../common/FileUpload';
+import { FileList } from '../common/FileList';
 
 interface ExpenseFormProps {
   initialData?: {
@@ -348,28 +350,35 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
           </div>
 
           {/* Receipt URL */}
-          <div>
-            <label htmlFor="receipt_url" className="block text-sm font-medium text-gray-700 mb-1">
-              Receipt URL
-            </label>
-            <input
-              type="text"
-              id="receipt_url"
-              name="receipt_url"
-              value={formData.receipt_url}
-              onChange={handleChange}
-              className={`w-full rounded-md border ${
-                errors.receipt_url ? 'border-red-500' : 'border-gray-300'
-              } shadow-sm p-2`}
-              placeholder="https://example.com/receipt.pdf"
-            />
-            {errors.receipt_url && (
-              <p className="mt-1 text-sm text-red-600">{errors.receipt_url}</p>
-            )}
-            <p className="mt-1 text-xs text-gray-500">
-              Optional link to a receipt image or document
-            </p>
-          </div>
+          {isEditing && initialData?.id && (
+            <div className="border-t border-gray-200 pt-4 mt-4">
+              <h3 className="text-md font-medium mb-2">Attached Files</h3>
+              <FileList
+                entityId={initialData.id}
+                entityType="expense"
+                className="mb-4"
+              />
+              <FileUpload
+                entityId={initialData.id}
+                entityType="expense"
+                buttonText="Attach Receipt or Document"
+                allowedTypes={['image/jpeg', 'image/png', 'application/pdf']}
+                maxSize={5}
+                onUploadSuccess={(fileData) => {
+                  // Optional: You can update the UI or show a success message
+                  console.log('File uploaded successfully:', fileData);
+                }}
+              />
+            </div>
+          )}
+
+          {!isEditing && (
+            <div className="border-t border-gray-200 pt-4 mt-4">
+              <p className="text-sm text-gray-500 italic">
+                You can upload receipt images and documents after saving the expense.
+              </p>
+            </div>
+          )}
 
           <div className="flex justify-end space-x-3 pt-4">
             <Button

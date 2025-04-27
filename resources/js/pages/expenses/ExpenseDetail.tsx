@@ -5,6 +5,8 @@ import toast from 'react-hot-toast';
 import { formatCurrency, formatDate } from '../../utils/format';
 import { Button } from '../../ui/Button/Button';
 import { Card } from '../../ui/Card';
+import { FileList } from '../../components/common/FileList';
+import { FileUpload } from '../../components/common/FileUpload';
 
 interface Expense {
   id: string;
@@ -182,25 +184,32 @@ const ExpenseDetail: React.FC = () => {
             </div>
           )}
 
-          {expense.receipt_url && (
-            <div className="col-span-1 md:col-span-2">
-              <h2 className="font-medium text-gray-500 text-sm mb-1">Receipt</h2>
-              <div className="mt-1">
-                <a
-                  href={expense.receipt_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                  </svg>
-                  View Receipt
-                </a>
+          {/* File Attachments Section */}
+          <Card className="border border-gray-200 shadow-sm mt-6">
+            <div className="p-6">
+              <h2 className="text-lg font-medium text-gray-900 mb-4">Attachments</h2>
+
+              <div className="space-y-4">
+                <FileList
+                  entityId={id || ''}
+                  entityType="expense"
+                  showEmpty={false}
+                />
+
+                <FileUpload
+                  entityId={id || ''}
+                  entityType="expense"
+                  buttonText="Attach New File"
+                  allowedTypes={['image/jpeg', 'image/png', 'application/pdf']}
+                  maxSize={5}
+                  onUploadSuccess={() => {
+                    // Refresh the page or update the file list
+                    window.location.reload();
+                  }}
+                />
               </div>
             </div>
-          )}
+          </Card>
         </div>
       </Card>
 

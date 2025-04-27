@@ -134,7 +134,7 @@ return [
     |
     */
 
-    'providers' => [
+    'providers' => ServiceProvider::defaultProviders()->merge([
         // Laravel Framework Service Providers...
         Illuminate\Auth\AuthServiceProvider::class,
         Illuminate\Broadcasting\BroadcastServiceProvider::class,
@@ -166,6 +166,7 @@ return [
 
         // Custom Service Providers...
         App\Core\EventSourcing\EventSourcingServiceProvider::class,
-    ],
+        App\Core\Files\FileServiceProvider::class,
+    ])->toArray(),
 
 ];

@@ -96,3 +96,12 @@ Route::prefix('dashboard')->group(function () {
     Route::get('/subscriptions-summary', App\Dashboard\UI\Api\SubscriptionSummaryController::class);
     Route::get('/utility-bills-summary', App\Dashboard\UI\Api\UtilityBillsSummaryController::class);
 });
+
+// File attachment routes
+Route::prefix('files')->group(function () {
+    Route::post('/upload', [App\Core\Http\Controllers\FileController::class, 'upload']);
+    Route::get('/entity', [App\Core\Http\Controllers\FileController::class, 'getFiles']);
+    Route::get('/{id}', [App\Core\Http\Controllers\FileController::class, 'show']);
+    Route::get('/{id}/download', [App\Core\Http\Controllers\FileController::class, 'download']);
+    Route::delete('/{id}', [App\Core\Http\Controllers\FileController::class, 'delete']);
+});
