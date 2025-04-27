@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useForm, SubmitHandler } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
+import { useToast } from '../../ui/Toast';
 import { Button } from '../../ui/Button';
 import { Card, CardContent, CardFooter } from '../../ui/Card';
 import { DollarSign } from 'lucide-react';
@@ -8,7 +9,7 @@ import { DollarSign } from 'lucide-react';
 interface ValuationFormProps {
   investmentId: string;
   onSuccess?: () => void;
-  onCancel: () => void;
+  onCancel?: () => void;
   initialValue?: number;
 }
 
@@ -20,6 +21,7 @@ const ValuationForm: React.FC<ValuationFormProps> = ({
 }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
+  const { toast } = useToast();
 
   const { register, handleSubmit, formState: { errors } } = useForm({
     defaultValues: {
@@ -38,6 +40,13 @@ const ValuationForm: React.FC<ValuationFormProps> = ({
         ...data,
         value: parseFloat(data.value),
       });
+
+      toast({
+        title: "Success",
+        description: "Valuation added successfully",
+        variant: "success",
+      });
+
       if (onSuccess) {
         onSuccess();
       }
@@ -47,8 +56,18 @@ const ValuationForm: React.FC<ValuationFormProps> = ({
       if (error.response?.data?.errors) {
         // Handle field-specific errors if needed
         setServerError('Please check the form for errors and try again.');
+        toast({
+          title: "Validation Error",
+          description: "Please check the form for errors and try again.",
+          variant: "destructive",
+        });
       } else {
         setServerError('Failed to add valuation. Please try again.');
+        toast({
+          title: "Error",
+          description: "Failed to add valuation. Please try again.",
+          variant: "destructive",
+        });
       }
     } finally {
       setIsSubmitting(false);

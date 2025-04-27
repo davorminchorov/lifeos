@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Button } from '../../ui';
 import { Card, CardHeader, CardTitle, CardContent } from '../../ui';
+import { useToast } from '../../ui/Toast';
 
 interface SubscriptionFormProps {
   initialData?: {
@@ -24,6 +25,7 @@ const SubscriptionForm: React.FC<SubscriptionFormProps> = ({
   isEditing = false
 }) => {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [formData, setFormData] = useState({
     name: initialData?.name || '',
     description: initialData?.description || '',
@@ -102,10 +104,20 @@ const SubscriptionForm: React.FC<SubscriptionFormProps> = ({
       if (isEditing && initialData?.id) {
         // Update existing subscription
         await axios.put(`/api/subscriptions/${initialData.id}`, formData);
+        toast({
+          title: "Success",
+          description: "Subscription updated successfully",
+          variant: "success",
+        });
         navigate(`/subscriptions/${initialData.id}`);
       } else {
         // Create new subscription
         const response = await axios.post('/api/subscriptions', formData);
+        toast({
+          title: "Success",
+          description: "Subscription created successfully",
+          variant: "success",
+        });
         navigate(`/subscriptions/${response.data.subscription_id}`);
       }
     } catch (error: any) {
@@ -120,8 +132,18 @@ const SubscriptionForm: React.FC<SubscriptionFormProps> = ({
         });
 
         setErrors(formattedErrors);
+        toast({
+          title: "Validation Error",
+          description: "Please correct the errors in the form",
+          variant: "destructive",
+        });
       } else {
         setSubmitError(error.response?.data?.error || 'An unexpected error occurred. Please try again.');
+        toast({
+          title: "Error",
+          description: error.response?.data?.error || 'An unexpected error occurred. Please try again.',
+          variant: "destructive",
+        });
       }
     } finally {
       setIsSubmitting(false);

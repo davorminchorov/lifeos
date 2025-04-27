@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
+import { useToast } from '../../ui/Toast';
 
 interface InvestmentFormProps {
   isEditing: boolean;
@@ -12,18 +13,23 @@ interface InvestmentFormData {
   description: string;
   initial_value: string;
   current_value: string;
+  purchase_date: string;
+  notes: string;
 }
 
 const InvestmentForm: React.FC<InvestmentFormProps> = ({ isEditing }) => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   const [formData, setFormData] = useState<InvestmentFormData>({
     name: '',
     type: 'stock', // Default type
     description: '',
     initial_value: '',
-    current_value: ''
+    current_value: '',
+    purchase_date: '',
+    notes: ''
   });
 
   const [loading, setLoading] = useState<boolean>(false);
@@ -59,13 +65,20 @@ const InvestmentForm: React.FC<InvestmentFormProps> = ({ isEditing }) => {
         type: investment.type,
         description: investment.description || '',
         initial_value: investment.initial_value?.toString() || '',
-        current_value: investment.current_value?.toString() || ''
+        current_value: investment.current_value?.toString() || '',
+        purchase_date: investment.purchase_date || '',
+        notes: investment.notes || ''
       });
 
       setError(null);
     } catch (err) {
-      setError('Failed to load investment data. Please try again later.');
-      console.error('Error fetching investment:', err);
+      console.error('Error fetching investment details:', err);
+      toast({
+        title: "Error",
+        description: "Failed to load investment details. Please try again.",
+        variant: "destructive",
+      });
+      setError('Failed to load investment details. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -99,22 +112,24 @@ const InvestmentForm: React.FC<InvestmentFormProps> = ({ isEditing }) => {
         current_value: formData.current_value ? parseFloat(formData.current_value) : null
       };
 
-      let response;
-
       if (isEditing) {
-        response = await axios.put(`/api/investments/${id}`, apiData);
+        await axios.put(`/api/investments/${id}`, apiData);
+        toast({
+          title: "Success",
+          description: "Investment updated successfully",
+          variant: "success",
+        });
       } else {
-        response = await axios.post('/api/investments', apiData);
+        await axios.post('/api/investments', apiData);
+        toast({
+          title: "Success",
+          description: "Investment created successfully",
+          variant: "success",
+        });
       }
 
-      // Navigate back to investments list with success message
-      navigate('/investments', {
-        state: {
-          message: isEditing
-            ? 'Investment updated successfully'
-            : 'Investment created successfully'
-        }
-      });
+      // Navigate back to investments list
+      navigate('/investments');
     } catch (err: any) {
       console.error('Error saving investment:', err);
 
@@ -129,8 +144,18 @@ const InvestmentForm: React.FC<InvestmentFormProps> = ({ isEditing }) => {
         });
 
         setValidationErrors(formattedErrors);
+        toast({
+          title: "Validation Error",
+          description: "Please correct the errors in the form",
+          variant: "destructive",
+        });
       } else {
         setError('Failed to save investment. Please try again later.');
+        toast({
+          title: "Error",
+          description: "Failed to save investment. Please try again later.",
+          variant: "destructive",
+        });
       }
     } finally {
       setSaving(false);

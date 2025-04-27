@@ -8,6 +8,7 @@ import BillSummaryCard from '../../components/utility-bills/BillSummaryCard';
 import BillPaymentHistoryCard from '../../components/utility-bills/BillPaymentHistoryCard';
 import RecordBillPaymentModal, { BillPaymentFormData } from '../../components/utility-bills/RecordBillPaymentModal';
 import ScheduleReminderModal, { ReminderFormData } from '../../components/utility-bills/ScheduleReminderModal';
+import { useToast } from '../../ui/Toast';
 
 interface UtilityBill {
   id: string;
@@ -45,6 +46,7 @@ const UtilityBillDetail: React.FC = () => {
   const [bill, setBill] = useState<UtilityBill | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { toast } = useToast();
 
   // Payment modal state
   const [showPaymentModal, setShowPaymentModal] = useState(false);
@@ -68,6 +70,11 @@ const UtilityBillDetail: React.FC = () => {
       setError(null);
     } catch (err) {
       setError('Failed to load bill details');
+      toast({
+        title: "Error",
+        description: "Failed to load bill details",
+        variant: "destructive",
+      });
       console.error(err);
     } finally {
       setLoading(false);
@@ -81,9 +88,20 @@ const UtilityBillDetail: React.FC = () => {
     try {
       await axios.post(`/api/utility-bills/${id}/pay`, paymentData);
       setShowPaymentModal(false);
+      toast({
+        title: "Success",
+        description: "Payment recorded successfully",
+        variant: "success",
+      });
       fetchBill(); // Refresh data
     } catch (err: any) {
-      setPaymentError(err.response?.data?.error || 'Failed to record payment');
+      const errorMessage = err.response?.data?.error || 'Failed to record payment';
+      setPaymentError(errorMessage);
+      toast({
+        title: "Error",
+        description: errorMessage,
+        variant: "destructive",
+      });
       console.error(err);
     } finally {
       setIsRecordingPayment(false);
@@ -97,9 +115,20 @@ const UtilityBillDetail: React.FC = () => {
     try {
       await axios.post(`/api/utility-bills/${id}/remind`, reminderData);
       setShowReminderModal(false);
+      toast({
+        title: "Success",
+        description: "Reminder scheduled successfully",
+        variant: "success",
+      });
       fetchBill(); // Refresh data
     } catch (err: any) {
-      setReminderError(err.response?.data?.error || 'Failed to schedule reminder');
+      const errorMessage = err.response?.data?.error || 'Failed to schedule reminder';
+      setReminderError(errorMessage);
+      toast({
+        title: "Error",
+        description: errorMessage,
+        variant: "destructive",
+      });
       console.error(err);
     } finally {
       setIsSchedulingReminder(false);

@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useRef, ChangeEvent } from 'react';
 import axios from 'axios';
-import { Button } from '../../ui/Button/Button';
+import { Button } from '../../ui/Button';
+import { useToast } from '../../ui/Toast';
 
 interface FileUploadProps {
   entityId: string;
@@ -36,26 +37,39 @@ export const FileUpload: React.FC<FileUploadProps> = ({
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { toast } = useToast();
 
   const validateFile = useCallback(
     (file: File): boolean => {
       // Check file size
       if (file.size > maxSize * 1024 * 1024) {
-        setError(`File size exceeds the maximum allowed size of ${maxSize}MB`);
+        const errorMsg = `File size exceeds the maximum allowed size of ${maxSize}MB`;
+        setError(errorMsg);
+        toast({
+          title: "File Size Error",
+          description: errorMsg,
+          variant: "destructive",
+        });
         return false;
       }
 
       // Check file type if specified
       if (allowedTypes && allowedTypes.length > 0) {
         if (!allowedTypes.includes(file.type)) {
-          setError(`File type not allowed. Accepted types: ${allowedTypes.join(', ')}`);
+          const errorMsg = `File type not allowed. Accepted types: ${allowedTypes.join(', ')}`;
+          setError(errorMsg);
+          toast({
+            title: "File Type Error",
+            description: errorMsg,
+            variant: "destructive",
+          });
           return false;
         }
       }
 
       return true;
     },
-    [maxSize, allowedTypes]
+    [maxSize, allowedTypes, toast]
   );
 
   const handleFileChange = useCallback(
@@ -82,12 +96,23 @@ export const FileUpload: React.FC<FileUploadProps> = ({
           },
         });
 
+        toast({
+          title: "Success",
+          description: "File uploaded successfully",
+          variant: "success",
+        });
+
         if (onUploadSuccess) {
           onUploadSuccess(response.data);
         }
       } catch (err: any) {
         const errorMessage = err.response?.data?.error || 'Failed to upload file';
         setError(errorMessage);
+        toast({
+          title: "Upload Error",
+          description: errorMessage,
+          variant: "destructive",
+        });
         if (onUploadError) {
           onUploadError(new Error(errorMessage));
         }
@@ -99,7 +124,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
         }
       }
     },
-    [entityId, entityType, validateFile, onUploadSuccess, onUploadError]
+    [entityId, entityType, validateFile, onUploadSuccess, onUploadError, toast]
   );
 
   const handleButtonClick = () => {

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Button } from '../../ui/Button/Button';
 import { Card } from '../../ui/Card';
+import { useToast } from '../../ui/Toast';
 
 interface UtilityBillFormProps {
   initialData?: {
@@ -26,6 +27,7 @@ const UtilityBillForm: React.FC<UtilityBillFormProps> = ({
   isEditing = false
 }) => {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [formData, setFormData] = useState({
     name: initialData?.name || '',
     description: initialData?.description || '',
@@ -94,10 +96,20 @@ const UtilityBillForm: React.FC<UtilityBillFormProps> = ({
       if (isEditing && initialData?.id) {
         // Update existing utility bill
         await axios.put(`/api/utility-bills/${initialData.id}`, formData);
+        toast({
+          title: "Success",
+          description: "Utility bill updated successfully",
+          variant: "success",
+        });
         navigate(`/utility-bills/${initialData.id}`);
       } else {
         // Create new utility bill
         const response = await axios.post('/api/utility-bills', formData);
+        toast({
+          title: "Success",
+          description: "Utility bill created successfully",
+          variant: "success",
+        });
         navigate(`/utility-bills/${response.data.utility_bill_id}`);
       }
     } catch (error: any) {
@@ -112,8 +124,18 @@ const UtilityBillForm: React.FC<UtilityBillFormProps> = ({
         });
 
         setErrors(formattedErrors);
+        toast({
+          title: "Validation Error",
+          description: "Please correct the errors in the form",
+          variant: "destructive",
+        });
       } else {
         setSubmitError(error.response?.data?.error || 'An unexpected error occurred. Please try again.');
+        toast({
+          title: "Error",
+          description: error.response?.data?.error || 'An unexpected error occurred. Please try again.',
+          variant: "destructive",
+        });
       }
     } finally {
       setIsSubmitting(false);
