@@ -64,7 +64,7 @@ export const MonthlySpendingChart: React.FC<MonthlySpendingChartProps> = ({ mont
     return <div className="text-red-600">{error}</div>;
   }
 
-  if (monthlyData.length === 0) {
+  if (!monthlyData || monthlyData.length === 0) {
     return <div className="text-gray-500">No data available for the selected period.</div>;
   }
 

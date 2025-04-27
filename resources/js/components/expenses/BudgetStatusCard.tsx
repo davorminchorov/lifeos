@@ -26,14 +26,20 @@ export const BudgetStatusCard: React.FC = () => {
 
       try {
         const response = await axios.get('/api/budgets');
-        // Sort by budget with lowest percentage remaining first
-        const sortedBudgets = [...response.data.data].sort((a, b) => {
-          const aRemaining = (a.budget_amount - a.current_spending) / a.budget_amount;
-          const bRemaining = (b.budget_amount - b.current_spending) / b.budget_amount;
-          return aRemaining - bRemaining;
-        }).slice(0, 3); // Only show top 3
 
-        setBudgets(sortedBudgets);
+        // Add null check and ensure we have an array
+        if (response.data && Array.isArray(response.data.data)) {
+          // Sort by budget with lowest percentage remaining first
+          const sortedBudgets = [...response.data.data].sort((a, b) => {
+            const aRemaining = (a.budget_amount - a.current_spending) / a.budget_amount;
+            const bRemaining = (b.budget_amount - b.current_spending) / b.budget_amount;
+            return aRemaining - bRemaining;
+          }).slice(0, 3); // Only show top 3
+
+          setBudgets(sortedBudgets);
+        } else {
+          setBudgets([]);
+        }
       } catch (err) {
         setError('Failed to load budgets');
         console.error('Failed to fetch budgets', err);

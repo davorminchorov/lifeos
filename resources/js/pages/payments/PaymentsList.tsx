@@ -51,23 +51,26 @@ const PaymentsList: React.FC = () => {
   });
 
   // Calculate payment statistics
-  const calculateStats = (paymentData: Payment[]) => {
+  const calculateStats = (paymentData: Payment[] | undefined) => {
+    // If paymentData is undefined or null, use an empty array
+    const data = paymentData || [];
+
     // Get current month and last month
     const now = new Date();
     const currentMonth = now.getMonth();
     const currentYear = now.getFullYear();
 
     // Calculate total spent
-    const totalSpent = paymentData.reduce((sum, payment) => sum + payment.amount, 0);
+    const totalSpent = data.reduce((sum, payment) => sum + payment.amount, 0);
 
     // Count payments
-    const paymentCount = paymentData.length;
+    const paymentCount = data.length;
 
     // Calculate average payment
     const averagePayment = paymentCount > 0 ? totalSpent / paymentCount : 0;
 
     // Calculate this month's payments
-    const thisMonthPayments = paymentData.filter(payment => {
+    const thisMonthPayments = data.filter(payment => {
       const paymentDate = new Date(payment.payment_date);
       return paymentDate.getMonth() === currentMonth && paymentDate.getFullYear() === currentYear;
     });
@@ -79,7 +82,7 @@ const PaymentsList: React.FC = () => {
     const lastMonthMonth = lastMonthDate.getMonth();
     const lastMonthYear = lastMonthDate.getFullYear();
 
-    const lastMonthPayments = paymentData.filter(payment => {
+    const lastMonthPayments = data.filter(payment => {
       const paymentDate = new Date(payment.payment_date);
       return paymentDate.getMonth() === lastMonthMonth && paymentDate.getFullYear() === lastMonthYear;
     });
@@ -87,7 +90,7 @@ const PaymentsList: React.FC = () => {
     const lastMonth = lastMonthPayments.reduce((sum, payment) => sum + payment.amount, 0);
 
     // Determine most common currency
-    const currency = paymentData.length > 0 ? paymentData[0].currency : 'USD';
+    const currency = data.length > 0 ? data[0].currency : 'USD';
 
     setStats({
       totalSpent,
@@ -244,7 +247,7 @@ const PaymentsList: React.FC = () => {
           }}
           variant="outline"
           size="sm"
-          disabled={payments.length === 0}
+          disabled={!payments || payments.length === 0}
         >
           Export to CSV
         </Button>
@@ -320,7 +323,13 @@ const PaymentsList: React.FC = () => {
         </div>
       )}
 
-      {payments.length === 0 ? (
+      {!payments ? (
+        <Card>
+          <div className="p-6 text-center">
+            <p className="text-gray-500">Loading payment data...</p>
+          </div>
+        </Card>
+      ) : payments.length === 0 ? (
         <Card>
           <div className="p-6 text-center">
             <p className="text-gray-500">No payment records found.</p>

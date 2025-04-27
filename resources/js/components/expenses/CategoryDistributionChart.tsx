@@ -59,7 +59,7 @@ export const CategoryDistributionChart: React.FC<CategoryDistributionChartProps>
     return <div className="text-red-600">{error}</div>;
   }
 
-  if (categoryData.length === 0) {
+  if (!categoryData || categoryData.length === 0) {
     return <div className="text-gray-500">No category data available.</div>;
   }
 

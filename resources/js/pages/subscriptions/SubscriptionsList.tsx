@@ -184,7 +184,13 @@ const SubscriptionsList: React.FC = () => {
         </div>
       )}
 
-      {subscriptions.length === 0 ? (
+      {!subscriptions ? (
+        <Card>
+          <div className="p-6 text-center">
+            <p className="text-gray-500">Loading subscriptions...</p>
+          </div>
+        </Card>
+      ) : subscriptions.length === 0 ? (
         <Card>
           <div className="p-6 text-center">
             <p className="text-gray-500">No subscriptions found. Create your first subscription!</p>

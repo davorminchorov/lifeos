@@ -36,9 +36,13 @@ export const ExpensesList: React.FC<ExpensesListProps> = ({ refreshTrigger = 0 }
       try {
         const response = await axios.get('/api/categories');
         const categoriesMap: Record<string, Category> = {};
-        response.data.data.forEach((category: Category) => {
-          categoriesMap[category.category_id] = category;
-        });
+
+        if (response.data && response.data.data) {
+          response.data.data.forEach((category: Category) => {
+            categoriesMap[category.category_id] = category;
+          });
+        }
+
         setCategories(categoriesMap);
       } catch (err) {
         console.error('Failed to fetch categories', err);
@@ -70,13 +74,17 @@ export const ExpensesList: React.FC<ExpensesListProps> = ({ refreshTrigger = 0 }
 
       const response = await axios.get('/api/expenses', { params });
 
-      // Add category names to expenses
-      const expensesWithCategories = response.data.data.map((expense: Expense) => ({
-        ...expense,
-        category_name: expense.category_id ? categories[expense.category_id]?.name : 'Uncategorized'
-      }));
+      if (response.data && response.data.data) {
+        // Add category names to expenses
+        const expensesWithCategories = response.data.data.map((expense: Expense) => ({
+          ...expense,
+          category_name: expense.category_id ? categories[expense.category_id]?.name : 'Uncategorized'
+        }));
 
-      setExpenses(expensesWithCategories);
+        setExpenses(expensesWithCategories);
+      } else {
+        setExpenses([]);
+      }
     } catch (err) {
       setError('Failed to load expenses');
       console.error('Failed to fetch expenses', err);
