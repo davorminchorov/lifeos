@@ -70,7 +70,9 @@ export const authStore = createStore({
       enqueue.effect(async () => {
         try {
           await authService.logout();
+          // After logout, clear the user and reset state
           authStore.send({ type: 'AUTH_FAILURE', error: null });
+          // Redirect to login page will be handled by the component
         } catch (error: any) {
           const errorMessage = error.response?.data?.message ||
                              "Logout failed";

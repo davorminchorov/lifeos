@@ -2,7 +2,7 @@
 
 namespace App\UtilityBills\UI\Api;
 
-use App\Core\Http\Controllers\ApiController;
+use App\Http\Controllers\Controller;
 use App\UtilityBills\Commands\AddBill;
 use App\UtilityBills\Commands\PayBill;
 use App\UtilityBills\Commands\ScheduleReminder;
@@ -15,9 +15,20 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use App\Core\Commands\CommandBus;
+use App\Core\Queries\QueryBus;
 
-class UtilityBillsController extends ApiController
+class UtilityBillsController extends Controller
 {
+    protected ?CommandBus $commandBus = null;
+    protected ?QueryBus $queryBus = null;
+
+    public function __construct(CommandBus $commandBus = null, QueryBus $queryBus = null)
+    {
+        $this->commandBus = $commandBus;
+        $this->queryBus = $queryBus;
+    }
+
     public function index()
     {
         $bills = $this->queryBus->handle(new GetBills());

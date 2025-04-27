@@ -40,6 +40,7 @@ class LoginController extends Controller
 
     /**
      * Log the user out of the application.
+     * Can be accessed via both GET and POST methods.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response

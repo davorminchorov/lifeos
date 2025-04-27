@@ -13,7 +13,7 @@ export default function UnifiedLayout({}: UnifiedLayoutProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const { isDark, toggleTheme } = useTheme();
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
 
   // Define navigation items with icons using Material Design icon patterns
   const navItems = [
@@ -105,14 +105,7 @@ export default function UnifiedLayout({}: UnifiedLayoutProps) {
 
   const handleLogout = async () => {
     try {
-      await fetch('/api/logout', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Requested-With': 'XMLHttpRequest'
-        },
-        credentials: 'include'
-      });
+      await logout();
       navigate('/login');
     } catch (error) {
       console.error('Logout failed', error);

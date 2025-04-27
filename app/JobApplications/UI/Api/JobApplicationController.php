@@ -2,7 +2,7 @@
 
 namespace App\JobApplications\UI\Api;
 
-use App\Core\Http\Controllers\Controller;
+use App\Http\Controllers\Controller;
 use App\JobApplications\Commands\SubmitApplicationCommand;
 use App\JobApplications\Commands\UpdateApplicationCommand;
 use App\JobApplications\Commands\ScheduleInterviewCommand;

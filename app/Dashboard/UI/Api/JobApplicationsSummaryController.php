@@ -5,7 +5,7 @@ namespace App\Dashboard\UI\Api;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use App\Core\Http\Controllers\Controller;
+use App\Http\Controllers\Controller;
 
 class JobApplicationsSummaryController extends Controller
 {

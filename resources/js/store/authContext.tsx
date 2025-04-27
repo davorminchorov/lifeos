@@ -20,7 +20,16 @@ const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Initialize auth on mount
   useEffect(() => {
+    // Check auth status when component mounts
     initAuth();
+
+    // Set up a timer to periodically check auth status (every 5 minutes)
+    const intervalId = setInterval(() => {
+      initAuth();
+    }, 5 * 60 * 1000);
+
+    // Clean up the interval when component unmounts
+    return () => clearInterval(intervalId);
   }, []);
 
   // Get values from store using selectors

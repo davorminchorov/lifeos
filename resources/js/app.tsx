@@ -77,51 +77,53 @@ const App: React.FC = () => {
                             <Route path="/login" element={<Login />} />
 
                             {/* Protected Routes */}
-                            <Route path="/" element={<UnifiedLayout />}>
-                                <Route index element={<Navigate to="/dashboard" replace />} />
-                                <Route path="dashboard" element={<Dashboard />} />
+                            <Route element={<ProtectedRoute />}>
+                                <Route path="/" element={<UnifiedLayout />}>
+                                    <Route index element={<Navigate to="/dashboard" replace />} />
+                                    <Route path="dashboard" element={<Dashboard />} />
 
-                                {/* Subscription Routes */}
-                                <Route path="subscriptions">
-                                    <Route index element={<SubscriptionsList />} />
-                                    <Route path="create" element={<CreateSubscription />} />
-                                    <Route path=":id" element={<SubscriptionDetail />} />
-                                    <Route path=":id/edit" element={<EditSubscription />} />
-                                </Route>
+                                    {/* Subscription Routes */}
+                                    <Route path="subscriptions">
+                                        <Route index element={<SubscriptionsList />} />
+                                        <Route path="create" element={<CreateSubscription />} />
+                                        <Route path=":id" element={<SubscriptionDetail />} />
+                                        <Route path=":id/edit" element={<EditSubscription />} />
+                                    </Route>
 
-                                {/* Payment Routes */}
-                                <Route path="payments">
-                                    <Route index element={<PaymentHistoryPage />} />
-                                    <Route path="record/:subscriptionId" element={<RecordPayment />} />
-                                    <Route path="history" element={<PaymentHistoryPage />} />
-                                </Route>
+                                    {/* Payment Routes */}
+                                    <Route path="payments">
+                                        <Route index element={<PaymentHistoryPage />} />
+                                        <Route path="record/:subscriptionId" element={<RecordPayment />} />
+                                        <Route path="history" element={<PaymentHistoryPage />} />
+                                    </Route>
 
-                                {/* Report Routes */}
-                                <Route path="reports">
-                                    <Route path="payments" element={<PaymentReports />} />
-                                </Route>
+                                    {/* Report Routes */}
+                                    <Route path="reports">
+                                        <Route path="payments" element={<PaymentReports />} />
+                                    </Route>
 
-                                {/* Expenses Routes */}
-                                <Route path="expenses" element={<ExpensesPage />} />
-                                <Route path="budgets" element={<BudgetsPage />} />
-                                <Route path="categories" element={<CategoriesPage />} />
+                                    {/* Expenses Routes */}
+                                    <Route path="expenses" element={<ExpensesPage />} />
+                                    <Route path="budgets" element={<BudgetsPage />} />
+                                    <Route path="categories" element={<CategoriesPage />} />
 
-                                {/* Utility Bills Routes */}
-                                <Route path="utility-bills">
-                                    <Route index element={<UtilityBillsPage />} />
-                                    <Route path=":id" element={<UtilityBillDetailPage />} />
-                                </Route>
+                                    {/* Utility Bills Routes */}
+                                    <Route path="utility-bills">
+                                        <Route index element={<UtilityBillsPage />} />
+                                        <Route path=":id" element={<UtilityBillDetailPage />} />
+                                    </Route>
 
-                                {/* Job Applications Routes */}
-                                <Route path="job-applications">
-                                    <Route index element={<JobApplicationsPage />} />
-                                    <Route path=":id" element={<JobApplicationDetailPage />} />
-                                </Route>
+                                    {/* Job Applications Routes */}
+                                    <Route path="job-applications">
+                                        <Route index element={<JobApplicationsPage />} />
+                                        <Route path=":id" element={<JobApplicationDetailPage />} />
+                                    </Route>
 
-                                {/* Investments Routes */}
-                                <Route path="investments">
-                                    <Route index element={<InvestmentsPage />} />
-                                    <Route path=":id" element={<InvestmentDetailPage />} />
+                                    {/* Investments Routes */}
+                                    <Route path="investments">
+                                        <Route index element={<InvestmentsPage />} />
+                                        <Route path=":id" element={<InvestmentDetailPage />} />
+                                    </Route>
                                 </Route>
                             </Route>
 
