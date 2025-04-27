@@ -1,47 +1,199 @@
-import React from "react";
-import { cn } from "../../utils/cn";
+import React, { useRef, useState } from 'react';
+import { cn } from '../../utils/cn';
 
-export type ButtonVariant = "default" | "primary" | "secondary" | "outline" | "ghost" | "link" | "destructive";
-export type ButtonSize = "default" | "sm" | "lg" | "icon";
+/**
+ * Button component following Material Design guidelines
+ *
+ * Supports the following features:
+ * - Multiple variants (contained, outlined, text, elevated, tonal)
+ * - Size variations (sm, md, lg)
+ * - Loading state with spinner
+ * - Start and end icons
+ * - Full width option
+ * - Material Design ripple effect
+ *
+ * Also maintains backward compatibility with legacy variant names:
+ * - 'outline' maps to 'outlined'
+ * - 'default' maps to 'contained'
+ * - 'primary' maps to 'contained'
+ */
+
+// Legacy variant types for backward compatibility
+type LegacyVariant = 'default' | 'primary' | 'secondary' | 'outline' | 'ghost' | 'link' | 'destructive';
+
+// Material Design variant types
+type MaterialVariant = 'contained' | 'outlined' | 'text' | 'elevated' | 'tonal';
+
+// Combined variant type for better developer experience
+export type ButtonVariant = MaterialVariant | LegacyVariant;
+
+// Size options
+export type ButtonSize = 'sm' | 'md' | 'lg' | 'default';
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
   size?: ButtonSize;
-  asChild?: boolean;
+  isLoading?: boolean;
+  fullWidth?: boolean;
+  startIcon?: React.ReactNode;
+  endIcon?: React.ReactNode;
+  asChild?: boolean; // For backward compatibility
 }
 
-const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant = "default", size = "default", asChild = false, ...props }, ref) => {
-    const Comp = "button";
+export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  ({
+    className,
+    variant = 'contained',
+    size = 'md',
+    isLoading = false,
+    fullWidth = false,
+    startIcon,
+    endIcon,
+    children,
+    disabled,
+    onClick,
+    asChild, // Ignored, for backward compatibility
+    ...props
+  }, ref) => {
+    // For ripple effect
+    const buttonRef = useRef<HTMLButtonElement>(null);
+    const [rippleStyle, setRippleStyle] = useState<React.CSSProperties>({});
+    const [isRippling, setIsRippling] = useState(false);
+
+    // Map legacy variants to Material Design variants
+    const normalizedVariant = mapVariant(variant);
+
+    // Maps legacy sizes to Material Design sizes
+    const normalizedSize = size === 'default' ? 'md' : size;
+
+    // Material Design uses more pronounced border radius and specific elevations
+    const baseStyles = 'relative inline-flex items-center justify-center rounded-full font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none overflow-hidden';
+
+    // Variant styles based on Material Design Button variants
+    const variantStyles = {
+      contained: 'bg-teal-600 text-white hover:bg-teal-700 active:bg-teal-800 shadow-sm focus:ring-teal-500 disabled:bg-teal-600/40',
+      outlined: 'border border-teal-600 text-teal-600 hover:bg-teal-50 active:bg-teal-100 focus:ring-teal-500 disabled:border-teal-600/40 disabled:text-teal-600/40',
+      text: 'text-teal-600 hover:bg-teal-50 active:bg-teal-100 focus:ring-teal-500 disabled:text-teal-600/40',
+      elevated: 'bg-white text-teal-600 shadow hover:shadow-md active:shadow-inner focus:ring-teal-500 disabled:text-teal-600/40',
+      tonal: 'bg-teal-100 text-teal-800 hover:bg-teal-200 active:bg-teal-300 focus:ring-teal-500 disabled:bg-teal-100/40 disabled:text-teal-800/40',
+
+      // Special legacy variants that don't map directly
+      secondary: 'bg-slate-600 text-white hover:bg-slate-700 active:bg-slate-800 shadow-sm focus:ring-slate-500 disabled:bg-slate-600/40',
+      ghost: 'text-slate-600 hover:bg-slate-50 active:bg-slate-100 focus:ring-slate-500 disabled:text-slate-600/40',
+      link: 'text-teal-600 underline hover:text-teal-700 focus:ring-teal-500 disabled:text-teal-600/40',
+      destructive: 'bg-red-600 text-white hover:bg-red-700 active:bg-red-800 shadow-sm focus:ring-red-500 disabled:bg-red-600/40',
+    };
+
+    // Size styles with Material Design touch target sizing
+    const sizeStyles = {
+      sm: 'h-9 text-sm px-4 min-w-[64px]',
+      md: 'h-10 px-6 min-w-[80px]',
+      lg: 'h-12 px-8 text-base min-w-[96px]',
+    };
+
+    // Handle ripple effect
+    const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+      if (disabled || isLoading) return;
+
+      const button = buttonRef.current;
+      if (!button) return;
+
+      const rect = button.getBoundingClientRect();
+      const size = Math.max(rect.width, rect.height) * 2;
+      const x = e.clientX - rect.left - size / 2;
+      const y = e.clientY - rect.top - size / 2;
+
+      setRippleStyle({
+        width: `${size}px`,
+        height: `${size}px`,
+        top: `${y}px`,
+        left: `${x}px`,
+      });
+
+      setIsRippling(true);
+      setTimeout(() => setIsRippling(false), 600);
+
+      if (onClick) onClick(e);
+    };
 
     return (
-      <Comp
+      <button
+        ref={buttonRef}
         className={cn(
-          "inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
-
-          // Variants
-          variant === "default" && "bg-primary text-primary-foreground hover:bg-primary/90",
-          variant === "destructive" && "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-          variant === "outline" && "border border-input bg-transparent hover:bg-accent hover:text-accent-foreground",
-          variant === "secondary" && "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-          variant === "ghost" && "hover:bg-accent hover:text-accent-foreground",
-          variant === "link" && "text-primary underline-offset-4 hover:underline",
-
-          // Sizes
-          size === "default" && "h-10 px-4 py-2",
-          size === "sm" && "h-9 rounded-md px-3",
-          size === "lg" && "h-11 rounded-md px-8",
-          size === "icon" && "h-10 w-10",
-
+          baseStyles,
+          variantStyles[normalizedVariant as keyof typeof variantStyles],
+          sizeStyles[normalizedSize as keyof typeof sizeStyles],
+          fullWidth && 'w-full',
+          "leading-none",
           className
         )}
-        ref={ref}
+        disabled={isLoading || disabled}
+        onClick={handleClick}
         {...props}
-      />
+      >
+        {/* Material Design ripple effect */}
+        {isRippling && (
+          <span
+            className="absolute block rounded-full bg-white bg-opacity-30 animate-ripple"
+            style={rippleStyle}
+          />
+        )}
+
+        <span className="flex items-center justify-center relative z-10">
+          {isLoading && (
+            <svg
+              className="animate-spin -ml-1 mr-2 h-5 w-5 text-current"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              />
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              />
+            </svg>
+          )}
+          {!isLoading && startIcon && <span className="mr-2 -ml-1">{startIcon}</span>}
+          <span>{children}</span>
+          {!isLoading && endIcon && <span className="ml-2 -mr-1">{endIcon}</span>}
+        </span>
+      </button>
     );
   }
 );
 
+// Map legacy variant names to Material Design variant names
+function mapVariant(variant: ButtonVariant): MaterialVariant | 'secondary' | 'ghost' | 'link' | 'destructive' {
+  switch (variant) {
+    case 'default':
+    case 'primary':
+      return 'contained';
+    case 'outline':
+      return 'outlined';
+    case 'contained':
+    case 'outlined':
+    case 'text':
+    case 'elevated':
+    case 'tonal':
+    case 'secondary':
+    case 'ghost':
+    case 'link':
+    case 'destructive':
+      return variant;
+    default:
+      return 'contained';
+  }
+}
+
 Button.displayName = "Button";
 
-export { Button };
+export default Button;

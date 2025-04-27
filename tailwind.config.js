@@ -41,6 +41,17 @@ export default {
           'on-container': '#7F1D1D',
         },
       },
+      keyframes: {
+        ripple: {
+          'to': {
+            transform: 'scale(4)',
+            opacity: '0'
+          },
+        },
+      },
+      animation: {
+        ripple: 'ripple 0.6s linear forwards',
+      },
       boxShadow: {
         // Material elevation levels
         'elevation-1': '0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.14)',

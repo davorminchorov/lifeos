@@ -1,8 +1,8 @@
 import React from 'react';
 
 // Export UI components from their respective directories
-export { Button } from './Button';
-export { Card } from './Card';
+export { default as Button } from './Button';
+export { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from './Card';
 export { Badge } from './Badge';
 export { Tabs } from './Tabs';
 export { Dialog } from './Dialog';

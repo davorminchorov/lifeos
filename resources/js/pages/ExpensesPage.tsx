@@ -4,8 +4,7 @@ import ExpenseForm from '../components/expenses/ExpenseForm';
 import { ExpensesList } from '../components/expenses/ExpensesList';
 import { MonthlySummaryCard } from '../components/expenses/MonthlySummaryCard';
 import { BudgetStatusCard } from '../components/expenses/BudgetStatusCard';
-import { Button } from '../ui/Button/Button';
-import { Card } from '../ui/Card';
+import { Button, Card, CardContent, CardHeader, CardTitle } from '../ui';
 
 export const ExpensesPage: React.FC = () => {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
@@ -44,35 +43,39 @@ export const ExpensesPage: React.FC = () => {
       </div>
 
       {showAddForm && (
-        <Card className="mb-6 border border-gray-200 shadow-sm">
-          <div className="p-6">
+        <Card variant="elevated" className="mb-6">
+          <CardContent>
             <ExpenseForm onSuccess={handleExpenseAdded} />
-          </div>
+          </CardContent>
         </Card>
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
         <div className="md:col-span-8">
-          <Card className="border border-gray-200 shadow-sm">
-            <div className="p-6">
+          <Card variant="elevated">
+            <CardContent>
               <ExpensesList refreshTrigger={refreshTrigger} />
-            </div>
+            </CardContent>
           </Card>
         </div>
 
         <div className="md:col-span-4 space-y-6">
-          <Card className="border border-gray-200 shadow-sm">
-            <div className="p-6">
-              <h2 className="text-xl font-semibold mb-4">Monthly Summary</h2>
+          <Card variant="filled">
+            <CardHeader>
+              <CardTitle>Monthly Summary</CardTitle>
+            </CardHeader>
+            <CardContent>
               <MonthlySummaryCard />
-            </div>
+            </CardContent>
           </Card>
 
-          <Card className="border border-gray-200 shadow-sm">
-            <div className="p-6">
-              <h2 className="text-xl font-semibold mb-4">Budget Status</h2>
+          <Card variant="outlined">
+            <CardHeader>
+              <CardTitle>Budget Status</CardTitle>
+            </CardHeader>
+            <CardContent>
               <BudgetStatusCard />
-            </div>
+            </CardContent>
           </Card>
         </div>
       </div>
