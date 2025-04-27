@@ -1,33 +1,44 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { LoginForm } from '../../components/auth/LoginForm';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../../store/authContext';
 
 export function Login() {
+  const { login, isAuthenticated, isLoading: authLoading, error: authError } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | undefined>();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Get the intended destination from location state, or default to dashboard
+  const from = (location.state as { from?: { pathname: string } })?.from?.pathname || '/dashboard';
+
+  // Redirect to intended destination if already authenticated
+  useEffect(() => {
+    if (isAuthenticated && !authLoading) {
+      navigate(from, { replace: true });
+    }
+  }, [isAuthenticated, authLoading, navigate, from]);
+
+  // Set error from auth store if available
+  useEffect(() => {
+    if (authError) {
+      setError(authError);
+    }
+  }, [authError]);
 
   const handleLogin = async (data: { email: string; password: string; remember: boolean }) => {
     setIsLoading(true);
     setError(undefined);
 
     try {
-      // You would use your actual authentication endpoint here
-      const response = await axios.post('/api/login', {
-        email: data.email,
-        password: data.password,
-        remember: data.remember
-      });
-
-      // Store token or session data
-      localStorage.setItem('token', response.data.token);
-
-      // Redirect to dashboard
-      navigate('/dashboard');
+      // Use the login function from our auth hook
+      await login(data.email, data.password, data.remember);
+      // Navigation will happen in the useEffect above when auth state changes
     } catch (err: any) {
       setError(
         err.response?.data?.message ||
+        err.response?.data?.error ||
         "We couldn't sign you in. Please check your credentials and try again."
       );
     } finally {

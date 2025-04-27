@@ -10,6 +10,10 @@ import { Login } from './pages/auth/Login';
 import Dashboard from './dashboard/routes/Dashboard';
 import NotFound from './pages/NotFound';
 
+// Import auth components
+import { AuthProvider } from './store/authContext';
+import { ProtectedRoute } from './components/auth/ProtectedRoute';
+
 console.log('LifeOS app initialized with React');
 
 // Setup CSRF token for all requests
@@ -25,17 +29,24 @@ if (token) {
 function App() {
     return (
         <BrowserRouter>
-            <Routes>
-                {/* Auth Routes */}
-                <Route path="/login" element={<Login />} />
-                <Route path="/dashboard" element={<Dashboard />} />
+            <AuthProvider>
+                <Routes>
+                    {/* Public Routes */}
+                    <Route path="/login" element={<Login />} />
 
-                {/* Redirect root to login for now */}
-                <Route path="/" element={<Navigate to="/login" replace />} />
+                    {/* Protected Routes */}
+                    <Route element={<ProtectedRoute />}>
+                        <Route path="/dashboard" element={<Dashboard />} />
+                        {/* Add other protected routes here */}
+                    </Route>
 
-                {/* 404 page */}
-                <Route path="*" element={<NotFound />} />
-            </Routes>
+                    {/* Redirect root to login for now */}
+                    <Route path="/" element={<Navigate to="/login" replace />} />
+
+                    {/* 404 page */}
+                    <Route path="*" element={<NotFound />} />
+                </Routes>
+            </AuthProvider>
         </BrowserRouter>
     );
 }

@@ -1,84 +1,65 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React from 'react';
+import { useAuth } from '../../store/authContext';
 
-export default function Dashboard() {
-  const [user, setUser] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+function Dashboard() {
+  const { user, logout } = useAuth();
 
-  useEffect(() => {
-    // Fetch the authenticated user data
-    const fetchUser = async () => {
-      try {
-        const response = await axios.get("/api/user");
-        setUser(response.data);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-        // Redirect to login if not authenticated
-        window.location.href = "/login";
-      }
-    };
-
-    fetchUser();
-  }, []);
-
-  const handleLogout = async () => {
-    try {
-      await axios.post("/api/logout");
-      window.location.href = "/login";
-    } catch (error) {
-      console.error("Error during logout:", error);
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className="container">
-        <div className="w-full max-w-4xl">
-          <div className="w-full h-12 bg-teal-600 flex items-center pl-4 text-white text-lg font-bold">
-            LifeOS
-          </div>
-          <div className="login-box text-center py-12">
-            Loading...
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* App Bar */}
+      <div className="bg-white shadow-elevation-1">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between h-16">
+            <div className="flex items-center">
+              <div className="w-10 h-10 rounded-full bg-teal-600 flex items-center justify-center text-white text-lg font-medium">
+                L
+              </div>
+              <h1 className="ml-3 text-xl font-medium text-slate-800">LifeOS</h1>
+            </div>
+            <div className="flex items-center">
+              <span className="mr-4 text-slate-600">
+                {user?.name}
+              </span>
+              <button
+                onClick={logout}
+                className="px-4 py-2 rounded text-sm font-medium text-slate-600 hover:bg-slate-100"
+              >
+                Log out
+              </button>
+            </div>
           </div>
         </div>
       </div>
-    );
-  }
 
-  return (
-    <div className="container">
-      <div className="w-full max-w-4xl">
-        <div className="w-full h-12 bg-teal-600 flex items-center justify-between px-4 text-white">
-          <div className="text-lg font-bold">LifeOS</div>
-          <button
-            onClick={handleLogout}
-            className="px-3 py-1 bg-white text-teal-600 rounded-md text-sm"
-          >
-            Logout
-          </button>
-        </div>
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="bg-white shadow-elevation-1 rounded-lg p-6">
+          <h2 className="text-xl font-medium text-slate-800 mb-4">Welcome to your dashboard</h2>
+          <p className="text-slate-600">
+            Your account is now set up and ready to use. You can start managing your tasks, projects, and more.
+          </p>
 
-        <div className="login-box mt-4">
-          <h1 className="text-slate-800 mb-4">Welcome, {user?.name}</h1>
+          <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* Dashboard Cards */}
+            <div className="bg-white border border-slate-200 rounded-lg shadow-elevation-1 p-6 hover:shadow-elevation-2 transition-shadow">
+              <h3 className="font-medium text-slate-800 mb-2">Tasks</h3>
+              <p className="text-slate-600">Manage your daily tasks and to-dos</p>
+            </div>
 
-          <div className="mb-6">
-            <p className="text-slate-600">
-              You are now logged into LifeOS. This is a placeholder dashboard that will be developed further.
-            </p>
-          </div>
+            <div className="bg-white border border-slate-200 rounded-lg shadow-elevation-1 p-6 hover:shadow-elevation-2 transition-shadow">
+              <h3 className="font-medium text-slate-800 mb-2">Projects</h3>
+              <p className="text-slate-600">Organize and track your projects</p>
+            </div>
 
-          <div className="border-t border-gray-200 pt-4">
-            <h2 className="text-lg font-semibold text-slate-800 mb-2">Getting Started</h2>
-            <ul className="list-disc pl-5 text-slate-600">
-              <li className="mb-1">Set up your first subscription</li>
-              <li className="mb-1">Track your expenses</li>
-              <li className="mb-1">Manage your bills</li>
-              <li className="mb-1">Create investment goals</li>
-            </ul>
+            <div className="bg-white border border-slate-200 rounded-lg shadow-elevation-1 p-6 hover:shadow-elevation-2 transition-shadow">
+              <h3 className="font-medium text-slate-800 mb-2">Calendar</h3>
+              <p className="text-slate-600">Schedule and manage your events</p>
+            </div>
           </div>
         </div>
       </div>
     </div>
   );
 }
+
+export default Dashboard;
