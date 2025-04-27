@@ -70,7 +70,9 @@ const InvestmentsPage: React.FC = () => {
                     </div>
                     <div>
                       <p className="text-sm font-medium text-gray-500 mb-1">Total Invested</p>
-                      <h3 className="text-2xl font-bold text-gray-900">{formatCurrency(summary?.total_invested ?? 0, 'USD')}</h3>
+                      <p className="text-3xl font-bold">
+                        {formatCurrency(summary?.total_invested || 0, 'USD')}
+                      </p>
                     </div>
                   </div>
                   <ArrowUpRight className="h-5 w-5 text-indigo-600" />
@@ -87,7 +89,9 @@ const InvestmentsPage: React.FC = () => {
                     </div>
                     <div>
                       <p className="text-sm font-medium text-gray-500 mb-1">Current Value</p>
-                      <h3 className="text-2xl font-bold text-gray-900">{formatCurrency(summary?.total_current_value ?? 0, 'USD')}</h3>
+                      <p className="text-3xl font-bold">
+                        {formatCurrency(summary?.total_current_value || 0, 'USD')}
+                      </p>
                     </div>
                   </div>
                   <ArrowUpRight className="h-5 w-5 text-green-600" />
