@@ -19,9 +19,9 @@ function Card({
   ...props
 }: CardProps) {
   const variantClasses = {
-    elevated: 'bg-surface shadow-elevation-1 hover:shadow-elevation-2',
-    filled: 'bg-surface-variant',
-    outlined: 'border border-outline bg-surface',
+    elevated: 'bg-surface shadow-elevation-2 hover:shadow-elevation-3',
+    filled: 'bg-surface-variant shadow-elevation-1',
+    outlined: 'border-2 border-outline border-opacity-20 bg-surface hover:shadow-elevation-1',
   };
 
   return (
@@ -51,7 +51,7 @@ function CardHeader({
     <div
       className={cn(
         'px-6 py-4',
-        withBorder && 'border-b border-outline/20',
+        withBorder && 'border-b border-outline border-opacity-20',
         className
       )}
       {...props}
@@ -108,7 +108,7 @@ function CardFooter({
   return (
     <div
       className={cn(
-        'px-6 py-4 flex items-center border-t border-outline/20',
+        'px-6 py-4 flex items-center border-t border-outline border-opacity-20',
         className
       )}
       {...props}

@@ -11,38 +11,43 @@ export default {
       colors: {
         // Material Design 3 color system using CSS variables
         primary: {
-          DEFAULT: 'var(--md-primary)',
-          container: 'var(--md-primary-container)',
-          on: 'var(--md-on-primary)',
-          'on-container': 'var(--md-on-primary-container)',
+          DEFAULT: 'var(--md-sys-color-primary)',
+          container: 'var(--md-sys-color-primary-container)',
+          on: 'var(--md-sys-color-on-primary)',
+          'on-container': 'var(--md-sys-color-on-primary-container)',
         },
         secondary: {
-          DEFAULT: 'var(--md-secondary)',
-          container: 'var(--md-secondary-container)',
-          on: 'var(--md-on-secondary)',
-          'on-container': 'var(--md-on-secondary-container)',
+          DEFAULT: 'var(--md-sys-color-secondary)',
+          container: 'var(--md-sys-color-secondary-container)',
+          on: 'var(--md-sys-color-on-secondary)',
+          'on-container': 'var(--md-sys-color-on-secondary-container)',
         },
         tertiary: {
-          DEFAULT: 'var(--md-tertiary)',
-          container: 'var(--md-tertiary-container)',
-          on: 'var(--md-on-tertiary)',
-          'on-container': 'var(--md-on-tertiary-container)',
+          DEFAULT: 'var(--md-sys-color-tertiary)',
+          container: 'var(--md-sys-color-tertiary-container)',
+          on: 'var(--md-sys-color-on-tertiary)',
+          'on-container': 'var(--md-sys-color-on-tertiary-container)',
         },
         surface: {
-          DEFAULT: 'var(--md-surface)',
-          variant: 'var(--md-surface-variant)',
-          on: 'var(--md-on-surface)',
-          'on-variant': 'var(--md-on-surface-variant)',
+          DEFAULT: 'var(--md-sys-color-surface)',
+          variant: 'var(--md-sys-color-surface-variant)',
+          on: 'var(--md-sys-color-on-surface)',
+          'on-variant': 'var(--md-sys-color-on-surface-variant)',
         },
         error: {
-          DEFAULT: 'var(--md-error)',
-          container: 'var(--md-error-container)',
-          on: 'var(--md-on-error)',
-          'on-container': 'var(--md-on-error-container)',
+          DEFAULT: 'var(--md-sys-color-error)',
+          container: 'var(--md-sys-color-error-container)',
+          on: 'var(--md-sys-color-on-error)',
+          'on-container': 'var(--md-sys-color-on-error-container)',
         },
-        background: 'var(--md-background)',
-        'on-background': 'var(--md-on-background)',
-        outline: 'var(--md-outline)',
+        background: 'var(--md-sys-color-background)',
+        'on-background': 'var(--md-sys-color-on-background)',
+        outline: 'var(--md-sys-color-outline)',
+        // Hard-coded fallback colors for direct use
+        'teal-600': '#0F766E', // Primary color
+        'purple-600': '#6D28D9', // Tertiary color
+        'slate-200': '#E2E8F0', // Light background
+        'slate-700': '#334155', // Dark text
       },
       keyframes: {
         ripple: {
@@ -71,7 +76,7 @@ export default {
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
-        brand: ['Roboto', 'system-ui', 'sans-serif'],
+        brand: ['Inter', 'system-ui', 'sans-serif'],
       },
       fontSize: {
         // Material typography scale
@@ -94,4 +99,33 @@ export default {
     },
   },
   plugins: [],
+  safelist: [
+    'bg-primary',
+    'text-on-primary',
+    'bg-primary-container',
+    'text-on-primary-container',
+    'bg-secondary',
+    'text-on-secondary',
+    'bg-secondary-container',
+    'text-on-secondary-container',
+    'bg-tertiary',
+    'text-on-tertiary',
+    'bg-tertiary-container',
+    'text-on-tertiary-container',
+    'bg-surface',
+    'text-on-surface',
+    'bg-surface-variant',
+    'text-on-surface-variant',
+    'bg-background',
+    'text-on-background',
+    'bg-error',
+    'text-on-error',
+    'bg-error-container',
+    'text-on-error-container',
+    'border-outline',
+    'shadow-elevation-1',
+    'shadow-elevation-2',
+    'shadow-elevation-3',
+    'shadow-elevation-4'
+  ]
 }

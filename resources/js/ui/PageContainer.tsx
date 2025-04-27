@@ -21,11 +21,11 @@ export function PageContainer({
   actions
 }: PageContainerProps) {
   return (
-    <div className="max-w-screen-xl mx-auto">
+    <div className="w-full max-w-screen-xl mx-auto">
       {/* Page header */}
       <div className="mb-6 flex flex-col md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="text-headline-medium font-medium text-on-surface mb-1">{title}</h1>
+          <h1 className="text-headline-medium font-bold text-on-surface mb-1">{title}</h1>
           {subtitle && (
             <p className="text-body-large text-on-surface-variant">{subtitle}</p>
           )}
@@ -38,7 +38,7 @@ export function PageContainer({
       </div>
 
       {/* Page content */}
-      <div className="bg-surface rounded-lg shadow-elevation-1 p-4 md:p-6">
+      <div className="bg-surface rounded-lg shadow-elevation-1 p-4 md:p-6 border border-outline border-opacity-10">
         {children}
       </div>
     </div>
@@ -62,7 +62,7 @@ export function PageSection({
   return (
     <section className={`mb-8 ${className}`}>
       {(title || subtitle) && (
-        <div className="mb-4">
+        <div className="mb-4 border-b border-outline border-opacity-10 pb-2">
           {title && <h2 className="text-title-large font-medium text-on-surface mb-1">{title}</h2>}
           {subtitle && <p className="text-body-medium text-on-surface-variant">{subtitle}</p>}
         </div>

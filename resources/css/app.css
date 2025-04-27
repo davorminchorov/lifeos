@@ -12,14 +12,22 @@
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: var(--md-sys-color-surface-variant);
-    color: var(--md-sys-color-on-surface);
+    background-color: var(--md-sys-color-background);
+    color: var(--md-sys-color-on-background);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  #app {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
   }
 
   :root {
-    /* Material Design 3 system colors */
+    /* Material Design 3 system colors - LifeOS Teal Theme */
     --md-sys-color-primary: #0F766E;
     --md-sys-color-primary-container: #99F6E4;
     --md-sys-color-on-primary: #FFFFFF;
@@ -40,6 +48,9 @@
     --md-sys-color-error-container: #FECACA;
     --md-sys-color-on-error: #FFFFFF;
     --md-sys-color-on-error-container: #7F1D1D;
+    --md-sys-color-background: #F8FAFC;
+    --md-sys-color-on-background: #1E293B;
+    --md-sys-color-outline: #CBD5E1;
 
     /* Material Design shape */
     --md-sys-shape-corner-xs: 4px;
@@ -49,7 +60,7 @@
     --md-sys-shape-corner-xl: 28px;
 
     /* Typography */
-    --md-sys-typescale-font-family-brand: 'Roboto', system-ui, sans-serif;
+    --md-sys-typescale-font-family-brand: 'Inter', system-ui, sans-serif;
     --md-sys-typescale-font-family-plain: 'Inter', system-ui, sans-serif;
   }
 
@@ -74,6 +85,9 @@
     --md-sys-color-error-container: #991B1B;
     --md-sys-color-on-error: #FFFFFF;
     --md-sys-color-on-error-container: #FCA5A5;
+    --md-sys-color-background: #0F172A;
+    --md-sys-color-on-background: #F8FAFC;
+    --md-sys-color-outline: #475569;
   }
 }
 
@@ -182,6 +196,99 @@
 
   .shadow-elevation-4 {
     box-shadow: 0 15px 25px rgba(0,0,0,0.12), 0 5px 10px rgba(0,0,0,0.10);
+  }
+
+  /* Direct styling for key components to ensure colors are applied */
+  .bg-primary {
+    background-color: var(--md-sys-color-primary);
+  }
+
+  .text-on-primary {
+    color: var(--md-sys-color-on-primary);
+  }
+
+  .bg-primary-container {
+    background-color: var(--md-sys-color-primary-container);
+  }
+
+  .text-on-primary-container {
+    color: var(--md-sys-color-on-primary-container);
+  }
+
+  .bg-secondary {
+    background-color: var(--md-sys-color-secondary);
+  }
+
+  .text-on-secondary {
+    color: var(--md-sys-color-on-secondary);
+  }
+
+  .bg-secondary-container {
+    background-color: var(--md-sys-color-secondary-container);
+  }
+
+  .text-on-secondary-container {
+    color: var(--md-sys-color-on-secondary-container);
+  }
+
+  .bg-tertiary {
+    background-color: var(--md-sys-color-tertiary);
+  }
+
+  .text-on-tertiary {
+    color: var(--md-sys-color-on-tertiary);
+  }
+
+  .bg-tertiary-container {
+    background-color: var(--md-sys-color-tertiary-container);
+  }
+
+  .text-on-tertiary-container {
+    color: var(--md-sys-color-on-tertiary-container);
+  }
+
+  .bg-surface {
+    background-color: var(--md-sys-color-surface);
+  }
+
+  .text-on-surface {
+    color: var(--md-sys-color-on-surface);
+  }
+
+  .bg-surface-variant {
+    background-color: var(--md-sys-color-surface-variant);
+  }
+
+  .text-on-surface-variant {
+    color: var(--md-sys-color-on-surface-variant);
+  }
+
+  .bg-background {
+    background-color: var(--md-sys-color-background);
+  }
+
+  .text-on-background {
+    color: var(--md-sys-color-on-background);
+  }
+
+  .bg-error {
+    background-color: var(--md-sys-color-error);
+  }
+
+  .text-on-error {
+    color: var(--md-sys-color-on-error);
+  }
+
+  .bg-error-container {
+    background-color: var(--md-sys-color-error-container);
+  }
+
+  .text-on-error-container {
+    color: var(--md-sys-color-on-error-container);
+  }
+
+  .border-outline {
+    border-color: var(--md-sys-color-outline);
   }
 }
 
