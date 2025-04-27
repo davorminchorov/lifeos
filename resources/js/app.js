@@ -1,2 +1,4 @@
 // App.js
-console.log('LifeOS app initialized');
+import './services/broadcasting';
+
+console.log('LifeOS app initialized with real-time broadcasting');
