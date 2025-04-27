@@ -21,7 +21,6 @@ const JobApplicationDetailPage: React.FC = () => {
   const [application, setApplication] = useState<JobApplication | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [showEditModal, setShowEditModal] = useState(false);
   const [showInterviewModal, setShowInterviewModal] = useState(false);
   const [showOutcomeModal, setShowOutcomeModal] = useState(false);
   const [activeTab, setActiveTab] = useState('details');
@@ -45,11 +44,6 @@ const JobApplicationDetailPage: React.FC = () => {
       fetchApplication();
     }
   }, [id]);
-
-  const handleApplicationUpdated = () => {
-    setShowEditModal(false);
-    fetchApplication();
-  };
 
   const handleInterviewAdded = () => {
     setShowInterviewModal(false);
@@ -109,7 +103,7 @@ const JobApplicationDetailPage: React.FC = () => {
       subtitle={`${application.company_name} - Applied on ${formatDate(application.application_date)}`}
       actions={
         <div className="flex space-x-2">
-          <Button variant="outlined" onClick={() => setShowEditModal(true)} icon={<Edit className="h-4 w-4 mr-2" />}>
+          <Button variant="outlined" onClick={() => navigate(`/job-applications/${id}/edit`)} icon={<Edit className="h-4 w-4 mr-2" />}>
             Edit
           </Button>
           {!['offered', 'rejected', 'withdrawn'].includes(application.status) && (
@@ -303,13 +297,6 @@ const JobApplicationDetailPage: React.FC = () => {
                         </Button>
                       </>
                     )}
-                    <Button
-                      variant="text"
-                      className="w-full"
-                      onClick={() => setShowEditModal(true)}
-                    >
-                      Edit Application
-                    </Button>
                   </div>
                 </CardContent>
               </Card>
@@ -462,15 +449,14 @@ const JobApplicationDetailPage: React.FC = () => {
         <Button variant="outlined" onClick={() => navigate('/job-applications')} icon={<ArrowLeft className="h-4 w-4 mr-2" />}>
           Back to Applications
         </Button>
+        <Button
+          variant="text"
+          className="w-full"
+          onClick={() => navigate(`/job-applications/${id}/edit`)}
+        >
+          Edit Application
+        </Button>
       </div>
-
-      {showEditModal && (
-        <JobApplicationModal
-          application={application}
-          onClose={() => setShowEditModal(false)}
-          onSave={handleApplicationUpdated}
-        />
-      )}
 
       {showInterviewModal && (
         <InterviewModal

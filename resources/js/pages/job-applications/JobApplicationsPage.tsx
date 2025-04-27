@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { axiosClient } from '../../lib/axios';
 import { Button } from '../../ui';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../../ui/Card';
@@ -9,13 +9,12 @@ import { PageContainer, PageSection } from '../../ui/PageContainer';
 import { formatDate } from '../../utils/dates';
 import { PlusCircle } from 'lucide-react';
 import { JobApplication } from '../../types/job-applications';
-import JobApplicationModal from '../../components/job-applications/JobApplicationModal';
 
 const JobApplicationsPage: React.FC = () => {
   const [applications, setApplications] = useState<JobApplication[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [showModal, setShowModal] = useState(false);
+  const navigate = useNavigate();
 
   const fetchApplications = async () => {
     try {
@@ -34,11 +33,6 @@ const JobApplicationsPage: React.FC = () => {
   useEffect(() => {
     fetchApplications();
   }, []);
-
-  const handleApplicationAdded = () => {
-    setShowModal(false);
-    fetchApplications();
-  };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -63,7 +57,7 @@ const JobApplicationsPage: React.FC = () => {
       subtitle="Track and manage your job search applications"
       actions={
         <Button
-          onClick={() => setShowModal(true)}
+          onClick={() => navigate('/job-applications/create')}
           variant="filled"
           icon={<PlusCircle className="h-4 w-4 mr-2" />}
         >
@@ -96,7 +90,7 @@ const JobApplicationsPage: React.FC = () => {
           ) : applications.length === 0 ? (
             <div className="text-center py-8">
               <p className="text-on-surface-variant mb-4">No job applications found</p>
-              <Button onClick={() => setShowModal(true)} variant="filled">Add Your First Application</Button>
+              <Button onClick={() => navigate('/job-applications/create')} variant="filled">Add Your First Application</Button>
             </div>
           ) : (
             <div className="overflow-x-auto">
@@ -141,13 +135,6 @@ const JobApplicationsPage: React.FC = () => {
             View Job Search Tips
           </Button>
         </div>
-      )}
-
-      {showModal && (
-        <JobApplicationModal
-          onClose={() => setShowModal(false)}
-          onSave={handleApplicationAdded}
-        />
       )}
     </PageContainer>
   );
