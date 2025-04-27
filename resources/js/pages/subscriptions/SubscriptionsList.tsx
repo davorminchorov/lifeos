@@ -1,27 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import axios from 'axios';
+import React, { useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { formatCurrency } from '../../utils/format';
 import { Button } from '../../ui';
 import { Card, CardHeader, CardTitle, CardContent } from '../../ui';
 import { PageContainer } from '../../ui/PageContainer';
 import SubscriptionManager from '../../components/subscriptions/SubscriptionManager';
+import { useSubscriptionStore } from '../../store/subscriptionStore';
+import {
+  useSubscriptions,
+  useSubscriptionCategories,
+  useCancelSubscription
+} from '../../queries/subscriptionQueries';
 import { Subscription as SubscriptionType } from '../../components/subscriptions/SubscriptionCard';
-
-interface SubscriptionAPI {
-  id: string;
-  name: string;
-  description: string;
-  amount: number;
-  currency: string;
-  billing_cycle: string;
-  start_date: string;
-  end_date: string | null;
-  status: string;
-  website: string | null;
-  category: string | null;
-  next_payment_date: string | null;
-}
 
 interface Meta {
   current_page: number;
@@ -31,128 +21,99 @@ interface Meta {
 }
 
 const SubscriptionsList: React.FC = () => {
-  const [subscriptions, setSubscriptions] = useState<SubscriptionType[]>([]);
-  const [meta, setMeta] = useState<Meta>({
+  const navigate = useNavigate();
+  const [state, actions] = useSubscriptionStore();
+  const { filters } = state;
+
+  // Convert our store filters to query params
+  const queryParams = {
+    status: filters.status === 'all' ? '' : filters.status,
+    category: filters.category === 'all' ? '' : filters.category,
+    sort_by: filters.sort_by
+  };
+
+  // Use React Query hooks
+  const {
+    data: subscriptionsData,
+    isLoading,
+    error: queryError
+  } = useSubscriptions(queryParams);
+
+  const { data: categories = [] } = useSubscriptionCategories();
+
+  const cancelSubscriptionMutation = useCancelSubscription();
+
+  // Update error state from query
+  useEffect(() => {
+    if (queryError) {
+      actions.setError('Failed to load subscriptions');
+      console.error(queryError);
+    } else {
+      actions.setError(null);
+    }
+  }, [queryError, actions]);
+
+  // Extract and transform subscription data for the UI
+  const subscriptions: SubscriptionType[] = subscriptionsData?.data?.map(sub => ({
+    id: sub.id,
+    name: sub.name,
+    description: sub.description,
+    status: sub.status === 'active' ? 'active' :
+            sub.status === 'cancelled' ? 'canceled' :
+            sub.status === 'paused' ? 'past_due' : 'inactive',
+    currentPeriodEnd: sub.next_payment_date || undefined,
+    price: sub.amount,
+    interval: sub.billing_cycle === 'monthly' ? 'month' :
+              sub.billing_cycle === 'annually' ? 'year' :
+              sub.billing_cycle === 'weekly' ? 'week' : 'day',
+    currency: sub.currency,
+    features: sub.category ? [sub.category] : undefined
+  })) || [];
+
+  // Extract pagination meta
+  const meta: Meta = subscriptionsData?.meta || {
     current_page: 1,
     per_page: 10,
     total: 0,
     last_page: 1,
-  });
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [filters, setFilters] = useState({
-    status: '',
-    category: '',
-    search: '',
-  });
-
-  const fetchSubscriptions = async (page = 1) => {
-    setLoading(true);
-    try {
-      const params = new URLSearchParams({
-        page: page.toString(),
-        per_page: '10',
-        sort_by: 'name',
-        sort_direction: 'asc',
-        ...filters,
-      }).toString();
-
-      const response = await axios.get(`/api/subscriptions?${params}`);
-      const apiData = response.data.data || [];
-      const metaData = response.data.meta || {
-        current_page: 1,
-        per_page: 10,
-        total: 0,
-        last_page: 1,
-      };
-
-      // Transform API data to SubscriptionType
-      const transformedData: SubscriptionType[] = apiData.map((sub: SubscriptionAPI) => ({
-        id: sub.id,
-        name: sub.name,
-        description: sub.description,
-        status: sub.status === 'active' ? 'active' :
-                sub.status === 'cancelled' ? 'canceled' :
-                sub.status === 'paused' ? 'past_due' : 'inactive',
-        currentPeriodEnd: sub.next_payment_date || undefined,
-        price: sub.amount,
-        interval: sub.billing_cycle === 'monthly' ? 'month' :
-                  sub.billing_cycle === 'annually' ? 'year' :
-                  sub.billing_cycle === 'weekly' ? 'week' : 'day',
-        currency: sub.currency,
-        features: sub.category ? [sub.category] : undefined
-      }));
-
-      setSubscriptions(transformedData);
-      setMeta(metaData);
-      setError(null);
-    } catch (err) {
-      setError('Failed to load subscriptions');
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
   };
 
-  useEffect(() => {
-    fetchSubscriptions();
-  }, [filters]);
-
   const handlePageChange = (page: number) => {
-    fetchSubscriptions(page);
+    // React Query will handle refetching when we change the page param
+    // This would ideally be reflected in the URL as well
   };
 
   const handleFilterChange = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFilters(prev => ({ ...prev, [name]: value }));
+    actions.updateFilter({ name, value });
   };
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    fetchSubscriptions();
+    // The query key change will trigger a refetch
   };
 
   const handleManageSubscription = (subscription: SubscriptionType) => {
-    // Navigate to subscription detail page
-    window.location.href = `/subscriptions/${subscription.id}`;
+    navigate(`/subscriptions/${subscription.id}`);
   };
 
   const handleCancelSubscription = async (subscription: SubscriptionType) => {
-    try {
-      const endDate = new Date().toISOString().split('T')[0]; // Today's date
-      await axios.post(`/api/subscriptions/${subscription.id}/cancel`, { end_date: endDate });
+    const endDate = new Date().toISOString().split('T')[0]; // Today's date
 
-      // Refresh subscriptions after cancellation
-      fetchSubscriptions();
-    } catch (err) {
-      console.error('Error cancelling subscription:', err);
-      setError('Failed to cancel subscription');
-    }
+    cancelSubscriptionMutation.mutate(
+      { subscriptionId: subscription.id, endDate },
+      {
+        onError: (error) => {
+          console.error('Error cancelling subscription:', error);
+          actions.setError('Failed to cancel subscription');
+        }
+      }
+    );
   };
 
-  const handleRenewSubscription = async (subscription: SubscriptionType) => {
-    try {
-      // For a basic renewal, we'll update the subscription with a new start date
-      const startDate = new Date().toISOString().split('T')[0]; // Today's date
-
-      // Get current subscription details first
-      const response = await axios.get(`/api/subscriptions/${subscription.id}`);
-      const currentData = response.data;
-
-      // Update with new values while keeping most properties the same
-      await axios.put(`/api/subscriptions/${subscription.id}`, {
-        ...currentData,
-        start_date: startDate,
-        status: 'active',
-        end_date: null
-      });
-
-      // Refresh subscriptions after renewal
-      fetchSubscriptions();
-    } catch (err) {
-      console.error('Error renewing subscription:', err);
-      setError('Failed to renew subscription');
-    }
+  const handleRenewSubscription = (subscription: SubscriptionType) => {
+    // Navigate to edit page where the user can update the subscription
+    navigate(`/subscriptions/${subscription.id}/edit`);
   };
 
   return (
@@ -182,10 +143,9 @@ const SubscriptionsList: React.FC = () => {
                 onChange={handleFilterChange}
                 className="w-full border border-outline border-opacity-30 rounded-md shadow-sm p-2 bg-surface text-on-surface"
               >
-                <option value="">All Statuses</option>
+                <option value="all">All Statuses</option>
                 <option value="active">Active</option>
                 <option value="cancelled">Cancelled</option>
-                <option value="paused">Paused</option>
               </select>
             </div>
 
@@ -200,29 +160,28 @@ const SubscriptionsList: React.FC = () => {
                 onChange={handleFilterChange}
                 className="w-full border border-outline border-opacity-30 rounded-md shadow-sm p-2 bg-surface text-on-surface"
               >
-                <option value="">All Categories</option>
-                <option value="streaming">Streaming</option>
-                <option value="software">Software</option>
-                <option value="hosting">Hosting</option>
-                <option value="utilities">Utilities</option>
-                <option value="memberships">Memberships</option>
-                <option value="other">Other</option>
+                <option value="all">All Categories</option>
+                {categories.map(category => (
+                  <option key={category} value={category}>{category}</option>
+                ))}
               </select>
             </div>
 
             <div>
-              <label htmlFor="search" className="block text-sm font-medium text-on-surface-variant mb-1">
-                Search
+              <label htmlFor="sort_by" className="block text-sm font-medium text-on-surface-variant mb-1">
+                Sort By
               </label>
-              <input
-                type="text"
-                id="search"
-                name="search"
-                value={filters.search}
+              <select
+                id="sort_by"
+                name="sort_by"
+                value={filters.sort_by}
                 onChange={handleFilterChange}
-                placeholder="Search subscriptions..."
                 className="w-full border border-outline border-opacity-30 rounded-md shadow-sm p-2 bg-surface text-on-surface"
-              />
+              >
+                <option value="name">Name</option>
+                <option value="amount">Amount</option>
+                <option value="next_payment_date">Next Payment</option>
+              </select>
             </div>
 
             <div className="flex items-end">
@@ -232,16 +191,16 @@ const SubscriptionsList: React.FC = () => {
         </CardContent>
       </Card>
 
-      {loading ? (
+      {isLoading ? (
         <div className="flex justify-center py-10">
           <div className="animate-pulse text-center">
             <div className="h-10 w-40 bg-surface-variant rounded mx-auto mb-4"></div>
             <div className="h-4 w-60 bg-surface-variant rounded mx-auto"></div>
           </div>
         </div>
-      ) : error ? (
+      ) : state.error ? (
         <div className="bg-error-container border border-error text-on-error-container p-4 rounded-lg">
-          {error}
+          {state.error}
         </div>
       ) : (
         <>

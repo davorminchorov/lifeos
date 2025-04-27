@@ -1,30 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import axios from 'axios';
-import { formatCurrency, formatDate } from '../../utils/format';
+import { formatCurrency } from '../../utils/format';
 import { Button } from '../../ui';
 import { Card, CardHeader, CardTitle, CardContent } from '../../ui';
 import PaymentHistoryCard from '../../components/subscriptions/PaymentHistoryCard';
 import PaymentSummaryCard from '../../components/subscriptions/PaymentSummaryCard';
 import RecordPaymentModal, { RecordPaymentFormData } from '../../components/subscriptions/RecordPaymentModal';
 import { useToast } from '../../ui/Toast';
-
-interface Subscription {
-  id: string;
-  name: string;
-  description: string;
-  amount: number;
-  currency: string;
-  billing_cycle: string;
-  start_date: string;
-  end_date: string | null;
-  status: string;
-  website: string | null;
-  category: string | null;
-  next_payment_date: string | null;
-  payments: SubscriptionPayment[];
-  total_paid: number;
-}
+import { useSubscriptionDetail, useSubscriptionPayments, useRecordPayment, useCancelSubscription } from '../../queries/subscriptionQueries';
+import { useSubscriptionStore } from '../../store/subscriptionStore';
 
 interface SubscriptionPayment {
   id: string;
@@ -39,105 +23,87 @@ const SubscriptionDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [subscription, setSubscription] = useState<Subscription | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+
+  // State management with XState Store
+  const { setError, setState } = useSubscriptionStore();
+
+  // Local UI state
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [cancelDate, setCancelDate] = useState(new Date().toISOString().split('T')[0]);
-  const [isCancelling, setIsCancelling] = useState(false);
-  const [cancelError, setCancelError] = useState<string | null>(null);
-
-  // Record payment modal state
   const [showPaymentModal, setShowPaymentModal] = useState(false);
-  const [isRecordingPayment, setIsRecordingPayment] = useState(false);
-  const [paymentError, setPaymentError] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetchSubscription();
-  }, [id]);
+  // TanStack Query hooks
+  const {
+    data: subscription,
+    isLoading: isLoadingSubscription,
+    error: subscriptionError
+  } = useSubscriptionDetail(id as string);
 
-  const fetchSubscription = async () => {
-    if (!id) return;
+  const {
+    data: payments = [],
+    isLoading: isLoadingPayments
+  } = useSubscriptionPayments(id as string, !!subscription);
 
-    setLoading(true);
-    try {
-      const response = await axios.get(`/api/subscriptions/${id}`);
-      setSubscription(response.data);
-      setError(null);
-    } catch (err: any) {
-      setError(err.response?.data?.error || 'Failed to load subscription details');
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const {
+    mutate: recordPayment,
+    isPending: isRecordingPayment,
+    error: paymentError
+  } = useRecordPayment();
+
+  const {
+    mutate: cancelSubscription,
+    isPending: isCancelling,
+    error: cancelError
+  } = useCancelSubscription();
 
   const handleCancelSubscription = async () => {
     if (!id) return;
 
-    setIsCancelling(true);
-    setCancelError(null);
-
-    try {
-      await axios.post(`/api/subscriptions/${id}/cancel`, {
-        end_date: cancelDate,
-      });
-
-      toast({
-        title: "Success",
-        description: "Subscription cancelled successfully",
-        variant: "success",
-      });
-
-      setShowCancelModal(false);
-      fetchSubscription(); // Refresh data
-    } catch (err: any) {
-      const errorMessage = err.response?.data?.error || 'Failed to cancel subscription';
-      setCancelError(errorMessage);
-
-      toast({
-        title: "Error",
-        description: errorMessage,
-        variant: "destructive",
-      });
-
-      console.error(err);
-    } finally {
-      setIsCancelling(false);
-    }
+    cancelSubscription(
+      { id, end_date: cancelDate },
+      {
+        onSuccess: () => {
+          toast({
+            title: "Success",
+            description: "Subscription cancelled successfully",
+            variant: "success",
+          });
+          setShowCancelModal(false);
+        },
+        onError: (err: any) => {
+          toast({
+            title: "Error",
+            description: err?.message || 'Failed to cancel subscription',
+            variant: "destructive",
+          });
+        }
+      }
+    );
   };
 
   const handleRecordPayment = async (paymentData: RecordPaymentFormData) => {
     if (!id) return;
 
-    setIsRecordingPayment(true);
-    setPaymentError(null);
-
-    try {
-      await axios.post(`/api/subscriptions/${id}/payments`, paymentData);
-
-      toast({
-        title: "Success",
-        description: "Payment recorded successfully",
-        variant: "success",
-      });
-
-      setShowPaymentModal(false);
-      fetchSubscription(); // Refresh data
-    } catch (err: any) {
-      const errorMessage = err.response?.data?.error || 'Failed to record payment';
-      setPaymentError(errorMessage);
-
-      toast({
-        title: "Error",
-        description: errorMessage,
-        variant: "destructive",
-      });
-
-      console.error(err);
-    } finally {
-      setIsRecordingPayment(false);
-    }
+    recordPayment(
+      { subscriptionId: id, ...paymentData },
+      {
+        onSuccess: () => {
+          toast({
+            title: "Success",
+            description: "Payment recorded successfully",
+            variant: "success",
+          });
+          setShowPaymentModal(false);
+        },
+        onError: (err: any) => {
+          toast({
+            title: "Error",
+            description: err?.message || 'Failed to record payment',
+            variant: "destructive",
+          });
+        }
+      }
+    );
   };
 
   const renderStatusBadge = (status: string) => {
@@ -164,7 +130,10 @@ const SubscriptionDetail: React.FC = () => {
     );
   };
 
-  if (loading) {
+  // Show loading state if either subscription or payments are loading
+  const isLoading = isLoadingSubscription || isLoadingPayments;
+
+  if (isLoading) {
     return (
       <div className="container mx-auto px-4 py-8 max-w-6xl">
         <div className="flex justify-center items-center h-64">
@@ -174,11 +143,12 @@ const SubscriptionDetail: React.FC = () => {
     );
   }
 
-  if (error || !subscription) {
+  if (subscriptionError || !subscription) {
+    const errorMessage = subscriptionError instanceof Error ? subscriptionError.message : 'Subscription not found';
     return (
       <div className="container mx-auto px-4 py-8 max-w-6xl">
         <div className="bg-error-container border border-error text-on-error-container px-4 py-3 rounded">
-          {error || 'Subscription not found'}
+          {errorMessage}
         </div>
         <div className="mt-4">
           <Button onClick={() => navigate('/subscriptions')} variant="filled">Back to subscriptions</Button>
@@ -188,7 +158,7 @@ const SubscriptionDetail: React.FC = () => {
   }
 
   // Transform payments to the format expected by PaymentHistoryCard
-  const formattedPayments = subscription.payments.map(payment => ({
+  const formattedPayments = payments.map(payment => ({
     id: payment.id,
     amount: payment.amount,
     date: payment.payment_date,
@@ -320,13 +290,13 @@ const SubscriptionDetail: React.FC = () => {
               nextPaymentDate={subscription.next_payment_date}
               totalPaid={subscription.total_paid || 0}
               startDate={subscription.start_date}
-              paymentCount={subscription.payments?.length || 0}
+              paymentCount={payments?.length || 0}
             />
           </CardContent>
         </Card>
       </div>
 
-      {subscription.payments && subscription.payments.length > 0 ? (
+      {payments.length > 0 ? (
         <Card variant="elevated" className="mb-6">
           <CardHeader>
             <CardTitle>Payment History</CardTitle>
@@ -358,7 +328,7 @@ const SubscriptionDetail: React.FC = () => {
 
               {cancelError && (
                 <div className="mb-4 p-3 bg-error-container text-on-error-container rounded">
-                  {cancelError}
+                  {(cancelError as Error).message || 'An error occurred'}
                 </div>
               )}
 
@@ -401,7 +371,7 @@ const SubscriptionDetail: React.FC = () => {
           onClose={() => setShowPaymentModal(false)}
           onSubmit={handleRecordPayment}
           isSubmitting={isRecordingPayment}
-          error={paymentError}
+          error={paymentError instanceof Error ? paymentError.message : null}
           defaultCurrency={subscription.currency}
           defaultAmount={subscription.amount}
         />
