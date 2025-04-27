@@ -4,6 +4,8 @@ import { ExpenseForm } from '../components/expenses/ExpenseForm';
 import { ExpensesList } from '../components/expenses/ExpensesList';
 import { MonthlySummaryCard } from '../components/expenses/MonthlySummaryCard';
 import { BudgetStatusCard } from '../components/expenses/BudgetStatusCard';
+import { Button } from '../ui/Button/Button';
+import { Card } from '../ui/Card';
 
 export const ExpensesPage: React.FC = () => {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
@@ -15,50 +17,75 @@ export const ExpensesPage: React.FC = () => {
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <div className="flex justify-between items-center mb-6">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-800">Expense Tracking</h1>
-          <div className="mt-2 flex space-x-4">
-            <Link to="/budgets" className="text-blue-600 hover:text-blue-800">
-              Manage Budgets
-            </Link>
-            <Link to="/categories" className="text-blue-600 hover:text-blue-800">
-              Manage Categories
-            </Link>
+    <div className="container mx-auto px-4 py-8 max-w-6xl">
+      <div className="flex flex-col space-y-4 mb-8">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+          <div>
+            <h1 className="text-3xl font-bold mb-2 sm:mb-0">Expense Tracking</h1>
+            <div className="flex space-x-4 mt-2">
+              <Link to="/budgets" className="text-blue-600 hover:text-blue-800">
+                Manage Budgets
+              </Link>
+              <Link to="/categories" className="text-blue-600 hover:text-blue-800">
+                Manage Categories
+              </Link>
+            </div>
           </div>
+
+          <Button
+            onClick={() => setShowAddForm(!showAddForm)}
+            className="whitespace-nowrap"
+          >
+            {showAddForm ? 'Cancel' : 'Add New Expense'}
+          </Button>
         </div>
-        <button
-          className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md"
-          onClick={() => setShowAddForm(!showAddForm)}
-        >
-          {showAddForm ? 'Cancel' : 'Add New Expense'}
-        </button>
+
+        <p className="text-gray-600">Track, categorize and analyze your expenses to manage your finances better.</p>
       </div>
 
       {showAddForm && (
-        <div className="mb-6">
-          <ExpenseForm onSuccess={handleExpenseAdded} />
-        </div>
+        <Card className="mb-6 border border-gray-200 shadow-sm">
+          <div className="p-6">
+            <ExpenseForm onSuccess={handleExpenseAdded} />
+          </div>
+        </Card>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <div className="lg:col-span-8">
-          <ExpensesList refreshTrigger={refreshTrigger} />
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+        <div className="md:col-span-8">
+          <Card className="border border-gray-200 shadow-sm">
+            <div className="p-6">
+              <ExpensesList refreshTrigger={refreshTrigger} />
+            </div>
+          </Card>
         </div>
 
-        <div className="lg:col-span-4">
-          <div className="bg-white rounded-lg shadow p-4 mb-6">
-            <h2 className="text-xl font-semibold mb-4">Monthly Summary</h2>
-            <MonthlySummaryCard />
-          </div>
+        <div className="md:col-span-4 space-y-6">
+          <Card className="border border-gray-200 shadow-sm">
+            <div className="p-6">
+              <h2 className="text-xl font-semibold mb-4">Monthly Summary</h2>
+              <MonthlySummaryCard />
+            </div>
+          </Card>
 
-          <div className="bg-white rounded-lg shadow p-4">
-            <h2 className="text-xl font-semibold mb-4">Budget Status</h2>
-            <BudgetStatusCard />
-          </div>
+          <Card className="border border-gray-200 shadow-sm">
+            <div className="p-6">
+              <h2 className="text-xl font-semibold mb-4">Budget Status</h2>
+              <BudgetStatusCard />
+            </div>
+          </Card>
         </div>
       </div>
+
+      {!showAddForm && (
+        <div className="mt-8 text-center">
+          <p className="text-gray-500 mb-2">Want to see more detailed analytics?</p>
+          <p className="text-gray-700 mb-4">Visit the reports section for comprehensive spending analysis.</p>
+          <Link to="/reports">
+            <Button variant="outlined">View Reports</Button>
+          </Link>
+        </div>
+      )}
     </div>
   );
 };

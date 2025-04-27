@@ -158,22 +158,31 @@ export const ExpensesList: React.FC<ExpensesListProps> = ({ refreshTrigger = 0 }
   }
 
   return (
-    <div className="bg-white rounded-lg shadow">
-      <div className="p-4 border-b">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold">Your Expenses</h2>
-          <button
-            onClick={handleExport}
-            className="text-blue-600 hover:text-blue-800 flex items-center"
-          >
-            <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-            </svg>
-            Export CSV
-          </button>
-        </div>
+    <div>
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-xl font-semibold">Your Expenses</h2>
 
-        <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="flex items-center">
+          <button
+            onClick={fetchExpenses}
+            className="ml-2 text-blue-600 hover:text-blue-800 text-sm flex items-center"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            Refresh
+          </button>
+          <a
+            href="/reports"
+            className="ml-4 text-blue-600 hover:text-blue-800 text-sm"
+          >
+            Export CSV
+          </a>
+        </div>
+      </div>
+
+      <div className="mb-6 bg-gray-50 rounded-lg p-4 border border-gray-200">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Category
@@ -181,7 +190,7 @@ export const ExpensesList: React.FC<ExpensesListProps> = ({ refreshTrigger = 0 }
             <select
               value={filterCategory}
               onChange={(e) => setFilterCategory(e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 bg-white"
             >
               <option value="">All Categories</option>
               {Object.values(categories).map((category) => (
@@ -200,7 +209,7 @@ export const ExpensesList: React.FC<ExpensesListProps> = ({ refreshTrigger = 0 }
               type="date"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 bg-white"
             />
           </div>
 
@@ -212,18 +221,38 @@ export const ExpensesList: React.FC<ExpensesListProps> = ({ refreshTrigger = 0 }
               type="date"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 bg-white"
             />
           </div>
         </div>
       </div>
 
-      {expenses.length === 0 ? (
-        <div className="p-8 text-center text-gray-500">
-          No expenses found. Start by adding a new expense.
+      {loading ? (
+        <div className="animate-pulse">
+          <div className="h-8 bg-gray-200 rounded w-full mb-4"></div>
+          <div className="h-8 bg-gray-200 rounded w-full mb-4"></div>
+          <div className="h-8 bg-gray-200 rounded w-full mb-4"></div>
+        </div>
+      ) : error ? (
+        <div className="p-8 text-center text-red-600 bg-red-50 rounded-lg border border-red-200">
+          {error}
+          <button
+            onClick={fetchExpenses}
+            className="block mx-auto mt-2 text-sm text-blue-600 hover:text-blue-800"
+          >
+            Try Again
+          </button>
+        </div>
+      ) : expenses.length === 0 ? (
+        <div className="flex flex-col items-center justify-center p-10 bg-gray-50 rounded-lg border border-gray-200">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-gray-300 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+          </svg>
+          <p className="text-lg font-medium text-gray-600 mb-1">No expenses found</p>
+          <p className="text-gray-500 text-center mb-4">Start by adding a new expense to track your spending.</p>
         </div>
       ) : (
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto border border-gray-200 rounded-lg shadow-sm">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
@@ -246,7 +275,7 @@ export const ExpensesList: React.FC<ExpensesListProps> = ({ refreshTrigger = 0 }
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {expenses.map((expense) => (
-                <tr key={expense.expense_id}>
+                <tr key={expense.expense_id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     {formatDate(expense.date)}
                   </td>
@@ -258,10 +287,12 @@ export const ExpensesList: React.FC<ExpensesListProps> = ({ refreshTrigger = 0 }
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     {expense.category_id ? (
-                      expense.category_name
+                      <span className="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-full">
+                        {expense.category_name}
+                      </span>
                     ) : (
                       <select
-                        className="text-xs rounded border border-gray-300 px-2 py-1"
+                        className="text-xs rounded border border-gray-300 px-2 py-1 bg-white"
                         onChange={(e) => handleCategorize(expense.expense_id, e.target.value)}
                         value=""
                       >
@@ -279,23 +310,13 @@ export const ExpensesList: React.FC<ExpensesListProps> = ({ refreshTrigger = 0 }
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-right font-medium">
                     {formatAmount(expense.amount)}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    {expense.category_id && (
-                      <button
-                        className="text-blue-600 hover:text-blue-900"
-                        onClick={() => {
-                          const newCategoryId = prompt(
-                            `Change category for ${expense.description}`,
-                            expense.category_id || ''
-                          );
-                          if (newCategoryId && newCategoryId !== expense.category_id) {
-                            handleCategorize(expense.expense_id, newCategoryId);
-                          }
-                        }}
-                      >
-                        Change
-                      </button>
-                    )}
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-right">
+                    <button
+                      className="text-blue-600 hover:text-blue-900"
+                      onClick={() => {/* Edit function would go here */}}
+                    >
+                      Edit
+                    </button>
                   </td>
                 </tr>
               ))}
