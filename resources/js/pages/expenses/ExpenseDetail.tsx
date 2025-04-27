@@ -5,6 +5,8 @@ import { formatCurrency, formatDate } from '../../utils/format';
 import { Button } from '../../ui/Button/Button';
 import { Card } from '../../ui/Card';
 import { useToast } from '../../ui/Toast';
+import { useExpenseDetail, useDeleteExpense } from '../../queries/expenseQueries';
+import { Edit, Trash, ArrowLeft, Download } from 'lucide-react';
 
 interface Category {
   id: string;
@@ -30,56 +32,48 @@ const ExpenseDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [expense, setExpense] = useState<Expense | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [deleting, setDeleting] = useState(false);
 
-  useEffect(() => {
-    const fetchExpense = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get(`/api/expenses/${id}`);
-        setExpense(response.data.data);
-        setError(null);
-      } catch (err) {
-        setError('Failed to load expense details');
-        console.error(err);
-        toast({
-          title: "Error",
-          description: "Failed to load expense details",
-          variant: "destructive",
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
+  // Use our React Query hook for fetching expense
+  const {
+    data: expense,
+    isLoading,
+    error
+  } = useExpenseDetail(id as string);
 
-    fetchExpense();
-  }, [id]);
+  // Use mutation for deleting expense
+  const deleteExpenseMutation = useDeleteExpense();
+  const [isDeleting, setIsDeleting] = useState(false);
 
+  // Handle navigation to edit page
+  const handleEdit = () => {
+    navigate(`/expenses/${id}/edit`);
+  };
+
+  // Handle deletion with confirmation
   const handleDelete = async () => {
     if (!window.confirm('Are you sure you want to delete this expense?')) {
       return;
     }
 
-    setDeleting(true);
-    try {
-      await axios.delete(`/api/expenses/${id}`);
-      toast({
-        title: "Success",
-        description: "Expense deleted successfully",
-      });
-      navigate('/expenses');
-    } catch (err) {
-      toast({
-        title: "Error",
-        description: "Failed to delete expense",
-        variant: "destructive",
-      });
-      console.error(err);
-      setDeleting(false);
-    }
+    setIsDeleting(true);
+    deleteExpenseMutation.mutate(id as string, {
+      onSuccess: () => {
+        toast({
+          title: "Success",
+          description: "Expense deleted successfully",
+        });
+        navigate('/expenses');
+      },
+      onError: (err) => {
+        toast({
+          title: "Error",
+          description: "Failed to delete expense",
+          variant: "destructive",
+        });
+        console.error(err);
+        setIsDeleting(false);
+      }
+    });
   };
 
   const formatPaymentMethod = (method: string) => {
@@ -115,7 +109,7 @@ const ExpenseDetail: React.FC = () => {
     return luminance > 0.5 ? '#000000' : '#ffffff';
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         <div className="flex justify-between items-center mb-6">
@@ -144,7 +138,7 @@ const ExpenseDetail: React.FC = () => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             <p className="text-xl font-medium text-gray-900 mb-2">Failed to load expense</p>
-            <p className="text-gray-600 mb-6">{error || 'The expense could not be found'}</p>
+            <p className="text-gray-600 mb-6">{(error as Error)?.message || 'The expense could not be found'}</p>
             <div className="flex justify-center space-x-4">
               <Button onClick={() => navigate('/expenses')} variant="outlined">
                 Back to Expenses
@@ -164,25 +158,28 @@ const ExpenseDetail: React.FC = () => {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
         <div>
           <Link to="/expenses" className="text-sm text-indigo-600 hover:text-indigo-800 flex items-center mb-2">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
+            <ArrowLeft className="h-4 w-4 mr-1" />
             Back to expenses
           </Link>
           <h1 className="text-3xl font-bold">{expense.title}</h1>
         </div>
 
         <div className="flex space-x-3">
-          <Link to={`/expenses/${id}/edit`}>
-            <Button variant="outlined">
-              Edit Expense
-            </Button>
-          </Link>
           <Button
-            onClick={handleDelete}
-            disabled={deleting}
+            variant="outlined"
+            onClick={handleEdit}
+            icon={<Edit className="h-4 w-4 mr-2" />}
           >
-            {deleting ? 'Deleting...' : 'Delete Expense'}
+            Edit Expense
+          </Button>
+          <Button
+            variant="outlined"
+            className="text-error border-error hover:bg-error-container/10"
+            onClick={handleDelete}
+            disabled={isDeleting}
+            icon={<Trash className="h-4 w-4 mr-2" />}
+          >
+            {isDeleting ? 'Deleting...' : 'Delete Expense'}
           </Button>
         </div>
       </div>
