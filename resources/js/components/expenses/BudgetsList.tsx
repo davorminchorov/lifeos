@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { BudgetForm } from './BudgetForm';
+import { Button } from '../../ui';
 
 interface Budget {
   budget_id: string;
@@ -123,95 +124,135 @@ export const BudgetsList: React.FC<BudgetsListProps> = ({ refreshTrigger = 0 }) 
     return <BudgetForm onSuccess={handleFormSuccess} />;
   }
 
-  if (loading && budgets.length === 0) {
-    return <div className="flex justify-center py-8">Loading budgets...</div>;
-  }
-
-  if (error) {
-    return <div className="bg-red-50 text-red-600 p-4 rounded">{error}</div>;
-  }
-
   return (
-    <div className="bg-white rounded-lg shadow">
-      <div className="p-4 border-b flex justify-between items-center">
-        <h2 className="text-xl font-semibold">Your Budgets</h2>
-        <button
+    <div>
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-title-medium font-medium text-on-surface">Your Budgets</h2>
+        <Button
           onClick={() => setShowAddForm(true)}
-          className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md transition duration-300"
+          variant="filled"
+          icon={
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
+            </svg>
+          }
         >
           Add New Budget
-        </button>
+        </Button>
       </div>
 
-      {budgets.length === 0 ? (
-        <div className="p-8 text-center text-gray-500">
-          No budgets found. Start by adding a new budget.
+      {loading ? (
+        <div className="animate-pulse space-y-4">
+          <div className="h-8 bg-surface-variant/40 rounded w-full"></div>
+          <div className="h-8 bg-surface-variant/40 rounded w-full"></div>
+          <div className="h-8 bg-surface-variant/40 rounded w-full"></div>
+        </div>
+      ) : error ? (
+        <div className="p-8 text-center text-error bg-error-container/50 rounded-lg border border-error/30">
+          {error}
+          <button
+            onClick={fetchBudgets}
+            className="block mx-auto mt-2 text-body-small text-primary hover:text-primary/80"
+          >
+            Try Again
+          </button>
+        </div>
+      ) : budgets.length === 0 ? (
+        <div className="flex flex-col items-center justify-center p-10 bg-surface-variant/20 rounded-lg border border-outline/20">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-on-surface-variant/30 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <p className="text-title-medium font-medium text-on-surface mb-1">No budgets found</p>
+          <p className="text-body-medium text-on-surface-variant text-center mb-4 max-w-md">
+            Start by adding a new budget to track your spending limits.
+          </p>
+          <Button
+            onClick={() => setShowAddForm(true)}
+            variant="filled"
+            icon={
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
+              </svg>
+            }
+          >
+            Add Your First Budget
+          </Button>
         </div>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Category
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Period
-                </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Budget
-                </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Spent
-                </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Remaining
-                </th>
-                <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {budgets.map((budget) => (
-                <tr key={budget.budget_id}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    {budget.category_name}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {formatDate(budget.start_date)} - {formatDate(budget.end_date)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-900">
-                    {formatAmount(budget.budget_amount)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-900">
-                    {formatAmount(budget.current_spending)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-900">
-                    {formatAmount(budget.remaining)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-center">
-                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                      budget.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                    }`}>
-                      {budget.status === 'active' ? 'Active' : 'Exceeded'}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <button
-                      onClick={() => setEditingBudget(budget)}
-                      className="text-blue-600 hover:text-blue-900"
-                    >
-                      Edit
-                    </button>
-                  </td>
+        <div className="bg-surface rounded-lg shadow-elevation-1 border border-outline/10 overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-outline/20">
+              <thead className="bg-surface-variant/20">
+                <tr>
+                  <th scope="col" className="px-6 py-3 text-left text-label-small font-medium text-on-surface-variant uppercase tracking-wider">
+                    Category
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-left text-label-small font-medium text-on-surface-variant uppercase tracking-wider">
+                    Period
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-right text-label-small font-medium text-on-surface-variant uppercase tracking-wider">
+                    Budget
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-right text-label-small font-medium text-on-surface-variant uppercase tracking-wider">
+                    Spent
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-right text-label-small font-medium text-on-surface-variant uppercase tracking-wider">
+                    Remaining
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-center text-label-small font-medium text-on-surface-variant uppercase tracking-wider">
+                    Status
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-right text-label-small font-medium text-on-surface-variant uppercase tracking-wider">
+                    Actions
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="bg-surface divide-y divide-outline/20">
+                {budgets.map((budget) => (
+                  <tr key={budget.budget_id} className="hover:bg-surface-variant/10">
+                    <td className="px-6 py-4 whitespace-nowrap text-body-medium font-medium text-on-surface">
+                      {budget.category_name}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-body-medium text-on-surface-variant">
+                      {formatDate(budget.start_date)} - {formatDate(budget.end_date)}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-body-medium text-right text-on-surface">
+                      {formatAmount(budget.budget_amount)}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-body-medium text-right text-on-surface">
+                      {formatAmount(budget.current_spending)}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-body-medium text-right text-on-surface">
+                      {formatAmount(budget.remaining)}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-center">
+                      <span className={`px-2 py-1 text-label-small leading-5 font-medium rounded-full ${
+                        budget.status === 'active'
+                          ? 'bg-tertiary-container text-on-tertiary-container'
+                          : 'bg-error-container text-on-error-container'
+                      }`}>
+                        {budget.status === 'active' ? 'Active' : 'Exceeded'}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-body-medium font-medium">
+                      <Button
+                        onClick={() => setEditingBudget(budget)}
+                        variant="text"
+                        size="sm"
+                        icon={
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                          </svg>
+                        }
+                      >
+                        Edit
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </div>

@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { Button } from '../../ui/Button/Button';
+import { Card } from '../../ui/Card';
 
 interface Category {
   category_id: string;
@@ -88,13 +90,13 @@ export const BudgetForm: React.FC<BudgetFormProps> = ({ onSuccess, initialData }
   };
 
   return (
-    <div className="bg-white rounded-lg shadow p-6">
-      <h2 className="text-xl font-semibold mb-4">
+    <Card className="p-6 shadow-elevation-2 border border-outline/40">
+      <h2 className="text-headline-small font-medium text-on-surface mb-4">
         {initialData ? 'Edit Budget' : 'Create New Budget'}
       </h2>
 
       {error && (
-        <div className="bg-red-50 text-red-600 p-3 rounded mb-4">
+        <div className="bg-error-container text-on-error-container p-3 rounded mb-4 border border-error/50 shadow-elevation-1">
           {error}
         </div>
       )}
@@ -102,13 +104,13 @@ export const BudgetForm: React.FC<BudgetFormProps> = ({ onSuccess, initialData }
       <form onSubmit={handleSubmit}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-body-medium font-medium text-on-surface-variant mb-1">
               Category
             </label>
             <select
               value={categoryId || ''}
               onChange={(e) => setCategoryId(e.target.value || null)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2"
+              className="w-full rounded-md border border-outline/50 px-3 py-2 bg-surface text-on-surface shadow-elevation-1 focus:border-primary focus:ring-1 focus:ring-primary"
             >
               <option value="">All Categories (Overall Budget)</option>
               {Array.isArray(categories) && categories.map((category) => (
@@ -120,7 +122,7 @@ export const BudgetForm: React.FC<BudgetFormProps> = ({ onSuccess, initialData }
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-body-medium font-medium text-on-surface-variant mb-1">
               Budget Amount
             </label>
             <input
@@ -129,67 +131,66 @@ export const BudgetForm: React.FC<BudgetFormProps> = ({ onSuccess, initialData }
               step="0.01"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2"
+              className="w-full rounded-md border border-outline/50 px-3 py-2 bg-surface text-on-surface shadow-elevation-1 focus:border-primary focus:ring-1 focus:ring-primary"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-body-medium font-medium text-on-surface-variant mb-1">
               Start Date
             </label>
             <input
               type="date"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2"
+              className="w-full rounded-md border border-outline/50 px-3 py-2 bg-surface text-on-surface shadow-elevation-1 focus:border-primary focus:ring-1 focus:ring-primary"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-body-medium font-medium text-on-surface-variant mb-1">
               End Date
             </label>
             <input
               type="date"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2"
+              className="w-full rounded-md border border-outline/50 px-3 py-2 bg-surface text-on-surface shadow-elevation-1 focus:border-primary focus:ring-1 focus:ring-primary"
               required
             />
           </div>
 
           <div className="col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-body-medium font-medium text-on-surface-variant mb-1">
               Notes
             </label>
             <textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2"
+              className="w-full rounded-md border border-outline/50 px-3 py-2 bg-surface text-on-surface shadow-elevation-1 focus:border-primary focus:ring-1 focus:ring-primary"
               rows={3}
             />
           </div>
         </div>
 
         <div className="mt-6 flex justify-end space-x-3">
-          <button
+          <Button
             type="button"
             onClick={onSuccess}
-            className="bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 px-4 rounded-md transition duration-300"
+            variant="outlined"
           >
             Cancel
-          </button>
-          <button
+          </Button>
+          <Button
             type="submit"
             disabled={loading}
-            className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md transition duration-300 disabled:opacity-50"
           >
             {loading ? 'Saving...' : 'Save Budget'}
-          </button>
+          </Button>
         </div>
       </form>
-    </div>
+    </Card>
   );
 };

@@ -167,16 +167,16 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
   ];
 
   return (
-    <Card className="max-w-2xl mx-auto">
-      <div className="px-6 py-4 border-b border-gray-200">
-        <h2 className="text-lg font-medium text-gray-900">
+    <Card className="max-w-2xl mx-auto shadow-elevation-2 border border-outline/40">
+      <div className="px-6 py-4 border-b border-outline-variant/60">
+        <h2 className="text-headline-small font-medium text-on-surface">
           {isEditing ? 'Edit Expense' : 'Add New Expense'}
         </h2>
       </div>
 
       <form onSubmit={handleSubmit} className="p-6">
         {submitError && (
-          <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+          <div className="mb-4 p-3 bg-error-container border border-error/50 text-on-error-container rounded shadow-elevation-1">
             {submitError}
           </div>
         )}
@@ -184,8 +184,8 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
         <div className="space-y-6">
           {/* Title */}
           <div>
-            <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
-              Title <span className="text-red-500">*</span>
+            <label htmlFor="title" className="block text-body-medium font-medium text-on-surface-variant mb-1">
+              Title <span className="text-error">*</span>
             </label>
             <input
               type="text"
@@ -194,20 +194,20 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
               value={formData.title}
               onChange={handleChange}
               className={`w-full rounded-md border ${
-                errors.title ? 'border-red-500' : 'border-gray-300'
-              } shadow-sm p-2`}
+                errors.title ? 'border-error' : 'border-outline/50'
+              } shadow-elevation-1 p-2 bg-surface text-on-surface focus:border-primary focus:ring-1 focus:ring-primary`}
               placeholder="e.g. Groceries, Restaurant, Taxi"
             />
             {errors.title && (
-              <p className="mt-1 text-sm text-red-600">{errors.title}</p>
+              <p className="mt-1 text-body-small text-error">{errors.title}</p>
             )}
           </div>
 
           {/* Amount and Currency (side by side) */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label htmlFor="amount" className="block text-sm font-medium text-gray-700 mb-1">
-                Amount <span className="text-red-500">*</span>
+              <label htmlFor="amount" className="block text-body-medium font-medium text-on-surface-variant mb-1">
+                Amount <span className="text-error">*</span>
               </label>
               <input
                 type="number"
@@ -218,18 +218,18 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
                 min="0.01"
                 step="0.01"
                 className={`w-full rounded-md border ${
-                  errors.amount ? 'border-red-500' : 'border-gray-300'
-                } shadow-sm p-2`}
+                  errors.amount ? 'border-error' : 'border-outline/50'
+                } shadow-elevation-1 p-2 bg-surface text-on-surface focus:border-primary focus:ring-1 focus:ring-primary`}
                 placeholder="0.00"
               />
               {errors.amount && (
-                <p className="mt-1 text-sm text-red-600">{errors.amount}</p>
+                <p className="mt-1 text-body-small text-error">{errors.amount}</p>
               )}
             </div>
 
             <div>
-              <label htmlFor="currency" className="block text-sm font-medium text-gray-700 mb-1">
-                Currency <span className="text-red-500">*</span>
+              <label htmlFor="currency" className="block text-body-medium font-medium text-on-surface-variant mb-1">
+                Currency <span className="text-error">*</span>
               </label>
               <select
                 id="currency"
@@ -237,8 +237,8 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
                 value={formData.currency}
                 onChange={handleChange}
                 className={`w-full rounded-md border ${
-                  errors.currency ? 'border-red-500' : 'border-gray-300'
-                } shadow-sm p-2`}
+                  errors.currency ? 'border-error' : 'border-outline/50'
+                } shadow-elevation-1 p-2 bg-surface text-on-surface focus:border-primary focus:ring-1 focus:ring-primary`}
               >
                 {currencyOptions.map(option => (
                   <option key={option.value} value={option.value}>
@@ -247,15 +247,15 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
                 ))}
               </select>
               {errors.currency && (
-                <p className="mt-1 text-sm text-red-600">{errors.currency}</p>
+                <p className="mt-1 text-body-small text-error">{errors.currency}</p>
               )}
             </div>
           </div>
 
           {/* Date */}
           <div>
-            <label htmlFor="date" className="block text-sm font-medium text-gray-700 mb-1">
-              Date <span className="text-red-500">*</span>
+            <label htmlFor="date" className="block text-body-medium font-medium text-on-surface-variant mb-1">
+              Date <span className="text-error">*</span>
             </label>
             <input
               type="date"
@@ -264,18 +264,18 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
               value={formData.date}
               onChange={handleChange}
               className={`w-full rounded-md border ${
-                errors.date ? 'border-red-500' : 'border-gray-300'
-              } shadow-sm p-2`}
+                errors.date ? 'border-error' : 'border-outline/50'
+              } shadow-elevation-1 p-2 bg-surface text-on-surface focus:border-primary focus:ring-1 focus:ring-primary`}
             />
             {errors.date && (
-              <p className="mt-1 text-sm text-red-600">{errors.date}</p>
+              <p className="mt-1 text-body-small text-error">{errors.date}</p>
             )}
           </div>
 
           {/* Category */}
           <div>
-            <label htmlFor="category_id" className="block text-sm font-medium text-gray-700 mb-1">
-              Category <span className="text-red-500">*</span>
+            <label htmlFor="category_id" className="block text-body-medium font-medium text-on-surface-variant mb-1">
+              Category <span className="text-error">*</span>
             </label>
             <select
               id="category_id"
@@ -283,8 +283,8 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
               value={formData.category_id}
               onChange={handleChange}
               className={`w-full rounded-md border ${
-                errors.category_id ? 'border-red-500' : 'border-gray-300'
-              } shadow-sm p-2`}
+                errors.category_id ? 'border-error' : 'border-outline/50'
+              } shadow-elevation-1 p-2 bg-surface text-on-surface focus:border-primary focus:ring-1 focus:ring-primary`}
               disabled={isLoadingCategories}
             >
               <option value="">Select a category</option>
@@ -295,16 +295,16 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
               ))}
             </select>
             {errors.category_id && (
-              <p className="mt-1 text-sm text-red-600">{errors.category_id}</p>
+              <p className="mt-1 text-body-small text-error">{errors.category_id}</p>
             )}
             {isLoadingCategories && (
-              <p className="mt-1 text-xs text-gray-500">Loading categories...</p>
+              <p className="mt-1 text-body-small text-on-surface-variant">Loading categories...</p>
             )}
           </div>
 
           {/* Payment Method */}
           <div>
-            <label htmlFor="payment_method" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="payment_method" className="block text-body-medium font-medium text-on-surface-variant mb-1">
               Payment Method
             </label>
             <select
@@ -313,8 +313,8 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
               value={formData.payment_method}
               onChange={handleChange}
               className={`w-full rounded-md border ${
-                errors.payment_method ? 'border-red-500' : 'border-gray-300'
-              } shadow-sm p-2`}
+                errors.payment_method ? 'border-error' : 'border-outline/50'
+              } shadow-elevation-1 p-2 bg-surface text-on-surface focus:border-primary focus:ring-1 focus:ring-primary`}
             >
               <option value="">Select a payment method</option>
               {paymentMethodOptions.map(option => (
@@ -324,13 +324,13 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
               ))}
             </select>
             {errors.payment_method && (
-              <p className="mt-1 text-sm text-red-600">{errors.payment_method}</p>
+              <p className="mt-1 text-body-small text-error">{errors.payment_method}</p>
             )}
           </div>
 
           {/* Description */}
           <div>
-            <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="description" className="block text-body-medium font-medium text-on-surface-variant mb-1">
               Description
             </label>
             <textarea
@@ -340,19 +340,19 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
               onChange={handleChange}
               rows={3}
               className={`w-full rounded-md border ${
-                errors.description ? 'border-red-500' : 'border-gray-300'
-              } shadow-sm p-2`}
+                errors.description ? 'border-error' : 'border-outline/50'
+              } shadow-elevation-1 p-2 bg-surface text-on-surface focus:border-primary focus:ring-1 focus:ring-primary`}
               placeholder="Add details about this expense"
             />
             {errors.description && (
-              <p className="mt-1 text-sm text-red-600">{errors.description}</p>
+              <p className="mt-1 text-body-small text-error">{errors.description}</p>
             )}
           </div>
 
           {/* Receipt URL */}
           {isEditing && initialData?.id && (
-            <div className="border-t border-gray-200 pt-4 mt-4">
-              <h3 className="text-md font-medium mb-2">Attached Files</h3>
+            <div className="border-t border-outline-variant/60 pt-4 mt-4">
+              <h3 className="text-title-medium font-medium text-on-surface mb-2">Attached Files</h3>
               <FileList
                 entityId={initialData.id}
                 entityType="expense"
@@ -373,8 +373,8 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
           )}
 
           {!isEditing && (
-            <div className="border-t border-gray-200 pt-4 mt-4">
-              <p className="text-sm text-gray-500 italic">
+            <div className="border-t border-outline-variant/60 pt-4 mt-4">
+              <p className="text-body-small text-on-surface-variant italic">
                 You can upload receipt images and documents after saving the expense.
               </p>
             </div>

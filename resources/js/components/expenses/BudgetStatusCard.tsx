@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
+import { Button } from '../../ui';
 
 interface Budget {
   budget_id: string;
   category_id: string | null;
-  category_name?: string;
+  category_name: string;
   budget_amount: number;
   current_spending: number;
   remaining: number;
   percentage_used: number;
   status: string;
-  start_date: string;
   end_date: string;
 }
 
@@ -64,21 +65,27 @@ export const BudgetStatusCard: React.FC = () => {
   };
 
   if (loading) {
-    return <div className="animate-pulse p-4">
-      <div className="h-4 bg-gray-300 rounded w-3/4 mb-3"></div>
-      <div className="h-4 bg-gray-300 rounded w-1/2 mb-3"></div>
-      <div className="h-4 bg-gray-300 rounded w-2/3"></div>
-    </div>;
+    return (
+      <div className="animate-pulse space-y-4">
+        <div className="h-20 bg-surface-variant/40 rounded w-full"></div>
+        <div className="h-20 bg-surface-variant/40 rounded w-full"></div>
+        <div className="h-20 bg-surface-variant/40 rounded w-full"></div>
+      </div>
+    );
   }
 
   if (error) {
-    return <div className="text-red-600 p-4">{error}</div>;
+    return (
+      <div className="text-error bg-error-container/60 p-4 rounded-lg border border-error/50 shadow-elevation-1">
+        {error}
+      </div>
+    );
   }
 
   if (budgets.length === 0) {
     return (
-      <div className="text-gray-500 p-4">
-        No budgets found. <a href="/budgets" className="text-blue-600 hover:underline">Create a budget</a>.
+      <div className="text-on-surface-variant p-4 bg-surface-container rounded-lg border border-outline/40 shadow-elevation-1">
+        No budgets found. <Link to="/budgets" className="text-primary hover:text-primary/80">Create a budget</Link>.
       </div>
     );
   }
@@ -86,36 +93,38 @@ export const BudgetStatusCard: React.FC = () => {
   return (
     <div className="space-y-4">
       {budgets.map((budget) => (
-        <div key={budget.budget_id} className="border rounded-lg p-4">
+        <div key={budget.budget_id} className="bg-surface-container rounded-lg p-4 border border-outline/40 shadow-elevation-1">
           <div className="flex justify-between items-center mb-2">
-            <h3 className="font-medium">{budget.category_name || 'Overall Budget'}</h3>
+            <h3 className="font-medium text-title-medium text-on-surface">{budget.category_name || 'Overall Budget'}</h3>
             <span
-              className={`px-2 py-1 rounded-full text-xs ${
-                budget.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+              className={`px-2 py-1 rounded-full text-label-small font-medium shadow-elevation-1 ${
+                budget.status === 'active'
+                  ? 'bg-tertiary-container text-on-tertiary-container'
+                  : 'bg-error-container text-on-error-container'
               }`}
             >
               {budget.status === 'active' ? 'Active' : 'Exceeded'}
             </span>
           </div>
 
-          <div className="flex justify-between text-sm text-gray-600 mb-2">
+          <div className="flex justify-between text-body-small text-on-surface-variant mb-2">
             <span>Ends {formatDate(budget.end_date)}</span>
             <span>{formatAmount(budget.current_spending)} / {formatAmount(budget.budget_amount)}</span>
           </div>
 
-          <div className="w-full bg-gray-200 rounded-full h-2.5">
+          <div className="w-full bg-surface-variant rounded-full h-2.5 shadow-elevation-1">
             <div
               className={`h-2.5 rounded-full ${
-                budget.percentage_used > 90 ? 'bg-red-600' :
-                budget.percentage_used > 70 ? 'bg-yellow-500' :
-                'bg-green-600'
+                budget.percentage_used > 90 ? 'bg-error' :
+                budget.percentage_used > 70 ? 'bg-tertiary' :
+                'bg-primary'
               }`}
               style={{width: `${Math.min(100, budget.percentage_used)}%`}}
             ></div>
           </div>
 
-          <div className="mt-2 text-sm">
-            <span className={budget.remaining < 0 ? 'text-red-600' : 'text-gray-700'}>
+          <div className="mt-2 text-body-small">
+            <span className={budget.remaining < 0 ? 'text-error' : 'text-on-surface'}>
               {budget.remaining < 0 ? 'Over by ' : 'Remaining: '}
               {formatAmount(Math.abs(budget.remaining))}
             </span>
@@ -123,10 +132,10 @@ export const BudgetStatusCard: React.FC = () => {
         </div>
       ))}
 
-      <div className="text-center mt-4">
-        <a href="/budgets" className="text-blue-600 hover:underline text-sm">
-          View all budgets
-        </a>
+      <div className="text-center mt-6">
+        <Link to="/budgets">
+          <Button variant="text" size="sm">View all budgets</Button>
+        </Link>
       </div>
     </div>
   );
