@@ -21,6 +21,7 @@ import { ResetPasswordPage } from './auth/routes/ResetPasswordPage';
 import { ThemeProvider } from './ui/ThemeProvider';
 import { ToastProvider } from './ui/Toast';
 import UnifiedLayout from './components/layouts/UnifiedLayout';
+import { QueryProvider } from './providers/QueryProvider';
 
 // Subscription Pages
 import SubscriptionsList from './pages/subscriptions/SubscriptionsList';
@@ -79,82 +80,84 @@ axios.defaults.withCredentials = true;
 const App: React.FC = () => {
     return (
         <BrowserRouter>
-            <ThemeProvider>
-                <ToastProvider>
-                    <AuthProvider>
-                        <Routes>
-                            {/* Auth Routes */}
-                            <Route path="/login" element={<Navigate to="/auth/login" replace />} />
-                            <Route path="/auth/login" element={<LoginPage />} />
-                            <Route path="/auth/forgot-password" element={<ForgotPasswordPage />} />
-                            <Route path="/auth/reset-password" element={<ResetPasswordPage />} />
+            <QueryProvider>
+                <ThemeProvider>
+                    <ToastProvider>
+                        <AuthProvider>
+                            <Routes>
+                                {/* Auth Routes */}
+                                <Route path="/login" element={<Navigate to="/auth/login" replace />} />
+                                <Route path="/auth/login" element={<LoginPage />} />
+                                <Route path="/auth/forgot-password" element={<ForgotPasswordPage />} />
+                                <Route path="/auth/reset-password" element={<ResetPasswordPage />} />
 
-                            {/* Protected Routes */}
-                            <Route element={<ProtectedRoute />}>
-                                <Route path="/" element={<UnifiedLayout />}>
-                                    <Route index element={<Navigate to="/dashboard" replace />} />
-                                    <Route path="dashboard" element={<Dashboard />} />
+                                {/* Protected Routes */}
+                                <Route element={<ProtectedRoute />}>
+                                    <Route path="/" element={<UnifiedLayout />}>
+                                        <Route index element={<Navigate to="/dashboard" replace />} />
+                                        <Route path="dashboard" element={<Dashboard />} />
 
-                                    {/* Subscription Routes */}
-                                    <Route path="subscriptions">
-                                        <Route index element={<SubscriptionsList />} />
-                                        <Route path="create" element={<CreateSubscription />} />
-                                        <Route path=":id" element={<SubscriptionDetail />} />
-                                        <Route path=":id/edit" element={<EditSubscription />} />
-                                    </Route>
+                                        {/* Subscription Routes */}
+                                        <Route path="subscriptions">
+                                            <Route index element={<SubscriptionsList />} />
+                                            <Route path="create" element={<CreateSubscription />} />
+                                            <Route path=":id" element={<SubscriptionDetail />} />
+                                            <Route path=":id/edit" element={<EditSubscription />} />
+                                        </Route>
 
-                                    {/* Payment Routes */}
-                                    <Route path="payments">
-                                        <Route index element={<PaymentHistoryPage />} />
-                                        <Route path="record/:subscriptionId" element={<RecordPayment />} />
-                                        <Route path="history" element={<PaymentHistoryPage />} />
-                                    </Route>
+                                        {/* Payment Routes */}
+                                        <Route path="payments">
+                                            <Route index element={<PaymentHistoryPage />} />
+                                            <Route path="record/:subscriptionId" element={<RecordPayment />} />
+                                            <Route path="history" element={<PaymentHistoryPage />} />
+                                        </Route>
 
-                                    {/* Report Routes */}
-                                    <Route path="reports">
-                                        <Route path="payments" element={<PaymentReports />} />
-                                    </Route>
+                                        {/* Report Routes */}
+                                        <Route path="reports">
+                                            <Route path="payments" element={<PaymentReports />} />
+                                        </Route>
 
-                                    {/* Expenses Routes */}
-                                    <Route path="expenses">
-                                        <Route index element={<ExpensesPage />} />
-                                        <Route path="create" element={<CreateExpense />} />
-                                        <Route path=":id" element={<ExpenseDetail />} />
-                                        <Route path=":id/edit" element={<EditExpense />} />
-                                    </Route>
-                                    <Route path="budgets" element={<BudgetsPage />} />
-                                    <Route path="categories" element={<CategoriesPage />} />
+                                        {/* Expenses Routes */}
+                                        <Route path="expenses">
+                                            <Route index element={<ExpensesPage />} />
+                                            <Route path="create" element={<CreateExpense />} />
+                                            <Route path=":id" element={<ExpenseDetail />} />
+                                            <Route path=":id/edit" element={<EditExpense />} />
+                                        </Route>
+                                        <Route path="budgets" element={<BudgetsPage />} />
+                                        <Route path="categories" element={<CategoriesPage />} />
 
-                                    {/* Utility Bills Routes */}
-                                    <Route path="utility-bills">
-                                        <Route index element={<UtilityBillsPage />} />
-                                        <Route path="create" element={<CreateUtilityBill />} />
-                                        <Route path=":id" element={<UtilityBillDetailPage />} />
-                                        <Route path=":id/edit" element={<EditUtilityBill />} />
-                                    </Route>
+                                        {/* Utility Bills Routes */}
+                                        <Route path="utility-bills">
+                                            <Route index element={<UtilityBillsPage />} />
+                                            <Route path="create" element={<CreateUtilityBill />} />
+                                            <Route path=":id" element={<UtilityBillDetailPage />} />
+                                            <Route path=":id/edit" element={<EditUtilityBill />} />
+                                        </Route>
 
-                                    {/* Job Applications Routes */}
-                                    <Route path="job-applications">
-                                        <Route index element={<JobApplicationsPage />} />
-                                        <Route path="create" element={<CreateJobApplication />} />
-                                        <Route path=":id" element={<JobApplicationDetailPage />} />
-                                        <Route path=":id/edit" element={<EditJobApplication />} />
-                                    </Route>
+                                        {/* Job Applications Routes */}
+                                        <Route path="job-applications">
+                                            <Route index element={<JobApplicationsPage />} />
+                                            <Route path="create" element={<CreateJobApplication />} />
+                                            <Route path=":id" element={<JobApplicationDetailPage />} />
+                                            <Route path=":id/edit" element={<EditJobApplication />} />
+                                        </Route>
 
-                                    {/* Investments Routes */}
-                                    <Route path="investments">
-                                        <Route index element={<InvestmentsPage />} />
-                                        <Route path=":id" element={<InvestmentDetailPage />} />
+                                        {/* Investments Routes */}
+                                        <Route path="investments">
+                                            <Route index element={<InvestmentsPage />} />
+                                            <Route path=":id" element={<InvestmentDetailPage />} />
+                                        </Route>
                                     </Route>
                                 </Route>
-                            </Route>
 
-                            {/* 404 page */}
-                            <Route path="*" element={<NotFound />} />
-                        </Routes>
-                    </AuthProvider>
-                </ToastProvider>
-            </ThemeProvider>
+                                {/* 404 page */}
+                                <Route path="*" element={<NotFound />} />
+                            </Routes>
+                        </AuthProvider>
+                    </ToastProvider>
+                </ThemeProvider>
+            </QueryProvider>
         </BrowserRouter>
     );
 };

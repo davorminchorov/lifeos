@@ -1,142 +1,109 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { axiosClient } from '../../lib/axios';
 import { Download, CreditCard, Calendar, ArrowUpRight, TrendingUp, Filter, ExternalLink, AlertCircle } from 'lucide-react';
 import { Button } from '../../ui/Button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../../ui/Card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../ui/Table';
 import { PageContainer, PageSection } from '../../ui/PageContainer';
 import { Badge } from '../../ui/Badge';
-import { Skeleton } from '../../ui/Skeleton';
 import { formatCurrency } from '../../utils/format';
 import { useToast } from '../../ui/Toast';
-
-interface Payment {
-  id: string;
-  amount: number;
-  currency: string;
-  payment_date: string;
-  payment_method: string;
-  subscription_name: string;
-  category: string;
-  notes?: string;
-}
-
-interface PaymentSummary {
-  total_spent: number;
-  payments_count: number;
-  average_payment: number;
-  this_month: number;
-  previous_month: number;
-}
+import { usePaymentStore } from '../../store/paymentStore';
+import { usePaymentHistory, useSubscriptionsList, useExportPaymentHistory } from '../../queries/paymentQueries';
 
 export default function PaymentHistoryPage() {
-  const [payments, setPayments] = useState<Payment[]>([]);
-  const [summary, setSummary] = useState<PaymentSummary>({
-    total_spent: 0,
-    payments_count: 0,
-    average_payment: 0,
-    this_month: 0,
-    previous_month: 0
-  });
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [exportStatus, setExportStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
-  const [subscriptions, setSubscriptions] = useState<{ id: string; name: string }[]>([]);
-  const [filters, setFilters] = useState({
-    subscription_id: 'all',
-    from_date: '',
-    to_date: ''
-  });
   const { toast } = useToast();
 
+  // Get state and actions from store
+  const [state, actions] = usePaymentStore();
+  const { filters, exportStatus } = state;
+
+  // Use React Query hooks
+  const {
+    data: paymentData,
+    isLoading,
+    error: queryError
+  } = usePaymentHistory(filters);
+
+  const { data: subscriptions = [] } = useSubscriptionsList();
+
+  const exportMutation = useExportPaymentHistory();
+
+  // Update store when data is fetched
   useEffect(() => {
-    fetchPaymentData();
-    fetchSubscriptions();
-  }, []);
-
-  const fetchPaymentData = async () => {
-    setLoading(true);
-    setError(null);
-
-    try {
-      const response = await axiosClient.get('/api/payment-history', { params: filters });
-      setPayments(response.data.payments || []);
-      setSummary(response.data.summary || {
+    if (paymentData) {
+      actions.setPayments(paymentData.payments || []);
+      actions.setSummary(paymentData.summary || {
         total_spent: 0,
         payments_count: 0,
         average_payment: 0,
         this_month: 0,
         previous_month: 0
       });
-    } catch (error) {
-      console.error('Error fetching payment history:', error);
+    }
+  }, [paymentData, actions]);
+
+  // Update subscriptions in store
+  useEffect(() => {
+    if (subscriptions.length > 0) {
+      actions.setSubscriptions(subscriptions);
+    }
+  }, [subscriptions, actions]);
+
+  // Handle query error
+  useEffect(() => {
+    if (queryError) {
+      console.error('Error fetching payment history:', queryError);
       toast({
         title: "Error",
         description: "Failed to load payment history. Please try again.",
         variant: "destructive",
       });
-      setError('Failed to load payment history. Please try again.');
-    } finally {
-      setLoading(false);
+      actions.setError('Failed to load payment history. Please try again.');
     }
-  };
-
-  const fetchSubscriptions = async () => {
-    try {
-      const response = await axiosClient.get('/api/subscriptions/list');
-      setSubscriptions(response.data.subscriptions || []);
-    } catch (error) {
-      console.error('Error fetching subscriptions:', error);
-    }
-  };
+  }, [queryError, toast, actions]);
 
   const handleFilterChange = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFilters(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleFilter = () => {
-    fetchPaymentData();
+    actions.updateFilter({ name, value });
   };
 
   const exportToCSV = async () => {
-    setExportStatus('loading');
+    actions.setExportStatus('loading');
 
-    try {
-      const response = await axiosClient.get('/api/payment-history/export', {
-        params: filters,
-        responseType: 'blob'
-      });
+    exportMutation.mutate(filters, {
+      onSuccess: (data) => {
+        const url = window.URL.createObjectURL(new Blob([data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', 'payment_history.csv');
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
 
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', 'payment_history.csv');
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
+        actions.setExportStatus('success');
 
-      setExportStatus('success');
+        // Reset status after 3 seconds
+        setTimeout(() => {
+          actions.setExportStatus('idle');
+        }, 3000);
+      },
+      onError: (error) => {
+        console.error('Error exporting payment history:', error);
+        actions.setExportStatus('error');
 
-      // Reset status after 3 seconds
-      setTimeout(() => {
-        setExportStatus('idle');
-      }, 3000);
-    } catch (error) {
-      console.error('Error exporting payment history:', error);
-      setExportStatus('error');
-
-      // Reset status after 3 seconds
-      setTimeout(() => {
-        setExportStatus('idle');
-      }, 3000);
-    }
+        // Reset status after 3 seconds
+        setTimeout(() => {
+          actions.setExportStatus('idle');
+        }, 3000);
+      }
+    });
   };
 
   const calculatePercentageChange = () => {
-    if (!summary.previous_month) return 0;
-    return ((summary.this_month - summary.previous_month) / summary.previous_month) * 100;
+    const { this_month, previous_month } = state.summary;
+    if (!previous_month) return 0;
+    return ((this_month - previous_month) / previous_month) * 100;
   };
 
   const percentChange = calculatePercentageChange();
@@ -144,7 +111,7 @@ export default function PaymentHistoryPage() {
     ? '+0.0%'
     : `${percentChange > 0 ? '+' : ''}${percentChange.toFixed(1)}%`;
 
-  if (loading) {
+  if (isLoading) {
     return (
       <PageContainer title="Payment History">
         <div className="flex justify-center items-center h-64">
@@ -172,10 +139,10 @@ export default function PaymentHistoryPage() {
         </Button>
       }
     >
-      {error && (
+      {state.error && (
         <div className="mb-6 p-4 bg-error/10 text-error rounded-lg flex items-center space-x-2">
           <AlertCircle className="h-5 w-5" />
-          <span>{error}</span>
+          <span>{state.error}</span>
         </div>
       )}
 
@@ -192,7 +159,7 @@ export default function PaymentHistoryPage() {
                   <div>
                     <p className="text-on-surface-variant text-sm mb-1">Total Spent</p>
                     <p className="text-on-surface text-2xl font-bold">
-                      {formatCurrency(summary.total_spent, 'USD')}
+                      {formatCurrency(state.summary.total_spent, 'USD')}
                     </p>
                   </div>
                 </div>
@@ -212,7 +179,7 @@ export default function PaymentHistoryPage() {
                   <div>
                     <p className="text-on-surface-variant text-sm mb-1">Payments Made</p>
                     <p className="text-on-surface text-2xl font-bold">
-                      {summary.payments_count}
+                      {state.summary.payments_count}
                     </p>
                   </div>
                 </div>
@@ -232,7 +199,7 @@ export default function PaymentHistoryPage() {
                   <div>
                     <p className="text-on-surface-variant text-sm mb-1">Average Payment</p>
                     <p className="text-on-surface text-2xl font-bold">
-                      {formatCurrency(summary.average_payment, 'USD')}
+                      {formatCurrency(state.summary.average_payment, 'USD')}
                     </p>
                   </div>
                 </div>
@@ -252,7 +219,7 @@ export default function PaymentHistoryPage() {
                   <div>
                     <p className="text-on-surface-variant text-sm mb-1">This Month</p>
                     <p className="text-on-surface text-2xl font-bold">
-                      {formatCurrency(summary.this_month, 'USD')}
+                      {formatCurrency(state.summary.this_month, 'USD')}
                     </p>
                   </div>
                 </div>
@@ -289,7 +256,7 @@ export default function PaymentHistoryPage() {
                   className="block w-full rounded-md border border-outline py-2 px-3 bg-surface text-on-surface shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                 >
                   <option value="all">All Subscriptions</option>
-                  {subscriptions.map(sub => (
+                  {state.subscriptions.map(sub => (
                     <option key={sub.id} value={sub.id}>{sub.name}</option>
                   ))}
                 </select>
@@ -325,7 +292,10 @@ export default function PaymentHistoryPage() {
 
               <div className="flex items-end">
                 <Button
-                  onClick={handleFilter}
+                  onClick={() => {
+                    // refetch data with current filters
+                    // the query key will handle the refetch for us
+                  }}
                   variant="filled"
                   className="w-full"
                   icon={<Filter className="h-4 w-4 mr-2" />}
@@ -346,7 +316,7 @@ export default function PaymentHistoryPage() {
             <CardDescription>Your payment records across all subscriptions</CardDescription>
           </CardHeader>
           <CardContent>
-            {payments.length === 0 ? (
+            {state.payments.length === 0 ? (
               <div className="p-8 text-center">
                 <div className="py-12 flex flex-col items-center justify-center border-2 border-dashed border-outline/40 rounded-lg">
                   <div className="p-3 rounded-full bg-surface-variant mb-4">
@@ -378,7 +348,7 @@ export default function PaymentHistoryPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {payments.map((payment) => (
+                  {state.payments.map((payment) => (
                     <TableRow key={payment.id}>
                       <TableCell>
                         {new Date(payment.payment_date).toLocaleDateString('en-US', {

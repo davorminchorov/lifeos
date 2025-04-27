@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { axiosClient } from '../../lib/axios';
+import React from 'react';
 import { Button } from '../../ui/Button/Button';
 import { Card } from '../../ui/Card';
 import { formatCurrency } from '../../utils/format';
+import { usePaymentStore } from '../../store/paymentStore';
+import { useRecordPayment } from '../../queries/paymentQueries';
 
 interface PaymentFormProps {
   subscriptionId: string;
@@ -13,12 +14,6 @@ interface PaymentFormProps {
   onCancel?: () => void;
 }
 
-interface FormData {
-  amount: number;
-  payment_date: string;
-  notes: string;
-}
-
 const PaymentForm: React.FC<PaymentFormProps> = ({
   subscriptionId,
   subscriptionName,
@@ -27,27 +22,26 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
   onSuccess,
   onCancel
 }) => {
-  const [formData, setFormData] = useState<FormData>({
-    amount: defaultAmount,
-    payment_date: new Date().toISOString().split('T')[0],
-    notes: '',
-  });
+  const [state, actions] = usePaymentStore();
+  const { formData, formErrors, isSubmitting, submitError } = state;
 
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitError, setSubmitError] = useState<string | null>(null);
+  // Initialize form data if needed
+  React.useEffect(() => {
+    if (formData.amount === 0) {
+      actions.updateFormField({ name: 'amount', value: defaultAmount });
+    }
+  }, [defaultAmount, formData.amount, actions]);
+
+  // Use mutation hook
+  const recordPayment = useRecordPayment();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    actions.updateFormField({ name, value });
 
     // Clear error for this field when user updates it
-    if (errors[name]) {
-      setErrors(prev => {
-        const newErrors = { ...prev };
-        delete newErrors[name];
-        return newErrors;
-      });
+    if (formErrors[name]) {
+      actions.clearFormError(name);
     }
   };
 
@@ -62,7 +56,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
       newErrors.payment_date = 'Payment date is required';
     }
 
-    setErrors(newErrors);
+    actions.setFormErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
@@ -73,33 +67,38 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
       return;
     }
 
-    setIsSubmitting(true);
-    setSubmitError(null);
+    actions.setIsSubmitting(true);
+    actions.setSubmitError(null);
 
-    try {
-      await axiosClient.post(`/api/subscriptions/${subscriptionId}/payments`, formData);
+    recordPayment.mutate(
+      { subscriptionId, formData },
+      {
+        onSuccess: () => {
+          if (onSuccess) {
+            onSuccess();
+          }
+        },
+        onError: (error: any) => {
+          console.error('Payment submission error:', error);
+          if (error.response?.data?.errors) {
+            // Handle validation errors from the server
+            const serverErrors = error.response.data.errors;
+            const formattedErrors: Record<string, string> = {};
 
-      if (onSuccess) {
-        onSuccess();
+            Object.entries(serverErrors).forEach(([key, messages]: [string, any]) => {
+              formattedErrors[key] = Array.isArray(messages) ? messages[0] : messages;
+            });
+
+            actions.setFormErrors(formattedErrors);
+          } else {
+            actions.setSubmitError(error.response?.data?.error || 'An unexpected error occurred. Please try again.');
+          }
+        },
+        onSettled: () => {
+          actions.setIsSubmitting(false);
+        }
       }
-    } catch (error: any) {
-      console.error('Payment submission error:', error);
-      if (error.response?.data?.errors) {
-        // Handle validation errors from the server
-        const serverErrors = error.response.data.errors;
-        const formattedErrors: Record<string, string> = {};
-
-        Object.entries(serverErrors).forEach(([key, messages]: [string, any]) => {
-          formattedErrors[key] = Array.isArray(messages) ? messages[0] : messages;
-        });
-
-        setErrors(formattedErrors);
-      } else {
-        setSubmitError(error.response?.data?.error || 'An unexpected error occurred. Please try again.');
-      }
-    } finally {
-      setIsSubmitting(false);
-    }
+    );
   };
 
   return (
@@ -136,15 +135,15 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
                 value={formData.amount}
                 onChange={handleChange}
                 className={`pl-7 w-full rounded-md border ${
-                  errors.amount ? 'border-red-500' : 'border-gray-300'
+                  formErrors.amount ? 'border-red-500' : 'border-gray-300'
                 } shadow-sm p-2`}
                 placeholder="0.00"
                 min="0.01"
                 step="0.01"
               />
             </div>
-            {errors.amount && (
-              <p className="mt-1 text-sm text-red-600">{errors.amount}</p>
+            {formErrors.amount && (
+              <p className="mt-1 text-sm text-red-600">{formErrors.amount}</p>
             )}
           </div>
 
@@ -160,11 +159,11 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
               value={formData.payment_date}
               onChange={handleChange}
               className={`w-full rounded-md border ${
-                errors.payment_date ? 'border-red-500' : 'border-gray-300'
+                formErrors.payment_date ? 'border-red-500' : 'border-gray-300'
               } shadow-sm p-2`}
             />
-            {errors.payment_date && (
-              <p className="mt-1 text-sm text-red-600">{errors.payment_date}</p>
+            {formErrors.payment_date && (
+              <p className="mt-1 text-sm text-red-600">{formErrors.payment_date}</p>
             )}
           </div>
 

@@ -26,6 +26,9 @@ importers:
       '@tailwindcss/postcss':
         specifier: ^4.1.4
         version: 4.1.4
+      '@tanstack/react-query':
+        specifier: ^5.74.7
+        version: 5.74.7(react@19.1.0)
       '@types/react':
         specifier: ^19.1.2
         version: 19.1.2
@@ -83,6 +86,9 @@ importers:
       xstate:
         specifier: ^5.19.2
         version: 5.19.2
+      xstate-store:
+        specifier: ^1.2.0
+        version: 1.2.0(@xstate/react@5.0.3(@types/react@19.1.2)(react@19.1.0)(xstate@5.19.2))(react@19.1.0)(xstate@5.19.2)
     devDependencies:
       '@vitejs/plugin-react':
         specifier: ^4.4.1
@@ -903,6 +909,14 @@ packages:
   '@tailwindcss/postcss@4.1.4':
     resolution: {integrity: sha512-bjV6sqycCEa+AQSt2Kr7wpGF1bOZJ5wsqnLEkqSbM/JEHxx/yhMH8wHmdkPyApF9xhHeMSwnnkDUUMMM/hYnXw==}
 
+  '@tanstack/query-core@5.74.7':
+    resolution: {integrity: sha512-X3StkN/Y6KGHndTjJf8H8th7AX4bKfbRpiVhVqevf0QWlxl6DhyJ0TYG3R0LARa/+xqDwzU9mA4pbJxzPCI29A==}
+
+  '@tanstack/react-query@5.74.7':
+    resolution: {integrity: sha512-u4o/RIWnnrq26orGZu2NDPwmVof1vtAiiV6KYUXd49GuK+8HX+gyxoAYqIaZogvCE1cqOuZAhQKcrKGYGkrLxg==}
+    peerDependencies:
+      react: ^18 || ^19
+
   '@types/babel__core@7.20.5':
     resolution: {integrity: sha512-qoQprZvz5wQFJwMDqeseRXWv3rqMvhgpbXFfVyWhbx9X47POIA6i/+dXefEmZKoAgOaTdaIgNSMqMIU61yRyzA==}
 
@@ -1481,6 +1495,13 @@ packages:
         optional: true
       yaml:
         optional: true
+
+  xstate-store@1.2.0:
+    resolution: {integrity: sha512-qpcrhTIINFYrfQj9avLgzzuZu6nwRkd0QGBxGSl/TZBKh9bC7b87ZggG5/23NbSfT8fkwyI49YMHuKGZjU6Beg==}
+    peerDependencies:
+      '@xstate/react': ^3.0.0
+      react: ^17.0.0 || ^18.0.0
+      xstate: ^4.32.1
 
   xstate@5.19.2:
     resolution: {integrity: sha512-B8fL2aP0ogn5aviAXFzI5oZseAMqN00fg/TeDa3ZtatyDcViYLIfuQl4y8qmHCiKZgGEzmnTyNtNQL9oeJE2gw==}
@@ -2147,6 +2168,13 @@ snapshots:
       postcss: 8.5.3
       tailwindcss: 4.1.4
 
+  '@tanstack/query-core@5.74.7': {}
+
+  '@tanstack/react-query@5.74.7(react@19.1.0)':
+    dependencies:
+      '@tanstack/query-core': 5.74.7
+      react: 19.1.0
+
   '@types/babel__core@7.20.5':
     dependencies:
       '@babel/parser': 7.27.0
@@ -2655,6 +2683,12 @@ snapshots:
       fsevents: 2.3.3
       jiti: 2.4.2
       lightningcss: 1.29.2
+
+  xstate-store@1.2.0(@xstate/react@5.0.3(@types/react@19.1.2)(react@19.1.0)(xstate@5.19.2))(react@19.1.0)(xstate@5.19.2):
+    dependencies:
+      '@xstate/react': 5.0.3(@types/react@19.1.2)(react@19.1.0)(xstate@5.19.2)
+      react: 19.1.0
+      xstate: 5.19.2
 
   xstate@5.19.2: {}
 
