@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { axiosClient } from '../../lib/axios';
 import { Button } from '../../ui';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../../ui/Card';
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '../../ui/Table';
@@ -9,50 +8,70 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../ui/Tabs';
 import { Separator } from '../../ui/Separator';
 import { PageContainer, PageSection } from '../../ui/PageContainer';
 import { formatDate } from '../../utils/dates';
-import { ArrowLeft, Edit, Calendar, Building, Clock, MessageSquare, User, Mail, Link as LinkIcon, FileText } from 'lucide-react';
-import { JobApplication, Interview } from '../../types/job-applications';
-import JobApplicationModal from '../../components/job-applications/JobApplicationModal';
+import { ArrowLeft, Edit, Calendar, Building, Clock, MessageSquare, User, Mail, Link as LinkIcon, FileText, Briefcase } from 'lucide-react';
 import InterviewModal from '../../components/job-applications/InterviewModal';
 import OutcomeModal from '../../components/job-applications/OutcomeModal';
+import { useJobApplicationDetail, useJobApplicationInterviews, useUpdateStatus } from '../../queries/jobApplicationQueries';
+import { useToast } from '../../ui/Toast';
 
 const JobApplicationDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [application, setApplication] = useState<JobApplication | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { toast } = useToast();
+
+  // React Query hooks
+  const {
+    data: application,
+    isLoading,
+    error,
+    refetch
+  } = useJobApplicationDetail(id as string);
+
+  const { data: interviews = [] } = useJobApplicationInterviews(id as string);
+  const updateStatusMutation = useUpdateStatus();
+
   const [showInterviewModal, setShowInterviewModal] = useState(false);
   const [showOutcomeModal, setShowOutcomeModal] = useState(false);
   const [activeTab, setActiveTab] = useState('details');
 
-  const fetchApplication = async () => {
-    try {
-      setLoading(true);
-      const response = await axiosClient.get(`/api/job-applications/${id}`);
-      setApplication(response.data);
-      setError(null);
-    } catch (err) {
-      setError('Failed to load job application details');
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (id) {
-      fetchApplication();
-    }
-  }, [id]);
-
   const handleInterviewAdded = () => {
     setShowInterviewModal(false);
-    fetchApplication();
+    refetch();
   };
 
   const handleOutcomeRecorded = () => {
     setShowOutcomeModal(false);
-    fetchApplication();
+    refetch();
+  };
+
+  const handleEditApplication = () => {
+    navigate(`/job-applications/${id}/edit`);
+  };
+
+  const updateStatus = (newStatus: string) => {
+    if (!id) return;
+
+    updateStatusMutation.mutate(
+      { id, status: newStatus },
+      {
+        onSuccess: () => {
+          toast({
+            title: "Status updated",
+            description: `Application status changed to ${newStatus}`,
+            variant: "success",
+          });
+          refetch();
+        },
+        onError: (err) => {
+          toast({
+            title: "Error",
+            description: "Failed to update status",
+            variant: "destructive",
+          });
+          console.error(err);
+        }
+      }
+    );
   };
 
   const getStatusBadge = (status: string) => {
@@ -72,7 +91,7 @@ const JobApplicationDetailPage: React.FC = () => {
     }
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <PageContainer title="Application Details">
         <div className="flex justify-center items-center h-64">
@@ -88,7 +107,7 @@ const JobApplicationDetailPage: React.FC = () => {
         <Card variant="elevated">
           <CardContent>
             <div className="bg-error/10 text-error p-4 rounded-lg mb-4">
-              {error || 'Job application not found'}
+              {(error as Error)?.message || 'Job application not found'}
             </div>
             <Button variant="outlined" onClick={() => navigate('/job-applications')}>Back to Applications</Button>
           </CardContent>
@@ -103,8 +122,12 @@ const JobApplicationDetailPage: React.FC = () => {
       subtitle={`${application.company_name} - Applied on ${formatDate(application.application_date)}`}
       actions={
         <div className="flex space-x-2">
-          <Button variant="outlined" onClick={() => navigate(`/job-applications/${id}/edit`)} icon={<Edit className="h-4 w-4 mr-2" />}>
-            Edit
+          <Button
+            variant="outlined"
+            onClick={handleEditApplication}
+            icon={<Edit className="h-4 w-4 mr-2" />}
+          >
+            Edit Application
           </Button>
           {!['offered', 'rejected', 'withdrawn'].includes(application.status) && (
             <>
@@ -118,6 +141,7 @@ const JobApplicationDetailPage: React.FC = () => {
               <Button
                 variant="outlined"
                 onClick={() => setShowOutcomeModal(true)}
+                icon={<Briefcase className="h-4 w-4 mr-2" />}
               >
                 Record Outcome
               </Button>
@@ -460,17 +484,17 @@ const JobApplicationDetailPage: React.FC = () => {
 
       {showInterviewModal && (
         <InterviewModal
-          applicationId={application.id}
+          jobApplicationId={id as string}
           onClose={() => setShowInterviewModal(false)}
-          onSave={handleInterviewAdded}
+          onSuccess={handleInterviewAdded}
         />
       )}
 
       {showOutcomeModal && (
         <OutcomeModal
-          applicationId={application.id}
+          jobApplicationId={id as string}
           onClose={() => setShowOutcomeModal(false)}
-          onSave={handleOutcomeRecorded}
+          onSuccess={handleOutcomeRecorded}
         />
       )}
     </PageContainer>
