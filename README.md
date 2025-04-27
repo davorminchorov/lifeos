@@ -17,19 +17,22 @@ LifeOS is a personal management system built with Laravel to track and manage va
   - Event Sourcing for complete history and audit trails
   - Vertical Slices Architecture with bounded contexts
   - Laravel Reverb for WebSockets
+  - Laravel Filament for admin interfaces
   - File storage for attachments
 
 - **Frontend**: 
-  - React 19 (Single Page Application)
-  - Tailwind CSS 4 for styling
+  - React 19+ with TypeScript
+  - TanStack React Query for data fetching
+  - XState for state machines
+  - Tailwind CSS 4+ for styling
+  - Radix UI for accessible components
   - Vite for frontend build tooling
-  - Modern TypeScript with module system
 
 - **Database**: 
   - MySQL/PostgreSQL for relational data
   - Event Store for domain events
 
-- **Authentication**: Single-user application with sign-in only (no registration)
+- **Authentication**: Single-user application with Laravel Sanctum
 - **Mobile Support**: Responsive design for mobile devices
 - **Data Management**: Import/Export capabilities for backup and migration
 
@@ -39,7 +42,7 @@ LifeOS is a personal management system built with Laravel to track and manage va
 
 The application is structured in vertical slices (bounded contexts) where each feature is implemented as a complete stack from UI to data layer:
 
-1. **Identity & Authentication**
+1. **Authentication**
    - Single-user authentication
    - Profile management
 
@@ -70,7 +73,7 @@ The application is structured in vertical slices (bounded contexts) where each f
 
 7. **Dashboard & Analytics**
    - Cross-domain reporting
-   - Data visualization
+   - Data visualization with Chart.js
    - Budget performance analysis
 
 ### Event Sourcing Implementation
@@ -79,79 +82,73 @@ The application is structured in vertical slices (bounded contexts) where each f
 - **Aggregates**: Domain models that emit and apply events
 - **Projections**: Read models built from event streams
 - **Command Handlers**: Process commands and coordinate domain logic
-- **Real-time Updates**: WebSockets broadcast projection updates to UI
+- **Real-time Updates**: WebSockets broadcast projection updates to UI using Laravel Reverb
 
-## Implementation Plan
+## Project Structure
 
-### Phase 1: Foundation
-- Project setup with Laravel, React 19, and Tailwind CSS 4
-- Event sourcing infrastructure
-- Authentication system
-- Base UI components and layouts
+```
+app/
+├── Core/                     # Core application components
+├── Authentication/           # Authentication bounded context
+├── Dashboard/                # Dashboard and analytics
+├── Expenses/                 # Expense tracking bounded context
+├── Http/                     # HTTP layer components
+├── Investments/              # Investment tracking bounded context
+├── JobApplications/          # Job application bounded context
+├── Models/                   # Base model definitions
+├── Providers/                # Service providers
+├── Subscriptions/            # Subscription management bounded context
+└── UtilityBills/             # Utility bills bounded context
 
-### Phase 2: Core Features
-- Subscription management implementation
-- Utility bills system with reminders
-- Basic expense tracking
-- Dashboard foundation
-
-### Phase 3: Advanced Features
-- Investment portfolio tracking with basic ROI calculations
-- Job application pipeline
-- Budget analysis tools
-- File attachment system
-- WebSocket real-time updates with Laravel Reverb
-
-### Phase 4: Refinement
-- Import/Export functionality
-- UI/UX improvements
-- Performance optimization
-- Reporting enhancements
-- Mobile responsiveness
+resources/
+├── js/                       # Frontend JavaScript/TypeScript
+├── css/                      # CSS and Tailwind styles
+└── views/                    # Blade templates for SSR
+```
 
 ## Documentation
 
-### Frontend Development
-- [Frontend Architecture](docs/frontend-architecture.md) - Overview of the vertical slice architecture
-- [Frontend Development Guidelines](docs/frontend-development.md) - Coding standards and patterns
-- [UI Component Development](docs/frontend-components.md) - Component design and implementation
-- [Frontend Implementation Guide](docs/frontend-implementation.md) - Step-by-step implementation instructions
+Comprehensive documentation is available in the `docs/` directory:
 
-### Backend Development
-- [Backend Architecture](docs/backend-architecture.md) - Detailed backend architecture with event sourcing
-- [Backend Implementation Guide](docs/backend-implementation.md) - How to implement backend features
-- [API Design Guidelines](docs/api-design.md) - RESTful API standards and patterns
-- [Event Sourcing Guide](docs/event-sourcing.md) - Comprehensive guide to event sourcing patterns
-- [Testing Strategy](docs/testing-strategy.md) - Comprehensive testing approach for event-sourced systems
-- [Projection Rebuilding](docs/projection-rebuilding.md) - Zero-downtime projection rebuilding strategy
+### Frontend
+- [Frontend Architecture](docs/frontend-architecture.md)
+- [Frontend Development Guidelines](docs/frontend-development.md)
+- [UI Component Development](docs/frontend-components.md)
+- [Frontend Implementation Guide](docs/frontend-implementation.md)
+
+### Backend
+- [Backend Architecture](docs/backend-architecture.md)
+- [Backend Implementation Guide](docs/backend-implementation.md)
+- [API Design Guidelines](docs/api-design.md)
+- [Event Sourcing Guide](docs/event-sourcing.md)
+- [Testing Strategy](docs/testing-strategy.md)
+- [Projection Rebuilding](docs/projection-rebuilding.md)
 
 ### DevOps and Performance
-- [Deployment Guide](docs/deployment-guide.md) - Complete guide for deploying to various environments
-- [Performance Optimization](docs/performance-optimization.md) - Strategies for optimizing application performance
-- [Architecture Diagrams](docs/architecture-diagrams.md) - Visual representations of the system architecture
+- [Deployment Guide](docs/deployment-guide.md)
+- [Performance Optimization](docs/performance-optimization.md)
+- [Architecture Diagrams](docs/architecture-diagrams.md)
 
 ### Real-time Features
-- [Reverb Integration](docs/reverb-integration.md) - Integrating Laravel Reverb with event sourcing for real-time updates
+- [Reverb Integration](docs/reverb-integration.md)
 
 ### Design and Frontend
-- [Design System](docs/design-system.md) - Comprehensive design system with color palettes, typography, and components
+- [Design System](docs/design-system.md)
 
 ### System Documentation
-- [Development Guidelines](docs/development-guidelines.md) - General coding standards and practices
-- [Coding Standards](docs/coding-standards.md) - Coding conventions and best practices for LifeOS development.
-- [Domain-Driven Design](docs/domain-driven-design.md) - DDD tactical patterns used in the LifeOS application.
-- [Event Storming Plan](docs/event-storming-plan.md) - Detailed plan for modeling domains using event storming.
-- [Troubleshooting](docs/troubleshooting.md) - Common issues and solutions
+- [Development Guidelines](docs/development-guidelines.md)
+- [Coding Standards](docs/coding-standards.md)
+- [Domain-Driven Design](docs/domain-driven-design.md)
+- [Event Storming Plan](docs/event-storming-plan.md)
 
 ## Installation
 
 ### Prerequisites
 
-- PHP 8.1 or higher
+- PHP 8.2 or higher
 - Composer
 - MySQL or PostgreSQL
-- Node.js 18+ (Node.js 23 recommended)
-- NPM
+- Node.js 18+ with npm/pnpm/yarn
 
 ### Option 1: Using Laravel Herd (macOS)
 
@@ -184,7 +181,7 @@ The application is structured in vertical slices (bounded contexts) where each f
    ```
 8. Access the application at `http://lifeos.test` (Configure this site in Herd)
 
-### Option 2: Using Laravel Sail (Docker)
+### Option 2: Using Docker Compose
 
 1. Clone the repository:
    ```
@@ -195,32 +192,42 @@ The application is structured in vertical slices (bounded contexts) where each f
    ```
    cp .env.example .env
    ```
-3. Install Composer dependencies:
+3. Start the Docker containers:
    ```
-   docker run --rm \
-       -v "$(pwd)":/opt \
-       -w /opt \
-       laravelsail/php81-composer:latest \
-       composer install --ignore-platform-reqs
+   docker-compose up -d
    ```
-4. Start Laravel Sail:
+4. Install dependencies:
    ```
-   ./vendor/bin/sail up -d
+   docker-compose exec app composer install
+   docker-compose exec app npm install
    ```
 5. Generate application key:
    ```
-   ./vendor/bin/sail artisan key:generate
+   docker-compose exec app php artisan key:generate
    ```
 6. Run migrations:
    ```
-   ./vendor/bin/sail artisan migrate
+   docker-compose exec app php artisan migrate
    ```
-7. Install and compile frontend assets:
+7. Build frontend assets:
    ```
-   ./vendor/bin/sail npm install
-   ./vendor/bin/sail npm run dev
+   docker-compose exec app npm run dev
    ```
 8. Access the application at `http://localhost`
+
+## Development Workflow
+
+For local development, you can use the combined dev command:
+
+```
+composer dev
+```
+
+This will start:
+- Laravel development server
+- Queue worker
+- Laravel Pail for logs
+- Vite for frontend assets
 
 ## License
 

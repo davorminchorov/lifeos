@@ -4,13 +4,58 @@
 LifeOS is a personal management system built with Laravel to track and manage various aspects of daily life including subscriptions, utility bills, investments, job applications, and expenses.
 
 ## Technology Stack
-- Backend: Laravel 12+, Event Sourcing, Vertical Slices Architecture, Laravel Reverb
-- Frontend: React 19, Tailwind CSS 4, TypeScript, Vite
-- Database: MySQL/PostgreSQL + Event Store
-- Authentication: Single-user application with sign-in only
+- Backend: 
+  - Laravel 12+
+  - Event Sourcing architecture
+  - Vertical Slices Architecture with bounded contexts
+  - Laravel Reverb for WebSockets
+  - Laravel Filament for admin interfaces
+  - PHP 8.2+
+
+- Frontend: 
+  - React 19+ with TypeScript
+  - TanStack React Query for data fetching
+  - XState for state machines
+  - Tailwind CSS 4+ for styling
+  - Radix UI for accessible components
+  - Vite for frontend build tooling
+  - Chart.js for data visualization
+
+- Database: 
+  - MySQL/PostgreSQL for relational data
+  - Event Store for domain events
+
+- Authentication: Single-user application with Laravel Sanctum
+- Environment: Docker-based development setup with options for Laravel Herd on macOS
+
+## Project Structure
+```
+app/
+├── Core/                     # Core application components
+├── Authentication/           # Authentication bounded context
+├── Dashboard/                # Dashboard and analytics
+├── Expenses/                 # Expense tracking bounded context
+├── Http/                     # HTTP layer components
+├── Investments/              # Investment tracking bounded context
+├── JobApplications/          # Job application bounded context
+├── Models/                   # Base model definitions
+├── Providers/                # Service providers
+├── Subscriptions/            # Subscription management bounded context
+└── UtilityBills/             # Utility bills bounded context
+
+resources/
+├── js/                       # Frontend JavaScript/TypeScript
+├── css/                      # CSS and Tailwind styles
+└── views/                    # Blade templates for SSR
+
+docs/                         # Comprehensive documentation
+├── frontend-architecture.md  # Frontend architecture documentation
+├── backend-architecture.md   # Backend architecture documentation
+└── ...                       # Various other documentation files
+```
 
 ## Architecture Principles
-- Vertical Slices with bounded contexts for feature organization
+- Vertical slices (bounded contexts) for feature organization
 - Event Sourcing for complete history and audit trails
 - CQRS pattern separating commands and queries
 - Responsive design for mobile support
@@ -18,68 +63,85 @@ LifeOS is a personal management system built with Laravel to track and manage va
 - Domain-Driven Design tactical patterns for domain modeling
 
 ## Core Features
-1. Monthly Subscription Tracking
-2. Recurring Utility Bills Tracking
-3. Investments Tracking
-4. Job Application Tracking
-5. Expenses Tracking
-6. Dashboard & Analytics
+1. **Subscription Management**
+   - Commands: AddSubscription, UpdateSubscription, CancelSubscription, RecordPayment
+   - Events: SubscriptionAdded, SubscriptionUpdated, SubscriptionCancelled, PaymentRecorded
+   - Projections: ActiveSubscriptions, UpcomingPayments, MonthlyExpenditure
 
-## Design System
-- Primary Colors: Deep Teal (#0F766E), Slate Blue (#1E293B), Warm White (#F8FAFC)
-- Accent Colors: Sunrise Orange (#F97316), Mint Green (#10B981), Ocean Blue (#3B82F6)
-- Typography: Inter font family with comprehensive type scale
-- Components: Standardized buttons, forms, cards, navigation, and data visualization
-- Patterns: Consistent empty states, notifications, loading states, and responsive approaches
-- Accessibility: WCAG 2.1 AA compliance throughout the application
+2. **Utility Bills Management**
+   - Commands: AddBill, UpdateBill, PayBill, ScheduleReminder
+   - Events: BillAdded, BillUpdated, BillPaid, ReminderScheduled, ReminderSent
+   - Projections: PendingBills, PaymentHistory, UpcomingReminders
 
-## Implementation Approach
-- Event Sourcing with projections for read models
-- Command pattern for state changes
-- Zero-downtime projection rebuilding with blue/green deployment
-- Optimistic UI updates via WebSockets integration
-- Comprehensive testing strategy for event-sourced systems
+3. **Investment Portfolio**
+   - Commands: CreateInvestment, RecordTransaction, UpdateValuation
+   - Events: InvestmentCreated, TransactionRecorded, ValuationUpdated
+   - Projections: PortfolioSummary, InvestmentPerformance (basic ROI)
 
-## Documentation Structure
-- Frontend Development (architecture, guidelines, components)
-- Backend Development (architecture, APIs, event sourcing)
-- DevOps and Performance (deployment, optimization)
-- Real-time Features (WebSocket integration)
-- Design System (colors, typography, components)
-- System Documentation (guidelines, troubleshooting)
+4. **Job Application Pipeline**
+   - Commands: SubmitApplication, ScheduleInterview, RecordOutcome
+   - Events: ApplicationSubmitted, InterviewScheduled, OutcomeRecorded
+   - Projections: ActiveApplications, InterviewSchedule, ApplicationHistory
+
+5. **Expense Tracking**
+   - Commands: RecordExpense, CategorizeExpense, SetBudget
+   - Events: ExpenseRecorded, ExpenseCategorized, BudgetSet, BudgetExceeded
+   - Projections: MonthlyExpenses, CategorySpending, BudgetPerformance
+
+6. **Dashboard & Analytics**
+   - Cross-domain reporting
+   - Data visualization with Chart.js
+   - Budget performance analysis
+
+## Frontend Implementation
+- Vertical slice architecture organizing code by business capability
+- Feature-specific stores using XState for state machines
+- React Query for API communication with caching
+- React Hook Form for form handling
+- Tailwind CSS 4 for styling with custom design system
+- Radix UI for accessible component primitives
+- Real-time updates via Laravel Echo and Pusher
 
 ## Event Sourcing Implementation
-- Using Spatie's Laravel Event Sourcing package
-- Events stored in a dedicated event store
-- Aggregates encapsulate business rules
-- Projectors rebuild read models from events
-- Command handlers validate and process commands
-- Blue/green rebuilding strategy for zero-downtime projection updates
-- Event versioning with upcasters for schema evolution
+- Events as the primary source of truth
+- Command handlers validating and processing commands
+- Aggregates applying and emitting domain events
+- Projectors building read models from event streams
+- Real-time updates via WebSockets when projections change
 
-## Real-time Updates
-- Laravel Reverb for WebSocket communication
-- Domain events translated to broadcast events
-- Optimistic UI updates with command-event correlation
-- Secure channel authorization
-- Client reconnection handling with missed event recovery
+## Development Workflow
+- Local development using composer dev command (starts server, queue worker, logs, and vite)
+- Docker-based environment for consistent development experience
+- TypeScript type checking with custom check-ts.cjs script
+- Laravel Pail for improved log visualization
 
-## Domain-Driven Design Tactical Patterns
-- **Core Domain Patterns**:
-  - Aggregates: SubscriptionAggregate, BillAggregate, InvestmentAggregate, JobApplicationAggregate, ExpenseAggregate
-  - Entities: Core domain objects with identity (Subscription, Bill, Investment, JobApplication, Expense)
-  - Value Objects: Immutable objects representing domain concepts (Money, BillingCycle, DateRange, Category, PaymentStatus)
-- **Behavioral Patterns**:
-  - Domain Events: Immutable past-tense named events (SubscriptionCreated, BillPaid, InvestmentValuationUpdated)
-  - Commands: Imperative verbs representing user intentions (CreateSubscription, PayBill, UpdateInvestmentValuation)
-  - Repositories: Interfaces for aggregate persistence (SubscriptionRepository, BillRepository, InvestmentRepository)
-- **Structural Patterns**:
-  - Domain Services: Cross-aggregate business logic (BudgetAnalysisService, ReminderService, PortfolioAnalysisService)
-  - Application Services: Orchestration layer connecting UI with domain (CommandBus, QueryBus, EventBus)
-  - Factories: Creation logic for complex domain objects (MoneyFactory, AggregateFactory, EventFactory)
-- **Data Access Patterns**:
-  - Projections: Optimized read models for specific query needs (ActiveSubscriptionsProjection, MonthlyExpenseSummaryProjection)
-  - Event Store: System of record for all domain events with versioning and snapshot support
+## Documentation Structure
+The project includes comprehensive documentation in the docs/ directory covering:
+- Frontend and backend architecture
+- Event sourcing implementation details
+- API design guidelines
+- Testing strategy
+- Deployment procedures
+- Performance optimization
+- Design system specifications
+- Development guidelines and coding standards
+
+## Design System
+- Defined in docs/design-system.md with comprehensive component library
+- Tailwind CSS 4 for utility-based styling
+- Accessible components built on Radix UI primitives
+- Consistent typography, spacing, and color systems
+- Mobile-first responsive design approach
+
+## Key Development Guidelines
+- Follow vertical slice architecture for new features
+- Implement event sourcing patterns consistently
+- Write comprehensive tests for all components
+- Adhere to the design system for UI consistency
+- Optimize for both desktop and mobile experiences
+- Ensure accessibility compliance in all UI components
+- Document new patterns and components
+- Use TypeScript for type safety across the frontend
 
 ## Key Documentation Resources
 - [Backend Architecture](docs/backend-architecture.md)
