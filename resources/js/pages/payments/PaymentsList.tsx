@@ -4,7 +4,7 @@ import axios from 'axios';
 import { formatCurrency, formatDate } from '../../utils/format';
 import { exportToCsv } from '../../utils/exportData';
 import Button from '../../ui/Button/Button';
-import Card from '../../ui/Card/Card';
+import { Card } from '../../ui/Card';
 import PaymentStats from '../../components/payments/PaymentStats';
 
 interface Payment {

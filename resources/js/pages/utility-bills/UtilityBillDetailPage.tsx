@@ -11,7 +11,7 @@ import { Input } from '../../ui/Input';
 import { Label } from '../../ui/Label';
 import { Textarea } from '../../ui/Textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../ui/Select';
-import { formatCurrency } from '../../utils/formatters';
+import { formatCurrency } from '../../utils/format';
 import { ArrowLeft, Edit, AlertTriangle, CreditCard, Bell, CheckCircle2, Clock } from 'lucide-react';
 
 interface UtilityBill {
@@ -174,7 +174,7 @@ export default function UtilityBillDetailPage() {
     const status = getDueDateStatus(dueDate);
     switch (status) {
       case 'overdue':
-        return <Badge variant="destructive">Overdue</Badge>;
+        return <Badge variant="danger">Overdue</Badge>;
       case 'due-soon':
         return <Badge variant="warning">Due Soon</Badge>;
       case 'upcoming':
@@ -424,7 +424,7 @@ export default function UtilityBillDetailPage() {
 
               <div>
                 <p className="text-sm text-muted-foreground">Amount</p>
-                <p className="font-medium">{formatCurrency(bill.amount)}</p>
+                <p className="font-medium">{formatCurrency(bill.amount, 'USD')}</p>
               </div>
 
               <div>
@@ -524,7 +524,7 @@ export default function UtilityBillDetailPage() {
                   {bill.payments.map((payment) => (
                     <TableRow key={payment.id}>
                       <TableCell>{new Date(payment.payment_date).toLocaleDateString()}</TableCell>
-                      <TableCell>{formatCurrency(payment.payment_amount)}</TableCell>
+                      <TableCell>{formatCurrency(payment.payment_amount, 'USD')}</TableCell>
                       <TableCell>{payment.payment_method}</TableCell>
                       <TableCell>{payment.notes || '-'}</TableCell>
                     </TableRow>

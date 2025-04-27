@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Button from '../../ui/Button/Button';
-import Card from '../../ui/Card/Card';
+import { Card } from '../../ui/Card';
 import { formatCurrency } from '../../utils/format';
 
 interface PaymentFormProps {

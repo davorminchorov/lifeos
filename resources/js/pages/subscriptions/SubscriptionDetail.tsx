@@ -3,7 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { formatCurrency, formatDate } from '../../utils/format';
 import Button from '../../ui/Button/Button';
-import Card from '../../ui/Card/Card';
+import { Card } from '../../ui/Card';
 
 interface Subscription {
   id: string;

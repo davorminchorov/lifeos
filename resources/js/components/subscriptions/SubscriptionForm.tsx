@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Button from '../../ui/Button/Button';
-import Card from '../../ui/Card/Card';
+import { Card } from '../../ui/Card';
 
 interface SubscriptionFormProps {
   initialData?: {

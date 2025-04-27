@@ -7,7 +7,7 @@ import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '.
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../ui/Tabs';
 import { Badge } from '../../ui/Badge';
 import { PlusCircle, AlertTriangle, CheckCircle, CalendarClock } from 'lucide-react';
-import { formatCurrency } from '../../utils/formatters';
+import { formatCurrency } from '../../utils/format';
 
 interface UtilityBill {
   id: string;
@@ -119,7 +119,7 @@ export default function UtilityBillsPage() {
     const status = getDueDateStatus(dueDate);
     switch (status) {
       case 'overdue':
-        return <Badge variant="destructive">Overdue</Badge>;
+        return <Badge variant="danger">Overdue</Badge>;
       case 'due-soon':
         return <Badge variant="warning">Due Soon</Badge>;
       case 'upcoming':
@@ -195,7 +195,7 @@ export default function UtilityBillsPage() {
                         <TableRow key={bill.id}>
                           <TableCell>{bill.name}</TableCell>
                           <TableCell>{bill.provider}</TableCell>
-                          <TableCell>{formatCurrency(bill.amount)}</TableCell>
+                          <TableCell>{formatCurrency(bill.amount, 'USD')}</TableCell>
                           <TableCell>
                             <div className="flex flex-col">
                               <span>{new Date(bill.due_date).toLocaleDateString()}</span>
@@ -253,7 +253,7 @@ export default function UtilityBillsPage() {
                         <TableRow key={bill.bill_id}>
                           <TableCell>{bill.name}</TableCell>
                           <TableCell>{bill.provider}</TableCell>
-                          <TableCell>{formatCurrency(bill.amount)}</TableCell>
+                          <TableCell>{formatCurrency(bill.amount, 'USD')}</TableCell>
                           <TableCell>
                             <div className="flex flex-col">
                               <span>{new Date(bill.due_date).toLocaleDateString()}</span>
@@ -310,7 +310,7 @@ export default function UtilityBillsPage() {
                           <TableCell>{payment.bill_name}</TableCell>
                           <TableCell>{payment.provider}</TableCell>
                           <TableCell>{new Date(payment.payment_date).toLocaleDateString()}</TableCell>
-                          <TableCell>{formatCurrency(payment.payment_amount)}</TableCell>
+                          <TableCell>{formatCurrency(payment.payment_amount, 'USD')}</TableCell>
                           <TableCell>{payment.payment_method}</TableCell>
                           <TableCell>{payment.category}</TableCell>
                         </TableRow>
@@ -357,7 +357,7 @@ export default function UtilityBillsPage() {
                           <TableCell>{reminder.bill_name}</TableCell>
                           <TableCell>{reminder.provider}</TableCell>
                           <TableCell>{new Date(reminder.due_date).toLocaleDateString()}</TableCell>
-                          <TableCell>{formatCurrency(reminder.amount)}</TableCell>
+                          <TableCell>{formatCurrency(reminder.amount, 'USD')}</TableCell>
                           <TableCell>{new Date(reminder.reminder_date).toLocaleDateString()}</TableCell>
                         </TableRow>
                       ))

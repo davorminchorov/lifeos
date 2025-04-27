@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { formatCurrency } from '../../utils/format';
 import Button from '../../ui/Button/Button';
-import Card from '../../ui/Card/Card';
+import { Card } from '../../ui/Card';
 
 // Simple line chart component
 const LineChart: React.FC<{

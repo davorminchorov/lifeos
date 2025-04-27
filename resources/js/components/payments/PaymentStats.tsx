@@ -1,6 +1,6 @@
 import React from 'react';
 import { formatCurrency } from '../../utils/format';
-import Card from '../../ui/Card/Card';
+import { Card } from '../../ui/Card';
 
 interface PaymentStatsProps {
   totalSpent: number;
