@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '../../ui/Card';
-import { Button } from '../../ui/Button';
+import { Button } from '../../ui/Button/Button';
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '../../ui/Table';
 import { Badge } from '../../ui/Badge';
 import { Separator } from '../../ui/Separator';
@@ -211,7 +211,7 @@ export default function UtilityBillDetailPage() {
           <p className="text-red-500">{error}</p>
         </CardContent>
         <CardFooter>
-          <Button onClick={handleGoBack}>Go Back</Button>
+          <Button variant="outlined" onClick={handleGoBack}>Go Back</Button>
         </CardFooter>
       </Card>
     );
@@ -227,7 +227,7 @@ export default function UtilityBillDetailPage() {
           <p>The requested bill could not be found.</p>
         </CardContent>
         <CardFooter>
-          <Button onClick={handleGoBack}>Go Back</Button>
+          <Button variant="outlined" onClick={handleGoBack}>Go Back</Button>
         </CardFooter>
       </Card>
     );
@@ -236,7 +236,7 @@ export default function UtilityBillDetailPage() {
   return (
     <div className="container mx-auto p-4">
       <div className="mb-6">
-        <Button variant="outline" onClick={handleGoBack} className="mb-4">
+        <Button variant="outlined" onClick={handleGoBack} className="mb-4">
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back to Bills
         </Button>
@@ -327,7 +327,7 @@ export default function UtilityBillDetailPage() {
                       </div>
 
                       <DialogFooter>
-                        <Button type="button" variant="outline" onClick={() => setShowPaymentDialog(false)}>
+                        <Button type="button" variant="outlined" onClick={() => setShowPaymentDialog(false)}>
                           Cancel
                         </Button>
                         <Button type="submit" disabled={paymentProcessing}>
@@ -340,7 +340,7 @@ export default function UtilityBillDetailPage() {
 
                 <Dialog open={showReminderDialog} onOpenChange={setShowReminderDialog}>
                   <DialogTrigger asChild>
-                    <Button variant="outline">
+                    <Button variant="outlined">
                       <Bell className="h-4 w-4 mr-2" />
                       Add Reminder
                     </Button>
@@ -384,7 +384,7 @@ export default function UtilityBillDetailPage() {
                       </div>
 
                       <DialogFooter>
-                        <Button type="button" variant="outline" onClick={() => setShowReminderDialog(false)}>
+                        <Button type="button" variant="outlined" onClick={() => setShowReminderDialog(false)}>
                           Cancel
                         </Button>
                         <Button type="submit" disabled={reminderProcessing}>
@@ -397,7 +397,7 @@ export default function UtilityBillDetailPage() {
               </>
             )}
 
-            <Button variant="outline" onClick={handleEdit}>
+            <Button variant="outlined" onClick={handleEdit}>
               <Edit className="h-4 w-4 mr-2" />
               Edit
             </Button>

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { formatCurrency, formatDate } from '../../utils/format';
-import Button from '../../ui/Button/Button';
+import { Button } from '../../ui/Button/Button';
 import { Card } from '../../ui/Card';
 
 interface Subscription {
@@ -172,11 +172,12 @@ const SubscriptionDetail: React.FC = () => {
         <h1 className="text-2xl font-bold">{subscription.name}</h1>
         <div className="flex space-x-3">
           <Link to={`/subscriptions/${id}/edit`}>
-            <Button variant="outline">Edit</Button>
+            <Button variant="outlined">Edit</Button>
           </Link>
           {subscription.status === 'active' && (
             <Button
-              variant="danger"
+              variant="outlined"
+              className="text-error border-error hover:bg-error-container/10"
               onClick={() => setShowCancelModal(true)}
             >
               Cancel Subscription
@@ -362,14 +363,15 @@ const SubscriptionDetail: React.FC = () => {
 
               <div className="flex justify-end space-x-3">
                 <Button
-                  variant="outline"
+                  variant="outlined"
                   onClick={() => setShowCancelModal(false)}
                   disabled={isCancelling}
                 >
                   Cancel
                 </Button>
                 <Button
-                  variant="danger"
+                  variant="outlined"
+                  className="text-error border-error hover:bg-error-container/10"
                   onClick={handleCancelSubscription}
                   isLoading={isCancelling}
                   disabled={isCancelling}
@@ -444,7 +446,7 @@ const SubscriptionDetail: React.FC = () => {
 
               <div className="flex justify-end space-x-3">
                 <Button
-                  variant="outline"
+                  variant="outlined"
                   onClick={() => setShowPaymentModal(false)}
                   disabled={isRecordingPayment}
                 >

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { formatCurrency } from '../../utils/format';
-import Button from '../../ui/Button/Button';
+import { Button } from '../../ui/Button/Button';
 import { Card } from '../../ui/Card';
 
 interface Subscription {

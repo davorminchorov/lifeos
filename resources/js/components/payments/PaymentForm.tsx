@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import Button from '../../ui/Button/Button';
+import { Button } from '../../ui/Button/Button';
 import { Card } from '../../ui/Card';
 import { formatCurrency } from '../../utils/format';
 
@@ -187,7 +187,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
 
         <div className="mt-8 flex justify-end space-x-3">
           <Button
-            variant="outline"
+            variant="outlined"
             type="button"
             onClick={onCancel}
           >

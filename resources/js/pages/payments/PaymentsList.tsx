@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { formatCurrency, formatDate } from '../../utils/format';
 import { exportToCsv } from '../../utils/exportData';
-import Button from '../../ui/Button/Button';
+import { Button } from '../../ui/Button/Button';
 import { Card } from '../../ui/Card';
 import PaymentStats from '../../components/payments/PaymentStats';
 
@@ -245,7 +245,7 @@ const PaymentsList: React.FC = () => {
             // Export to CSV
             exportToCsv(exportData, filename);
           }}
-          variant="outline"
+          variant="outlined"
           size="sm"
           disabled={!payments || payments.length === 0}
         >

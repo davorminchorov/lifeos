@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../../ui/Card';
-import { Button } from '../../ui/Button';
+import { Button } from '../../ui/Button/Button';
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '../../ui/Table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../ui/Tabs';
 import { Badge } from '../../ui/Badge';
@@ -205,7 +205,7 @@ export default function UtilityBillsPage() {
                           <TableCell>{bill.category}</TableCell>
                           <TableCell>{renderStatusBadge(bill.status)}</TableCell>
                           <TableCell>
-                            <Button variant="outline" size="sm" onClick={() => handleViewDetails(bill.id)}>
+                            <Button variant="outlined" size="sm" onClick={() => handleViewDetails(bill.id)}>
                               View
                             </Button>
                           </TableCell>
@@ -262,7 +262,7 @@ export default function UtilityBillsPage() {
                           </TableCell>
                           <TableCell>{bill.category}</TableCell>
                           <TableCell>
-                            <Button variant="outline" size="sm" onClick={() => handleViewDetails(bill.bill_id)}>
+                            <Button variant="outlined" size="sm" onClick={() => handleViewDetails(bill.bill_id)}>
                               View
                             </Button>
                           </TableCell>

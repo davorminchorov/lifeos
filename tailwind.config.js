@@ -4,88 +4,80 @@ export default {
     "./resources/**/*.blade.php",
     "./resources/**/*.js",
     "./resources/**/*.jsx",
-    "./resources/**/*.ts",
     "./resources/**/*.tsx",
   ],
   theme: {
     extend: {
       colors: {
-        teal: {
-          50: '#f0fdfa',
-          100: '#ccfbf1',
-          200: '#99f6e4',
-          300: '#5eead4',
-          400: '#2dd4bf',
-          500: '#14b8a6',
-          600: '#0F766E', // Primary color
-          700: '#0d9488',
-          800: '#0f766e',
-          900: '#134e4a',
+        // Material Design 3 color system
+        primary: {
+          DEFAULT: '#0F766E', // Teal 700
+          container: '#99F6E4', // Teal 200
+          on: '#FFFFFF',
+          'on-container': '#022C26',
         },
-        slate: {
-          50: '#f8fafc',
-          100: '#f1f5f9',
-          200: '#e2e8f0',
-          300: '#cbd5e1',
-          400: '#94A3B8', // Muted text
-          500: '#64748b',
-          600: '#475569', // Secondary text
-          700: '#334155',
-          800: '#1E293B', // Text color
-          900: '#0f172a',
+        secondary: {
+          DEFAULT: '#475569', // Slate 600
+          container: '#E2E8F0', // Slate 200
+          on: '#FFFFFF',
+          'on-container': '#1E293B',
         },
-        gray: {
-          50: '#F8FAFC',  // Background
-          100: '#F1F5F9', // Secondary background
+        tertiary: {
+          DEFAULT: '#6D28D9', // Violet 700
+          container: '#DDD6FE', // Violet 200
+          on: '#FFFFFF',
+          'on-container': '#2E1065',
         },
-        red: {
-          50: '#fef2f2',
-          100: '#fee2e2',
-          200: '#fecaca',
-          300: '#fca5a5',
-          400: '#f87171',
-          500: '#ef4444',
-          600: '#dc2626',
-          700: '#b91c1c',
-          800: '#991b1b',
-          900: '#7f1d1d',
+        surface: {
+          DEFAULT: '#FFFFFF',
+          variant: '#F8FAFC', // Slate 50
+          on: '#1E293B', // Slate 800
+          'on-variant': '#475569', // Slate 600
+        },
+        error: {
+          DEFAULT: '#EF4444', // Red 500
+          container: '#FECACA', // Red 200
+          on: '#FFFFFF',
+          'on-container': '#7F1D1D',
         },
       },
-      fontFamily: {
-        sans: ['Inter', 'sans-serif'],
-      },
-      // Add Material Design elevation shadows
       boxShadow: {
+        // Material elevation levels
         'elevation-1': '0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.14)',
         'elevation-2': '0 3px 6px rgba(0,0,0,0.12), 0 2px 4px rgba(0,0,0,0.10)',
         'elevation-3': '0 10px 20px rgba(0,0,0,0.12), 0 3px 6px rgba(0,0,0,0.10)',
         'elevation-4': '0 15px 25px rgba(0,0,0,0.12), 0 5px 10px rgba(0,0,0,0.10)',
       },
-      // Add ripple animation for Material Design buttons
-      keyframes: {
-        ripple: {
-          '0%': { transform: 'scale(0)', opacity: '0.5' },
-          '100%': { transform: 'scale(2)', opacity: '0' },
-        }
-      },
-      animation: {
-        ripple: 'ripple 0.6s linear forwards',
-      },
       borderRadius: {
-        'md': '4px',
-        'lg': '8px',
-        'xl': '12px',
-        '2xl': '16px',
-        '3xl': '28px',
+        'xs': '4px',
+        'sm': '8px',
+        'md': '12px',
+        'lg': '16px',
+        'xl': '28px',
+      },
+      fontFamily: {
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+        brand: ['Roboto', 'system-ui', 'sans-serif'],
+      },
+      fontSize: {
+        // Material typography scale
+        'display-large': ['3.56rem', { lineHeight: '4rem', fontWeight: '300', letterSpacing: '-0.016em' }],
+        'display-medium': ['2.81rem', { lineHeight: '3.25rem', fontWeight: '300', letterSpacing: '-0.008em' }],
+        'display-small': ['2.25rem', { lineHeight: '2.75rem', fontWeight: '300', letterSpacing: '0em' }],
+        'headline-large': ['2rem', { lineHeight: '2.5rem', fontWeight: '400', letterSpacing: '0em' }],
+        'headline-medium': ['1.75rem', { lineHeight: '2.25rem', fontWeight: '400', letterSpacing: '0em' }],
+        'headline-small': ['1.5rem', { lineHeight: '2rem', fontWeight: '400', letterSpacing: '0em' }],
+        'title-large': ['1.375rem', { lineHeight: '1.75rem', fontWeight: '400', letterSpacing: '0em' }],
+        'title-medium': ['1rem', { lineHeight: '1.5rem', fontWeight: '500', letterSpacing: '0.015em' }],
+        'title-small': ['0.875rem', { lineHeight: '1.25rem', fontWeight: '500', letterSpacing: '0.01em' }],
+        'body-large': ['1rem', { lineHeight: '1.5rem', fontWeight: '400', letterSpacing: '0.015em' }],
+        'body-medium': ['0.875rem', { lineHeight: '1.25rem', fontWeight: '400', letterSpacing: '0.017em' }],
+        'body-small': ['0.75rem', { lineHeight: '1rem', fontWeight: '400', letterSpacing: '0.025em' }],
+        'label-large': ['0.875rem', { lineHeight: '1.25rem', fontWeight: '500', letterSpacing: '0.01em' }],
+        'label-medium': ['0.75rem', { lineHeight: '1rem', fontWeight: '500', letterSpacing: '0.05em' }],
+        'label-small': ['0.688rem', { lineHeight: '0.938rem', fontWeight: '500', letterSpacing: '0.05em' }],
       },
     },
   },
-  safelist: [
-    'shadow-elevation-1',
-    'shadow-elevation-2',
-    'shadow-elevation-3',
-    'shadow-elevation-4',
-    'animate-ripple',
-  ],
   plugins: [],
 }

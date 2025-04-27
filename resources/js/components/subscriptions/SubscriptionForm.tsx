@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, FormEvent, ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import Button from '../../ui/Button/Button';
+import { Button } from '../../ui/Button/Button';
 import { Card } from '../../ui/Card';
 
 interface SubscriptionFormProps {
@@ -361,7 +361,7 @@ const SubscriptionForm: React.FC<SubscriptionFormProps> = ({
 
         <div className="mt-8 flex justify-end space-x-3">
           <Button
-            variant="outline"
+            variant="outlined"
             onClick={() => navigate('/subscriptions')}
             type="button"
           >

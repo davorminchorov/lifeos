@@ -2,7 +2,7 @@
 import '../css/app.css';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import axios from 'axios';
 
 // Import pages
@@ -58,7 +58,7 @@ axios.defaults.withCredentials = true;
  */
 const App: React.FC = () => {
     return (
-        <Router>
+        <BrowserRouter>
             <AuthProvider>
                 <Routes>
                     {/* Auth Routes */}
@@ -104,7 +104,7 @@ const App: React.FC = () => {
                     <Route path="*" element={<NotFound />} />
                 </Routes>
             </AuthProvider>
-        </Router>
+        </BrowserRouter>
     );
 };
 

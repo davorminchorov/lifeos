@@ -3,31 +3,9 @@
 /* Base styles */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
-:root {
-  /* Material Design 3 system colors */
-  --md-sys-color-primary: #0F766E;
-  --md-sys-color-primary-container: #99F6E4;
-  --md-sys-color-on-primary: #FFFFFF;
-  --md-sys-color-on-primary-container: #022C26;
-  --md-sys-color-secondary: #475569;
-  --md-sys-color-secondary-container: #E2E8F0;
-  --md-sys-color-on-secondary: #FFFFFF;
-  --md-sys-color-on-secondary-container: #1E293B;
-  --md-sys-color-surface: #FFFFFF;
-  --md-sys-color-surface-variant: #F8FAFC;
-  --md-sys-color-on-surface: #1E293B;
-  --md-sys-color-on-surface-variant: #475569;
-  --md-sys-color-error: #EF4444;
-  --md-sys-color-error-container: #FECACA;
-  --md-sys-color-on-error: #FFFFFF;
-  --md-sys-color-on-error-container: #7F1D1D;
-
-  /* Material Design shape scales */
-  --md-sys-shape-corner-small: 4px;
-  --md-sys-shape-corner-medium: 8px;
-  --md-sys-shape-corner-large: 16px;
-  --md-sys-shape-corner-extra-large: 28px;
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 @layer base {
   body {
@@ -39,43 +17,133 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
+
+  :root {
+    /* Material Design 3 system colors */
+    --md-sys-color-primary: #0F766E;
+    --md-sys-color-primary-container: #99F6E4;
+    --md-sys-color-on-primary: #FFFFFF;
+    --md-sys-color-on-primary-container: #022C26;
+    --md-sys-color-secondary: #475569;
+    --md-sys-color-secondary-container: #E2E8F0;
+    --md-sys-color-on-secondary: #FFFFFF;
+    --md-sys-color-on-secondary-container: #1E293B;
+    --md-sys-color-tertiary: #6D28D9;
+    --md-sys-color-tertiary-container: #DDD6FE;
+    --md-sys-color-on-tertiary: #FFFFFF;
+    --md-sys-color-on-tertiary-container: #2E1065;
+    --md-sys-color-surface: #FFFFFF;
+    --md-sys-color-surface-variant: #F8FAFC;
+    --md-sys-color-on-surface: #1E293B;
+    --md-sys-color-on-surface-variant: #475569;
+    --md-sys-color-error: #EF4444;
+    --md-sys-color-error-container: #FECACA;
+    --md-sys-color-on-error: #FFFFFF;
+    --md-sys-color-on-error-container: #7F1D1D;
+
+    /* Material Design shape */
+    --md-sys-shape-corner-xs: 4px;
+    --md-sys-shape-corner-sm: 8px;
+    --md-sys-shape-corner-md: 12px;
+    --md-sys-shape-corner-lg: 16px;
+    --md-sys-shape-corner-xl: 28px;
+
+    /* Typography */
+    --md-sys-typescale-font-family-brand: 'Roboto', system-ui, sans-serif;
+    --md-sys-typescale-font-family-plain: 'Inter', system-ui, sans-serif;
+  }
+
+  .dark {
+    --md-sys-color-primary: #14B8A6;
+    --md-sys-color-primary-container: #134E48;
+    --md-sys-color-on-primary: #FFFFFF;
+    --md-sys-color-on-primary-container: #99F6E4;
+    --md-sys-color-secondary: #94A3B8;
+    --md-sys-color-secondary-container: #334155;
+    --md-sys-color-on-secondary: #FFFFFF;
+    --md-sys-color-on-secondary-container: #E2E8F0;
+    --md-sys-color-tertiary: #A78BFA;
+    --md-sys-color-tertiary-container: #4C1D95;
+    --md-sys-color-on-tertiary: #FFFFFF;
+    --md-sys-color-on-tertiary-container: #DDD6FE;
+    --md-sys-color-surface: #121212;
+    --md-sys-color-surface-variant: #1E293B;
+    --md-sys-color-on-surface: #F8FAFC;
+    --md-sys-color-on-surface-variant: #E2E8F0;
+    --md-sys-color-error: #F87171;
+    --md-sys-color-error-container: #991B1B;
+    --md-sys-color-on-error: #FFFFFF;
+    --md-sys-color-on-error-container: #FCA5A5;
+  }
 }
 
 @layer components {
   /* Material Design Typography */
   .display-large {
+    font-family: var(--md-sys-typescale-font-family-brand);
     font-size: 3.56rem;
     line-height: 4rem;
     font-weight: 300;
     letter-spacing: -0.016em;
   }
 
+  .display-medium {
+    font-family: var(--md-sys-typescale-font-family-brand);
+    font-size: 2.81rem;
+    line-height: 3.25rem;
+    font-weight: 300;
+    letter-spacing: -0.008em;
+  }
+
+  .display-small {
+    font-family: var(--md-sys-typescale-font-family-brand);
+    font-size: 2.25rem;
+    line-height: 2.75rem;
+    font-weight: 300;
+  }
+
   .headline-large {
+    font-family: var(--md-sys-typescale-font-family-brand);
     font-size: 2rem;
     line-height: 2.5rem;
     font-weight: 400;
-    letter-spacing: 0;
   }
 
   .headline-medium {
+    font-family: var(--md-sys-typescale-font-family-brand);
     font-size: 1.75rem;
     line-height: 2.25rem;
     font-weight: 400;
-    letter-spacing: 0;
+  }
+
+  .headline-small {
+    font-family: var(--md-sys-typescale-font-family-brand);
+    font-size: 1.5rem;
+    line-height: 2rem;
+    font-weight: 400;
   }
 
   .title-large {
+    font-family: var(--md-sys-typescale-font-family-plain);
     font-size: 1.375rem;
     line-height: 1.75rem;
-    font-weight: 500;
-    letter-spacing: 0;
+    font-weight: 400;
   }
 
   .title-medium {
+    font-family: var(--md-sys-typescale-font-family-plain);
     font-size: 1rem;
     line-height: 1.5rem;
     font-weight: 500;
-    letter-spacing: 0.009em;
+    letter-spacing: 0.015em;
+  }
+
+  .title-small {
+    font-family: var(--md-sys-typescale-font-family-plain);
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
   }
 
   .body-large {

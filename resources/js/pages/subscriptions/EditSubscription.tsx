@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import SubscriptionForm from '../../components/subscriptions/SubscriptionForm';
-import Button from '../../ui/Button/Button';
+import { Button } from '../../ui/Button/Button';
 
 interface Subscription {
   id: string;
