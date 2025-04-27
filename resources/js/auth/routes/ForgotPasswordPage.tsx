@@ -1,14 +1,14 @@
 import React from 'react';
-import { LoginForm } from '../components/LoginForm';
+import { ForgotPasswordForm } from '../components/ForgotPasswordForm';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../../ui/ThemeProvider';
 
-export function LoginPage() {
+export function ForgotPasswordPage() {
   const navigate = useNavigate();
   const { isDark } = useTheme();
 
-  const handleLoginSuccess = () => {
-    navigate('/dashboard');
+  const handleSuccess = () => {
+    // No need to navigate away as the component handles its own success state
   };
 
   return (
@@ -24,7 +24,7 @@ export function LoginPage() {
           <p className="text-on-surface-variant">Manage your life in one place</p>
         </div>
 
-        <LoginForm onSuccess={handleLoginSuccess} />
+        <ForgotPasswordForm onSuccess={handleSuccess} />
 
         <div className="mt-8 text-center text-sm text-on-surface-variant">
           Trouble signing in? Contact your administrator

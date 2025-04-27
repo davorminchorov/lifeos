@@ -13,6 +13,9 @@ import NotFound from './pages/NotFound';
 // Import auth components
 import { AuthProvider } from './store/authContext';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
+import { LoginPage } from './auth/routes/LoginPage';
+import { ForgotPasswordPage } from './auth/routes/ForgotPasswordPage';
+import { ResetPasswordPage } from './auth/routes/ResetPasswordPage';
 
 // Import layouts and theme
 import { ThemeProvider } from './ui/ThemeProvider';
@@ -74,7 +77,10 @@ const App: React.FC = () => {
                     <AuthProvider>
                         <Routes>
                             {/* Auth Routes */}
-                            <Route path="/login" element={<Login />} />
+                            <Route path="/login" element={<Navigate to="/auth/login" replace />} />
+                            <Route path="/auth/login" element={<LoginPage />} />
+                            <Route path="/auth/forgot-password" element={<ForgotPasswordPage />} />
+                            <Route path="/auth/reset-password" element={<ResetPasswordPage />} />
 
                             {/* Protected Routes */}
                             <Route element={<ProtectedRoute />}>

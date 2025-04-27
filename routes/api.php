@@ -27,6 +27,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+// Password reset routes
+Route::post('/forgot-password', [LoginController::class, 'forgotPassword']);
+Route::post('/reset-password', [LoginController::class, 'resetPassword']);
+
 // Subscription routes (protected by auth middleware)
 Route::middleware('auth:sanctum')->group(function () {
     // Dashboard route
