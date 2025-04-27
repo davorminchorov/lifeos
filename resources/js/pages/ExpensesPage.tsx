@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ExpenseForm } from '../components/expenses/ExpenseForm';
+import ExpenseForm from '../components/expenses/ExpenseForm';
 import { ExpensesList } from '../components/expenses/ExpensesList';
 import { MonthlySummaryCard } from '../components/expenses/MonthlySummaryCard';
 import { BudgetStatusCard } from '../components/expenses/BudgetStatusCard';

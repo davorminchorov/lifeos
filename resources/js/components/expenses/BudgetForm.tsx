@@ -43,9 +43,14 @@ export const BudgetForm: React.FC<BudgetFormProps> = ({ onSuccess, initialData }
     const fetchCategories = async () => {
       try {
         const response = await axios.get('/api/categories');
-        setCategories(response.data.data);
+        if (response.data && Array.isArray(response.data.data)) {
+          setCategories(response.data.data);
+        } else {
+          setCategories([]);
+        }
       } catch (err) {
         console.error('Failed to fetch categories', err);
+        setCategories([]);
       }
     };
 
@@ -106,7 +111,7 @@ export const BudgetForm: React.FC<BudgetFormProps> = ({ onSuccess, initialData }
               className="w-full rounded-md border border-gray-300 px-3 py-2"
             >
               <option value="">All Categories (Overall Budget)</option>
-              {categories.map((category) => (
+              {Array.isArray(categories) && categories.map((category) => (
                 <option key={category.category_id} value={category.category_id}>
                   {category.name}
                 </option>

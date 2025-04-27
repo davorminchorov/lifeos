@@ -37,7 +37,7 @@ export const ExpensesList: React.FC<ExpensesListProps> = ({ refreshTrigger = 0 }
         const response = await axios.get('/api/categories');
         const categoriesMap: Record<string, Category> = {};
 
-        if (response.data && response.data.data) {
+        if (response.data && Array.isArray(response.data.data)) {
           response.data.data.forEach((category: Category) => {
             categoriesMap[category.category_id] = category;
           });
@@ -74,7 +74,7 @@ export const ExpensesList: React.FC<ExpensesListProps> = ({ refreshTrigger = 0 }
 
       const response = await axios.get('/api/expenses', { params });
 
-      if (response.data && response.data.data) {
+      if (response.data && Array.isArray(response.data.data)) {
         // Add category names to expenses
         const expensesWithCategories = response.data.data.map((expense: Expense) => ({
           ...expense,
@@ -88,6 +88,7 @@ export const ExpensesList: React.FC<ExpensesListProps> = ({ refreshTrigger = 0 }
     } catch (err) {
       setError('Failed to load expenses');
       console.error('Failed to fetch expenses', err);
+      setExpenses([]);
     } finally {
       setLoading(false);
     }

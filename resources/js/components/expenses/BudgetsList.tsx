@@ -39,9 +39,13 @@ export const BudgetsList: React.FC<BudgetsListProps> = ({ refreshTrigger = 0 }) 
       try {
         const response = await axios.get('/api/categories');
         const categoriesMap: Record<string, Category> = {};
-        response.data.data.forEach((category: Category) => {
-          categoriesMap[category.category_id] = category;
-        });
+
+        if (response.data && Array.isArray(response.data.data)) {
+          response.data.data.forEach((category: Category) => {
+            categoriesMap[category.category_id] = category;
+          });
+        }
+
         setCategories(categoriesMap);
       } catch (err) {
         console.error('Failed to fetch categories', err);
@@ -62,13 +66,17 @@ export const BudgetsList: React.FC<BudgetsListProps> = ({ refreshTrigger = 0 }) 
     try {
       const response = await axios.get('/api/budgets');
 
-      // Add category names to budgets
-      const budgetsWithCategories = response.data.data.map((budget: Budget) => ({
-        ...budget,
-        category_name: budget.category_id ? categories[budget.category_id]?.name : 'Overall Budget'
-      }));
+      if (response.data && Array.isArray(response.data.data)) {
+        // Add category names to budgets
+        const budgetsWithCategories = response.data.data.map((budget: Budget) => ({
+          ...budget,
+          category_name: budget.category_id ? categories[budget.category_id]?.name : 'Overall Budget'
+        }));
 
-      setBudgets(budgetsWithCategories);
+        setBudgets(budgetsWithCategories);
+      } else {
+        setBudgets([]);
+      }
     } catch (err) {
       setError('Failed to load budgets');
       console.error('Failed to fetch budgets', err);

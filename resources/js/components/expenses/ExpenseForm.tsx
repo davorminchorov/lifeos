@@ -1,162 +1,395 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-
-interface Category {
-  category_id: string;
-  name: string;
-}
+import { Button } from '../../ui/Button/Button';
+import { Card } from '../../ui/Card';
 
 interface ExpenseFormProps {
-  onSuccess: () => void;
+  initialData?: {
+    id?: string;
+    title: string;
+    amount: number;
+    currency: string;
+    date: string;
+    category_id: string;
+    description: string;
+    payment_method: string;
+    receipt_url?: string;
+  };
+  isEditing?: boolean;
+  categories?: { id: string; name: string }[];
+  onSuccess?: () => void;
 }
 
-export const ExpenseForm: React.FC<ExpenseFormProps> = ({ onSuccess }) => {
-  const [description, setDescription] = useState('');
-  const [amount, setAmount] = useState('');
-  const [categoryId, setCategoryId] = useState('');
-  const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
-  const [notes, setNotes] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [error, setError] = useState('');
+const ExpenseForm: React.FC<ExpenseFormProps> = ({
+  initialData,
+  isEditing = false,
+  categories = [],
+  onSuccess
+}) => {
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    title: initialData?.title || '',
+    amount: initialData?.amount || 0,
+    currency: initialData?.currency || 'USD',
+    date: initialData?.date || new Date().toISOString().split('T')[0],
+    category_id: initialData?.category_id || '',
+    description: initialData?.description || '',
+    payment_method: initialData?.payment_method || '',
+    receipt_url: initialData?.receipt_url || '',
+  });
+
+  const [availableCategories, setAvailableCategories] = useState(categories);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [isLoadingCategories, setIsLoadingCategories] = useState(categories.length === 0);
 
   useEffect(() => {
-    // Fetch categories
-    const fetchCategories = async () => {
-      try {
-        const response = await axios.get('/api/categories');
-        setCategories(response.data.data);
-      } catch (err) {
-        console.error('Failed to fetch categories', err);
-      }
-    };
+    // Fetch categories if not provided
+    if (categories.length === 0) {
+      fetchCategories();
+    }
+  }, [categories]);
 
-    fetchCategories();
-  }, []);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
-
+  const fetchCategories = async () => {
     try {
-      await axios.post('/api/expenses', {
-        description,
-        amount: parseFloat(amount),
-        category_id: categoryId || null,
-        date,
-        notes: notes || null,
-      });
-
-      // Reset form
-      setDescription('');
-      setAmount('');
-      setCategoryId('');
-      setDate(new Date().toISOString().slice(0, 10));
-      setNotes('');
-
-      onSuccess();
-    } catch (err: any) {
-      setError('Failed to record expense. ' + (err.response?.data?.message || ''));
+      setIsLoadingCategories(true);
+      const response = await axios.get('/api/categories');
+      setAvailableCategories(Array.isArray(response.data) ? response.data :
+                             (response.data?.data ? response.data.data : []));
+    } catch (error) {
+      console.error('Failed to fetch categories:', error);
+      setSubmitError('Failed to load expense categories. Please try again.');
     } finally {
-      setLoading(false);
+      setIsLoadingCategories(false);
     }
   };
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    // Clear error for this field when user updates it
+    if (errors[name]) {
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors[name];
+        return newErrors;
+      });
+    }
+  };
+
+  const validate = (): boolean => {
+    const newErrors: Record<string, string> = {};
+
+    if (!formData.title.trim()) {
+      newErrors.title = 'Title is required';
+    }
+
+    if (formData.amount <= 0) {
+      newErrors.amount = 'Amount must be greater than 0';
+    }
+
+    if (!formData.date) {
+      newErrors.date = 'Date is required';
+    }
+
+    if (!formData.category_id) {
+      newErrors.category_id = 'Category is required';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!validate()) {
+      return;
+    }
+
+    setIsSubmitting(true);
+    setSubmitError(null);
+
+    try {
+      if (isEditing && initialData?.id) {
+        // Update existing expense
+        await axios.put(`/api/expenses/${initialData.id}`, formData);
+        navigate(`/expenses/${initialData.id}`);
+      } else {
+        // Create new expense
+        const response = await axios.post('/api/expenses', formData);
+        navigate(`/expenses/${response.data.expense_id}`);
+      }
+      if (onSuccess) {
+        onSuccess();
+      }
+    } catch (error: any) {
+      console.error('Submission error:', error);
+      if (error.response?.data?.errors) {
+        // Handle validation errors from the server
+        const serverErrors = error.response.data.errors;
+        const formattedErrors: Record<string, string> = {};
+
+        Object.entries(serverErrors).forEach(([key, messages]: [string, any]) => {
+          formattedErrors[key] = Array.isArray(messages) ? messages[0] : messages;
+        });
+
+        setErrors(formattedErrors);
+      } else {
+        setSubmitError(error.response?.data?.error || 'An unexpected error occurred. Please try again.');
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const currencyOptions = [
+    { value: 'USD', label: 'USD - US Dollar' },
+    { value: 'EUR', label: 'EUR - Euro' },
+    { value: 'GBP', label: 'GBP - British Pound' },
+    { value: 'CAD', label: 'CAD - Canadian Dollar' },
+    { value: 'AUD', label: 'AUD - Australian Dollar' },
+    { value: 'JPY', label: 'JPY - Japanese Yen' },
+  ];
+
+  const paymentMethodOptions = [
+    { value: 'credit_card', label: 'Credit Card' },
+    { value: 'debit_card', label: 'Debit Card' },
+    { value: 'cash', label: 'Cash' },
+    { value: 'bank_transfer', label: 'Bank Transfer' },
+    { value: 'mobile_payment', label: 'Mobile Payment' },
+    { value: 'other', label: 'Other' },
+  ];
+
   return (
-    <div className="bg-white rounded-lg shadow p-6">
-      <h2 className="text-xl font-semibold mb-4">Record New Expense</h2>
+    <Card className="max-w-2xl mx-auto">
+      <div className="px-6 py-4 border-b border-gray-200">
+        <h2 className="text-lg font-medium text-gray-900">
+          {isEditing ? 'Edit Expense' : 'Add New Expense'}
+        </h2>
+      </div>
 
-      {error && (
-        <div className="bg-red-50 text-red-600 p-3 rounded mb-4">
-          {error}
-        </div>
-      )}
+      <form onSubmit={handleSubmit} className="p-6">
+        {submitError && (
+          <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+            {submitError}
+          </div>
+        )}
 
-      <form onSubmit={handleSubmit}>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Description
+        <div className="space-y-6">
+          {/* Title */}
+          <div>
+            <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
+              Title <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2"
-              required
+              id="title"
+              name="title"
+              value={formData.title}
+              onChange={handleChange}
+              className={`w-full rounded-md border ${
+                errors.title ? 'border-red-500' : 'border-gray-300'
+              } shadow-sm p-2`}
+              placeholder="e.g. Groceries, Restaurant, Taxi"
             />
+            {errors.title && (
+              <p className="mt-1 text-sm text-red-600">{errors.title}</p>
+            )}
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Amount
-            </label>
-            <input
-              type="number"
-              min="0"
-              step="0.01"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2"
-              required
-            />
+          {/* Amount and Currency (side by side) */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label htmlFor="amount" className="block text-sm font-medium text-gray-700 mb-1">
+                Amount <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="number"
+                id="amount"
+                name="amount"
+                value={formData.amount}
+                onChange={handleChange}
+                min="0.01"
+                step="0.01"
+                className={`w-full rounded-md border ${
+                  errors.amount ? 'border-red-500' : 'border-gray-300'
+                } shadow-sm p-2`}
+                placeholder="0.00"
+              />
+              {errors.amount && (
+                <p className="mt-1 text-sm text-red-600">{errors.amount}</p>
+              )}
+            </div>
+
+            <div>
+              <label htmlFor="currency" className="block text-sm font-medium text-gray-700 mb-1">
+                Currency <span className="text-red-500">*</span>
+              </label>
+              <select
+                id="currency"
+                name="currency"
+                value={formData.currency}
+                onChange={handleChange}
+                className={`w-full rounded-md border ${
+                  errors.currency ? 'border-red-500' : 'border-gray-300'
+                } shadow-sm p-2`}
+              >
+                {currencyOptions.map(option => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+              {errors.currency && (
+                <p className="mt-1 text-sm text-red-600">{errors.currency}</p>
+              )}
+            </div>
           </div>
 
+          {/* Date */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Date
+            <label htmlFor="date" className="block text-sm font-medium text-gray-700 mb-1">
+              Date <span className="text-red-500">*</span>
             </label>
             <input
               type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2"
-              required
+              id="date"
+              name="date"
+              value={formData.date}
+              onChange={handleChange}
+              className={`w-full rounded-md border ${
+                errors.date ? 'border-red-500' : 'border-gray-300'
+              } shadow-sm p-2`}
             />
+            {errors.date && (
+              <p className="mt-1 text-sm text-red-600">{errors.date}</p>
+            )}
           </div>
 
+          {/* Category */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Category
+            <label htmlFor="category_id" className="block text-sm font-medium text-gray-700 mb-1">
+              Category <span className="text-red-500">*</span>
             </label>
             <select
-              value={categoryId}
-              onChange={(e) => setCategoryId(e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2"
+              id="category_id"
+              name="category_id"
+              value={formData.category_id}
+              onChange={handleChange}
+              className={`w-full rounded-md border ${
+                errors.category_id ? 'border-red-500' : 'border-gray-300'
+              } shadow-sm p-2`}
+              disabled={isLoadingCategories}
             >
-              <option value="">-- Select Category --</option>
-              {categories.map((category) => (
-                <option key={category.category_id} value={category.category_id}>
+              <option value="">Select a category</option>
+              {Array.isArray(availableCategories) && availableCategories.map(category => (
+                <option key={category.id} value={category.id}>
                   {category.name}
                 </option>
               ))}
             </select>
+            {errors.category_id && (
+              <p className="mt-1 text-sm text-red-600">{errors.category_id}</p>
+            )}
+            {isLoadingCategories && (
+              <p className="mt-1 text-xs text-gray-500">Loading categories...</p>
+            )}
           </div>
 
-          <div className="col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Notes
+          {/* Payment Method */}
+          <div>
+            <label htmlFor="payment_method" className="block text-sm font-medium text-gray-700 mb-1">
+              Payment Method
+            </label>
+            <select
+              id="payment_method"
+              name="payment_method"
+              value={formData.payment_method}
+              onChange={handleChange}
+              className={`w-full rounded-md border ${
+                errors.payment_method ? 'border-red-500' : 'border-gray-300'
+              } shadow-sm p-2`}
+            >
+              <option value="">Select a payment method</option>
+              {paymentMethodOptions.map(option => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+            {errors.payment_method && (
+              <p className="mt-1 text-sm text-red-600">{errors.payment_method}</p>
+            )}
+          </div>
+
+          {/* Description */}
+          <div>
+            <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
+              Description
             </label>
             <textarea
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2"
+              id="description"
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
               rows={3}
+              className={`w-full rounded-md border ${
+                errors.description ? 'border-red-500' : 'border-gray-300'
+              } shadow-sm p-2`}
+              placeholder="Add details about this expense"
             />
+            {errors.description && (
+              <p className="mt-1 text-sm text-red-600">{errors.description}</p>
+            )}
+          </div>
+
+          {/* Receipt URL */}
+          <div>
+            <label htmlFor="receipt_url" className="block text-sm font-medium text-gray-700 mb-1">
+              Receipt URL
+            </label>
+            <input
+              type="text"
+              id="receipt_url"
+              name="receipt_url"
+              value={formData.receipt_url}
+              onChange={handleChange}
+              className={`w-full rounded-md border ${
+                errors.receipt_url ? 'border-red-500' : 'border-gray-300'
+              } shadow-sm p-2`}
+              placeholder="https://example.com/receipt.pdf"
+            />
+            {errors.receipt_url && (
+              <p className="mt-1 text-sm text-red-600">{errors.receipt_url}</p>
+            )}
+            <p className="mt-1 text-xs text-gray-500">
+              Optional link to a receipt image or document
+            </p>
+          </div>
+
+          <div className="flex justify-end space-x-3 pt-4">
+            <Button
+              variant="outlined"
+              onClick={() => navigate('/expenses')}
+              type="button"
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? 'Saving...' : isEditing ? 'Update Expense' : 'Add Expense'}
+            </Button>
           </div>
         </div>
-
-        <div className="mt-6">
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md transition duration-300 disabled:opacity-50"
-          >
-            {loading ? 'Saving...' : 'Record Expense'}
-          </button>
-        </div>
       </form>
-    </div>
+    </Card>
   );
 };
+
+export default ExpenseForm;
