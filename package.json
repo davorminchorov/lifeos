@@ -15,7 +15,7 @@
         "postcss": "^8.5.3",
         "tailwindcss": "^4.1.4",
         "typescript": "^5.8.3",
-        "vite": "^6.3.3"
+        "vite": "^6.3.4"
     },
     "dependencies": {
         "@heroicons/react": "^2.2.0",
