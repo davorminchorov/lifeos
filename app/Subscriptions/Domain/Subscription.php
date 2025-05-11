@@ -7,6 +7,7 @@ use App\Subscriptions\Events\SubscriptionAdded;
 use App\Subscriptions\Events\SubscriptionUpdated;
 use App\Subscriptions\Events\SubscriptionCancelled;
 use App\Subscriptions\Events\PaymentRecorded;
+use App\Subscriptions\Events\ReminderConfigured;
 use DateTimeImmutable;
 
 class Subscription extends AggregateRoot
@@ -23,6 +24,7 @@ class Subscription extends AggregateRoot
     private ?DateTimeImmutable $nextPaymentDate;
     private ?string $website;
     private ?string $category;
+    private ?ReminderSettings $reminderSettings;
 
     public static function create(
         string $subscriptionId,
@@ -102,6 +104,16 @@ class Subscription extends AggregateRoot
         $this->calculateNextPaymentDate();
     }
 
+    public function configureReminders(int $daysBefore, bool $enabled, string $method): void
+    {
+        $this->apply(new ReminderConfigured(
+            $this->aggregateId,
+            $daysBefore,
+            $enabled,
+            $method
+        ));
+    }
+
     private function calculateNextPaymentDate(): void
     {
         if ($this->status === SubscriptionStatus::CANCELLED->value) {
@@ -175,5 +187,16 @@ class Subscription extends AggregateRoot
         ];
 
         $this->calculateNextPaymentDate();
+    }
+
+    protected function applyReminderConfigured(ReminderConfigured $event): void
+    {
+        $payload = $event->toPayload();
+
+        $this->reminderSettings = ReminderSettings::create(
+            $payload['days_before'],
+            $payload['enabled'],
+            $payload['method']
+        );
     }
 }

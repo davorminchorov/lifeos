@@ -2,16 +2,13 @@
 
 namespace App\Subscriptions\Queries;
 
+use App\Core\EventSourcing\Query;
 use App\Subscriptions\Domain\SubscriptionStatus;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 
-class GetActiveSubscriptions
+class GetActiveSubscriptions implements Query
 {
-    public function __invoke(): Collection
+    public function __construct()
     {
-        return DB::table('subscriptions_read_model')
-            ->where('status', SubscriptionStatus::ACTIVE->value)
-            ->get();
+        // No parameters needed for this query
     }
 }

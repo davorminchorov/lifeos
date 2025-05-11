@@ -5,6 +5,7 @@ namespace App\Console;
 use App\UtilityBills\Commands\SendBillReminders;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use App\Console\Commands\SendSubscriptionReminders;
 
 class Kernel extends ConsoleKernel
 {
@@ -13,8 +14,10 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // Send utility bill reminders daily at 8 AM
-        $schedule->command(SendBillReminders::class)->dailyAt('08:00');
+        // $schedule->command('inspire')->hourly();
+
+        // Run subscription reminders daily at 8:00 AM
+        $schedule->command('subscriptions:send-reminders')->dailyAt('08:00');
     }
 
     /**

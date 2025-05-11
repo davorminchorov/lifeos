@@ -7,6 +7,7 @@ use App\Subscriptions\Events\PaymentRecorded;
 use App\Subscriptions\Events\SubscriptionAdded;
 use App\Subscriptions\Events\SubscriptionCancelled;
 use App\Subscriptions\Events\SubscriptionUpdated;
+use App\Subscriptions\Events\ReminderConfigured;
 use Illuminate\Support\Facades\DB;
 use DateTimeImmutable;
 
@@ -158,6 +159,62 @@ class SubscriptionProjector implements Projector
                         'updated_at' => $event->occurredAt->format('Y-m-d H:i:s'),
                     ]
                 );
+        }
+    }
+
+    public function handleReminderConfigured(ReminderConfigured $event): void
+    {
+        $payload = $event->toPayload();
+
+        // Update the subscription with reminder settings
+        DB::table('subscriptions')
+            ->where('id', $event->aggregateId)
+            ->update([
+                'reminder_days_before' => $payload['days_before'],
+                'reminder_enabled' => $payload['enabled'],
+                'reminder_method' => $payload['method'],
+                'updated_at' => $event->occurredAt->format('Y-m-d H:i:s'),
+            ]);
+
+        // If reminders are enabled, create or update entry in subscription_reminders table
+        if ($payload['enabled']) {
+            $subscription = DB::table('subscriptions')
+                ->where('id', $event->aggregateId)
+                ->first();
+
+            if ($subscription && $subscription->status === 'active') {
+                // Get the next payment date from upcoming_payments
+                $upcomingPayment = DB::table('upcoming_payments')
+                    ->where('subscription_id', $event->aggregateId)
+                    ->first();
+
+                if ($upcomingPayment) {
+                    $nextPaymentDate = new DateTimeImmutable($upcomingPayment->expected_date);
+                    $reminderDate = $nextPaymentDate->modify("-{$payload['days_before']} days");
+
+                    // Update or insert the reminder
+                    DB::table('subscription_reminders')
+                        ->updateOrInsert(
+                            ['subscription_id' => $event->aggregateId],
+                            [
+                                'subscription_name' => $subscription->name,
+                                'reminder_date' => $reminderDate->format('Y-m-d'),
+                                'payment_date' => $nextPaymentDate->format('Y-m-d'),
+                                'amount' => $subscription->amount,
+                                'currency' => $subscription->currency,
+                                'method' => $payload['method'],
+                                'sent' => false,
+                                'created_at' => $event->occurredAt->format('Y-m-d H:i:s'),
+                                'updated_at' => $event->occurredAt->format('Y-m-d H:i:s'),
+                            ]
+                        );
+                }
+            }
+        } else {
+            // If reminders are disabled, remove any existing reminder
+            DB::table('subscription_reminders')
+                ->where('subscription_id', $event->aggregateId)
+                ->delete();
         }
     }
 

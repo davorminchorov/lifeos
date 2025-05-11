@@ -8,9 +8,11 @@ use App\Subscriptions\Commands\AddSubscription;
 use App\Subscriptions\Commands\CancelSubscription;
 use App\Subscriptions\Commands\RecordPayment;
 use App\Subscriptions\Commands\UpdateSubscription;
+use App\Subscriptions\Commands\ConfigureReminders;
 use App\Subscriptions\Queries\GetSubscriptionDetail;
 use App\Subscriptions\Queries\GetSubscriptionList;
 use App\Subscriptions\Queries\GetUpcomingPayments;
+use App\Subscriptions\Queries\GetUpcomingReminders;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -164,6 +166,40 @@ class SubscriptionController extends Controller
     {
         $query = new GetUpcomingPayments(
             daysAhead: (int) $request->get('days_ahead', 30)
+        );
+
+        $result = $this->queryBus->handle($query);
+
+        return response()->json($result);
+    }
+
+    public function configureReminders(Request $request, string $id): JsonResponse
+    {
+        $this->validate($request, [
+            'days_before' => 'required|integer|min:1',
+            'enabled' => 'required|boolean',
+            'method' => 'required|string|in:email,sms,push,in_app',
+        ]);
+
+        $command = new ConfigureReminders(
+            subscriptionId: $id,
+            daysBefore: (int) $request->input('days_before'),
+            enabled: (bool) $request->input('enabled'),
+            method: $request->input('method')
+        );
+
+        try {
+            $this->commandBus->dispatch($command);
+            return response()->json(['message' => 'Subscription reminders configured successfully']);
+        } catch (\InvalidArgumentException $e) {
+            return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+        }
+    }
+
+    public function upcomingReminders(Request $request): JsonResponse
+    {
+        $query = new GetUpcomingReminders(
+            daysAhead: (int) $request->get('days_ahead', 14)
         );
 
         $result = $this->queryBus->handle($query);

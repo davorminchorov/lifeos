@@ -43,7 +43,26 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/subscriptions/{id}', [SubscriptionController::class, 'update']);
     Route::post('/subscriptions/{id}/cancel', [SubscriptionController::class, 'cancel']);
     Route::post('/subscriptions/{id}/payments', [SubscriptionController::class, 'recordPayment']);
+    Route::post('/subscriptions/{id}/reminders', [SubscriptionController::class, 'configureReminders']);
     Route::get('/upcoming-payments', [SubscriptionController::class, 'upcomingPayments']);
+    Route::get('/upcoming-reminders', [SubscriptionController::class, 'upcomingReminders']);
+
+    // Subscription notifications routes
+    Route::get('/notifications', [App\Subscriptions\UI\Api\NotificationController::class, 'index']);
+    Route::post('/notifications/{id}/mark-as-read', [App\Subscriptions\UI\Api\NotificationController::class, 'markAsRead']);
+    Route::post('/notifications/mark-all-as-read', [App\Subscriptions\UI\Api\NotificationController::class, 'markAllAsRead']);
+    Route::delete('/notifications/{id}', [App\Subscriptions\UI\Api\NotificationController::class, 'destroy']);
+    Route::get('/notifications/unread-count', [App\Subscriptions\UI\Api\NotificationController::class, 'getUnreadCount']);
+
+    // Subscription tags routes
+    Route::get('/subscription-tags', [App\Subscriptions\UI\Api\TagController::class, 'index']);
+    Route::post('/subscription-tags', [App\Subscriptions\UI\Api\TagController::class, 'store']);
+    Route::get('/subscription-tags/{id}', [App\Subscriptions\UI\Api\TagController::class, 'show']);
+    Route::put('/subscription-tags/{id}', [App\Subscriptions\UI\Api\TagController::class, 'update']);
+    Route::delete('/subscription-tags/{id}', [App\Subscriptions\UI\Api\TagController::class, 'destroy']);
+    Route::post('/subscription-tags/attach', [App\Subscriptions\UI\Api\TagController::class, 'attachTag']);
+    Route::post('/subscription-tags/detach', [App\Subscriptions\UI\Api\TagController::class, 'detachTag']);
+    Route::get('/subscriptions/{id}/tags', [App\Subscriptions\UI\Api\TagController::class, 'getSubscriptionTags']);
 
     // Payment routes
     Route::get('/payment-history', [PaymentController::class, 'index']);
@@ -122,6 +141,10 @@ Route::prefix('dashboard')->group(function () {
     Route::get('/subscriptions-summary', App\Dashboard\UI\Api\SubscriptionSummaryController::class);
     Route::get('/utility-bills-summary', App\Dashboard\UI\Api\UtilityBillsSummaryController::class);
     Route::get('/job-applications-summary', App\Dashboard\UI\Api\JobApplicationsSummaryController::class);
+
+    // New subscription dashboard widgets
+    Route::get('/subscriptions/upcoming-reminders', [App\Subscriptions\UI\Api\DashboardController::class, 'upcomingReminders']);
+    Route::get('/subscriptions/summary', [App\Subscriptions\UI\Api\DashboardController::class, 'subscriptionSummary']);
 });
 
 // File attachment routes
