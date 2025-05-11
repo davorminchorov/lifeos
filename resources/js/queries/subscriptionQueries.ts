@@ -48,12 +48,33 @@ interface CancelSubscriptionParams {
   subscriptionId?: string;
 }
 
+interface ReminderConfigurationParams {
+  subscriptionId: string;
+  days_before: number;
+  enabled: boolean;
+  method: string;
+}
+
+interface UpcomingReminder {
+  subscription_id: string;
+  subscription_name: string;
+  reminder_date: string;
+  payment_date: string;
+  amount: number;
+  currency: string;
+  method: string;
+  days_until_reminder: number;
+  days_until_payment: number;
+}
+
 // Query keys
 export const subscriptionKeys = {
   all: ['subscriptions'] as const,
   lists: () => [...subscriptionKeys.all, 'list'] as const,
   detail: (id: string) => [...subscriptionKeys.all, 'detail', id] as const,
   payments: (id: string) => [...subscriptionKeys.all, 'payments', id] as const,
+  reminders: () => [...subscriptionKeys.all, 'reminders'] as const,
+  upcomingReminders: () => [...subscriptionKeys.all, 'upcoming-reminders'] as const,
 };
 
 // Query functions
@@ -78,6 +99,14 @@ const recordSubscriptionPayment = async (params: RecordPaymentParams): Promise<v
 const cancelSubscription = async (params: CancelSubscriptionParams): Promise<void> => {
   await axios.post(`/api/subscriptions/${params.id}/cancel`, {
     end_date: params.end_date,
+  });
+};
+
+const configureReminders = async (params: ReminderConfigurationParams): Promise<void> => {
+  await axios.post(`/api/subscriptions/${params.subscriptionId}/reminders`, {
+    days_before: params.days_before,
+    enabled: params.enabled,
+    method: params.method,
   });
 };
 
@@ -179,5 +208,31 @@ export const useCancelSubscription = () => {
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: subscriptionKeys.detail(variables.id) });
     },
+  });
+};
+
+// Configure reminders for a subscription
+export const useConfigureReminders = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (params: ReminderConfigurationParams) => configureReminders(params),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: subscriptionKeys.detail(variables.subscriptionId) });
+      queryClient.invalidateQueries({ queryKey: subscriptionKeys.upcomingReminders() });
+    },
+  });
+};
+
+// Get upcoming reminders
+export const useUpcomingReminders = (daysAhead: number = 14) => {
+  return useQuery({
+    queryKey: [...subscriptionKeys.upcomingReminders(), daysAhead],
+    queryFn: async () => {
+      const response = await axios.get('/api/upcoming-reminders', {
+        params: { days_ahead: daysAhead }
+      });
+      return response.data as UpcomingReminder[];
+    }
   });
 };

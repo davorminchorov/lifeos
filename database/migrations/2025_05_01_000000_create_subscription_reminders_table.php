@@ -11,24 +11,30 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Add reminder fields to subscriptions table
-        Schema::table('subscriptions', function (Blueprint $table) {
-            $table->integer('reminder_days_before')->nullable();
-            $table->boolean('reminder_enabled')->default(false);
-            $table->string('reminder_method')->nullable();
-        });
+        // Skip this migration if the table already exists from our adaptive migration
+        if (Schema::hasTable('subscription_reminders')) {
+            return;
+        }
 
-        // Create the subscription_reminders table
-        Schema::create('subscription_reminders', function (Blueprint $table) {
-            $table->uuid('subscription_id')->primary();
-            $table->string('subscription_name');
-            $table->date('reminder_date');
-            $table->date('payment_date');
-            $table->decimal('amount', 10, 2);
-            $table->string('currency', 3);
-            $table->string('method');
-            $table->boolean('sent')->default(false);
-            $table->timestamp('sent_at')->nullable();
+        // Check if the subscriptions table exists and has a UUID primary key
+        $usingUuid = Schema::hasTable('subscriptions') &&
+                    Schema::hasColumn('subscriptions', 'id') &&
+                    Schema::getColumnType('subscriptions', 'id') !== 'bigint';
+
+        Schema::create('subscription_reminders', function (Blueprint $table) use ($usingUuid) {
+            $table->id();
+
+            // Ensure the type matches the subscriptions.id column
+            if ($usingUuid) {
+                $table->uuid('subscription_id');
+            } else {
+                $table->unsignedBigInteger('subscription_id');
+            }
+
+            $table->integer('days_before')->default(3);
+            $table->boolean('enabled')->default(true);
+            $table->string('method')->default('email');
+            $table->timestamp('last_sent_at')->nullable();
             $table->timestamps();
 
             $table->foreign('subscription_id')
@@ -43,14 +49,14 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('subscription_reminders');
+        // Skip this down migration if the adaptive migration has run
+        if (Schema::hasTable('subscription_reminders') &&
+            Schema::hasTable('subscriptions') &&
+            Schema::hasColumn('subscriptions', 'id') &&
+            Schema::getColumnType('subscriptions', 'id') === 'bigint') {
+            return;
+        }
 
-        Schema::table('subscriptions', function (Blueprint $table) {
-            $table->dropColumn([
-                'reminder_days_before',
-                'reminder_enabled',
-                'reminder_method'
-            ]);
-        });
+        Schema::dropIfExists('subscription_reminders');
     }
 };

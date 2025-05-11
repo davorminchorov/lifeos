@@ -11,21 +11,32 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Create the tags table
+        // Skip this migration if the tables already exist from our adaptive migration
+        if (Schema::hasTable('subscription_tags') && Schema::hasTable('subscription_tag')) {
+            return;
+        }
+
+        // Check if the subscriptions table exists and has a UUID primary key
+        $usingUuid = Schema::hasTable('subscriptions') &&
+                     Schema::hasColumn('subscriptions', 'id') &&
+                     Schema::getColumnType('subscriptions', 'id') !== 'bigint';
+
         Schema::create('subscription_tags', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->id();
             $table->string('name');
-            $table->string('color')->default('#3B82F6'); // Default to a blue color
+            $table->string('color', 7)->default('#6366F1');
             $table->timestamps();
         });
 
-        // Create the subscription_tag pivot table
-        Schema::create('subscription_tag', function (Blueprint $table) {
-            $table->uuid('subscription_id');
-            $table->uuid('tag_id');
-            $table->timestamps();
+        Schema::create('subscription_tag', function (Blueprint $table) use ($usingUuid) {
+            // Ensure the type matches the subscriptions.id column
+            if ($usingUuid) {
+                $table->uuid('subscription_id');
+            } else {
+                $table->unsignedBigInteger('subscription_id');
+            }
 
-            $table->primary(['subscription_id', 'tag_id']);
+            $table->unsignedBigInteger('tag_id');
 
             $table->foreign('subscription_id')
                 ->references('id')
@@ -36,6 +47,8 @@ return new class extends Migration
                 ->references('id')
                 ->on('subscription_tags')
                 ->onDelete('cascade');
+
+            $table->primary(['subscription_id', 'tag_id']);
         });
     }
 
@@ -44,6 +57,14 @@ return new class extends Migration
      */
     public function down(): void
     {
+        // Skip this down migration if the adaptive migration has run
+        if ((Schema::hasTable('subscription_tags') || Schema::hasTable('subscription_tag')) &&
+            Schema::hasTable('subscriptions') &&
+            Schema::hasColumn('subscriptions', 'id') &&
+            Schema::getColumnType('subscriptions', 'id') === 'bigint') {
+            return;
+        }
+
         Schema::dropIfExists('subscription_tag');
         Schema::dropIfExists('subscription_tags');
     }

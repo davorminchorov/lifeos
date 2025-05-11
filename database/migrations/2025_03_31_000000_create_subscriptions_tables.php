@@ -11,6 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // Skip this migration if the subscriptions table already exists with an auto-incrementing id
+        if (Schema::hasTable('subscriptions') && Schema::hasColumn('subscriptions', 'id') && Schema::getColumnType('subscriptions', 'id') === 'bigint') {
+            return;
+        }
+
         // Main subscriptions table (read model)
         Schema::create('subscriptions', function (Blueprint $table) {
             $table->uuid('id')->primary();
@@ -61,8 +66,11 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('upcoming_payments');
-        Schema::dropIfExists('payments');
-        Schema::dropIfExists('subscriptions');
+        // Only drop tables if the original migration hasn't run
+        if (!Schema::hasTable('subscriptions') || (Schema::hasColumn('subscriptions', 'id') && Schema::getColumnType('subscriptions', 'id') !== 'bigint')) {
+            Schema::dropIfExists('upcoming_payments');
+            Schema::dropIfExists('payments');
+            Schema::dropIfExists('subscriptions');
+        }
     }
 };

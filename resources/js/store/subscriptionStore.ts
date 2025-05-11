@@ -14,6 +14,9 @@ export interface Subscription {
   website?: string | null;
   category?: string | null;
   next_payment_date?: string | null;
+  reminder_days_before?: number | null;
+  reminder_enabled?: boolean;
+  reminder_method?: string | null;
 }
 
 export interface Payment {

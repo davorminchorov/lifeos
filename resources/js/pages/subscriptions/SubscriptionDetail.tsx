@@ -6,9 +6,9 @@ import { Card, CardHeader, CardTitle, CardContent } from '../../ui';
 import PaymentHistoryCard from '../../components/subscriptions/PaymentHistoryCard';
 import PaymentSummaryCard from '../../components/subscriptions/PaymentSummaryCard';
 import RecordPaymentModal, { RecordPaymentFormData } from '../../components/subscriptions/RecordPaymentModal';
+import ReminderConfigurationModal, { ReminderFormData } from '../../components/subscriptions/ReminderConfigurationModal';
 import { useToast } from '../../ui/Toast';
-import { useSubscriptionDetail, useSubscriptionPayments, useRecordPayment, useCancelSubscription } from '../../queries/subscriptionQueries';
-import { useSubscriptionStore } from '../../store/subscriptionStore';
+import { useSubscriptionDetail, useSubscriptionPayments, useRecordPayment, useCancelSubscription, useConfigureReminders } from '../../queries/subscriptionQueries';
 
 interface SubscriptionPayment {
   id: string;
@@ -19,18 +19,35 @@ interface SubscriptionPayment {
   created_at: string;
 }
 
+interface Subscription {
+  id: string;
+  name: string;
+  description: string;
+  amount: number;
+  currency: string;
+  billing_cycle: string;
+  start_date: string;
+  end_date: string | null;
+  status: string;
+  website: string | null;
+  category: string | null;
+  next_payment_date: string | null;
+  reminder_days_before?: number | null;
+  reminder_enabled?: boolean;
+  reminder_method?: string | null;
+  total_paid?: number;
+}
+
 const SubscriptionDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  // State management with XState Store
-  const { setError, setState } = useSubscriptionStore();
-
   // Local UI state
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [cancelDate, setCancelDate] = useState(new Date().toISOString().split('T')[0]);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [showReminderModal, setShowReminderModal] = useState(false);
 
   // TanStack Query hooks
   const {
@@ -55,6 +72,12 @@ const SubscriptionDetail: React.FC = () => {
     isPending: isCancelling,
     error: cancelError
   } = useCancelSubscription();
+
+  const {
+    mutate: configureReminders,
+    isPending: isConfiguringReminders,
+    error: reminderError
+  } = useConfigureReminders();
 
   const handleCancelSubscription = () => {
     if (!id) return;
@@ -106,6 +129,34 @@ const SubscriptionDetail: React.FC = () => {
     );
   };
 
+  const handleConfigureReminders = (reminderData: ReminderFormData) => {
+    if (!id) return;
+
+    configureReminders(
+      {
+        subscriptionId: id,
+        ...reminderData
+      },
+      {
+        onSuccess: () => {
+          toast({
+            title: "Success",
+            description: "Reminders configured successfully",
+            variant: "success",
+          });
+          setShowReminderModal(false);
+        },
+        onError: (err: any) => {
+          toast({
+            title: "Error",
+            description: err?.message || 'Failed to configure reminders',
+            variant: "destructive",
+          });
+        }
+      }
+    );
+  };
+
   const renderStatusBadge = (status: string) => {
     let className = '';
 
@@ -127,6 +178,23 @@ const SubscriptionDetail: React.FC = () => {
       <span className={`px-2 py-1 text-xs font-medium rounded-full ${className}`}>
         {status.charAt(0).toUpperCase() + status.slice(1)}
       </span>
+    );
+  };
+
+  const renderReminderStatus = (subscription: Subscription) => {
+    if (!subscription.reminder_enabled) {
+      return <span className="text-on-surface-variant">Not configured</span>;
+    }
+
+    return (
+      <div className="flex flex-col">
+        <span className="text-tertiary">
+          {subscription.reminder_days_before} {subscription.reminder_days_before === 1 ? 'day' : 'days'} before payment
+        </span>
+        <span className="text-sm text-on-surface-variant capitalize">
+          via {subscription.reminder_method?.replace('_', ' ')}
+        </span>
+      </div>
     );
   };
 
@@ -197,6 +265,20 @@ const SubscriptionDetail: React.FC = () => {
                 <div>
                   <p className="text-sm text-on-surface-variant">Status</p>
                   <p className="mt-1">{renderStatusBadge(subscription.status)}</p>
+                </div>
+
+                <div>
+                  <p className="text-sm text-on-surface-variant">Payment Reminders</p>
+                  <div className="mt-1 flex justify-between items-center">
+                    {renderReminderStatus(subscription)}
+                    <Button
+                      variant="text"
+                      onClick={() => setShowReminderModal(true)}
+                      className="text-sm"
+                    >
+                      {subscription.reminder_enabled ? 'Update' : 'Configure'}
+                    </Button>
+                  </div>
                 </div>
 
                 <div>
@@ -376,6 +458,20 @@ const SubscriptionDetail: React.FC = () => {
           defaultAmount={subscription.amount}
         />
       )}
+
+      {/* Reminder Configuration Modal */}
+      <ReminderConfigurationModal
+        isOpen={showReminderModal}
+        onClose={() => setShowReminderModal(false)}
+        onSubmit={handleConfigureReminders}
+        isSubmitting={isConfiguringReminders}
+        subscriptionName={subscription.name}
+        defaultValues={{
+          days_before: subscription.reminder_days_before || 3,
+          enabled: subscription.reminder_enabled || false,
+          method: subscription.reminder_method || 'email',
+        }}
+      />
     </div>
   );
 };

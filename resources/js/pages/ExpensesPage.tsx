@@ -46,6 +46,9 @@ export const ExpensesPage: React.FC = () => {
         <Link to="/categories">
           <Button variant="text">Manage Categories</Button>
         </Link>
+        <Link to="/expenses/analytics">
+          <Button variant="text">Analytics Dashboard</Button>
+        </Link>
       </div>
 
       {showAddForm && (
@@ -94,9 +97,9 @@ export const ExpensesPage: React.FC = () => {
       {!showAddForm && (
         <div className="mt-8 text-center">
           <p className="text-on-surface-variant mb-2">Want to see more detailed analytics?</p>
-          <p className="text-on-surface mb-4">Visit the reports section for comprehensive spending analysis.</p>
-          <Link to="/reports">
-            <Button variant="outlined">View Reports</Button>
+          <p className="text-on-surface mb-4">View comprehensive expense analytics with interactive visualizations.</p>
+          <Link to="/expenses/analytics">
+            <Button variant="outlined">View Analytics Dashboard</Button>
           </Link>
         </div>
       )}

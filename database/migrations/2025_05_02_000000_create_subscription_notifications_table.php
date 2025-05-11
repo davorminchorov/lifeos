@@ -11,13 +11,30 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('subscription_notifications', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->uuid('subscription_id');
-            $table->string('title');
-            $table->text('message');
-            $table->string('type')->default('reminder'); // reminder, payment_due, payment_success, etc.
-            $table->boolean('read')->default(false);
+        // Skip this migration if the table already exists from our adaptive migration
+        if (Schema::hasTable('subscription_notifications')) {
+            return;
+        }
+
+        // Check if the subscriptions table exists and has a UUID primary key
+        $usingUuid = Schema::hasTable('subscriptions') &&
+                     Schema::hasColumn('subscriptions', 'id') &&
+                     Schema::getColumnType('subscriptions', 'id') !== 'bigint';
+
+        Schema::create('subscription_notifications', function (Blueprint $table) use ($usingUuid) {
+            $table->id();
+
+            // Ensure the type matches the subscriptions.id column
+            if ($usingUuid) {
+                $table->uuid('subscription_id');
+            } else {
+                $table->unsignedBigInteger('subscription_id');
+            }
+
+            $table->string('type');
+            $table->text('content');
+            $table->timestamp('sent_at');
+            $table->boolean('is_read')->default(false);
             $table->timestamp('read_at')->nullable();
             $table->timestamps();
 
@@ -33,6 +50,14 @@ return new class extends Migration
      */
     public function down(): void
     {
+        // Skip this down migration if the adaptive migration has run
+        if (Schema::hasTable('subscription_notifications') &&
+            Schema::hasTable('subscriptions') &&
+            Schema::hasColumn('subscriptions', 'id') &&
+            Schema::getColumnType('subscriptions', 'id') === 'bigint') {
+            return;
+        }
+
         Schema::dropIfExists('subscription_notifications');
     }
 };
