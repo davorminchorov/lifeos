@@ -1,0 +1,23 @@
+# Allow self-signed certificates
+serversTransport:
+  insecureSkipVerify: true
+
+providers:
+  docker:
+    exposedByDefault: false
+  file:
+      filename: /traefik-certs.yml
+      watch: true
+entryPoints:
+  web:
+    address: ":80"
+  websecure:
+    address: ":443"
+
+accessLog: {}
+log:
+  level: ERROR
+
+api:
+  dashboard: true
+  insecure: true
