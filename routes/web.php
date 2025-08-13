@@ -20,6 +20,8 @@ Route::patch('subscriptions/{subscription}/resume', [SubscriptionController::cla
 Route::patch('subscriptions/{subscription}/cancel', [SubscriptionController::class, 'cancel'])->name('subscriptions.cancel');
 
 Route::resource('contracts', ContractController::class);
+Route::post('contracts/{contract}/terminate', [ContractController::class, 'terminate'])->name('contracts.terminate');
+Route::post('contracts/{contract}/renew', [ContractController::class, 'renew'])->name('contracts.renew');
 Route::resource('warranties', WarrantyController::class);
 Route::resource('investments', InvestmentController::class);
 
