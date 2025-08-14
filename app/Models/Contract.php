@@ -71,12 +71,18 @@ class Contract extends Model
     // Scope for contracts requiring notice
     public function scopeRequiringNotice($query)
     {
-        return $query->whereNotNull('notice_period_days')
-                    ->whereNotNull('end_date')
-                    ->where('status', 'active')
-                    ->where('end_date', '<=', now()->addDays(
-                        fn($q) => $q->select('notice_period_days')
-                    ));
+        // Get all active contracts with notice periods and filter in PHP
+        // This approach is needed because the date calculation varies by contract
+        $contracts = $query->whereNotNull('notice_period_days')
+                          ->whereNotNull('end_date')
+                          ->where('status', 'active')
+                          ->get();
+
+        $contractIds = $contracts->filter(function($contract) {
+            return $contract->end_date <= now()->addDays($contract->notice_period_days);
+        })->pluck('id');
+
+        return $query->whereIn('id', $contractIds);
     }
 
     // Check if contract is expired
