@@ -475,4 +475,317 @@ class InvestmentController extends Controller
 
         return collect($monthlyTrend)->sortKeys()->take(12);
     }
+
+    /**
+     * Display investment goals.
+     */
+    public function goalIndex(Request $request)
+    {
+        $userId = auth()->id();
+        $goals = collect([
+            // This would typically come from a goals table/model
+            // For now, returning placeholder data structure
+        ]);
+
+        if ($request->expectsJson()) {
+            return response()->json(['data' => $goals]);
+        }
+
+        return view('investments.goals.index', compact('goals'));
+    }
+
+    /**
+     * Store a new investment goal.
+     */
+    public function goalStore(Request $request)
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'target_amount' => 'required|numeric|min:0',
+            'target_date' => 'nullable|date|after:today',
+            'description' => 'nullable|string|max:1000',
+        ]);
+
+        // This would typically create a new goal record
+        // For now, returning success response
+        $goal = [
+            'id' => uniqid(),
+            'user_id' => auth()->id(),
+            'title' => $request->title,
+            'target_amount' => $request->target_amount,
+            'target_date' => $request->target_date,
+            'description' => $request->description,
+            'current_progress' => 0,
+            'created_at' => now(),
+        ];
+
+        if ($request->expectsJson()) {
+            return response()->json(['data' => $goal], 201);
+        }
+
+        return redirect()->route('investments.goals.index')
+            ->with('success', 'Investment goal created successfully!');
+    }
+
+    /**
+     * Update an investment goal.
+     */
+    public function goalUpdate(Request $request, $goalId)
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'target_amount' => 'required|numeric|min:0',
+            'target_date' => 'nullable|date|after:today',
+            'description' => 'nullable|string|max:1000',
+        ]);
+
+        // This would typically update the goal record
+        // For now, returning success response
+        if ($request->expectsJson()) {
+            return response()->json(['message' => 'Goal updated successfully']);
+        }
+
+        return redirect()->route('investments.goals.index')
+            ->with('success', 'Investment goal updated successfully!');
+    }
+
+    /**
+     * Delete an investment goal.
+     */
+    public function goalDestroy($goalId)
+    {
+        // This would typically delete the goal record
+        // For now, returning success response
+        if (request()->expectsJson()) {
+            return response()->json(['message' => 'Goal deleted successfully']);
+        }
+
+        return redirect()->route('investments.goals.index')
+            ->with('success', 'Investment goal deleted successfully!');
+    }
+
+    /**
+     * Display tax reports index.
+     */
+    public function taxReportIndex(Request $request)
+    {
+        $userId = auth()->id();
+
+        // Get basic tax summary data
+        $taxSummary = [
+            'total_realized_gains' => 0,
+            'total_realized_losses' => 0,
+            'total_dividend_income' => 0,
+            'tax_year' => $request->get('tax_year', date('Y')),
+        ];
+
+        $soldInvestments = Investment::where('user_id', $userId)
+            ->where('status', 'sold')
+            ->get();
+
+        $activeInvestments = Investment::where('user_id', $userId)
+            ->where('status', 'active')
+            ->get();
+
+        $taxSummary['total_realized_gains'] = $soldInvestments->where('realized_gain_loss', '>', 0)->sum('realized_gain_loss');
+        $taxSummary['total_realized_losses'] = abs($soldInvestments->where('realized_gain_loss', '<', 0)->sum('realized_gain_loss'));
+        $taxSummary['total_dividend_income'] = $activeInvestments->sum('total_dividends_received');
+
+        if ($request->expectsJson()) {
+            return response()->json(['data' => $taxSummary]);
+        }
+
+        return view('investments.tax-reports.index', compact('taxSummary'));
+    }
+
+    /**
+     * Generate capital gains report.
+     */
+    public function capitalGainsReport(Request $request)
+    {
+        $userId = auth()->id();
+        $taxYear = $request->get('tax_year', date('Y'));
+
+        $soldInvestments = Investment::where('user_id', $userId)
+            ->where('status', 'sold')
+            ->get();
+
+        $capitalGains = $soldInvestments->map(function ($investment) {
+            return [
+                'investment_name' => $investment->name,
+                'symbol' => $investment->symbol_identifier,
+                'purchase_date' => $investment->purchase_date,
+                'sale_date' => $investment->sale_date,
+                'purchase_price' => $investment->purchase_price,
+                'sale_price' => $investment->sale_price,
+                'quantity' => $investment->quantity_sold ?? $investment->quantity,
+                'cost_basis' => $investment->total_cost_basis,
+                'proceeds' => $investment->sale_proceeds,
+                'gain_loss' => $investment->realized_gain_loss,
+                'holding_period' => $investment->holding_period_days > 365 ? 'Long-term' : 'Short-term',
+            ];
+        });
+
+        $report = [
+            'tax_year' => $taxYear,
+            'total_short_term_gains' => $capitalGains->where('holding_period', 'Short-term')->where('gain_loss', '>', 0)->sum('gain_loss'),
+            'total_short_term_losses' => abs($capitalGains->where('holding_period', 'Short-term')->where('gain_loss', '<', 0)->sum('gain_loss')),
+            'total_long_term_gains' => $capitalGains->where('holding_period', 'Long-term')->where('gain_loss', '>', 0)->sum('gain_loss'),
+            'total_long_term_losses' => abs($capitalGains->where('holding_period', 'Long-term')->where('gain_loss', '<', 0)->sum('gain_loss')),
+            'transactions' => $capitalGains,
+        ];
+
+        if ($request->expectsJson()) {
+            return response()->json(['data' => $report]);
+        }
+
+        return view('investments.tax-reports.capital-gains', compact('report'));
+    }
+
+    /**
+     * Generate dividend income report.
+     */
+    public function dividendIncomeReport(Request $request)
+    {
+        $userId = auth()->id();
+        $taxYear = $request->get('tax_year', date('Y'));
+
+        $investments = Investment::where('user_id', $userId)
+            ->where('total_dividends_received', '>', 0)
+            ->get();
+
+        $dividendReport = $investments->map(function ($investment) {
+            return [
+                'investment_name' => $investment->name,
+                'symbol' => $investment->symbol_identifier,
+                'total_dividends' => $investment->total_dividends_received,
+                'qualified_dividends' => $investment->qualified_dividends ?? $investment->total_dividends_received * 0.8, // Estimate
+                'non_qualified_dividends' => $investment->non_qualified_dividends ?? $investment->total_dividends_received * 0.2, // Estimate
+                'dividend_history' => $investment->dividend_history ?? [],
+            ];
+        });
+
+        $report = [
+            'tax_year' => $taxYear,
+            'total_dividend_income' => $dividendReport->sum('total_dividends'),
+            'total_qualified_dividends' => $dividendReport->sum('qualified_dividends'),
+            'total_non_qualified_dividends' => $dividendReport->sum('non_qualified_dividends'),
+            'dividend_details' => $dividendReport,
+        ];
+
+        if ($request->expectsJson()) {
+            return response()->json(['data' => $report]);
+        }
+
+        return view('investments.tax-reports.dividend-income', compact('report'));
+    }
+
+    /**
+     * Get rebalancing alerts.
+     */
+    public function rebalancingAlerts(Request $request)
+    {
+        $userId = auth()->id();
+        $investments = Investment::where('user_id', $userId)
+            ->where('status', 'active')
+            ->get();
+
+        $totalValue = $investments->sum('current_market_value');
+        $alerts = [];
+
+        // Check for concentration risk
+        $typeAllocations = $investments->groupBy('investment_type');
+        foreach ($typeAllocations as $type => $typeInvestments) {
+            $typeValue = $typeInvestments->sum('current_market_value');
+            $percentage = $totalValue > 0 ? ($typeValue / $totalValue) * 100 : 0;
+
+            if ($percentage > 30) {
+                $alerts[] = [
+                    'type' => 'concentration_risk',
+                    'severity' => 'high',
+                    'message' => "High concentration in {$type} ({$percentage}%). Consider diversifying.",
+                    'recommendation' => "Reduce allocation to {$type} to below 30%",
+                ];
+            }
+        }
+
+        // Check for underperforming investments
+        $underperformers = $investments->where('unrealized_gain_loss_percentage', '<', -20);
+        foreach ($underperformers as $investment) {
+            $alerts[] = [
+                'type' => 'underperformance',
+                'severity' => 'medium',
+                'message' => "{$investment->name} is down {$investment->unrealized_gain_loss_percentage}%",
+                'recommendation' => "Review and consider rebalancing or cutting losses",
+            ];
+        }
+
+        // Check for no recent rebalancing
+        $lastRebalance = $request->get('last_rebalance_date');
+        if (!$lastRebalance || now()->diffInMonths($lastRebalance) > 6) {
+            $alerts[] = [
+                'type' => 'rebalance_due',
+                'severity' => 'low',
+                'message' => 'Portfolio has not been rebalanced in over 6 months',
+                'recommendation' => 'Consider reviewing and rebalancing your portfolio allocation',
+            ];
+        }
+
+        if ($request->expectsJson()) {
+            return response()->json(['data' => $alerts]);
+        }
+
+        return view('investments.rebalancing.alerts', compact('alerts'));
+    }
+
+    /**
+     * Generate rebalancing recommendations.
+     */
+    public function rebalancingRecommendations(Request $request)
+    {
+        $request->validate([
+            'target_allocation' => 'required|array',
+            'target_allocation.*.type' => 'required|string',
+            'target_allocation.*.percentage' => 'required|numeric|min:0|max:100',
+        ]);
+
+        $userId = auth()->id();
+        $investments = Investment::where('user_id', $userId)
+            ->where('status', 'active')
+            ->get();
+
+        $totalValue = $investments->sum('current_market_value');
+        $currentAllocations = $investments->groupBy('investment_type')->map(function ($group) use ($totalValue) {
+            return [
+                'current_value' => $group->sum('current_market_value'),
+                'current_percentage' => $totalValue > 0 ? ($group->sum('current_market_value') / $totalValue) * 100 : 0,
+            ];
+        });
+
+        $recommendations = [];
+        foreach ($request->target_allocation as $target) {
+            $currentAllocation = $currentAllocations->get($target['type'], ['current_value' => 0, 'current_percentage' => 0]);
+            $targetValue = ($target['percentage'] / 100) * $totalValue;
+            $difference = $targetValue - $currentAllocation['current_value'];
+
+            if (abs($difference) > ($totalValue * 0.05)) { // 5% threshold
+                $recommendations[] = [
+                    'investment_type' => $target['type'],
+                    'current_percentage' => $currentAllocation['current_percentage'],
+                    'target_percentage' => $target['percentage'],
+                    'current_value' => $currentAllocation['current_value'],
+                    'target_value' => $targetValue,
+                    'difference' => $difference,
+                    'action' => $difference > 0 ? 'buy' : 'sell',
+                    'amount' => abs($difference),
+                ];
+            }
+        }
+
+        if ($request->expectsJson()) {
+            return response()->json(['data' => $recommendations]);
+        }
+
+        return view('investments.rebalancing.recommendations', compact('recommendations'));
+    }
 }

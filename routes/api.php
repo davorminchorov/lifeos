@@ -49,10 +49,23 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     // Investments
     Route::apiResource('investments', InvestmentController::class);
     Route::post('investments/{investment}/update-price', [InvestmentController::class, 'updatePrice']);
+    Route::post('investments/{investment}/record-buy', [InvestmentController::class, 'recordBuy']);
+    Route::post('investments/{investment}/record-sell', [InvestmentController::class, 'recordSell']);
+    Route::post('investments/{investment}/record-dividend', [InvestmentController::class, 'recordDividend']);
+    Route::get('investments/portfolio/summary', [InvestmentController::class, 'portfolioSummary']);
     Route::get('investments/analytics/summary', [InvestmentController::class, 'analyticsSummary']);
     Route::get('investments/analytics/performance', [InvestmentController::class, 'performanceAnalytics']);
     Route::get('investments/analytics/allocation', [InvestmentController::class, 'allocationAnalytics']);
     Route::get('investments/analytics/dividends', [InvestmentController::class, 'dividendAnalytics']);
+    Route::get('investments/goals', [InvestmentController::class, 'goalIndex']);
+    Route::post('investments/goals', [InvestmentController::class, 'goalStore']);
+    Route::patch('investments/goals/{goal}', [InvestmentController::class, 'goalUpdate']);
+    Route::delete('investments/goals/{goal}', [InvestmentController::class, 'goalDestroy']);
+    Route::get('investments/tax-reports', [InvestmentController::class, 'taxReportIndex']);
+    Route::get('investments/tax-reports/capital-gains', [InvestmentController::class, 'capitalGainsReport']);
+    Route::get('investments/tax-reports/dividend-income', [InvestmentController::class, 'dividendIncomeReport']);
+    Route::get('investments/rebalancing/alerts', [InvestmentController::class, 'rebalancingAlerts']);
+    Route::post('investments/rebalancing/recommendations', [InvestmentController::class, 'rebalancingRecommendations']);
 
     // Expenses
     Route::apiResource('expenses', ExpenseController::class);

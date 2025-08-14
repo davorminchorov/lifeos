@@ -38,6 +38,18 @@ Route::middleware('auth')->group(function () {
     Route::post('contracts/{contract}/add-amendment', [ContractController::class, 'addAmendment'])->name('contracts.add-amendment');
     Route::resource('warranties', WarrantyController::class);
     Route::resource('investments', InvestmentController::class);
+    Route::post('investments/{investment}/record-buy', [InvestmentController::class, 'recordBuy'])->name('investments.record-buy');
+    Route::post('investments/{investment}/record-sell', [InvestmentController::class, 'recordSell'])->name('investments.record-sell');
+    Route::post('investments/{investment}/record-dividend', [InvestmentController::class, 'recordDividend'])->name('investments.record-dividend');
+    Route::get('investments/goals/index', [InvestmentController::class, 'goalIndex'])->name('investments.goals.index');
+    Route::post('investments/goals/store', [InvestmentController::class, 'goalStore'])->name('investments.goals.store');
+    Route::patch('investments/goals/{goal}/update', [InvestmentController::class, 'goalUpdate'])->name('investments.goals.update');
+    Route::delete('investments/goals/{goal}', [InvestmentController::class, 'goalDestroy'])->name('investments.goals.destroy');
+    Route::get('investments/tax-reports/index', [InvestmentController::class, 'taxReportIndex'])->name('investments.tax-reports.index');
+    Route::get('investments/tax-reports/capital-gains', [InvestmentController::class, 'capitalGainsReport'])->name('investments.tax-reports.capital-gains');
+    Route::get('investments/tax-reports/dividend-income', [InvestmentController::class, 'dividendIncomeReport'])->name('investments.tax-reports.dividend-income');
+    Route::get('investments/rebalancing/alerts', [InvestmentController::class, 'rebalancingAlerts'])->name('investments.rebalancing.alerts');
+    Route::post('investments/rebalancing/recommendations', [InvestmentController::class, 'rebalancingRecommendations'])->name('investments.rebalancing.recommendations');
 
     Route::resource('expenses', ExpenseController::class);
     Route::patch('expenses/{expense}/mark-reimbursed', [ExpenseController::class, 'markReimbursed'])->name('expenses.mark-reimbursed');
