@@ -6,6 +6,7 @@ use App\Http\Requests\StoreInvestmentRequest;
 use App\Http\Requests\UpdateInvestmentRequest;
 use App\Http\Resources\InvestmentResource;
 use App\Models\Investment;
+use App\Models\InvestmentGoal;
 use Illuminate\Http\Request;
 
 class InvestmentController extends Controller
@@ -482,10 +483,9 @@ class InvestmentController extends Controller
     public function goalIndex(Request $request)
     {
         $userId = auth()->id();
-        $goals = collect([
-            // This would typically come from a goals table/model
-            // For now, returning placeholder data structure
-        ]);
+        $goals = InvestmentGoal::where('user_id', $userId)
+            ->orderBy('created_at', 'desc')
+            ->get();
 
         if ($request->expectsJson()) {
             return response()->json(['data' => $goals]);
@@ -506,18 +506,13 @@ class InvestmentController extends Controller
             'description' => 'nullable|string|max:1000',
         ]);
 
-        // This would typically create a new goal record
-        // For now, returning success response
-        $goal = [
-            'id' => uniqid(),
+        $goal = InvestmentGoal::create([
             'user_id' => auth()->id(),
             'title' => $request->title,
             'target_amount' => $request->target_amount,
             'target_date' => $request->target_date,
             'description' => $request->description,
-            'current_progress' => 0,
-            'created_at' => now(),
-        ];
+        ]);
 
         if ($request->expectsJson()) {
             return response()->json(['data' => $goal], 201);
@@ -539,10 +534,13 @@ class InvestmentController extends Controller
             'description' => 'nullable|string|max:1000',
         ]);
 
-        // This would typically update the goal record
-        // For now, returning success response
+        $goal = InvestmentGoal::where('user_id', auth()->id())
+            ->findOrFail($goalId);
+
+        $goal->update($request->validated());
+
         if ($request->expectsJson()) {
-            return response()->json(['message' => 'Goal updated successfully']);
+            return response()->json(['data' => $goal]);
         }
 
         return redirect()->route('investments.goals.index')
@@ -554,8 +552,11 @@ class InvestmentController extends Controller
      */
     public function goalDestroy($goalId)
     {
-        // This would typically delete the goal record
-        // For now, returning success response
+        $goal = InvestmentGoal::where('user_id', auth()->id())
+            ->findOrFail($goalId);
+
+        $goal->delete();
+
         if (request()->expectsJson()) {
             return response()->json(['message' => 'Goal deleted successfully']);
         }
