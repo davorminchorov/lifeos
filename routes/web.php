@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\ContractController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ExpenseController;
@@ -9,25 +10,38 @@ use App\Http\Controllers\UtilityBillController;
 use App\Http\Controllers\WarrantyController;
 use Illuminate\Support\Facades\Route;
 
-// Dashboard Routes
-Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
+// Authentication Routes
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
+    Route::post('/register', [AuthController::class, 'register']);
+});
 
-// Life Management Platform Routes
-Route::resource('subscriptions', SubscriptionController::class);
-Route::patch('subscriptions/{subscription}/pause', [SubscriptionController::class, 'pause'])->name('subscriptions.pause');
-Route::patch('subscriptions/{subscription}/resume', [SubscriptionController::class, 'resume'])->name('subscriptions.resume');
-Route::patch('subscriptions/{subscription}/cancel', [SubscriptionController::class, 'cancel'])->name('subscriptions.cancel');
+Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth')->name('logout');
 
-Route::resource('contracts', ContractController::class);
-Route::post('contracts/{contract}/terminate', [ContractController::class, 'terminate'])->name('contracts.terminate');
-Route::post('contracts/{contract}/renew', [ContractController::class, 'renew'])->name('contracts.renew');
-Route::post('contracts/{contract}/add-amendment', [ContractController::class, 'addAmendment'])->name('contracts.add-amendment');
-Route::resource('warranties', WarrantyController::class);
-Route::resource('investments', InvestmentController::class);
+// Protected Routes - Require Authentication
+Route::middleware('auth')->group(function () {
+    // Dashboard Routes
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
 
-Route::resource('expenses', ExpenseController::class);
-Route::patch('expenses/{expense}/mark-reimbursed', [ExpenseController::class, 'markReimbursed'])->name('expenses.mark-reimbursed');
+    // Life Management Platform Routes
+    Route::resource('subscriptions', SubscriptionController::class);
+    Route::patch('subscriptions/{subscription}/pause', [SubscriptionController::class, 'pause'])->name('subscriptions.pause');
+    Route::patch('subscriptions/{subscription}/resume', [SubscriptionController::class, 'resume'])->name('subscriptions.resume');
+    Route::patch('subscriptions/{subscription}/cancel', [SubscriptionController::class, 'cancel'])->name('subscriptions.cancel');
 
-Route::resource('utility-bills', UtilityBillController::class);
-Route::patch('utility-bills/{utility_bill}/mark-paid', [UtilityBillController::class, 'markPaid'])->name('utility-bills.mark-paid');
+    Route::resource('contracts', ContractController::class);
+    Route::post('contracts/{contract}/terminate', [ContractController::class, 'terminate'])->name('contracts.terminate');
+    Route::post('contracts/{contract}/renew', [ContractController::class, 'renew'])->name('contracts.renew');
+    Route::post('contracts/{contract}/add-amendment', [ContractController::class, 'addAmendment'])->name('contracts.add-amendment');
+    Route::resource('warranties', WarrantyController::class);
+    Route::resource('investments', InvestmentController::class);
+
+    Route::resource('expenses', ExpenseController::class);
+    Route::patch('expenses/{expense}/mark-reimbursed', [ExpenseController::class, 'markReimbursed'])->name('expenses.mark-reimbursed');
+
+    Route::resource('utility-bills', UtilityBillController::class);
+    Route::patch('utility-bills/{utility_bill}/mark-paid', [UtilityBillController::class, 'markPaid'])->name('utility-bills.mark-paid');
+});

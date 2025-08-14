@@ -54,8 +54,47 @@
                         </div>
                     </div>
 
-                    <!-- Dark Mode Toggle -->
-                    <div class="flex items-center">
+                    <!-- User Menu & Dark Mode Toggle -->
+                    <div class="flex items-center space-x-4">
+                        @auth
+                            <!-- User Dropdown -->
+                            <div class="relative">
+                                <button id="user-menu-button" type="button" class="flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[color:var(--color-accent-500)] transition-colors duration-200" aria-expanded="false" aria-haspopup="true">
+                                    <span class="sr-only">Open user menu</span>
+                                    <div class="h-8 w-8 rounded-full bg-[color:var(--color-accent-600)] flex items-center justify-center">
+                                        <span class="text-sm font-medium text-white">{{ substr(Auth::user()->name, 0, 1) }}</span>
+                                    </div>
+                                    <span class="ml-2 text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)]">{{ Auth::user()->name }}</span>
+                                    <svg class="ml-1 h-4 w-4 text-[color:var(--color-primary-400)]" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                                    </svg>
+                                </button>
+
+                                <!-- Dropdown Menu -->
+                                <div id="user-menu" class="hidden origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] ring-1 ring-black ring-opacity-5 divide-y divide-[color:var(--color-primary-200)] dark:divide-[color:var(--color-dark-300)] focus:outline-none z-50">
+                                    <div class="py-1">
+                                        <a href="#" class="block px-4 py-2 text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] hover:bg-[color:var(--color-primary-100)] dark:hover:bg-[color:var(--color-dark-200)] transition-colors duration-200">Profile</a>
+                                        <a href="#" class="block px-4 py-2 text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] hover:bg-[color:var(--color-primary-100)] dark:hover:bg-[color:var(--color-dark-200)] transition-colors duration-200">Settings</a>
+                                    </div>
+                                    <div class="py-1">
+                                        <form method="POST" action="{{ route('logout') }}">
+                                            @csrf
+                                            <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-[color:var(--color-danger-600)] hover:bg-[color:var(--color-primary-100)] dark:hover:bg-[color:var(--color-dark-200)] transition-colors duration-200">
+                                                Sign out
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        @else
+                            <!-- Login/Register Links -->
+                            <div class="flex items-center space-x-4">
+                                <a href="{{ route('login') }}" class="text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] hover:text-[color:var(--color-accent-600)] transition-colors duration-200">Sign in</a>
+                                <a href="{{ route('register') }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-[color:var(--color-accent-600)] hover:bg-[color:var(--color-accent-700)] transition-colors duration-200">Get Started</a>
+                            </div>
+                        @endauth
+
+                        <!-- Dark Mode Toggle -->
                         <button id="theme-toggle" type="button" class="text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] hover:bg-[color:var(--color-primary-200)] dark:hover:bg-[color:var(--color-dark-200)] focus:outline-none focus:ring-4 focus:ring-[color:var(--color-primary-300)] dark:focus:ring-[color:var(--color-dark-300)] rounded-lg text-sm p-2.5 transition-colors duration-200">
                             <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
                             <svg id="theme-toggle-light-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 2L13.09 8.26L20 9L14 14.74L15.18 21.02L10 18L4.82 21.02L6 14.74L0 9L6.91 8.26L10 2Z"></path></svg>
@@ -159,6 +198,23 @@
                 }
             }
         });
+
+        // User menu dropdown functionality
+        const userMenuButton = document.getElementById('user-menu-button');
+        const userMenu = document.getElementById('user-menu');
+
+        if (userMenuButton && userMenu) {
+            userMenuButton.addEventListener('click', function() {
+                userMenu.classList.toggle('hidden');
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(event) {
+                if (!userMenuButton.contains(event.target) && !userMenu.contains(event.target)) {
+                    userMenu.classList.add('hidden');
+                }
+            });
+        }
     </script>
 </body>
 </html>
