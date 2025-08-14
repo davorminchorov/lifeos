@@ -227,7 +227,7 @@ class LifeOSSeeder extends Seeder
     {
         $investments = [
             [
-                'investment_type' => 'stock',
+                'investment_type' => 'stocks',
                 'symbol_identifier' => 'AAPL',
                 'name' => 'Apple Inc.',
                 'quantity' => 50.00000000,
@@ -236,7 +236,7 @@ class LifeOSSeeder extends Seeder
                 'current_value' => 185.50000000,
                 'total_dividends_received' => 125.50,
                 'total_fees_paid' => 9.99,
-                'risk_tolerance' => 'medium',
+                'risk_tolerance' => 'moderate',
                 'account_broker' => 'Fidelity',
                 'status' => 'active',
             ],
@@ -250,7 +250,7 @@ class LifeOSSeeder extends Seeder
                 'current_value' => 445.20000000,
                 'total_dividends_received' => 89.25,
                 'total_fees_paid' => 7.50,
-                'risk_tolerance' => 'low',
+                'risk_tolerance' => 'conservative',
                 'account_broker' => 'Charles Schwab',
                 'status' => 'active',
             ],
@@ -264,7 +264,7 @@ class LifeOSSeeder extends Seeder
                 'current_value' => 52000.00000000,
                 'total_dividends_received' => 0.00,
                 'total_fees_paid' => 125.00,
-                'risk_tolerance' => 'high',
+                'risk_tolerance' => 'aggressive',
                 'account_broker' => 'Coinbase',
                 'status' => 'active',
             ],
