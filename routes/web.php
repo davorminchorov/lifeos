@@ -27,6 +27,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
 
     // Life Management Platform Routes
+    // Analytics routes must come before resource routes to prevent conflicts
+    Route::get('subscriptions/analytics/summary', [SubscriptionController::class, 'analyticsSummary'])->name('subscriptions.analytics.summary');
+    Route::get('subscriptions/analytics/spending', [SubscriptionController::class, 'spendingAnalytics'])->name('subscriptions.analytics.spending');
+    Route::get('subscriptions/analytics/category-breakdown', [SubscriptionController::class, 'categoryBreakdown'])->name('subscriptions.analytics.category-breakdown');
+
     Route::resource('subscriptions', SubscriptionController::class);
     Route::patch('subscriptions/{subscription}/pause', [SubscriptionController::class, 'pause'])->name('subscriptions.pause');
     Route::patch('subscriptions/{subscription}/resume', [SubscriptionController::class, 'resume'])->name('subscriptions.resume');

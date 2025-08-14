@@ -217,14 +217,14 @@ class SubscriptionControllerTest extends TestCase
 
     public function test_show_allows_access_to_other_users_subscription()
     {
-        // This test will reveal the authorization issue
+        // This test verifies that authorization is working properly
         $otherUserSubscription = Subscription::factory()->create(['user_id' => $this->otherUser->id]);
 
         $response = $this->actingAs($this->user)
             ->get("/subscriptions/{$otherUserSubscription->id}");
 
-        // This should fail (403 or 404) but will likely succeed, revealing the security issue
-        $response->assertStatus(200);
+        // Should fail with 403 due to proper authorization
+        $response->assertStatus(403);
     }
 
     public function test_edit_shows_edit_form()
@@ -264,7 +264,7 @@ class SubscriptionControllerTest extends TestCase
 
     public function test_update_allows_modification_of_other_users_subscription()
     {
-        // This test will reveal the authorization issue
+        // This test verifies that authorization is working properly
         $otherUserSubscription = Subscription::factory()->create(['user_id' => $this->otherUser->id]);
 
         $updateData = [
@@ -280,8 +280,8 @@ class SubscriptionControllerTest extends TestCase
         $response = $this->actingAs($this->user)
             ->put("/subscriptions/{$otherUserSubscription->id}", $updateData);
 
-        // This should fail but will likely succeed, revealing the security issue
-        $response->assertRedirect();
+        // Should fail with 403 due to proper authorization
+        $response->assertStatus(403);
     }
 
     public function test_destroy_deletes_subscription()
@@ -297,14 +297,14 @@ class SubscriptionControllerTest extends TestCase
 
     public function test_destroy_allows_deletion_of_other_users_subscription()
     {
-        // This test will reveal the authorization issue
+        // This test verifies that authorization is working properly
         $otherUserSubscription = Subscription::factory()->create(['user_id' => $this->otherUser->id]);
 
         $response = $this->actingAs($this->user)
             ->delete("/subscriptions/{$otherUserSubscription->id}");
 
-        // This should fail but will likely succeed, revealing the security issue
-        $response->assertRedirect();
+        // Should fail with 403 due to proper authorization
+        $response->assertStatus(403);
     }
 
     public function test_cancel_sets_status_and_cancellation_date()
@@ -428,7 +428,9 @@ class SubscriptionControllerTest extends TestCase
         $data = $response->json('data');
 
         // Should only show data for the authenticated user
-        $this->assertEquals(2, $data['categories']['Entertainment']['count']);
+        $this->assertCount(1, $data); // Only one category for authenticated user
+        $this->assertEquals('Entertainment', $data[0]['category']);
+        $this->assertEquals(2, $data[0]['count']);
     }
 
     public function test_unauthenticated_access_is_denied()

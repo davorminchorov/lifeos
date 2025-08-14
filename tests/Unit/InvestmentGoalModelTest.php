@@ -139,7 +139,7 @@ class InvestmentGoalModelTest extends TestCase
     {
         $user = User::factory()->create();
         InvestmentGoal::factory()->create(['user_id' => $user->id, 'status' => 'active']);
-        InvestmentGoal::factory()->create(['user_id' => $user->id, 'status' => 'completed']);
+        InvestmentGoal::factory()->create(['user_id' => $user->id, 'status' => 'achieved']);
         InvestmentGoal::factory()->create(['user_id' => $user->id, 'status' => 'active']);
 
         $activeGoals = InvestmentGoal::active()->get();

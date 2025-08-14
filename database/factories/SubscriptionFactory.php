@@ -32,7 +32,7 @@ class SubscriptionFactory extends Factory
         };
 
         return [
-            'user_id' => 1, // Will be overridden when creating with relationships
+            'user_id' => \App\Models\User::factory(),
             'service_name' => $this->faker->randomElement($services),
             'description' => $this->faker->optional()->sentence(),
             'category' => $this->faker->randomElement($categories),

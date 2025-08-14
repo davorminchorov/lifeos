@@ -110,7 +110,7 @@ class UtilityBill extends Model
     // Get days until due date
     public function getDaysUntilDueAttribute()
     {
-        return now()->diffInDays($this->due_date, false);
+        return (int) round(now()->startOfDay()->diffInDays($this->due_date->startOfDay(), false));
     }
 
     // Check if usage is over budget threshold
@@ -143,7 +143,8 @@ class UtilityBill extends Model
             return null;
         }
 
-        $previousUsage = end($this->usage_history);
+        $history = $this->usage_history;
+        $previousUsage = end($history);
         $currentUsage = $this->usage_amount;
 
         if (!$previousUsage || $previousUsage == 0) {

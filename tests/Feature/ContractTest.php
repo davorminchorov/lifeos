@@ -238,13 +238,13 @@ class ContractTest extends TestCase
             'status' => 'active',
         ]);
 
-        $summaryResponse = $this->getJson('/api/contracts/analytics/summary');
+        $summaryResponse = $this->actingAs($this->user)->getJson('/api/v1/contracts/analytics/summary');
         $summaryResponse->assertStatus(200);
 
-        $expiringResponse = $this->getJson('/api/contracts/analytics/expiring');
+        $expiringResponse = $this->actingAs($this->user)->getJson('/api/v1/contracts/analytics/expiring');
         $expiringResponse->assertStatus(200);
 
-        $performanceResponse = $this->getJson('/api/contracts/analytics/performance');
+        $performanceResponse = $this->actingAs($this->user)->getJson('/api/v1/contracts/analytics/performance');
         $performanceResponse->assertStatus(200);
     }
 }

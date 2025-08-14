@@ -36,7 +36,7 @@ class Subscription extends Model
     protected function casts(): array
     {
         return [
-            'cost' => 'decimal:2',
+            'cost' => 'float',
             'billing_cycle_days' => 'integer',
             'start_date' => 'date',
             'next_billing_date' => 'date',
@@ -62,7 +62,7 @@ class Subscription extends Model
     // Scope for subscriptions due soon
     public function scopeDueSoon($query, $days = 7)
     {
-        return $query->where('next_billing_date', '<=', now()->addDays($days))
+        return $query->where('next_billing_date', '<=', now()->addDays((int) $days))
                     ->where('status', 'active');
     }
 

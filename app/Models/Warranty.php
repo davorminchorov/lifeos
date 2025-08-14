@@ -62,7 +62,7 @@ class Warranty extends Model
     // Scope for warranties expiring soon
     public function scopeExpiringSoon($query, $days = 30)
     {
-        return $query->where('warranty_expiration_date', '<=', now()->addDays($days))
+        return $query->where('warranty_expiration_date', '<=', now()->addDays((int) $days))
                     ->where('current_status', 'active');
     }
 
@@ -81,16 +81,16 @@ class Warranty extends Model
     // Get days until warranty expires
     public function getDaysUntilExpirationAttribute()
     {
-        return now()->diffInDays($this->warranty_expiration_date, false);
+        return (int) round(now()->startOfDay()->diffInDays($this->warranty_expiration_date->startOfDay(), false));
     }
 
     // Get warranty remaining percentage
     public function getWarrantyRemainingPercentageAttribute()
     {
-        $totalDays = $this->purchase_date->diffInDays($this->warranty_expiration_date);
-        $remainingDays = max(0, now()->diffInDays($this->warranty_expiration_date, false));
+        $totalDays = $this->purchase_date->startOfDay()->diffInDays($this->warranty_expiration_date->startOfDay());
+        $remainingDays = max(0, now()->startOfDay()->diffInDays($this->warranty_expiration_date->startOfDay(), false));
 
-        return $totalDays > 0 ? ($remainingDays / $totalDays) * 100 : 0;
+        return $totalDays > 0 ? round(($remainingDays / $totalDays) * 100, 1) : 0;
     }
 
     // Check if warranty has claims

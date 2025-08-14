@@ -41,7 +41,7 @@ class Contract extends Model
             'end_date' => 'date',
             'notice_period_days' => 'integer',
             'auto_renewal' => 'boolean',
-            'contract_value' => 'decimal:2',
+            'contract_value' => 'float',
             'performance_rating' => 'integer',
             'document_attachments' => 'array',
             'renewal_history' => 'array',
@@ -63,7 +63,7 @@ class Contract extends Model
     // Scope for contracts expiring soon
     public function scopeExpiringSoon($query, $days = 30)
     {
-        return $query->where('end_date', '<=', now()->addDays($days))
+        return $query->where('end_date', '<=', now()->addDays((int) $days))
                     ->where('status', 'active')
                     ->whereNotNull('end_date');
     }
@@ -94,7 +94,7 @@ class Contract extends Model
     // Get days until expiration
     public function getDaysUntilExpirationAttribute()
     {
-        return $this->end_date ? now()->diffInDays($this->end_date, false) : null;
+        return $this->end_date ? (int) round(now()->startOfDay()->diffInDays($this->end_date->startOfDay(), false)) : null;
     }
 
     // Get notice deadline

@@ -46,7 +46,7 @@ class ExpenseFactory extends Factory
         $isRecurring = $this->faker->boolean(20);
 
         return [
-            'user_id' => 1, // Will be overridden when creating with relationships
+            'user_id' => \App\Models\User::factory(),
             'amount' => $this->faker->randomFloat(2, 1.99, 999.99),
             'currency' => 'USD',
             'category' => $category,

@@ -80,7 +80,7 @@ class UtilityBillFactory extends Factory
         }
 
         return [
-            'user_id' => 1, // Will be overridden when creating with relationships
+            'user_id' => \App\Models\User::factory(),
             'utility_type' => $utilityType,
             'service_provider' => $provider,
             'account_number' => $this->faker->bothify('##########'),

@@ -32,7 +32,7 @@ class WarrantyFactory extends Factory
         $warrantyExpiration = (clone $purchaseDate)->modify("+{$warrantyMonths} months");
 
         return [
-            'user_id' => 1, // Will be overridden when creating with relationships
+            'user_id' => \App\Models\User::factory(),
             'product_name' => $this->faker->randomElement($products),
             'brand' => $this->faker->randomElement($brands),
             'model' => $this->faker->optional()->bothify('##??-###'),

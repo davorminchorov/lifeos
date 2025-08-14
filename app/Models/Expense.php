@@ -131,6 +131,6 @@ class Expense extends Model
     // Get age of expense in days
     public function getAgeDaysAttribute()
     {
-        return $this->expense_date->diffInDays(now());
+        return (int) round($this->expense_date->startOfDay()->diffInDays(now()->startOfDay()));
     }
 }

@@ -15,6 +15,6 @@ class ExpenseControllerTest extends TestCase
     {
         $response = $this->get('/');
 
-        $response->assertStatus(200);
+        $response->assertStatus(302); // Redirects to login when not authenticated
     }
 }

@@ -12,10 +12,7 @@ class ContractController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth');
-        $this->middleware('can:view,contract')->only(['show', 'edit']);
-        $this->middleware('can:update,contract')->only(['update', 'terminate', 'renew', 'addAmendment']);
-        $this->middleware('can:delete,contract')->only(['destroy']);
+        // Middleware is now handled in bootstrap/app.php or route definitions
     }
     /**
      * Display a listing of the resource.
@@ -99,6 +96,11 @@ class ContractController extends Controller
      */
     public function show(Contract $contract)
     {
+        // Ensure the contract belongs to the authenticated user
+        if ($contract->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized access to contract.');
+        }
+
         $contract->load('user');
 
         if (request()->expectsJson()) {
@@ -113,6 +115,11 @@ class ContractController extends Controller
      */
     public function edit(Contract $contract)
     {
+        // Ensure the contract belongs to the authenticated user
+        if ($contract->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized access to contract.');
+        }
+
         return view('contracts.edit', compact('contract'));
     }
 
@@ -121,6 +128,11 @@ class ContractController extends Controller
      */
     public function update(UpdateContractRequest $request, Contract $contract)
     {
+        // Ensure the contract belongs to the authenticated user
+        if ($contract->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized access to contract.');
+        }
+
         $contract->update($request->validated());
 
         if ($request->expectsJson()) {
@@ -136,6 +148,11 @@ class ContractController extends Controller
      */
     public function destroy(Contract $contract)
     {
+        // Ensure the contract belongs to the authenticated user
+        if ($contract->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized access to contract.');
+        }
+
         $contract->delete();
 
         if (request()->expectsJson()) {
@@ -151,6 +168,11 @@ class ContractController extends Controller
      */
     public function terminate(Contract $contract)
     {
+        // Ensure the contract belongs to the authenticated user
+        if ($contract->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized access to contract.');
+        }
+
         $contract->update([
             'status' => 'terminated',
             'end_date' => now(),
@@ -169,6 +191,11 @@ class ContractController extends Controller
      */
     public function renew(Request $request, Contract $contract)
     {
+        // Ensure the contract belongs to the authenticated user
+        if ($contract->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized access to contract.');
+        }
+
         $request->validate([
             'new_end_date' => 'required|date|after:today',
         ]);
@@ -201,6 +228,11 @@ class ContractController extends Controller
      */
     public function addAmendment(Request $request, Contract $contract)
     {
+        // Ensure the contract belongs to the authenticated user
+        if ($contract->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized access to contract.');
+        }
+
         $request->validate([
             'amendment_description' => 'required|string|max:1000',
         ]);

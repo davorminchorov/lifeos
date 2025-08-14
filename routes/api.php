@@ -31,12 +31,14 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::get('subscriptions/analytics/categories', [SubscriptionController::class, 'categoryBreakdown']);
 
     // Contracts
-    Route::apiResource('contracts', ContractController::class);
-    Route::post('contracts/{contract}/renew', [ContractController::class, 'renew']);
-    Route::post('contracts/{contract}/terminate', [ContractController::class, 'terminate']);
+    // Analytics routes must come before resource routes to prevent conflicts
     Route::get('contracts/analytics/summary', [ContractController::class, 'analyticsSummary']);
     Route::get('contracts/analytics/expiring', [ContractController::class, 'expiringAnalytics']);
     Route::get('contracts/analytics/performance', [ContractController::class, 'performanceAnalytics']);
+
+    Route::apiResource('contracts', ContractController::class);
+    Route::post('contracts/{contract}/renew', [ContractController::class, 'renew']);
+    Route::post('contracts/{contract}/terminate', [ContractController::class, 'terminate']);
 
     // Warranties
     Route::apiResource('warranties', WarrantyController::class);

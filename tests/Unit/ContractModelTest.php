@@ -120,12 +120,13 @@ class ContractModelTest extends TestCase
     {
         $user = User::factory()->create();
 
+        $today = now()->startOfDay();
         $contractExpiringSoon = Contract::factory()->for($user)->create([
-            'end_date' => now()->addDays(15),
+            'end_date' => $today->copy()->addDays(15),
         ]);
 
         $expiredContract = Contract::factory()->for($user)->create([
-            'end_date' => now()->subDays(5),
+            'end_date' => $today->copy()->subDays(5),
         ]);
 
         $noEndDateContract = Contract::factory()->for($user)->create([
