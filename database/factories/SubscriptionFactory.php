@@ -56,4 +56,21 @@ class SubscriptionFactory extends Factory
             'status' => $this->faker->randomElement(['active', 'cancelled', 'paused']),
         ];
     }
+
+    /**
+     * Create a subscription with a custom billing cycle.
+     */
+    public function customBillingCycle(): static
+    {
+        return $this->state(function (array $attributes) {
+            $billingCycleDays = $this->faker->numberBetween(15, 90);
+            $startDate = $attributes['start_date'] ?? $this->faker->dateTimeBetween('-2 years', 'now');
+
+            return [
+                'billing_cycle' => 'custom',
+                'billing_cycle_days' => $billingCycleDays,
+                'next_billing_date' => (clone $startDate)->modify("+{$billingCycleDays} days"),
+            ];
+        });
+    }
 }

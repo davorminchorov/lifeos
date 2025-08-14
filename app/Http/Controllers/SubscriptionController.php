@@ -15,7 +15,7 @@ class SubscriptionController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Subscription::query()->with('user');
+        $query = Subscription::where('user_id', auth()->id())->with('user');
 
         // Filter by status
         if ($request->has('status')) {
@@ -83,6 +83,11 @@ class SubscriptionController extends Controller
      */
     public function show(Subscription $subscription)
     {
+        // Ensure the subscription belongs to the authenticated user
+        if ($subscription->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized access to subscription.');
+        }
+
         $subscription->load('user');
 
         if (request()->expectsJson()) {
@@ -97,6 +102,11 @@ class SubscriptionController extends Controller
      */
     public function edit(Subscription $subscription)
     {
+        // Ensure the subscription belongs to the authenticated user
+        if ($subscription->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized access to subscription.');
+        }
+
         return view('subscriptions.edit', compact('subscription'));
     }
 
@@ -105,6 +115,11 @@ class SubscriptionController extends Controller
      */
     public function update(UpdateSubscriptionRequest $request, Subscription $subscription)
     {
+        // Ensure the subscription belongs to the authenticated user
+        if ($subscription->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized access to subscription.');
+        }
+
         $subscription->update($request->validated());
 
         if ($request->expectsJson()) {
@@ -120,6 +135,11 @@ class SubscriptionController extends Controller
      */
     public function destroy(Subscription $subscription)
     {
+        // Ensure the subscription belongs to the authenticated user
+        if ($subscription->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized access to subscription.');
+        }
+
         $subscription->delete();
 
         if (request()->expectsJson()) {
@@ -135,6 +155,11 @@ class SubscriptionController extends Controller
      */
     public function cancel(Subscription $subscription)
     {
+        // Ensure the subscription belongs to the authenticated user
+        if ($subscription->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized access to subscription.');
+        }
+
         $subscription->update([
             'status' => 'cancelled',
             'cancellation_date' => now(),
@@ -153,6 +178,11 @@ class SubscriptionController extends Controller
      */
     public function pause(Subscription $subscription)
     {
+        // Ensure the subscription belongs to the authenticated user
+        if ($subscription->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized access to subscription.');
+        }
+
         $subscription->update(['status' => 'paused']);
 
         if (request()->expectsJson()) {
@@ -168,6 +198,11 @@ class SubscriptionController extends Controller
      */
     public function resume(Subscription $subscription)
     {
+        // Ensure the subscription belongs to the authenticated user
+        if ($subscription->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized access to subscription.');
+        }
+
         $subscription->update(['status' => 'active']);
 
         if (request()->expectsJson()) {
