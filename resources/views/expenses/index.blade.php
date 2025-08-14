@@ -21,7 +21,7 @@
 @section('content')
     <!-- Filters and Search -->
     <div class="bg-white dark:bg-gray-800 shadow rounded-lg mb-6">
-        <div class="p-6">
+        <div class="px-4 py-5 sm:px-6">
             <form method="GET" action="{{ route('expenses.index') }}" class="grid grid-cols-1 md:grid-cols-5 gap-4">
                 <!-- Search -->
                 <div>

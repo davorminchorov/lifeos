@@ -5,14 +5,14 @@
 @section('header')
     <div class="flex justify-between items-center">
         <div>
-            <h1 class="text-3xl font-bold text-gray-900 dark:text-white">
+            <h1 class="text-3xl font-bold text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                 Subscriptions
             </h1>
-            <p class="mt-2 text-gray-600 dark:text-gray-400">
+            <p class="mt-2 text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)]">
                 Manage your recurring subscriptions and track spending
             </p>
         </div>
-        <a href="{{ route('subscriptions.create') }}" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium">
+        <a href="{{ route('subscriptions.create') }}" class="bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 shadow-sm">
             Add Subscription
         </a>
     </div>
@@ -21,7 +21,7 @@
 @section('content')
     <!-- Filters and Search -->
     <div class="bg-white dark:bg-gray-800 shadow rounded-lg mb-6">
-        <div class="p-6">
+        <div class="px-4 py-5 sm:px-6">
             <form method="GET" action="{{ route('subscriptions.index') }}" class="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <!-- Search -->
                 <div>

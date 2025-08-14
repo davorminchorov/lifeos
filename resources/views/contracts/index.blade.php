@@ -23,7 +23,7 @@
 @section('content')
     <!-- Filter and Search -->
     <div class="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg mb-6">
-        <div class="p-6">
+        <div class="px-4 py-5 sm:px-6">
             <form method="GET" action="{{ route('contracts.index') }}" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <!-- Search -->
                 <div>
