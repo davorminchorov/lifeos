@@ -2,46 +2,39 @@
     'name',
     'label',
     'required' => false,
-    'placeholder' => 'Please select...',
-    'value' => '',
-    'options' => [],
-    'helpText' => null,
+    'placeholder' => '',
+    'helpText' => '',
+    'onchange' => ''
 ])
 
 <div>
-    <label for="{{ $name }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+    <label for="{{ $name }}" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
         {{ $label }}
         @if($required)
-            <span class="text-red-500">*</span>
+            <span class="text-[color:var(--color-danger-500)]">*</span>
         @endif
     </label>
 
-    <select
-        name="{{ $name }}"
-        id="{{ $name }}"
-        {{ $required ? 'required' : '' }}
-        {{ $attributes->merge(['class' => 'mt-1 block w-full px-3 py-2 rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 ' . ($errors->has($name) ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : '')]) }}
-    >
-        @if($placeholder)
-            <option value="">{{ $placeholder }}</option>
-        @endif
-
-        @if(is_array($options) && !empty($options))
-            @foreach($options as $optionValue => $optionLabel)
-                <option value="{{ $optionValue }}" {{ old($name, $value) === $optionValue ? 'selected' : '' }}>
-                    {{ $optionLabel }}
-                </option>
-            @endforeach
-        @else
+    <div class="mt-1">
+        <select
+            name="{{ $name }}"
+            id="{{ $name }}"
+            @if($onchange) onchange="{{ $onchange }}" @endif
+            class="block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]"
+            @if($required) required @endif
+        >
+            @if($placeholder)
+                <option value="">{{ $placeholder }}</option>
+            @endif
             {{ $slot }}
-        @endif
-    </select>
+        </select>
+    </div>
 
     @if($helpText)
-        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ $helpText }}</p>
+        <p class="mt-2 text-sm text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">{{ $helpText }}</p>
     @endif
 
     @error($name)
-        <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+        <p class="mt-2 text-sm text-[color:var(--color-danger-600)]">{{ $message }}</p>
     @enderror
 </div>

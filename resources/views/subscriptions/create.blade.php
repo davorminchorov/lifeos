@@ -5,14 +5,14 @@
 @section('header')
     <div class="flex justify-between items-center">
         <div>
-            <h1 class="text-3xl font-bold text-gray-900 dark:text-white">
+            <h1 class="text-3xl font-bold text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                 Add New Subscription
             </h1>
-            <p class="mt-2 text-gray-600 dark:text-gray-400">
+            <p class="mt-2 text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)]">
                 Track a new recurring subscription service
             </p>
         </div>
-        <a href="{{ route('subscriptions.index') }}" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-md text-sm font-medium">
+        <a href="{{ route('subscriptions.index') }}" class="bg-[color:var(--color-primary-600)] hover:bg-[color:var(--color-primary-700)] text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200">
             Back to List
         </a>
     </div>

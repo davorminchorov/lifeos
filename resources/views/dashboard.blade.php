@@ -3,10 +3,10 @@
 @section('title', 'Dashboard - LifeOS')
 
 @section('header')
-    <h1 class="text-3xl font-bold text-gray-900 dark:text-white">
+    <h1 class="text-3xl font-bold text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
         Dashboard
     </h1>
-    <p class="mt-2 text-gray-600 dark:text-gray-400">
+    <p class="mt-2 text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)]">
         Welcome to your personal life management platform
     </p>
 @endsection
@@ -15,85 +15,85 @@
     <!-- Quick Stats -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         <!-- Subscriptions Stats -->
-        <div class="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
+        <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] overflow-hidden shadow rounded-lg border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)]">
             <div class="p-5">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
-                        <svg class="h-6 w-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="h-6 w-6 text-[color:var(--color-accent-500)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
                     </div>
                     <div class="ml-5 w-0 flex-1">
                         <dl>
-                            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Active Subscriptions</dt>
-                            <dd class="text-lg font-medium text-gray-900 dark:text-white">{{ $stats['active_subscriptions'] ?? 0 }}</dd>
+                            <dt class="text-sm font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] truncate">Active Subscriptions</dt>
+                            <dd class="text-lg font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">{{ $stats['active_subscriptions'] ?? 0 }}</dd>
                         </dl>
                     </div>
                     <div class="ml-5">
-                        <a href="{{ route('subscriptions.index') }}" class="text-indigo-600 hover:text-indigo-500 text-sm font-medium">View all</a>
+                        <a href="{{ route('subscriptions.index') }}" class="text-[color:var(--color-accent-600)] hover:text-[color:var(--color-accent-700)] text-sm font-medium">View all</a>
                     </div>
                 </div>
             </div>
-            <div class="bg-gray-50 dark:bg-gray-700 px-5 py-3">
+            <div class="bg-[color:var(--color-primary-200)] dark:bg-[color:var(--color-dark-300)] px-5 py-3">
                 <div class="text-sm">
-                    <span class="text-gray-500 dark:text-gray-400">Monthly cost:</span>
-                    <span class="font-medium text-gray-900 dark:text-white">${{ number_format($stats['monthly_subscription_cost'] ?? 0, 2) }}</span>
+                    <span class="text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">Monthly cost:</span>
+                    <span class="font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">${{ number_format($stats['monthly_subscription_cost'] ?? 0, 2) }}</span>
                 </div>
             </div>
         </div>
 
         <!-- Contracts Stats -->
-        <div class="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
+        <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] overflow-hidden shadow rounded-lg border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)]">
             <div class="p-5">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
-                        <svg class="h-6 w-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="h-6 w-6 text-[color:var(--color-success-500)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                         </svg>
                     </div>
                     <div class="ml-5 w-0 flex-1">
                         <dl>
-                            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Active Contracts</dt>
-                            <dd class="text-lg font-medium text-gray-900 dark:text-white">{{ $stats['active_contracts'] ?? 0 }}</dd>
+                            <dt class="text-sm font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] truncate">Active Contracts</dt>
+                            <dd class="text-lg font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">{{ $stats['active_contracts'] ?? 0 }}</dd>
                         </dl>
                     </div>
                     <div class="ml-5">
-                        <a href="{{ route('contracts.index') }}" class="text-indigo-600 hover:text-indigo-500 text-sm font-medium">View all</a>
+                        <a href="{{ route('contracts.index') }}" class="text-[color:var(--color-accent-600)] hover:text-[color:var(--color-accent-700)] text-sm font-medium">View all</a>
                     </div>
                 </div>
             </div>
-            <div class="bg-gray-50 dark:bg-gray-700 px-5 py-3">
+            <div class="bg-[color:var(--color-primary-200)] dark:bg-[color:var(--color-dark-300)] px-5 py-3">
                 <div class="text-sm">
-                    <span class="text-gray-500 dark:text-gray-400">Expiring soon:</span>
-                    <span class="font-medium text-gray-900 dark:text-white">{{ $stats['contracts_expiring_soon'] ?? 0 }}</span>
+                    <span class="text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">Expiring soon:</span>
+                    <span class="font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">{{ $stats['contracts_expiring_soon'] ?? 0 }}</span>
                 </div>
             </div>
         </div>
 
         <!-- Investments Stats -->
-        <div class="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
+        <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] overflow-hidden shadow rounded-lg border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)]">
             <div class="p-5">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
-                        <svg class="h-6 w-6 text-yellow-600 dark:text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="h-6 w-6 text-[color:var(--color-warning-500)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
                         </svg>
                     </div>
                     <div class="ml-5 w-0 flex-1">
                         <dl>
-                            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Portfolio Value</dt>
-                            <dd class="text-lg font-medium text-gray-900 dark:text-white">${{ number_format($stats['portfolio_value'] ?? 0, 2) }}</dd>
+                            <dt class="text-sm font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] truncate">Portfolio Value</dt>
+                            <dd class="text-lg font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">${{ number_format($stats['portfolio_value'] ?? 0, 2) }}</dd>
                         </dl>
                     </div>
                     <div class="ml-5">
-                        <a href="{{ route('investments.index') }}" class="text-indigo-600 hover:text-indigo-500 text-sm font-medium">View all</a>
+                        <a href="{{ route('investments.index') }}" class="text-[color:var(--color-accent-600)] hover:text-[color:var(--color-accent-700)] text-sm font-medium">View all</a>
                     </div>
                 </div>
             </div>
-            <div class="bg-gray-50 dark:bg-gray-700 px-5 py-3">
+            <div class="bg-[color:var(--color-primary-200)] dark:bg-[color:var(--color-dark-300)] px-5 py-3">
                 <div class="text-sm">
-                    <span class="text-gray-500 dark:text-gray-400">Total return:</span>
-                    <span class="font-medium {{ ($stats['total_return'] ?? 0) >= 0 ? 'text-green-600' : 'text-red-600' }}">
+                    <span class="text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">Total return:</span>
+                    <span class="font-medium {{ ($stats['total_return'] ?? 0) >= 0 ? 'text-[color:var(--color-success-600)]' : 'text-[color:var(--color-danger-600)]' }}">
                         {{ ($stats['total_return'] ?? 0) >= 0 ? '+' : '' }}${{ number_format($stats['total_return'] ?? 0, 2) }}
                     </span>
                 </div>

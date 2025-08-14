@@ -1,30 +1,13 @@
-@props([
-    'title',
-    'description' => null,
-    'grid' => true,
-    'gridCols' => 'md:grid-cols-2',
-])
+@props(['title', 'description'])
 
-<div class="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg">
+<div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] shadow rounded-lg mb-6 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)]">
     <div class="px-4 py-5 sm:px-6">
-        <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">
-            {{ $title }}
-        </h3>
+        <h3 class="text-lg leading-6 font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">{{ $title }}</h3>
         @if($description)
-            <p class="mt-1 max-w-2xl text-sm text-gray-500 dark:text-gray-400">
-                {{ $description }}
-            </p>
+            <p class="mt-1 text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)]">{{ $description }}</p>
         @endif
     </div>
-    <div class="border-t border-gray-200 dark:border-gray-700 px-4 py-5 sm:px-6">
-        @if($grid)
-            <div class="grid grid-cols-1 {{ $gridCols }} gap-6">
-                {{ $slot }}
-            </div>
-        @else
-            <div class="space-y-6">
-                {{ $slot }}
-            </div>
-        @endif
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 px-4 py-5 sm:px-6">
+        {{ $slot }}
     </div>
 </div>

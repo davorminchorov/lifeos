@@ -14,18 +14,18 @@
             id="{{ $name }}"
             value="{{ $value }}"
             {{ old($name, $checked) ? 'checked' : '' }}
-            {{ $attributes->merge(['class' => 'h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 dark:border-gray-700 rounded']) }}
+            {{ $attributes->merge(['class' => 'h-4 w-4 text-[color:var(--color-accent-600)] focus:ring-[color:var(--color-accent-500)] border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded']) }}
         >
     </div>
     <div class="ml-3 text-sm">
-        <label for="{{ $name }}" class="font-medium text-gray-700 dark:text-gray-300">
+        <label for="{{ $name }}" class="font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
             {{ $label }}
         </label>
         @if($helpText)
-            <p class="text-gray-500 dark:text-gray-400">{{ $helpText }}</p>
+            <p class="text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">{{ $helpText }}</p>
         @endif
         @error($name)
-            <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+            <p class="mt-1 text-sm text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-500)]">{{ $message }}</p>
         @enderror
     </div>
 </div>
