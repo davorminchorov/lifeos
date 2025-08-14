@@ -33,6 +33,7 @@ return new class extends Migration
             $table->text('notes')->nullable();
             $table->enum('status', ['active', 'expired', 'terminated', 'pending'])->default('active');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

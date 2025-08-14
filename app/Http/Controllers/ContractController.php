@@ -10,12 +10,19 @@ use Illuminate\Http\Request;
 
 class ContractController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+        $this->middleware('can:view,contract')->only(['show', 'edit']);
+        $this->middleware('can:update,contract')->only(['update', 'terminate', 'renew', 'addAmendment']);
+        $this->middleware('can:delete,contract')->only(['destroy']);
+    }
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
-        $query = Contract::query()->with('user');
+        $query = Contract::query()->where('user_id', auth()->id())->with('user');
 
         // Filter by status
         if ($request->has('status')) {
