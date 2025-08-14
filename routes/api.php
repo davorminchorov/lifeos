@@ -69,6 +69,9 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
 
     // Expenses
     Route::apiResource('expenses', ExpenseController::class);
+    Route::patch('expenses/{expense}/mark-reimbursed', [ExpenseController::class, 'markReimbursed']);
+    Route::post('expenses/{expense}/duplicate', [ExpenseController::class, 'duplicate']);
+    Route::post('expenses/bulk-action', [ExpenseController::class, 'bulkAction']);
     Route::get('expenses/analytics/summary', [ExpenseController::class, 'analyticsSummary']);
     Route::get('expenses/analytics/categories', [ExpenseController::class, 'categoryBreakdown']);
     Route::get('expenses/analytics/trends', [ExpenseController::class, 'trendAnalytics']);

@@ -56,7 +56,10 @@ Route::middleware('auth')->group(function () {
     Route::post('investments/rebalancing/recommendations', [InvestmentController::class, 'rebalancingRecommendations'])->name('investments.rebalancing.recommendations');
 
     Route::resource('expenses', ExpenseController::class);
+    Route::get('expenses/analytics', [ExpenseController::class, 'analytics'])->name('expenses.analytics');
     Route::patch('expenses/{expense}/mark-reimbursed', [ExpenseController::class, 'markReimbursed'])->name('expenses.mark-reimbursed');
+    Route::post('expenses/{expense}/duplicate', [ExpenseController::class, 'duplicate'])->name('expenses.duplicate');
+    Route::post('expenses/bulk-action', [ExpenseController::class, 'bulkAction'])->name('expenses.bulk-action');
 
     Route::resource('utility-bills', UtilityBillController::class);
     Route::patch('utility-bills/{utility_bill}/mark-paid', [UtilityBillController::class, 'markPaid'])->name('utility-bills.mark-paid');
