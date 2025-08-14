@@ -8,4 +8,49 @@
 @theme {
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+
+    /* LifeOS Design System Colors */
+
+    /* Primary Cream/Warm Neutrals */
+    --color-primary-50: #FDFDFC;
+    --color-primary-100: #F8F7F4;
+    --color-primary-200: #EEEEEC;
+    --color-primary-300: #E3E3E0;
+    --color-primary-400: #DBDBD7;
+    --color-primary-500: #A1A09A;
+    --color-primary-600: #706F6C;
+    --color-primary-700: #1B1B18;
+
+    /* Laravel Red Accent */
+    --color-accent-50: #FFF2F2;
+    --color-accent-100: #FFE5E5;
+    --color-accent-500: #F53003;
+    --color-accent-600: #E02B02;
+    --color-accent-700: #CC2602;
+
+    /* Dark Mode Variants */
+    --color-dark-50: #0A0A0A;
+    --color-dark-100: #161615;
+    --color-dark-200: #1D1D1C;
+    --color-dark-300: #3E3E3A;
+    --color-dark-400: #62605B;
+    --color-dark-500: #A1A09A;
+    --color-dark-600: #EDEDEC;
+
+    /* Functional Status Colors */
+    --color-success-50: #F0FDF4;
+    --color-success-500: #22C55E;
+    --color-success-600: #16A34A;
+
+    --color-warning-50: #FFFBEB;
+    --color-warning-500: #F59E0B;
+    --color-warning-600: #D97706;
+
+    --color-danger-50: #FEF2F2;
+    --color-danger-500: #EF4444;
+    --color-danger-600: #DC2626;
+
+    --color-info-50: #EFF6FF;
+    --color-info-500: #3B82F6;
+    --color-info-600: #2563EB;
 }
