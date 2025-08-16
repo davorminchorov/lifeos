@@ -1,0 +1,172 @@
+@extends('layouts.app')
+
+@section('title', 'Spending Analytics - Subscriptions - LifeOS')
+
+@section('header')
+    <div class="flex justify-between items-center">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900 dark:text-white">
+                Spending Analytics
+            </h1>
+            <p class="mt-2 text-gray-600 dark:text-gray-400">
+                Detailed breakdown of your subscription spending patterns
+            </p>
+        </div>
+        <div class="flex space-x-3">
+            <a href="{{ route('subscriptions.index') }}" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-md text-sm font-medium">
+                Back to Subscriptions
+            </a>
+        </div>
+    </div>
+@endsection
+
+@section('content')
+    <div class="space-y-8">
+        <!-- Spending Trend -->
+        <div class="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg">
+            <div class="px-4 py-5 sm:px-6">
+                <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">
+                    Spending Trend
+                </h3>
+                <p class="mt-1 max-w-2xl text-sm text-gray-500 dark:text-gray-400">
+                    Current and projected subscription costs
+                </p>
+            </div>
+            <div class="border-t border-gray-200 dark:border-gray-700">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 p-6">
+                    <div class="text-center">
+                        <div class="text-3xl font-bold text-green-600 dark:text-green-400">
+                            ${{ number_format($analytics['spending_trend']['current_month'], 2) }}
+                        </div>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                            Current Month
+                        </p>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-3xl font-bold text-blue-600 dark:text-blue-400">
+                            ${{ number_format($analytics['spending_trend']['projected_year'], 2) }}
+                        </div>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                            Projected Year
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Monthly Breakdown by Billing Cycle -->
+        <div class="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg">
+            <div class="px-4 py-5 sm:px-6">
+                <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">
+                    Breakdown by Billing Cycle
+                </h3>
+                <p class="mt-1 max-w-2xl text-sm text-gray-500 dark:text-gray-400">
+                    How your subscriptions are distributed by billing frequency
+                </p>
+            </div>
+            <div class="border-t border-gray-200 dark:border-gray-700">
+                @if($analytics['monthly_breakdown']->count() > 0)
+                    <div class="overflow-hidden">
+                        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                            <thead class="bg-gray-50 dark:bg-gray-700">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                        Billing Cycle
+                                    </th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                        Count
+                                    </th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                        Total Cost
+                                    </th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                        Monthly Equivalent
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                                @foreach($analytics['monthly_breakdown'] as $cycle => $data)
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm font-medium text-gray-900 dark:text-white capitalize">
+                                                {{ $cycle }}
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm text-gray-900 dark:text-white">
+                                                {{ $data['count'] }}
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm text-gray-900 dark:text-white">
+                                                ${{ number_format($data['total_cost'], 2) }}
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm text-gray-900 dark:text-white">
+                                                ${{ number_format($data['monthly_equivalent'], 2) }}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @else
+                    <div class="px-6 py-8 text-center">
+                        <p class="text-gray-500 dark:text-gray-400">No active subscriptions found.</p>
+                    </div>
+                @endif
+            </div>
+        </div>
+
+        <!-- Top Expenses -->
+        <div class="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg">
+            <div class="px-4 py-5 sm:px-6">
+                <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">
+                    Top 5 Expenses
+                </h3>
+                <p class="mt-1 max-w-2xl text-sm text-gray-500 dark:text-gray-400">
+                    Your most expensive subscriptions by monthly cost
+                </p>
+            </div>
+            <div class="border-t border-gray-200 dark:border-gray-700">
+                @if($analytics['top_expenses']->count() > 0)
+                    <ul class="divide-y divide-gray-200 dark:divide-gray-700">
+                        @foreach($analytics['top_expenses'] as $subscription)
+                            <li class="px-6 py-4">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center">
+                                        <div>
+                                            <div class="text-sm font-medium text-gray-900 dark:text-white">
+                                                {{ $subscription->service_name }}
+                                            </div>
+                                            <div class="text-sm text-gray-500 dark:text-gray-400">
+                                                {{ $subscription->category }}
+                                                @if($subscription->billing_cycle)
+                                                    • {{ ucfirst($subscription->billing_cycle) }}
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <div class="text-sm font-medium text-gray-900 dark:text-white">
+                                            ${{ number_format($subscription->monthly_cost, 2) }}/month
+                                        </div>
+                                        <div class="text-sm text-gray-500 dark:text-gray-400">
+                                            ${{ $subscription->currency }} {{ number_format($subscription->cost, 2) }}/{{ $subscription->billing_cycle }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        @endforeach
+                    </ul>
+                @else
+                    <div class="px-6 py-8 text-center">
+                        <p class="text-gray-500 dark:text-gray-400">No active subscriptions found.</p>
+                    </div>
+                @endif
+            </div>
+        </div>
+    </div>
+@endsection

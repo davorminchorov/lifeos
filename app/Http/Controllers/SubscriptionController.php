@@ -188,7 +188,7 @@ class SubscriptionController extends Controller
     {
         $userId = auth()->id();
 
-        $summary = [
+        $data = [
             'total_subscriptions' => Subscription::where('user_id', $userId)->count(),
             'active_subscriptions' => Subscription::where('user_id', $userId)->where('status', 'active')->count(),
             'cancelled_subscriptions' => Subscription::where('user_id', $userId)->where('status', 'cancelled')->count(),
@@ -206,7 +206,7 @@ class SubscriptionController extends Controller
                 ->count(),
         ];
 
-        return view('subscriptions.analytics.summary', compact('summary'));
+        return response()->json(['data' => $data]);
     }
 
     /**
@@ -220,7 +220,7 @@ class SubscriptionController extends Controller
             ->where('status', 'active')
             ->get();
 
-        $analytics = [
+        $data = [
             'monthly_breakdown' => $subscriptions->groupBy('billing_cycle')->map(function ($group, $cycle) {
                 return [
                     'count' => $group->count(),
@@ -235,7 +235,7 @@ class SubscriptionController extends Controller
             'top_expenses' => $subscriptions->sortByDesc('monthly_cost')->take(5)->values(),
         ];
 
-        return view('subscriptions.analytics.spending', compact('analytics'));
+        return response()->json(['data' => $data]);
     }
 
     /**
@@ -261,11 +261,11 @@ class SubscriptionController extends Controller
 
         $totalMonthly = $categories->sum('monthly_cost');
 
-        $categories = $categories->map(function ($item) use ($totalMonthly) {
+        $data = $categories->map(function ($item) use ($totalMonthly) {
             $item['percentage'] = $totalMonthly > 0 ? round(($item['monthly_cost'] / $totalMonthly) * 100, 2) : 0;
             return $item;
-        });
+        })->values(); // Convert to indexed array for JSON
 
-        return view('subscriptions.analytics.category-breakdown', compact('categories'));
+        return response()->json(['data' => $data]);
     }
 }
