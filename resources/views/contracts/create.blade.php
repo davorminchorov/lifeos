@@ -9,7 +9,7 @@
                 <ol class="flex items-center space-x-4">
                     <li>
                         <div>
-                            <a href="{{ route('contracts.index') }}" class="text-gray-400 hover:text-gray-500">
+                            <a href="{{ route('contracts.index') }}" class="text-[color:var(--color-primary-400)] hover:text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)] dark:hover:text-[color:var(--color-dark-300)] transition-colors duration-200">
                                 <svg class="flex-shrink-0 h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                                     <path fill-rule="evenodd" d="M9.707 14.707a1 1 0 01-1.414 0L3.586 10l4.707-4.707a1 1 0 011.414 1.414L6.414 10l3.293 3.293a1 1 0 010 1.414z" clip-rule="evenodd" />
                                 </svg>
@@ -19,23 +19,23 @@
                     </li>
                     <li>
                         <div class="flex items-center">
-                            <a href="{{ route('contracts.index') }}" class="text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">Contracts</a>
+                            <a href="{{ route('contracts.index') }}" class="text-sm font-medium text-[color:var(--color-primary-500)] hover:text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-500)] dark:hover:text-[color:var(--color-dark-400)] transition-colors duration-200">Contracts</a>
                         </div>
                     </li>
                     <li>
                         <div class="flex items-center">
-                            <svg class="flex-shrink-0 h-5 w-5 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+                            <svg class="flex-shrink-0 h-5 w-5 text-[color:var(--color-primary-300)] dark:text-[color:var(--color-dark-300)]" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
                             </svg>
-                            <span class="ml-4 text-sm font-medium text-gray-500 dark:text-gray-400">Create Contract</span>
+                            <span class="ml-4 text-sm font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">Create Contract</span>
                         </div>
                     </li>
                 </ol>
             </nav>
-            <h1 class="mt-2 text-3xl font-bold text-gray-900 dark:text-white">
+            <h1 class="mt-2 text-3xl font-bold text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                 Create New Contract
             </h1>
-            <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+            <p class="mt-1 text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)]">
                 Add a new contract to track agreements and obligations.
             </p>
         </div>

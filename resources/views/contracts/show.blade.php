@@ -9,7 +9,7 @@
                 <ol class="flex items-center space-x-4">
                     <li>
                         <div>
-                            <a href="{{ route('contracts.index') }}" class="text-gray-400 hover:text-gray-500">
+                            <a href="{{ route('contracts.index') }}" class="text-[color:var(--color-primary-400)] hover:text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)] dark:hover:text-[color:var(--color-dark-300)] transition-colors duration-200">
                                 <svg class="flex-shrink-0 h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                                     <path fill-rule="evenodd" d="M9.707 14.707a1 1 0 01-1.414 0L3.586 10l4.707-4.707a1 1 0 011.414 1.414L6.414 10l3.293 3.293a1 1 0 010 1.414z" clip-rule="evenodd" />
                                 </svg>
@@ -19,31 +19,31 @@
                     </li>
                     <li>
                         <div class="flex items-center">
-                            <a href="{{ route('contracts.index') }}" class="text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">Contracts</a>
+                            <a href="{{ route('contracts.index') }}" class="text-sm font-medium text-[color:var(--color-primary-500)] hover:text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-500)] dark:hover:text-[color:var(--color-dark-400)] transition-colors duration-200">Contracts</a>
                         </div>
                     </li>
                     <li>
                         <div class="flex items-center">
-                            <svg class="flex-shrink-0 h-5 w-5 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+                            <svg class="flex-shrink-0 h-5 w-5 text-[color:var(--color-primary-300)] dark:text-[color:var(--color-dark-300)]" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
                             </svg>
-                            <span class="ml-4 text-sm font-medium text-gray-500 dark:text-gray-400">{{ $contract->title }}</span>
+                            <span class="ml-4 text-sm font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">{{ $contract->title }}</span>
                         </div>
                     </li>
                 </ol>
             </nav>
-            <h1 class="mt-2 text-3xl font-bold text-gray-900 dark:text-white">
+            <h1 class="mt-2 text-3xl font-bold text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                 {{ $contract->title }}
             </h1>
             <div class="mt-1 flex items-center space-x-2">
                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium
-                    @if($contract->status === 'active') bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100
-                    @elseif($contract->status === 'expired') bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100
-                    @elseif($contract->status === 'terminated') bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-100
-                    @else bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100 @endif">
+                    @if($contract->status === 'active') bg-[color:var(--color-success-50)] text-[color:var(--color-success-800)] dark:bg-[color:var(--color-success-800)] dark:text-[color:var(--color-success-100)]
+                    @elseif($contract->status === 'expired') bg-[color:var(--color-danger-50)] text-[color:var(--color-danger-800)] dark:bg-[color:var(--color-danger-800)] dark:text-[color:var(--color-danger-100)]
+                    @elseif($contract->status === 'terminated') bg-[color:var(--color-primary-100)] text-[color:var(--color-primary-800)] dark:bg-[color:var(--color-primary-800)] dark:text-[color:var(--color-primary-100)]
+                    @else bg-[color:var(--color-warning-50)] text-[color:var(--color-warning-800)] dark:bg-[color:var(--color-warning-800)] dark:text-[color:var(--color-warning-100)] @endif">
                     {{ ucfirst($contract->status) }}
                 </span>
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-100">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-[color:var(--color-info-50)] text-[color:var(--color-info-800)] dark:bg-[color:var(--color-info-800)] dark:text-[color:var(--color-info-100)]">
                     {{ ucfirst(str_replace('_', ' ', $contract->contract_type)) }}
                 </span>
             </div>

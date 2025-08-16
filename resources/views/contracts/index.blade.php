@@ -5,15 +5,15 @@
 @section('header')
     <div class="flex justify-between items-center">
         <div>
-            <h1 class="text-3xl font-bold text-gray-900 dark:text-white">
+            <h1 class="text-3xl font-bold text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                 Contracts
             </h1>
-            <p class="mt-2 text-gray-600 dark:text-gray-400">
+            <p class="mt-2 text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)]">
                 Manage your legal agreements and contracts
             </p>
         </div>
         <div class="flex space-x-3">
-            <a href="{{ route('contracts.create') }}" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium">
+            <a href="{{ route('contracts.create') }}" class="bg-[color:var(--color-accent-600)] hover:bg-[color:var(--color-accent-700)] text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 shadow-sm">
                 Add Contract
             </a>
         </div>
@@ -89,14 +89,14 @@
     <!-- Quick Actions -->
     <div class="mb-6 flex space-x-3">
         <a href="{{ route('contracts.index', ['expiring_soon' => 30]) }}"
-           class="inline-flex items-center px-3 py-2 border border-orange-300 shadow-sm text-sm leading-4 font-medium rounded-md text-orange-700 bg-orange-50 hover:bg-orange-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">
+           class="inline-flex items-center px-3 py-2 border border-[color:var(--color-warning-300)] shadow-sm text-sm leading-4 font-medium rounded-md text-[color:var(--color-warning-700)] bg-[color:var(--color-warning-50)] hover:bg-[color:var(--color-warning-100)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[color:var(--color-warning-500)] transition-colors duration-200">
             <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
             </svg>
             Expiring Soon
         </a>
         <a href="{{ route('contracts.index', ['requiring_notice' => true]) }}"
-           class="inline-flex items-center px-3 py-2 border border-red-300 shadow-sm text-sm leading-4 font-medium rounded-md text-red-700 bg-red-50 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+           class="inline-flex items-center px-3 py-2 border border-[color:var(--color-danger-300)] shadow-sm text-sm leading-4 font-medium rounded-md text-[color:var(--color-danger-700)] bg-[color:var(--color-danger-50)] hover:bg-[color:var(--color-danger-100)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[color:var(--color-danger-500)] transition-colors duration-200">
             <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5z"></path>
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -107,28 +107,28 @@
 
     <!-- Contracts List -->
     @if($contracts->count() > 0)
-        <div class="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-md">
-            <ul class="divide-y divide-gray-200 dark:divide-gray-700">
+        <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] shadow overflow-hidden sm:rounded-md border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)]">
+            <ul class="divide-y divide-[color:var(--color-primary-200)] dark:divide-[color:var(--color-dark-300)]">
                 @foreach($contracts as $contract)
-                    <li class="px-6 py-4 hover:bg-gray-50 dark:hover:bg-gray-700">
+                    <li class="px-6 py-4 hover:bg-[color:var(--color-primary-200)] dark:hover:bg-[color:var(--color-dark-300)] transition-colors duration-200">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center min-w-0 flex-1">
                                 <div class="min-w-0 flex-1">
                                     <div class="flex items-center">
-                                        <p class="text-sm font-medium text-indigo-600 dark:text-indigo-400 truncate">
-                                            <a href="{{ route('contracts.show', $contract) }}" class="hover:text-indigo-500">
+                                        <p class="text-sm font-medium text-[color:var(--color-accent-600)] dark:text-[color:var(--color-accent-500)] truncate">
+                                            <a href="{{ route('contracts.show', $contract) }}" class="hover:text-[color:var(--color-accent-700)]">
                                                 {{ $contract->title }}
                                             </a>
                                         </p>
                                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ml-2
-                                            @if($contract->status === 'active') bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100
-                                            @elseif($contract->status === 'expired') bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100
-                                            @elseif($contract->status === 'terminated') bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-100
-                                            @else bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100 @endif">
+                                            @if($contract->status === 'active') bg-[color:var(--color-success-50)] text-[color:var(--color-success-800)] dark:bg-[color:var(--color-success-800)] dark:text-[color:var(--color-success-100)]
+                                            @elseif($contract->status === 'expired') bg-[color:var(--color-danger-50)] text-[color:var(--color-danger-800)] dark:bg-[color:var(--color-danger-800)] dark:text-[color:var(--color-danger-100)]
+                                            @elseif($contract->status === 'terminated') bg-[color:var(--color-primary-100)] text-[color:var(--color-primary-800)] dark:bg-[color:var(--color-primary-800)] dark:text-[color:var(--color-primary-100)]
+                                            @else bg-[color:var(--color-warning-50)] text-[color:var(--color-warning-800)] dark:bg-[color:var(--color-warning-800)] dark:text-[color:var(--color-warning-100)] @endif">
                                             {{ ucfirst($contract->status) }}
                                         </span>
                                     </div>
-                                    <div class="mt-2 flex items-center text-sm text-gray-500 dark:text-gray-400">
+                                    <div class="mt-2 flex items-center text-sm text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">
                                         <div class="flex items-center">
                                             <svg class="flex-shrink-0 mr-1.5 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0H5m14 0v-4a2 2 0 00-2-2H7a2 2 0 00-2 2v4"></path>
@@ -152,7 +152,7 @@
                                             </div>
                                         @endif
                                     </div>
-                                    <div class="mt-2 flex items-center text-sm text-gray-500 dark:text-gray-400">
+                                    <div class="mt-2 flex items-center text-sm text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">
                                         @if($contract->end_date)
                                             <div class="flex items-center">
                                                 <svg class="flex-shrink-0 mr-1.5 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -161,11 +161,11 @@
                                                 <span>Ends {{ $contract->end_date->format('M j, Y') }}</span>
                                                 @if($contract->days_until_expiration !== null)
                                                     @if($contract->days_until_expiration < 0)
-                                                        <span class="ml-2 text-red-600 dark:text-red-400 font-medium">
+                                                        <span class="ml-2 text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)] font-medium">
                                                             (Expired {{ abs($contract->days_until_expiration) }} days ago)
                                                         </span>
                                                     @elseif($contract->days_until_expiration <= 30)
-                                                        <span class="ml-2 text-orange-600 dark:text-orange-400 font-medium">
+                                                        <span class="ml-2 text-[color:var(--color-warning-600)] dark:text-[color:var(--color-warning-400)] font-medium">
                                                             ({{ $contract->days_until_expiration }} days remaining)
                                                         </span>
                                                     @endif
@@ -184,15 +184,15 @@
                             </div>
                             <div class="ml-5 flex-shrink-0 flex items-center space-x-2">
                                 @if($contract->notice_deadline && $contract->notice_deadline->isFuture() && $contract->notice_deadline->diffInDays(now()) <= 30)
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[color:var(--color-danger-50)] text-[color:var(--color-danger-800)] dark:bg-[color:var(--color-danger-800)] dark:text-[color:var(--color-danger-100)]">
                                         Notice Required
                                     </span>
                                 @endif
                                 <div class="flex space-x-2">
-                                    <a href="{{ route('contracts.show', $contract) }}" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300">
+                                    <a href="{{ route('contracts.show', $contract) }}" class="text-[color:var(--color-accent-600)] hover:text-[color:var(--color-accent-700)] dark:text-[color:var(--color-accent-500)] dark:hover:text-[color:var(--color-accent-400)]">
                                         View
                                     </a>
-                                    <a href="{{ route('contracts.edit', $contract) }}" class="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300">
+                                    <a href="{{ route('contracts.edit', $contract) }}" class="text-[color:var(--color-primary-600)] hover:text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-500)] dark:hover:text-[color:var(--color-dark-400)]">
                                         Edit
                                     </a>
                                 </div>
@@ -208,13 +208,13 @@
             {{ $contracts->withQueryString()->links() }}
         </div>
     @else
-        <div class="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg">
+        <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] shadow overflow-hidden sm:rounded-lg border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)]">
             <div class="text-center py-12">
-                <svg class="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 48 48">
+                <svg class="mx-auto h-12 w-12 text-[color:var(--color-primary-400)] dark:text-[color:var(--color-dark-400)]" fill="none" stroke="currentColor" viewBox="0 0 48 48">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                 </svg>
-                <h3 class="mt-2 text-sm font-medium text-gray-900 dark:text-white">No contracts found</h3>
-                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                <h3 class="mt-2 text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">No contracts found</h3>
+                <p class="mt-1 text-sm text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">
                     @if(request()->hasAny(['search', 'status', 'contract_type']))
                         No contracts match your current filters.
                     @else
@@ -223,11 +223,11 @@
                 </p>
                 <div class="mt-6">
                     @if(request()->hasAny(['search', 'status', 'contract_type']))
-                        <a href="{{ route('contracts.index') }}" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        <a href="{{ route('contracts.index') }}" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-[color:var(--color-accent-600)] hover:bg-[color:var(--color-accent-700)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[color:var(--color-accent-500)] transition-colors duration-200">
                             Clear Filters
                         </a>
                     @else
-                        <a href="{{ route('contracts.create') }}" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        <a href="{{ route('contracts.create') }}" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-[color:var(--color-accent-600)] hover:bg-[color:var(--color-accent-700)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[color:var(--color-accent-500)] transition-colors duration-200">
                             <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                             </svg>
@@ -241,36 +241,36 @@
 
     <!-- Summary Stats -->
     <div class="mt-8 grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div class="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
+        <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] overflow-hidden shadow rounded-lg border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)]">
             <div class="p-5">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
-                        <svg class="h-6 w-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="h-6 w-6 text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                         </svg>
                     </div>
                     <div class="ml-5 w-0 flex-1">
                         <dl>
-                            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Total Contracts</dt>
-                            <dd class="text-lg font-medium text-gray-900 dark:text-white">{{ $contracts->total() }}</dd>
+                            <dt class="text-sm font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] truncate">Total Contracts</dt>
+                            <dd class="text-lg font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">{{ $contracts->total() }}</dd>
                         </dl>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
+        <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] overflow-hidden shadow rounded-lg border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)]">
             <div class="p-5">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
-                        <svg class="h-6 w-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="h-6 w-6 text-[color:var(--color-success-500)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
                     </div>
                     <div class="ml-5 w-0 flex-1">
                         <dl>
-                            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Active</dt>
-                            <dd class="text-lg font-medium text-gray-900 dark:text-white">
+                            <dt class="text-sm font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] truncate">Active</dt>
+                            <dd class="text-lg font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                                 {{ $contracts->where('status', 'active')->count() }}
                             </dd>
                         </dl>
@@ -279,18 +279,18 @@
             </div>
         </div>
 
-        <div class="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
+        <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] overflow-hidden shadow rounded-lg border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)]">
             <div class="p-5">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
-                        <svg class="h-6 w-6 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="h-6 w-6 text-[color:var(--color-warning-500)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
                         </svg>
                     </div>
                     <div class="ml-5 w-0 flex-1">
                         <dl>
-                            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Expiring Soon</dt>
-                            <dd class="text-lg font-medium text-gray-900 dark:text-white">
+                            <dt class="text-sm font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] truncate">Expiring Soon</dt>
+                            <dd class="text-lg font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                                 {{ $contracts->filter(function($contract) {
                                     return $contract->end_date && $contract->end_date->diffInDays(now(), false) <= 30 && $contract->status === 'active';
                                 })->count() }}
@@ -301,18 +301,18 @@
             </div>
         </div>
 
-        <div class="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
+        <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] overflow-hidden shadow rounded-lg border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)]">
             <div class="p-5">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
-                        <svg class="h-6 w-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="h-6 w-6 text-[color:var(--color-danger-500)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                         </svg>
                     </div>
                     <div class="ml-5 w-0 flex-1">
                         <dl>
-                            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Expired</dt>
-                            <dd class="text-lg font-medium text-gray-900 dark:text-white">
+                            <dt class="text-sm font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] truncate">Expired</dt>
+                            <dd class="text-lg font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                                 {{ $contracts->where('status', 'expired')->count() }}
                             </dd>
                         </dl>
