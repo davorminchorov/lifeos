@@ -75,7 +75,7 @@
                                 <!-- Dropdown Menu -->
                                 <div id="user-menu" class="hidden origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] ring-1 ring-black ring-opacity-5 divide-y divide-[color:var(--color-primary-200)] dark:divide-[color:var(--color-dark-300)] focus:outline-none z-50">
                                     <div class="py-1">
-                                        <a href="#" class="block px-4 py-2 text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] hover:bg-[color:var(--color-primary-100)] dark:hover:bg-[color:var(--color-dark-200)] transition-colors duration-200">Profile</a>
+                                        <a href="{{ route('profile.show') }}" class="block px-4 py-2 text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] hover:bg-[color:var(--color-primary-100)] dark:hover:bg-[color:var(--color-dark-200)] transition-colors duration-200">Profile</a>
                                         <a href="#" class="block px-4 py-2 text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] hover:bg-[color:var(--color-primary-100)] dark:hover:bg-[color:var(--color-dark-200)] transition-colors duration-200">Settings</a>
                                     </div>
                                     <div class="py-1">
