@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreInvestmentRequest;
 use App\Http\Requests\UpdateInvestmentRequest;
-use App\Http\Resources\InvestmentResource;
 use App\Models\Investment;
 use App\Models\InvestmentGoal;
 use Illuminate\Http\Request;

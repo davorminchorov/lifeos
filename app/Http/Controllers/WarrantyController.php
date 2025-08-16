@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreWarrantyRequest;
 use App\Http\Requests\UpdateWarrantyRequest;
-use App\Http\Resources\WarrantyResource;
 use App\Models\Warranty;
 use Illuminate\Http\Request;
 

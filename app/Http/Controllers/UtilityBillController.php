@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreUtilityBillRequest;
 use App\Http\Requests\UpdateUtilityBillRequest;
-use App\Http\Resources\UtilityBillResource;
 use App\Models\UtilityBill;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;

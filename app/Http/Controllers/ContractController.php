@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreContractRequest;
 use App\Http\Requests\UpdateContractRequest;
-use App\Http\Resources\ContractResource;
 use App\Models\Contract;
 use Illuminate\Http\Request;
 

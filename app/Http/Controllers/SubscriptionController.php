@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreSubscriptionRequest;
 use App\Http\Requests\UpdateSubscriptionRequest;
-use App\Http\Resources\SubscriptionResource;
 use App\Models\Subscription;
 use Illuminate\Http\Request;
 
@@ -45,9 +44,6 @@ class SubscriptionController extends Controller
 
         $subscriptions = $query->paginate($request->get('per_page', 15));
 
-        if ($request->expectsJson()) {
-            return SubscriptionResource::collection($subscriptions);
-        }
 
         return view('subscriptions.index', compact('subscriptions'));
     }
@@ -70,10 +66,6 @@ class SubscriptionController extends Controller
             ...$request->validated(),
         ]);
 
-        if ($request->expectsJson()) {
-            return new SubscriptionResource($subscription);
-        }
-
         return redirect()->route('subscriptions.show', $subscription)
             ->with('success', 'Subscription created successfully!');
     }
@@ -89,10 +81,6 @@ class SubscriptionController extends Controller
         }
 
         $subscription->load('user');
-
-        if (request()->expectsJson()) {
-            return new SubscriptionResource($subscription);
-        }
 
         return view('subscriptions.show', compact('subscription'));
     }
@@ -122,10 +110,6 @@ class SubscriptionController extends Controller
 
         $subscription->update($request->validated());
 
-        if ($request->expectsJson()) {
-            return new SubscriptionResource($subscription);
-        }
-
         return redirect()->route('subscriptions.show', $subscription)
             ->with('success', 'Subscription updated successfully!');
     }
@@ -141,10 +125,6 @@ class SubscriptionController extends Controller
         }
 
         $subscription->delete();
-
-        if (request()->expectsJson()) {
-            return response()->json(['message' => 'Subscription deleted successfully']);
-        }
 
         return redirect()->route('subscriptions.index')
             ->with('success', 'Subscription deleted successfully!');
@@ -165,10 +145,6 @@ class SubscriptionController extends Controller
             'cancellation_date' => now(),
         ]);
 
-        if (request()->expectsJson()) {
-            return new SubscriptionResource($subscription);
-        }
-
         return redirect()->route('subscriptions.show', $subscription)
             ->with('success', 'Subscription cancelled successfully!');
     }
@@ -185,10 +161,6 @@ class SubscriptionController extends Controller
 
         $subscription->update(['status' => 'paused']);
 
-        if (request()->expectsJson()) {
-            return new SubscriptionResource($subscription);
-        }
-
         return redirect()->route('subscriptions.show', $subscription)
             ->with('success', 'Subscription paused successfully!');
     }
@@ -204,10 +176,6 @@ class SubscriptionController extends Controller
         }
 
         $subscription->update(['status' => 'active']);
-
-        if (request()->expectsJson()) {
-            return new SubscriptionResource($subscription);
-        }
 
         return redirect()->route('subscriptions.show', $subscription)
             ->with('success', 'Subscription resumed successfully!');
@@ -238,7 +206,7 @@ class SubscriptionController extends Controller
                 ->count(),
         ];
 
-        return response()->json(['data' => $summary]);
+        return view('subscriptions.analytics.summary', compact('summary'));
     }
 
     /**
@@ -267,7 +235,7 @@ class SubscriptionController extends Controller
             'top_expenses' => $subscriptions->sortByDesc('monthly_cost')->take(5)->values(),
         ];
 
-        return response()->json(['data' => $analytics]);
+        return view('subscriptions.analytics.spending', compact('analytics'));
     }
 
     /**
@@ -298,6 +266,6 @@ class SubscriptionController extends Controller
             return $item;
         });
 
-        return response()->json(['data' => $categories->values()]);
+        return view('subscriptions.analytics.category-breakdown', compact('categories'));
     }
 }

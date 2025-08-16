@@ -230,21 +230,4 @@ class ContractTest extends TestCase
         );
     }
 
-    public function test_analytics_endpoints_work()
-    {
-        Contract::factory()->count(5)->for($this->user)->create(['status' => 'active']);
-        Contract::factory()->count(2)->for($this->user)->create([
-            'end_date' => now()->addDays(15),
-            'status' => 'active',
-        ]);
-
-        $summaryResponse = $this->actingAs($this->user)->getJson('/api/v1/contracts/analytics/summary');
-        $summaryResponse->assertStatus(200);
-
-        $expiringResponse = $this->actingAs($this->user)->getJson('/api/v1/contracts/analytics/expiring');
-        $expiringResponse->assertStatus(200);
-
-        $performanceResponse = $this->actingAs($this->user)->getJson('/api/v1/contracts/analytics/performance');
-        $performanceResponse->assertStatus(200);
-    }
 }
