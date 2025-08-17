@@ -16,7 +16,7 @@ class InvestmentFactory extends Factory
      */
     public function definition(): array
     {
-        $investmentTypes = ['stock', 'bond', 'crypto', 'real_estate', 'mutual_fund', 'etf', 'commodity', 'other'];
+        $investmentTypes = ['stocks', 'bonds', 'etf', 'mutual_fund', 'crypto', 'real_estate', 'commodities', 'cash'];
         $stockSymbols = ['AAPL', 'GOOGL', 'MSFT', 'AMZN', 'TSLA', 'NVDA', 'META', 'NFLX', 'AMD', 'UBER'];
         $cryptoSymbols = ['BTC', 'ETH', 'ADA', 'SOL', 'DOT', 'MATIC', 'AVAX', 'LINK'];
         $etfSymbols = ['SPY', 'QQQ', 'VTI', 'VOO', 'IWM', 'EFA', 'VEA', 'BND'];
@@ -30,7 +30,7 @@ class InvestmentFactory extends Factory
         $name = '';
 
         switch ($investmentType) {
-            case 'stock':
+            case 'stocks':
                 $symbol = $this->faker->randomElement($stockSymbols);
                 $name = $symbol.' Stock';
                 break;
@@ -67,7 +67,7 @@ class InvestmentFactory extends Factory
             'investment_goals' => $this->faker->optional()->randomElements([
                 'retirement', 'growth', 'income', 'speculation', 'diversification',
             ], 2),
-            'risk_tolerance' => $this->faker->randomElement(['low', 'medium', 'high']),
+            'risk_tolerance' => $this->faker->randomElement(['conservative', 'moderate', 'aggressive']),
             'account_broker' => $this->faker->optional()->randomElement([
                 'Fidelity', 'Charles Schwab', 'TD Ameritrade', 'E*TRADE', 'Robinhood', 'Interactive Brokers',
             ]),
@@ -90,7 +90,7 @@ class InvestmentFactory extends Factory
             'target_allocation_percentage' => $this->faker->optional()->randomFloat(2, 1, 25),
             'last_price_update' => $this->faker->optional()->dateTimeBetween('-1 week', 'now'),
             'notes' => $this->faker->optional()->sentence(),
-            'status' => $this->faker->randomElement(['active', 'sold', 'monitoring']),
+            'status' => $this->faker->randomElement(['active', 'sold', 'pending']),
         ];
     }
 }
