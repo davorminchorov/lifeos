@@ -2,8 +2,8 @@
 
 namespace Tests\Unit;
 
-use App\Models\UtilityBill;
 use App\Models\User;
+use App\Models\UtilityBill;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -19,16 +19,16 @@ class UtilityBillModelTest extends TestCase
             'bill_amount', 'usage_amount', 'usage_unit', 'rate_per_unit', 'bill_period_start',
             'bill_period_end', 'due_date', 'payment_status', 'payment_date', 'meter_readings',
             'bill_attachments', 'service_plan', 'contract_terms', 'auto_pay_enabled',
-            'usage_history', 'budget_alert_threshold', 'notes'
+            'usage_history', 'budget_alert_threshold', 'notes',
         ];
-        $bill = new UtilityBill();
+        $bill = new UtilityBill;
 
         $this->assertEquals($fillable, $bill->getFillable());
     }
 
     public function test_utility_bill_casts_attributes_correctly(): void
     {
-        $bill = new UtilityBill();
+        $bill = new UtilityBill;
         $casts = $bill->getCasts();
 
         $this->assertArrayHasKey('bill_amount', $casts);
@@ -60,7 +60,7 @@ class UtilityBillModelTest extends TestCase
 
     public function test_utility_bill_belongs_to_user(): void
     {
-        $bill = new UtilityBill();
+        $bill = new UtilityBill;
         $relationship = $bill->user();
 
         $this->assertInstanceOf(BelongsTo::class, $relationship);
@@ -115,17 +115,17 @@ class UtilityBillModelTest extends TestCase
         UtilityBill::factory()->create([
             'user_id' => $user->id,
             'payment_status' => 'pending',
-            'due_date' => now()->subDays(5)
+            'due_date' => now()->subDays(5),
         ]);
         UtilityBill::factory()->create([
             'user_id' => $user->id,
             'payment_status' => 'overdue',
-            'due_date' => now()->addDays(5)
+            'due_date' => now()->addDays(5),
         ]);
         UtilityBill::factory()->create([
             'user_id' => $user->id,
             'payment_status' => 'pending',
-            'due_date' => now()->addDays(5)
+            'due_date' => now()->addDays(5),
         ]);
 
         $overdueBills = UtilityBill::overdue()->get();
@@ -139,17 +139,17 @@ class UtilityBillModelTest extends TestCase
         UtilityBill::factory()->create([
             'user_id' => $user->id,
             'payment_status' => 'pending',
-            'due_date' => now()->addDays(3)
+            'due_date' => now()->addDays(3),
         ]);
         UtilityBill::factory()->create([
             'user_id' => $user->id,
             'payment_status' => 'pending',
-            'due_date' => now()->addDays(10)
+            'due_date' => now()->addDays(10),
         ]);
         UtilityBill::factory()->create([
             'user_id' => $user->id,
             'payment_status' => 'paid',
-            'due_date' => now()->addDays(3)
+            'due_date' => now()->addDays(3),
         ]);
 
         $dueSoonBills = UtilityBill::dueSoon()->get();
@@ -164,11 +164,11 @@ class UtilityBillModelTest extends TestCase
         $user = User::factory()->create();
         UtilityBill::factory()->create([
             'user_id' => $user->id,
-            'bill_period_start' => now()
+            'bill_period_start' => now(),
         ]);
         UtilityBill::factory()->create([
             'user_id' => $user->id,
-            'bill_period_start' => now()->subMonth()
+            'bill_period_start' => now()->subMonth(),
         ]);
 
         $currentMonthBills = UtilityBill::currentMonth()->get();
@@ -182,17 +182,17 @@ class UtilityBillModelTest extends TestCase
         $overdueBill = UtilityBill::factory()->create([
             'user_id' => $user->id,
             'payment_status' => 'pending',
-            'due_date' => now()->subDays(1)
+            'due_date' => now()->subDays(1),
         ]);
         $notOverdueBill = UtilityBill::factory()->create([
             'user_id' => $user->id,
             'payment_status' => 'pending',
-            'due_date' => now()->addDays(1)
+            'due_date' => now()->addDays(1),
         ]);
         $paidBill = UtilityBill::factory()->create([
             'user_id' => $user->id,
             'payment_status' => 'paid',
-            'due_date' => now()->subDays(1)
+            'due_date' => now()->subDays(1),
         ]);
 
         $this->assertTrue($overdueBill->is_overdue);
@@ -205,7 +205,7 @@ class UtilityBillModelTest extends TestCase
         $user = User::factory()->create();
         $bill = UtilityBill::factory()->create([
             'user_id' => $user->id,
-            'due_date' => now()->addDays(5)
+            'due_date' => now()->addDays(5),
         ]);
 
         $this->assertEquals(5, $bill->days_until_due);
@@ -217,17 +217,17 @@ class UtilityBillModelTest extends TestCase
         $overBudgetBill = UtilityBill::factory()->create([
             'user_id' => $user->id,
             'bill_amount' => 150.00,
-            'budget_alert_threshold' => 100.00
+            'budget_alert_threshold' => 100.00,
         ]);
         $underBudgetBill = UtilityBill::factory()->create([
             'user_id' => $user->id,
             'bill_amount' => 80.00,
-            'budget_alert_threshold' => 100.00
+            'budget_alert_threshold' => 100.00,
         ]);
         $noBudgetBill = UtilityBill::factory()->create([
             'user_id' => $user->id,
             'bill_amount' => 50.00,
-            'budget_alert_threshold' => null
+            'budget_alert_threshold' => null,
         ]);
 
         $this->assertTrue($overBudgetBill->is_over_budget);
@@ -242,7 +242,7 @@ class UtilityBillModelTest extends TestCase
             'user_id' => $user->id,
             'bill_amount' => 100.00,
             'bill_period_start' => now()->subDays(30),
-            'bill_period_end' => now()
+            'bill_period_end' => now(),
         ]);
 
         $expectedCostPerDay = 100.00 / 30;
@@ -255,12 +255,12 @@ class UtilityBillModelTest extends TestCase
         $bill = UtilityBill::factory()->create([
             'user_id' => $user->id,
             'bill_amount' => 120.00,
-            'usage_amount' => 1000.00
+            'usage_amount' => 1000.00,
         ]);
         $zeroUsageBill = UtilityBill::factory()->create([
             'user_id' => $user->id,
             'bill_amount' => 120.00,
-            'usage_amount' => 0
+            'usage_amount' => 0,
         ]);
 
         $this->assertEquals(0.12, $bill->usage_efficiency);
@@ -273,12 +273,12 @@ class UtilityBillModelTest extends TestCase
         $billWithHistory = UtilityBill::factory()->create([
             'user_id' => $user->id,
             'usage_amount' => 1100.00,
-            'usage_history' => [1000.00, 900.00]
+            'usage_history' => [1000.00, 900.00],
         ]);
         $billWithoutHistory = UtilityBill::factory()->create([
             'user_id' => $user->id,
             'usage_amount' => 1100.00,
-            'usage_history' => []
+            'usage_history' => [],
         ]);
 
         // Should compare with the last entry (900.00)
@@ -293,7 +293,7 @@ class UtilityBillModelTest extends TestCase
         $bill = UtilityBill::factory()->create([
             'user_id' => $user->id,
             'bill_period_start' => now()->subDays(30),
-            'bill_period_end' => now()
+            'bill_period_end' => now(),
         ]);
 
         $this->assertEquals(30, $bill->billing_period_days);

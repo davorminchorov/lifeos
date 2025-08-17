@@ -2,7 +2,6 @@
 
 namespace Tests\Unit;
 
-use App\Models\Contract;
 use App\Models\Subscription;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -17,7 +16,7 @@ class UserModelTest extends TestCase
     public function test_user_has_fillable_attributes(): void
     {
         $fillable = ['name', 'email', 'password'];
-        $user = new User();
+        $user = new User;
 
         $this->assertEquals($fillable, $user->getFillable());
     }
@@ -25,14 +24,14 @@ class UserModelTest extends TestCase
     public function test_user_has_hidden_attributes(): void
     {
         $hidden = ['password', 'remember_token'];
-        $user = new User();
+        $user = new User;
 
         $this->assertEquals($hidden, $user->getHidden());
     }
 
     public function test_user_casts_attributes_correctly(): void
     {
-        $user = new User();
+        $user = new User;
         $casts = $user->getCasts();
 
         $this->assertArrayHasKey('email_verified_at', $casts);
@@ -44,7 +43,7 @@ class UserModelTest extends TestCase
     public function test_password_is_hashed_when_set(): void
     {
         $user = User::factory()->create([
-            'password' => 'plain-text-password'
+            'password' => 'plain-text-password',
         ]);
 
         $this->assertNotEquals('plain-text-password', $user->password);
@@ -53,7 +52,7 @@ class UserModelTest extends TestCase
 
     public function test_user_has_subscriptions_relationship(): void
     {
-        $user = new User();
+        $user = new User;
         $relationship = $user->subscriptions();
 
         $this->assertInstanceOf(HasMany::class, $relationship);

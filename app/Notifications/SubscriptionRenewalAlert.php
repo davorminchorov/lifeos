@@ -39,8 +39,8 @@ class SubscriptionRenewalAlert extends Notification implements ShouldQueue
             : "⏰ {$this->subscription->service_name} renews in {$this->daysUntilRenewal} days";
 
         $greeting = $this->daysUntilRenewal === 0
-            ? "Your subscription is renewing today"
-            : "Your subscription is renewing soon";
+            ? 'Your subscription is renewing today'
+            : 'Your subscription is renewing soon';
 
         return (new MailMessage)
             ->subject($subject)
@@ -53,11 +53,11 @@ class SubscriptionRenewalAlert extends Notification implements ShouldQueue
                 return $mail->line("**Payment method:** {$this->subscription->payment_method}");
             })
             ->when($this->subscription->auto_renewal, function ($mail) {
-                return $mail->line("This subscription will automatically renew.");
+                return $mail->line('This subscription will automatically renew.');
             }, function ($mail) {
-                return $mail->line("This subscription requires manual renewal.");
+                return $mail->line('This subscription requires manual renewal.');
             })
-            ->action('Manage Subscription', url('/subscriptions/' . $this->subscription->id))
+            ->action('Manage Subscription', url('/subscriptions/'.$this->subscription->id))
             ->line('You can cancel or modify this subscription anytime from your dashboard.')
             ->salutation('Best regards, LifeOS Team');
     }

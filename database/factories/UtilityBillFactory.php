@@ -27,7 +27,7 @@ class UtilityBillFactory extends Factory
             'cable_tv' => ['Comcast', 'DirecTV', 'Dish Network', 'Spectrum TV', 'Cox Cable'],
             'trash' => ['Waste Management', 'Republic Services', 'City Sanitation', 'Local Waste Co'],
             'sewer' => ['City Sewer Department', 'Municipal Sewer', 'Regional Sewer Authority'],
-            'other' => ['Utility Company', 'Service Provider', 'Municipal Services']
+            'other' => ['Utility Company', 'Service Provider', 'Municipal Services'],
         ];
 
         $usageUnitsByType = [
@@ -39,7 +39,7 @@ class UtilityBillFactory extends Factory
             'cable_tv' => null,
             'trash' => null,
             'sewer' => 'gallons',
-            'other' => null
+            'other' => null,
         ];
 
         $utilityType = $this->faker->randomElement($utilityTypes);
@@ -98,12 +98,12 @@ class UtilityBillFactory extends Factory
                 [
                     'current' => $this->faker->numberBetween(10000, 99999),
                     'previous' => $this->faker->numberBetween(5000, 10000),
-                    'date' => $billPeriodEnd->format('Y-m-d')
-                ]
+                    'date' => $billPeriodEnd->format('Y-m-d'),
+                ],
             ]),
             'bill_attachments' => $this->faker->optional(0.5)->randomElements([
                 'utility_bill_001.pdf',
-                'statement_002.jpg'
+                'statement_002.jpg',
             ]),
             'service_plan' => $this->faker->optional()->words(3, true),
             'contract_terms' => $this->faker->optional()->sentence(),
@@ -111,7 +111,7 @@ class UtilityBillFactory extends Factory
             'usage_history' => $this->faker->optional()->randomElements([
                 ['month' => 'Jan', 'usage' => 500, 'cost' => 75],
                 ['month' => 'Feb', 'usage' => 450, 'cost' => 68],
-                ['month' => 'Mar', 'usage' => 520, 'cost' => 78]
+                ['month' => 'Mar', 'usage' => 520, 'cost' => 78],
             ]),
             'budget_alert_threshold' => $this->faker->optional()->randomFloat(2, 100, 300),
             'notes' => $this->faker->optional()->sentence(),

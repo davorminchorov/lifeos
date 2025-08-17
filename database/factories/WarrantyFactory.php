@@ -19,7 +19,7 @@ class WarrantyFactory extends Factory
         $products = [
             'MacBook Pro', 'iPhone 15', 'Samsung Galaxy S24', 'iPad Air', 'Dell XPS 13',
             'Sony WH-1000XM5', 'Nintendo Switch', 'Tesla Model 3', 'Dyson V15',
-            'KitchenAid Mixer', 'LG OLED TV', 'Canon EOS R5', 'Apple Watch Series 9'
+            'KitchenAid Mixer', 'LG OLED TV', 'Canon EOS R5', 'Apple Watch Series 9',
         ];
 
         $brands = ['Apple', 'Samsung', 'Sony', 'Dell', 'HP', 'LG', 'Canon', 'Dyson', 'KitchenAid', 'Tesla'];
@@ -48,31 +48,31 @@ class WarrantyFactory extends Factory
                 [
                     'date' => $this->faker->dateTimeBetween($purchaseDate, 'now')->format('Y-m-d'),
                     'issue' => 'Screen defect',
-                    'resolution' => 'Replacement unit provided'
-                ]
+                    'resolution' => 'Replacement unit provided',
+                ],
             ]),
             'receipt_attachments' => $this->faker->optional()->randomElements([
                 'receipt_001.pdf',
-                'purchase_confirmation.jpg'
+                'purchase_confirmation.jpg',
             ]),
             'proof_of_purchase_attachments' => $this->faker->optional()->randomElements([
                 'invoice.pdf',
-                'credit_card_statement.pdf'
+                'credit_card_statement.pdf',
             ]),
             'current_status' => $this->faker->randomElement($statuses),
             'transfer_history' => $this->faker->optional(0.1)->randomElements([
                 [
                     'date' => $this->faker->dateTimeBetween($purchaseDate, 'now')->format('Y-m-d'),
                     'to' => $this->faker->name(),
-                    'reason' => 'Gift'
-                ]
+                    'reason' => 'Gift',
+                ],
             ]),
             'maintenance_reminders' => $this->faker->optional()->randomElements([
                 [
                     'type' => 'Software Update',
                     'frequency' => 'Monthly',
-                    'last_done' => $this->faker->dateTimeBetween('-1 month', 'now')->format('Y-m-d')
-                ]
+                    'last_done' => $this->faker->dateTimeBetween('-1 month', 'now')->format('Y-m-d'),
+                ],
             ]),
             'notes' => $this->faker->optional()->sentence(),
         ];

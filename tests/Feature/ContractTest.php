@@ -229,5 +229,4 @@ class ContractTest extends TestCase
             $contract->notice_deadline->format('Y-m-d')
         );
     }
-
 }

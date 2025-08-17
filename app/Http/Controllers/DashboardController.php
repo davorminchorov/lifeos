@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Subscription;
 use App\Models\Contract;
-use App\Models\Warranty;
-use App\Models\Investment;
 use App\Models\Expense;
+use App\Models\Investment;
+use App\Models\Subscription;
 use App\Models\UtilityBill;
-use Illuminate\Http\Request;
+use App\Models\Warranty;
 
 class DashboardController extends Controller
 {
@@ -94,7 +93,7 @@ class DashboardController extends Controller
                 'title' => 'Subscription Renewal Due',
                 'message' => "{$subscription->service_name} renews on {$subscription->next_billing_date->format('M j, Y')}",
                 'action_url' => route('subscriptions.show', $subscription),
-                'action_text' => 'View'
+                'action_text' => 'View',
             ];
         }
 
@@ -106,7 +105,7 @@ class DashboardController extends Controller
                 'title' => 'Contract Expiring Soon',
                 'message' => "{$contract->title} expires on {$contract->end_date->format('M j, Y')}",
                 'action_url' => route('contracts.show', $contract),
-                'action_text' => 'Review'
+                'action_text' => 'Review',
             ];
         }
 
@@ -118,7 +117,7 @@ class DashboardController extends Controller
                 'title' => 'Warranty Expiring Soon',
                 'message' => "{$warranty->product_name} warranty expires on {$warranty->warranty_expiration_date->format('M j, Y')}",
                 'action_url' => route('warranties.show', $warranty),
-                'action_text' => 'View'
+                'action_text' => 'View',
             ];
         }
 
@@ -130,7 +129,7 @@ class DashboardController extends Controller
                 'title' => 'Overdue Bill',
                 'message' => "{$bill->service_provider} bill was due on {$bill->due_date->format('M j, Y')}",
                 'action_url' => route('utility-bills.show', $bill),
-                'action_text' => 'Pay Now'
+                'action_text' => 'Pay Now',
             ];
         }
 
@@ -142,15 +141,13 @@ class DashboardController extends Controller
                 'title' => 'Bill Due Soon',
                 'message' => "{$bill->service_provider} bill is due on {$bill->due_date->format('M j, Y')}",
                 'action_url' => route('utility-bills.show', $bill),
-                'action_text' => 'View'
+                'action_text' => 'View',
             ];
         }
 
         // Limit to recent 10 alerts
         return array_slice($alerts, 0, 10);
     }
-
-
 
     /**
      * Get count of items requiring attention.

@@ -24,7 +24,7 @@ class ContractFactory extends Factory
             'Home Cleaning Service',
             'IT Support Contract',
             'Gym Membership Agreement',
-            'Phone Service Contract'
+            'Phone Service Contract',
         ];
 
         $startDate = $this->faker->dateTimeBetween('-1 year', 'now');
@@ -46,15 +46,15 @@ class ContractFactory extends Factory
             'termination_clauses' => $this->faker->optional()->paragraph(),
             'document_attachments' => $this->faker->optional()->randomElements([
                 'contract_signed.pdf',
-                'terms_conditions.pdf'
+                'terms_conditions.pdf',
             ]),
             'performance_rating' => $this->faker->optional()->numberBetween(1, 5),
             'renewal_history' => $this->faker->optional()->randomElements([
                 ['date' => '2023-01-01', 'action' => 'renewed'],
-                ['date' => '2022-01-01', 'action' => 'initial']
+                ['date' => '2022-01-01', 'action' => 'initial'],
             ]),
             'amendments' => $this->faker->optional()->randomElements([
-                ['date' => '2023-06-01', 'change' => 'Price increase']
+                ['date' => '2023-06-01', 'change' => 'Price increase'],
             ]),
             'notes' => $this->faker->optional()->sentence(),
             'status' => $this->faker->randomElement(['active', 'expired', 'terminated', 'pending']),

@@ -91,7 +91,7 @@ class Expense extends Model
     public function scopeCurrentMonth($query)
     {
         return $query->whereYear('expense_date', now()->year)
-                    ->whereMonth('expense_date', now()->month);
+            ->whereMonth('expense_date', now()->month);
     }
 
     // Scope for current year expenses
@@ -103,13 +103,13 @@ class Expense extends Model
     // Check if expense has receipts
     public function getHasReceiptsAttribute()
     {
-        return !empty($this->receipt_attachments);
+        return ! empty($this->receipt_attachments);
     }
 
     // Get formatted amount with currency
     public function getFormattedAmountAttribute()
     {
-        return $this->currency . ' ' . number_format($this->amount, 2);
+        return $this->currency.' '.number_format($this->amount, 2);
     }
 
     // Check if expense is over budget (if budget allocated)
@@ -121,7 +121,7 @@ class Expense extends Model
     // Get budget variance
     public function getBudgetVarianceAttribute()
     {
-        if (!$this->budget_allocated) {
+        if (! $this->budget_allocated) {
             return null;
         }
 

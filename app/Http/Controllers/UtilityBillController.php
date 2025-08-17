@@ -56,16 +56,16 @@ class UtilityBillController extends Controller
         // Filter bills over budget threshold
         if ($request->has('over_budget')) {
             $query->whereNotNull('budget_alert_threshold')
-                  ->whereRaw('bill_amount > budget_alert_threshold');
+                ->whereRaw('bill_amount > budget_alert_threshold');
         }
 
         // Search by service provider or service address
         if ($request->has('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
-                $q->where('service_provider', 'like', '%' . $search . '%')
-                  ->orWhere('service_address', 'like', '%' . $search . '%')
-                  ->orWhere('account_number', 'like', '%' . $search . '%');
+                $q->where('service_provider', 'like', '%'.$search.'%')
+                    ->orWhere('service_address', 'like', '%'.$search.'%')
+                    ->orWhere('account_number', 'like', '%'.$search.'%');
             });
         }
 
@@ -194,7 +194,7 @@ class UtilityBillController extends Controller
 
         $utilityBill->update([
             'payment_status' => 'disputed',
-            'notes' => $utilityBill->notes . "\n\nDispute: " . $request->get('dispute_reason', 'No reason provided'),
+            'notes' => $utilityBill->notes."\n\nDispute: ".$request->get('dispute_reason', 'No reason provided'),
         ]);
 
         if ($request->expectsJson()) {
@@ -541,10 +541,12 @@ class UtilityBillController extends Controller
         });
 
         $overallAverage = $bills->avg('usage_amount');
+
         return $seasonal->map(function ($data) use ($overallAverage) {
             $data['variation_percentage'] = $overallAverage > 0
                 ? round((($data['average_usage'] - $overallAverage) / $overallAverage) * 100, 2)
                 : 0;
+
             return $data;
         });
     }
@@ -615,7 +617,7 @@ class UtilityBillController extends Controller
         $currentYear = $bills->where('bill_period_start', '>=', now()->startOfYear());
         $previousYear = $bills->whereBetween('bill_period_start', [
             now()->subYear()->startOfYear(),
-            now()->subYear()->endOfYear()
+            now()->subYear()->endOfYear(),
         ]);
 
         return [

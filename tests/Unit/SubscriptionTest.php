@@ -22,7 +22,7 @@ class SubscriptionTest extends TestCase
 
     public function test_subscription_has_correct_fillable_fields()
     {
-        $subscription = new Subscription();
+        $subscription = new Subscription;
 
         $expectedFillable = [
             'user_id',

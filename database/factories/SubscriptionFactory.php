@@ -25,7 +25,7 @@ class SubscriptionFactory extends Factory
         $billingCycle = $this->faker->randomElement($billingCycles);
 
         // Calculate next billing date based on cycle
-        $nextBillingDate = match($billingCycle) {
+        $nextBillingDate = match ($billingCycle) {
             'monthly' => (clone $startDate)->modify('+1 month'),
             'yearly' => (clone $startDate)->modify('+1 year'),
             'weekly' => (clone $startDate)->modify('+1 week'),

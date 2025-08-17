@@ -41,8 +41,8 @@ class InvestmentController extends Controller
         if ($request->has('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', '%' . $search . '%')
-                  ->orWhere('symbol_identifier', 'like', '%' . $search . '%');
+                $q->where('name', 'like', '%'.$search.'%')
+                    ->orWhere('symbol_identifier', 'like', '%'.$search.'%');
             });
         }
 
@@ -246,7 +246,7 @@ class InvestmentController extends Controller
     public function recordSell(Request $request, Investment $investment)
     {
         $request->validate([
-            'quantity' => 'required|numeric|min:0|max:' . $investment->quantity,
+            'quantity' => 'required|numeric|min:0|max:'.$investment->quantity,
             'price_per_unit' => 'required|numeric|min:0',
             'fees' => 'nullable|numeric|min:0',
             'transaction_date' => 'nullable|date',
@@ -394,6 +394,7 @@ class InvestmentController extends Controller
         $analytics = [
             'by_investment_type' => $investments->groupBy('investment_type')->map(function ($group) use ($totalValue) {
                 $groupValue = $group->sum('current_market_value');
+
                 return [
                     'count' => $group->count(),
                     'value' => $groupValue,
@@ -402,6 +403,7 @@ class InvestmentController extends Controller
             }),
             'by_account_broker' => $investments->groupBy('account_broker')->map(function ($group) use ($totalValue) {
                 $groupValue = $group->sum('current_market_value');
+
                 return [
                     'count' => $group->count(),
                     'value' => $groupValue,
@@ -443,7 +445,9 @@ class InvestmentController extends Controller
      */
     private function calculateDiversificationScore($investments)
     {
-        if ($investments->count() === 0) return 0;
+        if ($investments->count() === 0) {
+            return 0;
+        }
 
         $totalValue = $investments->sum('current_market_value');
         $typeAllocations = $investments->groupBy('investment_type');
@@ -716,13 +720,13 @@ class InvestmentController extends Controller
                 'type' => 'underperformance',
                 'severity' => 'medium',
                 'message' => "{$investment->name} is down {$investment->unrealized_gain_loss_percentage}%",
-                'recommendation' => "Review and consider rebalancing or cutting losses",
+                'recommendation' => 'Review and consider rebalancing or cutting losses',
             ];
         }
 
         // Check for no recent rebalancing
         $lastRebalance = $request->get('last_rebalance_date');
-        if (!$lastRebalance || now()->diffInMonths($lastRebalance) > 6) {
+        if (! $lastRebalance || now()->diffInMonths($lastRebalance) > 6) {
             $alerts[] = [
                 'type' => 'rebalance_due',
                 'severity' => 'low',

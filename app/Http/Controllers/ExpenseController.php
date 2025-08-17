@@ -61,8 +61,8 @@ class ExpenseController extends Controller
         if ($request->has('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
-                $q->where('description', 'like', '%' . $search . '%')
-                  ->orWhere('merchant', 'like', '%' . $search . '%');
+                $q->where('description', 'like', '%'.$search.'%')
+                    ->orWhere('merchant', 'like', '%'.$search.'%');
             });
         }
 
@@ -365,6 +365,7 @@ class ExpenseController extends Controller
             ->groupBy('category')
             ->map(function ($group, $category) {
                 $categoryTotal = $group->sum('total_amount');
+
                 return [
                     'category' => $category,
                     'total_amount' => $categoryTotal,
@@ -383,6 +384,7 @@ class ExpenseController extends Controller
 
         $categoriesWithPercentage = $categories->map(function ($item) use ($totalAmount) {
             $item['percentage'] = $totalAmount > 0 ? round(($item['total_amount'] / $totalAmount) * 100, 2) : 0;
+
             return $item;
         });
 
@@ -462,6 +464,7 @@ class ExpenseController extends Controller
                 round(($item['spent'] / $item['budget']) * 100, 2) : 0;
             $item['status'] = $item['percentage_used'] > 100 ? 'over_budget' :
                 ($item['percentage_used'] > 80 ? 'warning' : 'on_track');
+
             return $item;
         });
 
@@ -483,7 +486,9 @@ class ExpenseController extends Controller
      */
     private function calculateGrowthRate($monthlyTrends)
     {
-        if ($monthlyTrends->count() < 2) return 0;
+        if ($monthlyTrends->count() < 2) {
+            return 0;
+        }
 
         $current = $monthlyTrends->last()->total_amount;
         $previous = $monthlyTrends->slice(-2, 1)->first()->total_amount;

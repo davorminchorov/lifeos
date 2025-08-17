@@ -16,16 +16,16 @@ class InvestmentGoalModelTest extends TestCase
     {
         $fillable = [
             'user_id', 'title', 'description', 'target_amount', 'current_progress',
-            'target_date', 'status', 'created_at', 'updated_at'
+            'target_date', 'status', 'created_at', 'updated_at',
         ];
-        $goal = new InvestmentGoal();
+        $goal = new InvestmentGoal;
 
         $this->assertEquals($fillable, $goal->getFillable());
     }
 
     public function test_investment_goal_casts_attributes_correctly(): void
     {
-        $goal = new InvestmentGoal();
+        $goal = new InvestmentGoal;
         $casts = $goal->getCasts();
 
         $this->assertArrayHasKey('target_amount', $casts);
@@ -39,7 +39,7 @@ class InvestmentGoalModelTest extends TestCase
 
     public function test_investment_goal_belongs_to_user(): void
     {
-        $goal = new InvestmentGoal();
+        $goal = new InvestmentGoal;
         $relationship = $goal->user();
 
         $this->assertInstanceOf(BelongsTo::class, $relationship);
@@ -54,7 +54,7 @@ class InvestmentGoalModelTest extends TestCase
         $goal = InvestmentGoal::factory()->create([
             'user_id' => $user->id,
             'target_amount' => 1000.00,
-            'current_progress' => 500.00
+            'current_progress' => 500.00,
         ]);
         $this->assertEquals(50, $goal->progress_percentage);
 
@@ -62,7 +62,7 @@ class InvestmentGoalModelTest extends TestCase
         $goalComplete = InvestmentGoal::factory()->create([
             'user_id' => $user->id,
             'target_amount' => 1000.00,
-            'current_progress' => 1000.00
+            'current_progress' => 1000.00,
         ]);
         $this->assertEquals(100, $goalComplete->progress_percentage);
 
@@ -70,7 +70,7 @@ class InvestmentGoalModelTest extends TestCase
         $goalOver = InvestmentGoal::factory()->create([
             'user_id' => $user->id,
             'target_amount' => 1000.00,
-            'current_progress' => 1200.00
+            'current_progress' => 1200.00,
         ]);
         $this->assertEquals(100, $goalOver->progress_percentage);
 
@@ -78,7 +78,7 @@ class InvestmentGoalModelTest extends TestCase
         $goalZero = InvestmentGoal::factory()->create([
             'user_id' => $user->id,
             'target_amount' => 0.00,
-            'current_progress' => 100.00
+            'current_progress' => 100.00,
         ]);
         $this->assertEquals(0, $goalZero->progress_percentage);
     }
@@ -90,21 +90,21 @@ class InvestmentGoalModelTest extends TestCase
         $achievedGoal = InvestmentGoal::factory()->create([
             'user_id' => $user->id,
             'target_amount' => 1000.00,
-            'current_progress' => 1000.00
+            'current_progress' => 1000.00,
         ]);
         $this->assertTrue($achievedGoal->is_achieved);
 
         $overAchievedGoal = InvestmentGoal::factory()->create([
             'user_id' => $user->id,
             'target_amount' => 1000.00,
-            'current_progress' => 1200.00
+            'current_progress' => 1200.00,
         ]);
         $this->assertTrue($overAchievedGoal->is_achieved);
 
         $notAchievedGoal = InvestmentGoal::factory()->create([
             'user_id' => $user->id,
             'target_amount' => 1000.00,
-            'current_progress' => 800.00
+            'current_progress' => 800.00,
         ]);
         $this->assertFalse($notAchievedGoal->is_achieved);
     }
@@ -116,21 +116,21 @@ class InvestmentGoalModelTest extends TestCase
         $goal = InvestmentGoal::factory()->create([
             'user_id' => $user->id,
             'target_amount' => 1000.00,
-            'current_progress' => 300.00
+            'current_progress' => 300.00,
         ]);
         $this->assertEquals(700.00, $goal->remaining_amount);
 
         $completedGoal = InvestmentGoal::factory()->create([
             'user_id' => $user->id,
             'target_amount' => 1000.00,
-            'current_progress' => 1000.00
+            'current_progress' => 1000.00,
         ]);
         $this->assertEquals(0, $completedGoal->remaining_amount);
 
         $overAchievedGoal = InvestmentGoal::factory()->create([
             'user_id' => $user->id,
             'target_amount' => 1000.00,
-            'current_progress' => 1200.00
+            'current_progress' => 1200.00,
         ]);
         $this->assertEquals(0, $overAchievedGoal->remaining_amount);
     }
@@ -156,17 +156,17 @@ class InvestmentGoalModelTest extends TestCase
         InvestmentGoal::factory()->create([
             'user_id' => $user->id,
             'target_amount' => 1000.00,
-            'current_progress' => 1000.00
+            'current_progress' => 1000.00,
         ]);
         InvestmentGoal::factory()->create([
             'user_id' => $user->id,
             'target_amount' => 1000.00,
-            'current_progress' => 500.00
+            'current_progress' => 500.00,
         ]);
         InvestmentGoal::factory()->create([
             'user_id' => $user->id,
             'target_amount' => 1000.00,
-            'current_progress' => 1200.00
+            'current_progress' => 1200.00,
         ]);
 
         $achievedGoals = InvestmentGoal::achieved()->get();

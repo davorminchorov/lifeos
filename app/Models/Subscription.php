@@ -63,7 +63,7 @@ class Subscription extends Model
     public function scopeDueSoon($query, $days = 7)
     {
         return $query->where('next_billing_date', '<=', now()->addDays((int) $days))
-                    ->where('status', 'active');
+            ->where('status', 'active');
     }
 
     // Calculate monthly cost for different billing cycles

@@ -13,6 +13,7 @@ class ContractController extends Controller
     {
         // Middleware is now handled in bootstrap/app.php or route definitions
     }
+
     /**
      * Display a listing of the resource.
      */
@@ -45,8 +46,8 @@ class ContractController extends Controller
         if ($request->has('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
-                $q->where('title', 'like', '%' . $search . '%')
-                  ->orWhere('counterparty', 'like', '%' . $search . '%');
+                $q->where('title', 'like', '%'.$search.'%')
+                    ->orWhere('counterparty', 'like', '%'.$search.'%');
             });
         }
 
@@ -294,9 +295,9 @@ class ContractController extends Controller
             ->get();
 
         $analytics = [
-            'expiring_30_days' => $expiringContracts->filter(fn($c) => $c->days_until_expiration <= 30)->count(),
-            'expiring_60_days' => $expiringContracts->filter(fn($c) => $c->days_until_expiration <= 60 && $c->days_until_expiration > 30)->count(),
-            'expiring_90_days' => $expiringContracts->filter(fn($c) => $c->days_until_expiration <= 90 && $c->days_until_expiration > 60)->count(),
+            'expiring_30_days' => $expiringContracts->filter(fn ($c) => $c->days_until_expiration <= 30)->count(),
+            'expiring_60_days' => $expiringContracts->filter(fn ($c) => $c->days_until_expiration <= 60 && $c->days_until_expiration > 30)->count(),
+            'expiring_90_days' => $expiringContracts->filter(fn ($c) => $c->days_until_expiration <= 90 && $c->days_until_expiration > 60)->count(),
             'contracts_by_type' => $expiringContracts->groupBy('contract_type')->map->count(),
             'upcoming_renewals' => $expiringContracts->where('auto_renewal', true)->count(),
             'manual_renewals_needed' => $expiringContracts->where('auto_renewal', false)->count(),

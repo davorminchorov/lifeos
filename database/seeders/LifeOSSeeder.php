@@ -2,14 +2,13 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-use App\Models\Subscription;
 use App\Models\Contract;
-use App\Models\Warranty;
-use App\Models\Investment;
 use App\Models\Expense;
+use App\Models\Investment;
+use App\Models\Subscription;
+use App\Models\User;
 use App\Models\UtilityBill;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Warranty;
 use Illuminate\Database\Seeder;
 
 class LifeOSSeeder extends Seeder
@@ -29,7 +28,7 @@ class LifeOSSeeder extends Seeder
             ]
         );
 
-        $this->command->info('Created demo user: ' . $user->email);
+        $this->command->info('Created demo user: '.$user->email);
 
         // Create Subscriptions
         $this->createSubscriptions($user);

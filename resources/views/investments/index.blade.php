@@ -76,7 +76,7 @@
     </div>
 
     <!-- Investments Table -->
-    <div class="bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] shadow overflow-hidden sm:rounded-lg border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)]">
+    <div class="bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] shadow overflow-hidden sm:rounded-lg border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)]" x-data="{}">
         <div class="px-4 py-5 sm:p-6">
             @if($investments->count() > 0)
                 <div class="overflow-x-auto">
@@ -141,14 +141,11 @@
                                         <div class="flex space-x-2">
                                             <a href="{{ route('investments.show', $investment) }}" class="text-[color:var(--color-accent-500)] hover:text-[color:var(--color-accent-600)] dark:text-[color:var(--color-accent-500)] dark:hover:text-[color:var(--color-accent-600)] transition-colors duration-200">View</a>
                                             <a href="{{ route('investments.edit', $investment) }}" class="text-[color:var(--color-accent-500)] hover:text-[color:var(--color-accent-600)] dark:text-[color:var(--color-accent-500)] dark:hover:text-[color:var(--color-accent-600)] transition-colors duration-200">Edit</a>
-                                            <form method="POST" action="{{ route('investments.destroy', $investment) }}" class="inline">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="text-[color:var(--color-danger-500)] hover:text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-500)] dark:hover:text-[color:var(--color-danger-600)] transition-colors duration-200"
-                                                        onclick="return confirm('Are you sure you want to delete this investment?')">
-                                                    Delete
-                                                </button>
-                                            </form>
+                                            <button type="button"
+                                                    class="text-[color:var(--color-danger-500)] hover:text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-500)] dark:hover:text-[color:var(--color-danger-600)] transition-colors duration-200"
+                                                    x-on:click="$dispatch('open-modal', { id: 'deleteInvestmentModal-{{ $investment->id }}' })">
+                                                Delete
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>
@@ -177,4 +174,17 @@
             @endif
         </div>
     </div>
+
+    <!-- Delete Modals for each investment -->
+    @foreach($investments as $investment)
+        <x-confirmation-modal
+            id="deleteInvestmentModal-{{ $investment->id }}"
+            title="Delete Investment"
+            message="Are you sure you want to delete the investment '{{ $investment->symbol ?? $investment->name }}'? This action cannot be undone."
+            confirm-text="Delete"
+            confirm-button-class="bg-[color:var(--color-danger-500)] hover:bg-[color:var(--color-danger-600)] text-white"
+            :action="route('investments.destroy', $investment)"
+            method="DELETE"
+        />
+    @endforeach
 @endsection

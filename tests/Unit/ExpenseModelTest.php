@@ -18,16 +18,16 @@ class ExpenseModelTest extends TestCase
             'user_id', 'amount', 'currency', 'category', 'subcategory', 'expense_date',
             'description', 'merchant', 'payment_method', 'receipt_attachments', 'tags',
             'location', 'is_tax_deductible', 'expense_type', 'is_recurring',
-            'recurring_schedule', 'budget_allocated', 'notes', 'status'
+            'recurring_schedule', 'budget_allocated', 'notes', 'status',
         ];
-        $expense = new Expense();
+        $expense = new Expense;
 
         $this->assertEquals($fillable, $expense->getFillable());
     }
 
     public function test_expense_casts_attributes_correctly(): void
     {
-        $expense = new Expense();
+        $expense = new Expense;
         $casts = $expense->getCasts();
 
         $this->assertArrayHasKey('amount', $casts);
@@ -49,7 +49,7 @@ class ExpenseModelTest extends TestCase
 
     public function test_expense_belongs_to_user(): void
     {
-        $expense = new Expense();
+        $expense = new Expense;
         $relationship = $expense->user();
 
         $this->assertInstanceOf(BelongsTo::class, $relationship);
@@ -161,11 +161,11 @@ class ExpenseModelTest extends TestCase
         $user = User::factory()->create();
         $expenseWithReceipts = Expense::factory()->create([
             'user_id' => $user->id,
-            'receipt_attachments' => ['receipt1.jpg', 'receipt2.pdf']
+            'receipt_attachments' => ['receipt1.jpg', 'receipt2.pdf'],
         ]);
         $expenseWithoutReceipts = Expense::factory()->create([
             'user_id' => $user->id,
-            'receipt_attachments' => []
+            'receipt_attachments' => [],
         ]);
 
         $this->assertTrue($expenseWithReceipts->has_receipts);
@@ -178,7 +178,7 @@ class ExpenseModelTest extends TestCase
         $expense = Expense::factory()->create([
             'user_id' => $user->id,
             'amount' => 123.45,
-            'currency' => 'USD'
+            'currency' => 'USD',
         ]);
 
         $this->assertEquals('USD 123.45', $expense->formatted_amount);
@@ -190,17 +190,17 @@ class ExpenseModelTest extends TestCase
         $overBudgetExpense = Expense::factory()->create([
             'user_id' => $user->id,
             'amount' => 150.00,
-            'budget_allocated' => 100.00
+            'budget_allocated' => 100.00,
         ]);
         $underBudgetExpense = Expense::factory()->create([
             'user_id' => $user->id,
             'amount' => 80.00,
-            'budget_allocated' => 100.00
+            'budget_allocated' => 100.00,
         ]);
         $noBudgetExpense = Expense::factory()->create([
             'user_id' => $user->id,
             'amount' => 50.00,
-            'budget_allocated' => null
+            'budget_allocated' => null,
         ]);
 
         $this->assertTrue($overBudgetExpense->is_over_budget);
@@ -214,12 +214,12 @@ class ExpenseModelTest extends TestCase
         $expense = Expense::factory()->create([
             'user_id' => $user->id,
             'amount' => 120.00,
-            'budget_allocated' => 100.00
+            'budget_allocated' => 100.00,
         ]);
         $noBudgetExpense = Expense::factory()->create([
             'user_id' => $user->id,
             'amount' => 50.00,
-            'budget_allocated' => null
+            'budget_allocated' => null,
         ]);
 
         $this->assertEquals(20.00, $expense->budget_variance);
@@ -231,7 +231,7 @@ class ExpenseModelTest extends TestCase
         $user = User::factory()->create();
         $expense = Expense::factory()->create([
             'user_id' => $user->id,
-            'expense_date' => now()->subDays(5)
+            'expense_date' => now()->subDays(5),
         ]);
 
         $this->assertEquals(5, $expense->age_days);

@@ -329,45 +329,88 @@
                 </a>
 
                 @if($subscription->status === 'active')
-                    <form method="POST" action="{{ route('subscriptions.pause', $subscription) }}" class="inline">
-                        @csrf
-                        <button type="submit" class="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-md text-sm font-medium" onclick="return confirm('Are you sure you want to pause this subscription?')">
-                            Pause Subscription
-                        </button>
-                    </form>
-                    <form method="POST" action="{{ route('subscriptions.cancel', $subscription) }}" class="inline">
-                        @csrf
-                        <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium" onclick="return confirm('Are you sure you want to cancel this subscription?')">
-                            Cancel Subscription
-                        </button>
-                    </form>
+                    <button type="button"
+                            class="bg-[color:var(--color-warning-500)] hover:bg-[color:var(--color-warning-600)] text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200"
+                            x-on:click="$dispatch('open-modal', { id: 'pauseModal' })">
+                        Pause Subscription
+                    </button>
+                    <button type="button"
+                            class="bg-[color:var(--color-danger-600)] hover:bg-[color:var(--color-danger-700)] text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200"
+                            x-on:click="$dispatch('open-modal', { id: 'cancelModal' })">
+                        Cancel Subscription
+                    </button>
                 @elseif($subscription->status === 'paused')
-                    <form method="POST" action="{{ route('subscriptions.resume', $subscription) }}" class="inline">
-                        @csrf
-                        <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium">
-                            Resume Subscription
-                        </button>
-                    </form>
-                    <form method="POST" action="{{ route('subscriptions.cancel', $subscription) }}" class="inline">
-                        @csrf
-                        <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium" onclick="return confirm('Are you sure you want to cancel this subscription?')">
-                            Cancel Subscription
-                        </button>
-                    </form>
+                    <button type="button"
+                            class="bg-[color:var(--color-success-600)] hover:bg-[color:var(--color-success-700)] text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200"
+                            x-on:click="$dispatch('open-modal', { id: 'resumeModal' })">
+                        Resume Subscription
+                    </button>
+                    <button type="button"
+                            class="bg-[color:var(--color-danger-600)] hover:bg-[color:var(--color-danger-700)] text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200"
+                            x-on:click="$dispatch('open-modal', { id: 'cancelModal' })">
+                        Cancel Subscription
+                    </button>
                 @elseif($subscription->status === 'cancelled')
-                    <div class="text-sm text-gray-500 dark:text-gray-400">
+                    <div class="text-sm text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">
                         This subscription has been cancelled and cannot be modified.
                     </div>
                 @endif
 
-                <form method="POST" action="{{ route('subscriptions.destroy', $subscription) }}" class="inline">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-md text-sm font-medium" onclick="return confirm('Are you sure you want to delete this subscription? This action cannot be undone.')">
-                        Delete Subscription
-                    </button>
-                </form>
+                <button type="button"
+                        class="bg-[color:var(--color-primary-600)] hover:bg-[color:var(--color-primary-700)] text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200"
+                        x-on:click="$dispatch('open-modal', { id: 'deleteModal' })">
+                    Delete Subscription
+                </button>
             </div>
         </div>
     </div>
+
+    <!-- Modals -->
+    @if($subscription->status === 'active')
+        <x-confirmation-modal
+            id="pauseModal"
+            title="Pause Subscription"
+            message="Are you sure you want to pause {{ $subscription->service_name }}? You can resume it later."
+            confirm-text="Pause"
+            confirm-button-class="bg-[color:var(--color-warning-500)] hover:bg-[color:var(--color-warning-600)] text-white"
+            :action="route('subscriptions.pause', $subscription)"
+        />
+
+        <x-confirmation-modal
+            id="cancelModal"
+            title="Cancel Subscription"
+            message="Are you sure you want to cancel {{ $subscription->service_name }}? This action cannot be undone."
+            confirm-text="Cancel Subscription"
+            confirm-button-class="bg-[color:var(--color-danger-500)] hover:bg-[color:var(--color-danger-600)] text-white"
+            :action="route('subscriptions.cancel', $subscription)"
+        />
+    @elseif($subscription->status === 'paused')
+        <x-confirmation-modal
+            id="resumeModal"
+            title="Resume Subscription"
+            message="Are you sure you want to resume {{ $subscription->service_name }}?"
+            confirm-text="Resume"
+            confirm-button-class="bg-[color:var(--color-success-500)] hover:bg-[color:var(--color-success-600)] text-white"
+            :action="route('subscriptions.resume', $subscription)"
+        />
+
+        <x-confirmation-modal
+            id="cancelModal"
+            title="Cancel Subscription"
+            message="Are you sure you want to cancel {{ $subscription->service_name }}? This action cannot be undone."
+            confirm-text="Cancel Subscription"
+            confirm-button-class="bg-[color:var(--color-danger-500)] hover:bg-[color:var(--color-danger-600)] text-white"
+            :action="route('subscriptions.cancel', $subscription)"
+        />
+    @endif
+
+    <x-confirmation-modal
+        id="deleteModal"
+        title="Delete Subscription"
+        message="Are you sure you want to delete {{ $subscription->service_name }}? This action cannot be undone and all data will be permanently removed."
+        confirm-text="Delete"
+        confirm-button-class="bg-[color:var(--color-danger-500)] hover:bg-[color:var(--color-danger-600)] text-white"
+        :action="route('subscriptions.destroy', $subscription)"
+        method="DELETE"
+    />
 @endsection

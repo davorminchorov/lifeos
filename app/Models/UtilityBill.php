@@ -75,10 +75,10 @@ class UtilityBill extends Model
     public function scopeOverdue($query)
     {
         return $query->where('payment_status', 'overdue')
-                    ->orWhere(function($q) {
-                        $q->where('payment_status', 'pending')
-                          ->where('due_date', '<', now());
-                    });
+            ->orWhere(function ($q) {
+                $q->where('payment_status', 'pending')
+                    ->where('due_date', '<', now());
+            });
     }
 
     // Scope for paid bills
@@ -91,14 +91,14 @@ class UtilityBill extends Model
     public function scopeDueSoon($query, $days = 7)
     {
         return $query->where('due_date', '<=', now()->addDays($days))
-                    ->where('payment_status', 'pending');
+            ->where('payment_status', 'pending');
     }
 
     // Scope for current month bills
     public function scopeCurrentMonth($query)
     {
         return $query->whereYear('bill_period_start', now()->year)
-                    ->whereMonth('bill_period_start', now()->month);
+            ->whereMonth('bill_period_start', now()->month);
     }
 
     // Check if bill is overdue
@@ -123,13 +123,14 @@ class UtilityBill extends Model
     public function getCostPerDayAttribute()
     {
         $periodDays = $this->bill_period_start->diffInDays($this->bill_period_end);
+
         return $periodDays > 0 ? $this->bill_amount / $periodDays : 0;
     }
 
     // Get usage efficiency (cost per unit if available)
     public function getUsageEfficiencyAttribute()
     {
-        if (!$this->usage_amount || $this->usage_amount == 0) {
+        if (! $this->usage_amount || $this->usage_amount == 0) {
             return null;
         }
 
@@ -139,7 +140,7 @@ class UtilityBill extends Model
     // Compare with previous month usage (if history available)
     public function getUsageComparisonAttribute()
     {
-        if (!$this->usage_history || !is_array($this->usage_history) || count($this->usage_history) < 2) {
+        if (! $this->usage_history || ! is_array($this->usage_history) || count($this->usage_history) < 2) {
             return null;
         }
 
@@ -147,7 +148,7 @@ class UtilityBill extends Model
         $previousUsage = end($history);
         $currentUsage = $this->usage_amount;
 
-        if (!$previousUsage || $previousUsage == 0) {
+        if (! $previousUsage || $previousUsage == 0) {
             return null;
         }
 

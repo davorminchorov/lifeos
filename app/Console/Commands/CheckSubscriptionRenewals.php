@@ -48,13 +48,13 @@ class CheckSubscriptionRenewals extends Command
         $this->info('📊 Summary:');
         $this->table(
             ['Days', 'Description'],
-            collect($notificationDays)->map(fn($days) => [
+            collect($notificationDays)->map(fn ($days) => [
                 $days,
-                match($days) {
+                match ($days) {
                     0 => 'Due today',
                     1 => 'Due tomorrow',
                     default => "Due in {$days} days"
-                }
+                },
             ])
         );
 

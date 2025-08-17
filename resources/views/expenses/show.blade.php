@@ -24,7 +24,7 @@
 @endsection
 
 @section('content')
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6" x-data="{}">
         <!-- Main Details -->
         <div class="lg:col-span-2">
             <div class="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg">
@@ -174,14 +174,11 @@
                         Edit Expense
                     </a>
 
-                    <form method="POST" action="{{ route('expenses.destroy', $expense) }}" class="w-full">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium"
-                                onclick="return confirm('Are you sure you want to delete this expense?')">
-                            Delete Expense
-                        </button>
-                    </form>
+                    <button type="button"
+                            class="w-full bg-[color:var(--color-danger-600)] hover:bg-[color:var(--color-danger-700)] text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200"
+                            x-on:click="$dispatch('open-modal', { id: 'deleteExpenseModal' })">
+                        Delete Expense
+                    </button>
                 </div>
             </div>
 
@@ -210,4 +207,15 @@
             </div>
         </div>
     </div>
+
+    <!-- Delete Modal -->
+    <x-confirmation-modal
+        id="deleteExpenseModal"
+        title="Delete Expense"
+        message="Are you sure you want to delete the expense '{{ $expense->description }}'? This action cannot be undone."
+        confirm-text="Delete"
+        confirm-button-class="bg-[color:var(--color-danger-500)] hover:bg-[color:var(--color-danger-600)] text-white"
+        :action="route('expenses.destroy', $expense)"
+        method="DELETE"
+    />
 @endsection

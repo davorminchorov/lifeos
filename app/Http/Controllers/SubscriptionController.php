@@ -34,7 +34,7 @@ class SubscriptionController extends Controller
 
         // Search by service name
         if ($request->has('search')) {
-            $query->where('service_name', 'like', '%' . $request->search . '%');
+            $query->where('service_name', 'like', '%'.$request->search.'%');
         }
 
         // Sort by next billing date by default
@@ -43,7 +43,6 @@ class SubscriptionController extends Controller
         $query->orderBy($sortBy, $sortOrder);
 
         $subscriptions = $query->paginate($request->get('per_page', 15));
-
 
         return view('subscriptions.index', compact('subscriptions'));
     }
@@ -263,6 +262,7 @@ class SubscriptionController extends Controller
 
         $data = $categories->map(function ($item) use ($totalMonthly) {
             $item['percentage'] = $totalMonthly > 0 ? round(($item['monthly_cost'] / $totalMonthly) * 100, 2) : 0;
+
             return $item;
         })->values(); // Convert to indexed array for JSON
 

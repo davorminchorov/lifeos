@@ -67,6 +67,6 @@ class SendSubscriptionRenewalNotifications implements ShouldQueue
      */
     public function failed(\Throwable $exception): void
     {
-        Log::error('Subscription renewal notification job failed: ' . $exception->getMessage());
+        Log::error('Subscription renewal notification job failed: '.$exception->getMessage());
     }
 }

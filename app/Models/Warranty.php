@@ -63,7 +63,7 @@ class Warranty extends Model
     public function scopeExpiringSoon($query, $days = 30)
     {
         return $query->where('warranty_expiration_date', '<=', now()->addDays((int) $days))
-                    ->where('current_status', 'active');
+            ->where('current_status', 'active');
     }
 
     // Scope for expired warranties
@@ -96,7 +96,7 @@ class Warranty extends Model
     // Check if warranty has claims
     public function getHasClaimsAttribute()
     {
-        return !empty($this->claim_history);
+        return ! empty($this->claim_history);
     }
 
     // Get total number of claims

@@ -32,7 +32,6 @@ class InvestmentTest extends TestCase
         $response->assertViewHas('investments');
     }
 
-
     public function it_can_display_create_investment_form()
     {
         $response = $this->get(route('investments.create'));
@@ -40,7 +39,6 @@ class InvestmentTest extends TestCase
         $response->assertStatus(200);
         $response->assertViewIs('investments.create');
     }
-
 
     public function it_can_store_a_new_investment()
     {
@@ -71,7 +69,6 @@ class InvestmentTest extends TestCase
         ]);
     }
 
-
     public function it_validates_required_fields_when_storing_investment()
     {
         $response = $this->post(route('investments.store'), []);
@@ -87,7 +84,6 @@ class InvestmentTest extends TestCase
         ]);
     }
 
-
     public function it_can_display_investment_details()
     {
         $investment = Investment::factory()->create(['user_id' => $this->user->id]);
@@ -99,7 +95,6 @@ class InvestmentTest extends TestCase
         $response->assertViewHas('investment', $investment);
     }
 
-
     public function it_can_display_edit_investment_form()
     {
         $investment = Investment::factory()->create(['user_id' => $this->user->id]);
@@ -110,7 +105,6 @@ class InvestmentTest extends TestCase
         $response->assertViewIs('investments.edit');
         $response->assertViewHas('investment', $investment);
     }
-
 
     public function it_can_update_an_investment()
     {
@@ -145,7 +139,6 @@ class InvestmentTest extends TestCase
         ]);
     }
 
-
     public function it_can_delete_an_investment()
     {
         $investment = Investment::factory()->create(['user_id' => $this->user->id]);
@@ -155,7 +148,6 @@ class InvestmentTest extends TestCase
         $response->assertRedirect();
         $this->assertDatabaseMissing('investments', ['id' => $investment->id]);
     }
-
 
     public function it_prevents_unauthorized_access_to_other_users_investments()
     {
@@ -175,19 +167,18 @@ class InvestmentTest extends TestCase
         $response->assertStatus(403);
     }
 
-
     public function it_can_filter_investments_by_type()
     {
         Investment::factory()->create([
             'user_id' => $this->user->id,
             'investment_type' => 'stock',
-            'name' => 'Stock Investment'
+            'name' => 'Stock Investment',
         ]);
 
         Investment::factory()->create([
             'user_id' => $this->user->id,
             'investment_type' => 'crypto',
-            'name' => 'Crypto Investment'
+            'name' => 'Crypto Investment',
         ]);
 
         $response = $this->get(route('investments.index', ['type' => 'stock']));
@@ -197,19 +188,18 @@ class InvestmentTest extends TestCase
         $response->assertDontSee('Crypto Investment');
     }
 
-
     public function it_can_search_investments_by_name()
     {
         Investment::factory()->create([
             'user_id' => $this->user->id,
             'name' => 'Apple Inc.',
-            'symbol_identifier' => 'AAPL'
+            'symbol_identifier' => 'AAPL',
         ]);
 
         Investment::factory()->create([
             'user_id' => $this->user->id,
             'name' => 'Microsoft Corp.',
-            'symbol_identifier' => 'MSFT'
+            'symbol_identifier' => 'MSFT',
         ]);
 
         $response = $this->get(route('investments.index', ['search' => 'Apple']));
@@ -218,7 +208,6 @@ class InvestmentTest extends TestCase
         $response->assertSee('Apple Inc.');
         $response->assertDontSee('Microsoft Corp.');
     }
-
 
     public function it_calculates_investment_performance_correctly()
     {
@@ -250,7 +239,6 @@ class InvestmentTest extends TestCase
         $this->assertEqualsWithDelta(20.76, $investment->total_return_percentage, 0.01);
     }
 
-
     public function it_can_update_investment_price()
     {
         $investment = Investment::factory()->create([
@@ -265,7 +253,6 @@ class InvestmentTest extends TestCase
         $investment->refresh();
         $this->assertNotNull($investment->last_price_update);
     }
-
 
     public function it_returns_analytics_summary()
     {
@@ -283,7 +270,6 @@ class InvestmentTest extends TestCase
         ]);
     }
 
-
     public function it_returns_performance_analytics()
     {
         Investment::factory()->count(3)->create(['user_id' => $this->user->id]);
@@ -298,19 +284,18 @@ class InvestmentTest extends TestCase
         ]);
     }
 
-
     public function it_returns_allocation_analytics()
     {
         Investment::factory()->create([
             'user_id' => $this->user->id,
             'investment_type' => 'stock',
-            'current_market_value' => 5000
+            'current_market_value' => 5000,
         ]);
 
         Investment::factory()->create([
             'user_id' => $this->user->id,
             'investment_type' => 'bond',
-            'current_market_value' => 3000
+            'current_market_value' => 3000,
         ]);
 
         $response = $this->get(route('investments.analytics.allocation'));
@@ -322,12 +307,11 @@ class InvestmentTest extends TestCase
         ]);
     }
 
-
     public function it_returns_dividend_analytics()
     {
         Investment::factory()->create([
             'user_id' => $this->user->id,
-            'total_dividends_received' => 100.00
+            'total_dividends_received' => 100.00,
         ]);
 
         $response = $this->get(route('investments.analytics.dividends'));
@@ -338,7 +322,6 @@ class InvestmentTest extends TestCase
             'monthly_dividend_trend',
         ]);
     }
-
 
     public function unauthenticated_users_cannot_access_investments()
     {
@@ -359,7 +342,6 @@ class InvestmentTest extends TestCase
         }
     }
 
-
     public function it_validates_investment_type_enum()
     {
         $invalidData = [
@@ -377,7 +359,6 @@ class InvestmentTest extends TestCase
         $response->assertSessionHasErrors('investment_type');
     }
 
-
     public function it_validates_numeric_fields()
     {
         $invalidData = [
@@ -394,7 +375,6 @@ class InvestmentTest extends TestCase
 
         $response->assertSessionHasErrors(['quantity', 'purchase_price']);
     }
-
 
     public function it_validates_date_fields()
     {

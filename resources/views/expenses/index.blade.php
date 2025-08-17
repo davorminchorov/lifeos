@@ -86,7 +86,7 @@
     </div>
 
     <!-- Expenses Table -->
-    <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] shadow overflow-hidden sm:rounded-lg border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)]">
+    <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] shadow overflow-hidden sm:rounded-lg border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)]" x-data="{}">
         <div class="px-4 py-5 sm:p-6">
             @if($expenses->count() > 0)
                 <div class="overflow-x-auto">
@@ -172,14 +172,11 @@
                                                     </button>
                                                 </form>
                                             @endif
-                                            <form method="POST" action="{{ route('expenses.destroy', $expense) }}" class="inline">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="text-[color:var(--color-danger-600)] hover:text-[color:var(--color-danger-700)]"
-                                                        onclick="return confirm('Are you sure you want to delete this expense?')">
-                                                    Delete
-                                                </button>
-                                            </form>
+                                            <button type="button"
+                                                    class="text-[color:var(--color-danger-600)] hover:text-[color:var(--color-danger-700)]"
+                                                    x-on:click="$dispatch('open-modal', { id: 'deleteExpenseModal-{{ $expense->id }}' })">
+                                                Delete
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>
@@ -208,4 +205,17 @@
             @endif
         </div>
     </div>
+
+    <!-- Delete Modals for each expense -->
+    @foreach($expenses as $expense)
+        <x-confirmation-modal
+            id="deleteExpenseModal-{{ $expense->id }}"
+            title="Delete Expense"
+            message="Are you sure you want to delete the expense '{{ $expense->description }}'? This action cannot be undone."
+            confirm-text="Delete"
+            confirm-button-class="bg-[color:var(--color-danger-500)] hover:bg-[color:var(--color-danger-600)] text-white"
+            :action="route('expenses.destroy', $expense)"
+            method="DELETE"
+        />
+    @endforeach
 @endsection

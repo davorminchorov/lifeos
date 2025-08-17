@@ -32,21 +32,21 @@ class InvestmentFactory extends Factory
         switch ($investmentType) {
             case 'stock':
                 $symbol = $this->faker->randomElement($stockSymbols);
-                $name = $symbol . ' Stock';
+                $name = $symbol.' Stock';
                 break;
             case 'crypto':
                 $symbol = $this->faker->randomElement($cryptoSymbols);
-                $name = $symbol . ' Cryptocurrency';
+                $name = $symbol.' Cryptocurrency';
                 break;
             case 'etf':
                 $symbol = $this->faker->randomElement($etfSymbols);
-                $name = $symbol . ' ETF';
+                $name = $symbol.' ETF';
                 break;
             case 'real_estate':
                 $name = $this->faker->randomElement($realEstateNames);
                 break;
             default:
-                $name = $this->faker->words(2, true) . ' Investment';
+                $name = $this->faker->words(2, true).' Investment';
         }
 
         $purchasePrice = $this->faker->randomFloat(8, 0.01, 1000);
@@ -65,11 +65,11 @@ class InvestmentFactory extends Factory
             'total_dividends_received' => $this->faker->randomFloat(2, 0, 1000),
             'total_fees_paid' => $this->faker->randomFloat(2, 0, 100),
             'investment_goals' => $this->faker->optional()->randomElements([
-                'retirement', 'growth', 'income', 'speculation', 'diversification'
+                'retirement', 'growth', 'income', 'speculation', 'diversification',
             ], 2),
             'risk_tolerance' => $this->faker->randomElement(['low', 'medium', 'high']),
             'account_broker' => $this->faker->optional()->randomElement([
-                'Fidelity', 'Charles Schwab', 'TD Ameritrade', 'E*TRADE', 'Robinhood', 'Interactive Brokers'
+                'Fidelity', 'Charles Schwab', 'TD Ameritrade', 'E*TRADE', 'Robinhood', 'Interactive Brokers',
             ]),
             'account_number' => $this->faker->optional()->bothify('########'),
             'transaction_history' => $this->faker->optional()->randomElements([
@@ -77,15 +77,15 @@ class InvestmentFactory extends Factory
                     'date' => $purchaseDate->format('Y-m-d'),
                     'type' => 'buy',
                     'quantity' => $quantity,
-                    'price' => $purchasePrice
-                ]
+                    'price' => $purchasePrice,
+                ],
             ]),
             'tax_lots' => $this->faker->optional()->randomElements([
                 [
                     'purchase_date' => $purchaseDate->format('Y-m-d'),
                     'quantity' => $quantity,
-                    'cost_basis' => $purchasePrice
-                ]
+                    'cost_basis' => $purchasePrice,
+                ],
             ]),
             'target_allocation_percentage' => $this->faker->optional()->randomFloat(2, 1, 25),
             'last_price_update' => $this->faker->optional()->dateTimeBetween('-1 week', 'now'),

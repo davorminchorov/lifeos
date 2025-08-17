@@ -12,6 +12,7 @@ class SubscriptionControllerTest extends TestCase
     use RefreshDatabase;
 
     private User $user;
+
     private User $otherUser;
 
     protected function setUp(): void
@@ -37,11 +38,11 @@ class SubscriptionControllerTest extends TestCase
     {
         $activeSubscription = Subscription::factory()->create([
             'user_id' => $this->user->id,
-            'status' => 'active'
+            'status' => 'active',
         ]);
         $cancelledSubscription = Subscription::factory()->create([
             'user_id' => $this->user->id,
-            'status' => 'cancelled'
+            'status' => 'cancelled',
         ]);
 
         $response = $this->actingAs($this->user)
@@ -54,11 +55,11 @@ class SubscriptionControllerTest extends TestCase
     {
         $entertainmentSubscription = Subscription::factory()->create([
             'user_id' => $this->user->id,
-            'category' => 'Entertainment'
+            'category' => 'Entertainment',
         ]);
         $softwareSubscription = Subscription::factory()->create([
             'user_id' => $this->user->id,
-            'category' => 'Software'
+            'category' => 'Software',
         ]);
 
         $response = $this->actingAs($this->user)
@@ -72,12 +73,12 @@ class SubscriptionControllerTest extends TestCase
         $dueSoonSubscription = Subscription::factory()->create([
             'user_id' => $this->user->id,
             'status' => 'active',
-            'next_billing_date' => now()->addDays(3)
+            'next_billing_date' => now()->addDays(3),
         ]);
         $notDueSoonSubscription = Subscription::factory()->create([
             'user_id' => $this->user->id,
             'status' => 'active',
-            'next_billing_date' => now()->addDays(10)
+            'next_billing_date' => now()->addDays(10),
         ]);
 
         $response = $this->actingAs($this->user)
@@ -90,11 +91,11 @@ class SubscriptionControllerTest extends TestCase
     {
         $netflixSubscription = Subscription::factory()->create([
             'user_id' => $this->user->id,
-            'service_name' => 'Netflix'
+            'service_name' => 'Netflix',
         ]);
         $spotifySubscription = Subscription::factory()->create([
             'user_id' => $this->user->id,
-            'service_name' => 'Spotify'
+            'service_name' => 'Spotify',
         ]);
 
         $response = $this->actingAs($this->user)
@@ -311,7 +312,7 @@ class SubscriptionControllerTest extends TestCase
     {
         $subscription = Subscription::factory()->create([
             'user_id' => $this->user->id,
-            'status' => 'active'
+            'status' => 'active',
         ]);
 
         $response = $this->actingAs($this->user)
@@ -327,7 +328,7 @@ class SubscriptionControllerTest extends TestCase
     {
         $subscription = Subscription::factory()->create([
             'user_id' => $this->user->id,
-            'status' => 'active'
+            'status' => 'active',
         ]);
 
         $response = $this->actingAs($this->user)
@@ -342,7 +343,7 @@ class SubscriptionControllerTest extends TestCase
     {
         $subscription = Subscription::factory()->create([
             'user_id' => $this->user->id,
-            'status' => 'paused'
+            'status' => 'paused',
         ]);
 
         $response = $this->actingAs($this->user)
@@ -358,17 +359,17 @@ class SubscriptionControllerTest extends TestCase
         // Create subscriptions for the authenticated user
         Subscription::factory()->count(3)->create([
             'user_id' => $this->user->id,
-            'status' => 'active'
+            'status' => 'active',
         ]);
         Subscription::factory()->count(1)->create([
             'user_id' => $this->user->id,
-            'status' => 'cancelled'
+            'status' => 'cancelled',
         ]);
 
         // Create subscriptions for another user (should not be included)
         Subscription::factory()->count(2)->create([
             'user_id' => $this->otherUser->id,
-            'status' => 'active'
+            'status' => 'active',
         ]);
 
         $response = $this->actingAs($this->user)
@@ -388,14 +389,14 @@ class SubscriptionControllerTest extends TestCase
             'user_id' => $this->user->id,
             'status' => 'active',
             'billing_cycle' => 'monthly',
-            'cost' => 10.00
+            'cost' => 10.00,
         ]);
 
         Subscription::factory()->count(1)->create([
             'user_id' => $this->otherUser->id,
             'status' => 'active',
             'billing_cycle' => 'monthly',
-            'cost' => 50.00
+            'cost' => 50.00,
         ]);
 
         $response = $this->actingAs($this->user)
@@ -412,13 +413,13 @@ class SubscriptionControllerTest extends TestCase
         Subscription::factory()->count(2)->create([
             'user_id' => $this->user->id,
             'status' => 'active',
-            'category' => 'Entertainment'
+            'category' => 'Entertainment',
         ]);
 
         Subscription::factory()->count(3)->create([
             'user_id' => $this->otherUser->id,
             'status' => 'active',
-            'category' => 'Entertainment'
+            'category' => 'Entertainment',
         ]);
 
         $response = $this->actingAs($this->user)

@@ -46,9 +46,9 @@ class WarrantyController extends Controller
         if ($request->has('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
-                $q->where('product_name', 'like', '%' . $search . '%')
-                  ->orWhere('brand', 'like', '%' . $search . '%')
-                  ->orWhere('model', 'like', '%' . $search . '%');
+                $q->where('product_name', 'like', '%'.$search.'%')
+                    ->orWhere('brand', 'like', '%'.$search.'%')
+                    ->orWhere('model', 'like', '%'.$search.'%');
             });
         }
 
@@ -189,7 +189,7 @@ class WarrantyController extends Controller
         $claimHistory = $warranty->claim_history ?? [];
         $claimIndex = $request->claim_index;
 
-        if (!isset($claimHistory[$claimIndex])) {
+        if (! isset($claimHistory[$claimIndex])) {
             return back()->withErrors(['error' => 'Claim not found.']);
         }
 

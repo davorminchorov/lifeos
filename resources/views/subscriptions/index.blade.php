@@ -79,7 +79,7 @@
     </div>
 
     <!-- Subscriptions Table -->
-    <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] shadow overflow-hidden sm:rounded-lg border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)]">
+    <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] shadow overflow-hidden sm:rounded-lg border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)]" x-data="{}">
         <div class="px-4 py-5 sm:p-6">
             @if($subscriptions->count() > 0)
                 <div class="overflow-x-auto">
@@ -149,15 +149,17 @@
                                             <a href="{{ route('subscriptions.show', $subscription) }}" class="text-[color:var(--color-accent-600)] hover:text-[color:var(--color-accent-700)]">View</a>
                                             <a href="{{ route('subscriptions.edit', $subscription) }}" class="text-[color:var(--color-warning-600)] hover:text-[color:var(--color-warning-700)]">Edit</a>
                                             @if($subscription->status === 'active')
-                                                <form method="POST" action="{{ route('subscriptions.pause', $subscription) }}" class="inline">
-                                                    @csrf
-                                                    <button type="submit" class="text-[color:var(--color-warning-600)] hover:text-[color:var(--color-warning-700)]">Pause</button>
-                                                </form>
+                                                <button type="button"
+                                                        class="text-[color:var(--color-warning-600)] hover:text-[color:var(--color-warning-700)] cursor-pointer hover:underline focus:outline-none focus:ring-2 focus:ring-[color:var(--color-warning-500)] focus:ring-opacity-50 rounded transition-colors duration-200"
+                                                        x-on:click="$dispatch('open-modal', { id: 'pauseModal-{{ $subscription->id }}' })">
+                                                    Pause
+                                                </button>
                                             @elseif($subscription->status === 'paused')
-                                                <form method="POST" action="{{ route('subscriptions.resume', $subscription) }}" class="inline">
-                                                    @csrf
-                                                    <button type="submit" class="text-[color:var(--color-success-600)] hover:text-[color:var(--color-success-700)]">Resume</button>
-                                                </form>
+                                                <button type="button"
+                                                        class="text-[color:var(--color-success-600)] hover:text-[color:var(--color-success-700)] cursor-pointer hover:underline focus:outline-none focus:ring-2 focus:ring-[color:var(--color-success-500)] focus:ring-opacity-50 rounded transition-colors duration-200"
+                                                        x-on:click="$dispatch('open-modal', { id: 'resumeModal-{{ $subscription->id }}' })">
+                                                    Resume
+                                                </button>
                                             @endif
                                         </div>
                                     </td>
@@ -250,4 +252,29 @@
             </div>
         </div>
     @endif
+
+    <!-- Modals for each subscription -->
+    @foreach($subscriptions as $subscription)
+        @if($subscription->status === 'active')
+            <x-confirmation-modal
+                id="pauseModal-{{ $subscription->id }}"
+                title="Pause Subscription"
+                message="Are you sure you want to pause {{ $subscription->service_name }}? You can resume it later."
+                confirm-text="Pause"
+                confirm-button-class="bg-[color:var(--color-warning-500)] hover:bg-[color:var(--color-warning-600)] text-white"
+                :action="route('subscriptions.pause', $subscription)"
+                method="PATCH"
+            />
+        @elseif($subscription->status === 'paused')
+            <x-confirmation-modal
+                id="resumeModal-{{ $subscription->id }}"
+                title="Resume Subscription"
+                message="Are you sure you want to resume {{ $subscription->service_name }}?"
+                confirm-text="Resume"
+                confirm-button-class="bg-[color:var(--color-success-500)] hover:bg-[color:var(--color-success-600)] text-white"
+                :action="route('subscriptions.resume', $subscription)"
+                method="PATCH"
+            />
+        @endif
+    @endforeach
 @endsection

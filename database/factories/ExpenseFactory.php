@@ -28,12 +28,12 @@ class ExpenseFactory extends Factory
             'education' => ['tuition', 'books', 'courses', 'supplies', 'training'],
             'travel' => ['flights', 'hotels', 'car_rental', 'meals', 'activities'],
             'home' => ['rent', 'mortgage', 'repairs', 'furniture', 'cleaning'],
-            'insurance' => ['health', 'auto', 'home', 'life', 'disability']
+            'insurance' => ['health', 'auto', 'home', 'life', 'disability'],
         ];
 
         $merchants = [
             'Walmart', 'Target', 'Starbucks', 'McDonald\'s', 'Amazon', 'Best Buy',
-            'Home Depot', 'CVS Pharmacy', 'Shell', 'Uber', 'Netflix', 'Spotify'
+            'Home Depot', 'CVS Pharmacy', 'Shell', 'Uber', 'Netflix', 'Spotify',
         ];
 
         $paymentMethods = ['Credit Card', 'Debit Card', 'Cash', 'PayPal', 'Apple Pay', 'Google Pay'];
@@ -57,10 +57,10 @@ class ExpenseFactory extends Factory
             'payment_method' => $this->faker->randomElement($paymentMethods),
             'receipt_attachments' => $this->faker->optional(0.4)->randomElements([
                 'receipt_001.jpg',
-                'receipt_002.pdf'
+                'receipt_002.pdf',
             ]),
             'tags' => $this->faker->optional()->randomElements([
-                'essential', 'luxury', 'work', 'family', 'health', 'education'
+                'essential', 'luxury', 'work', 'family', 'health', 'education',
             ], 2),
             'location' => $this->faker->optional()->city(),
             'is_tax_deductible' => $this->faker->boolean(15),

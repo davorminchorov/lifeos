@@ -82,7 +82,7 @@
     </div>
 
     <!-- Utility Bills Table -->
-    <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] shadow overflow-hidden sm:rounded-lg border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)]">
+    <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] shadow overflow-hidden sm:rounded-lg border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)]" x-data="{}">
         <div class="px-4 py-5 sm:p-6">
             @if($utilityBills->count() > 0)
                 <div class="overflow-x-auto">
@@ -194,14 +194,11 @@
                                                     </button>
                                                 </form>
                                             @endif
-                                            <form method="POST" action="{{ route('utility-bills.destroy', $bill) }}" class="inline">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="text-[color:var(--color-danger-600)] hover:text-[color:var(--color-danger-700)]"
-                                                        onclick="return confirm('Are you sure you want to delete this utility bill?')">
-                                                    Delete
-                                                </button>
-                                            </form>
+                                            <button type="button"
+                                                    class="text-[color:var(--color-danger-600)] hover:text-[color:var(--color-danger-700)]"
+                                                    x-on:click="$dispatch('open-modal', { id: 'deleteUtilityBillModal-{{ $bill->id }}' })">
+                                                Delete
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>
@@ -230,4 +227,17 @@
             @endif
         </div>
     </div>
+
+    <!-- Delete Modals for each utility bill -->
+    @foreach($utilityBills as $bill)
+        <x-confirmation-modal
+            id="deleteUtilityBillModal-{{ $bill->id }}"
+            title="Delete Utility Bill"
+            message="Are you sure you want to delete the {{ ucfirst($bill->utility_type) }} bill from {{ $bill->service_provider }}? This action cannot be undone."
+            confirm-text="Delete"
+            confirm-button-class="bg-[color:var(--color-danger-500)] hover:bg-[color:var(--color-danger-600)] text-white"
+            :action="route('utility-bills.destroy', $bill)"
+            method="DELETE"
+        />
+    @endforeach
 @endsection

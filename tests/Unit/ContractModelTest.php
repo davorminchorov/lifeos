@@ -214,7 +214,7 @@ class ContractModelTest extends TestCase
             'status',
         ];
 
-        $contract = new Contract();
+        $contract = new Contract;
         $this->assertEquals($fillable, $contract->getFillable());
     }
 
