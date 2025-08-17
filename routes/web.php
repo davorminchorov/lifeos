@@ -57,6 +57,7 @@ Route::middleware('auth')->group(function () {
     Route::post('investments/{investment}/record-buy', [InvestmentController::class, 'recordBuy'])->name('investments.record-buy');
     Route::post('investments/{investment}/record-sell', [InvestmentController::class, 'recordSell'])->name('investments.record-sell');
     Route::post('investments/{investment}/record-dividend', [InvestmentController::class, 'recordDividend'])->name('investments.record-dividend');
+    Route::post('investments/{investment}/update-price', [InvestmentController::class, 'updatePrice'])->name('investments.update-price');
     Route::get('investments/goals/index', [InvestmentController::class, 'goalIndex'])->name('investments.goals.index');
     Route::post('investments/goals/store', [InvestmentController::class, 'goalStore'])->name('investments.goals.store');
     Route::patch('investments/goals/{goal}/update', [InvestmentController::class, 'goalUpdate'])->name('investments.goals.update');
