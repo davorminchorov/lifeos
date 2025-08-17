@@ -128,10 +128,10 @@
                                         {{ $bill->bill_period_start->format('M d') }} - {{ $bill->bill_period_end->format('M d, Y') }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
-                                        ${{ number_format($bill->bill_amount, 2) }}
+                                        {{ $bill->formatted_bill_amount }}
                                         @if($bill->rate_per_unit)
                                             <div class="text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">
-                                                ${{ number_format($bill->rate_per_unit, 4) }}/{{ $bill->usage_unit }}
+                                                MKD {{ number_format($bill->rate_per_unit, 4) }}/{{ $bill->usage_unit }}
                                             </div>
                                         @endif
                                     </td>

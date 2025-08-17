@@ -157,7 +157,7 @@
 
                     <!-- Contract Value -->
                     <div>
-                        <label for="contract_value" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Contract Value ($)</label>
+                        <label for="contract_value" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Contract Value</label>
                         <input type="number" name="contract_value" id="contract_value" min="0" step="0.01" value="{{ old('contract_value', $contract->contract_value) }}"
                                class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 @error('contract_value') border-red-500 @enderror"
                                placeholder="0.00">
@@ -171,7 +171,7 @@
                         <label for="currency" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Currency *</label>
                         <select name="currency" id="currency" required
                                 class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 @error('currency') border-red-500 @enderror">
-                            <option value="MKD" {{ old('currency', $contract->currency) === 'MKD' ? 'selected' : '' }}>MKD (ден) - Macedonian Denar</option>
+                            <option value="MKD" {{ old('currency', $contract->currency) === 'MKD' ? 'selected' : '' }}>MKD - Macedonian Denar</option>
                             <option value="USD" {{ old('currency', $contract->currency) === 'USD' ? 'selected' : '' }}>USD ($) - US Dollar</option>
                             <option value="EUR" {{ old('currency', $contract->currency) === 'EUR' ? 'selected' : '' }}>EUR (€) - Euro</option>
                             <option value="GBP" {{ old('currency', $contract->currency) === 'GBP' ? 'selected' : '' }}>GBP (£) - British Pound</option>

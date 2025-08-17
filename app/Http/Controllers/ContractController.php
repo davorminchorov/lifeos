@@ -5,13 +5,17 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreContractRequest;
 use App\Http\Requests\UpdateContractRequest;
 use App\Models\Contract;
+use App\Services\CurrencyService;
 use Illuminate\Http\Request;
 
 class ContractController extends Controller
 {
-    public function __construct()
+    protected CurrencyService $currencyService;
+
+    public function __construct(CurrencyService $currencyService)
     {
         // Middleware is now handled in bootstrap/app.php or route definitions
+        $this->currencyService = $currencyService;
     }
 
     /**
@@ -260,14 +264,25 @@ class ContractController extends Controller
     {
         $userId = auth()->id();
 
+        // Get active contracts and convert values to MKD
+        $activeContracts = Contract::where('user_id', $userId)
+            ->where('status', 'active')
+            ->whereNotNull('contract_value')
+            ->get();
+
+        $totalContractValueMKD = 0;
+        foreach ($activeContracts as $contract) {
+            $currency = $contract->currency ?? config('currency.default', 'MKD');
+            $valueInMKD = $this->currencyService->convertToDefault($contract->contract_value, $currency);
+            $totalContractValueMKD += $valueInMKD;
+        }
+
         $summary = [
             'total_contracts' => Contract::where('user_id', $userId)->count(),
             'active_contracts' => Contract::where('user_id', $userId)->where('status', 'active')->count(),
             'terminated_contracts' => Contract::where('user_id', $userId)->where('status', 'terminated')->count(),
             'expired_contracts' => Contract::where('user_id', $userId)->where('status', 'expired')->count(),
-            'total_contract_value' => Contract::where('user_id', $userId)
-                ->where('status', 'active')
-                ->sum('contract_value'),
+            'total_contract_value' => $totalContractValueMKD,
             'expiring_soon' => Contract::where('user_id', $userId)
                 ->expiringSoon(30)
                 ->count(),

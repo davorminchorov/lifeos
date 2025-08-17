@@ -5,11 +5,19 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreExpenseRequest;
 use App\Http\Requests\UpdateExpenseRequest;
 use App\Models\Expense;
+use App\Services\CurrencyService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class ExpenseController extends Controller
 {
+    protected CurrencyService $currencyService;
+
+    public function __construct(CurrencyService $currencyService)
+    {
+        $this->currencyService = $currencyService;
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -213,48 +221,69 @@ class ExpenseController extends Controller
             $query->currentYear();
         }
 
-        // Category breakdown
-        $categoryBreakdown = (clone $query)
-            ->select('category', DB::raw('SUM(amount) as total_amount'), DB::raw('COUNT(*) as count'))
-            ->groupBy('category')
-            ->orderBy('total_amount', 'desc')
-            ->get();
+        // Load all expenses and convert to MKD
+        $expenses = $query->get();
+        $expensesWithMKD = $expenses->map(function ($expense) {
+            $currency = $expense->currency ?? config('currency.default', 'MKD');
+            $amountInMKD = $this->currencyService->convertToDefault($expense->amount, $currency);
+            $expense->amount_mkd = $amountInMKD;
+            return $expense;
+        });
 
-        // Monthly spending trends
-        $monthlySpending = (clone $query)
-            ->select(
-                DB::raw('YEAR(expense_date) as year'),
-                DB::raw('MONTH(expense_date) as month'),
-                DB::raw('SUM(amount) as total_amount'),
-                DB::raw('COUNT(*) as count')
-            )
-            ->groupBy('year', 'month')
-            ->orderBy('year', 'desc')
-            ->orderBy('month', 'desc')
-            ->get();
+        // Category breakdown with MKD conversion
+        $categoryBreakdown = $expensesWithMKD->groupBy('category')->map(function ($group, $category) {
+            return [
+                'category' => $category,
+                'total_amount' => $group->sum('amount_mkd'),
+                'count' => $group->count(),
+            ];
+        })->sortByDesc('total_amount')->values();
 
-        // Business vs Personal breakdown
-        $typeBreakdown = (clone $query)
-            ->select('expense_type', DB::raw('SUM(amount) as total_amount'), DB::raw('COUNT(*) as count'))
-            ->groupBy('expense_type')
-            ->get();
+        // Monthly spending trends with MKD conversion
+        $monthlySpending = $expensesWithMKD->groupBy(function ($expense) {
+            return $expense->expense_date->format('Y-m');
+        })->map(function ($group, $yearMonth) {
+            [$year, $month] = explode('-', $yearMonth);
+            return [
+                'year' => (int) $year,
+                'month' => (int) $month,
+                'total_amount' => $group->sum('amount_mkd'),
+                'count' => $group->count(),
+            ];
+        })->sortByDesc(function ($item) {
+            return $item['year'] * 100 + $item['month'];
+        })->values();
 
-        // Tax deductible summary
-        $taxDeductibleTotal = (clone $query)->taxDeductible()->sum('amount');
+        // Business vs Personal breakdown with MKD conversion
+        $typeBreakdown = $expensesWithMKD->groupBy('expense_type')->map(function ($group, $type) {
+            return [
+                'expense_type' => $type,
+                'total_amount' => $group->sum('amount_mkd'),
+                'count' => $group->count(),
+            ];
+        })->values();
 
-        // Top merchants
-        $topMerchants = (clone $query)
-            ->whereNotNull('merchant')
-            ->select('merchant', DB::raw('SUM(amount) as total_amount'), DB::raw('COUNT(*) as count'))
-            ->groupBy('merchant')
-            ->orderBy('total_amount', 'desc')
-            ->limit(10)
-            ->get();
+        // Tax deductible summary with MKD conversion
+        $taxDeductibleTotal = $expensesWithMKD->filter(function ($expense) {
+            return $expense->is_tax_deductible;
+        })->sum('amount_mkd');
+
+        // Top merchants with MKD conversion
+        $topMerchants = $expensesWithMKD->whereNotNull('merchant')->groupBy('merchant')->map(function ($group, $merchant) {
+            return [
+                'merchant' => $merchant,
+                'total_amount' => $group->sum('amount_mkd'),
+                'count' => $group->count(),
+            ];
+        })->sortByDesc('total_amount')->take(10)->values();
+
+        $totalAmountMKD = $expensesWithMKD->sum('amount_mkd');
+        $averageExpenseMKD = $expensesWithMKD->count() > 0 ? $totalAmountMKD / $expensesWithMKD->count() : 0;
 
         $analytics = [
-            'total_expenses' => $query->count(),
-            'total_amount' => $query->sum('amount'),
-            'average_expense' => $query->avg('amount'),
+            'total_expenses' => $expensesWithMKD->count(),
+            'total_amount' => $totalAmountMKD,
+            'average_expense' => $averageExpenseMKD,
             'category_breakdown' => $categoryBreakdown,
             'monthly_spending' => $monthlySpending,
             'type_breakdown' => $typeBreakdown,

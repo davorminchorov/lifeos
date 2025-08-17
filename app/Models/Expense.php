@@ -109,7 +109,8 @@ class Expense extends Model
     // Get formatted amount with currency
     public function getFormattedAmountAttribute()
     {
-        return $this->currency.' '.number_format($this->amount, 2);
+        $currencyService = app(\App\Services\CurrencyService::class);
+        return $currencyService->format($this->amount, $this->currency);
     }
 
     // Check if expense is over budget (if budget allocated)

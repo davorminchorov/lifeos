@@ -116,7 +116,7 @@
                                         </span>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
-                                        <div>${{ number_format($warranty->purchase_price, 2) }}</div>
+                                        <div>{{ $warranty->formatted_purchase_price }}</div>
                                         <div class="text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">{{ ucfirst($warranty->warranty_type) }}</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
@@ -254,7 +254,11 @@
                             <dl>
                                 <dt class="text-sm font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] truncate">Total Coverage Value</dt>
                                 <dd class="text-lg font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
-                                    ${{ number_format($warranties->where('current_status', 'active')->where('is_expired', false)->sum('purchase_price'), 2) }}
+                                    @php
+                                        $currencyService = app(\App\Services\CurrencyService::class);
+                                        $totalCoverageValue = $warranties->where('current_status', 'active')->where('is_expired', false)->sum('purchase_price');
+                                    @endphp
+                                    {{ $currencyService->format($totalCoverageValue) }}
                                 </dd>
                             </dl>
                         </div>

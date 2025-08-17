@@ -190,7 +190,7 @@
                     <div class="bg-white dark:bg-gray-800 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                         <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">Purchase Price</dt>
                         <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">
-                            <div class="text-lg font-semibold">${{ number_format($warranty->purchase_price, 2) }}</div>
+                            <div class="text-lg font-semibold">{{ $warranty->formatted_purchase_price }}</div>
                         </dd>
                     </div>
                     @if($warranty->retailer)

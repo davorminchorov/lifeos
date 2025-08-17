@@ -95,10 +95,11 @@
                         <tbody class="bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] divide-y divide-[color:var(--color-primary-300)] dark:divide-[color:var(--color-dark-300)]">
                             @foreach($investments as $investment)
                                 @php
-                                    $totalValue = $investment->quantity * $investment->current_price;
-                                    $totalCost = $investment->quantity * $investment->purchase_price;
-                                    $gainLoss = $totalValue - $totalCost;
-                                    $gainLossPercent = $totalCost > 0 ? (($gainLoss / $totalCost) * 100) : 0;
+                                    $totalValue = $investment->current_market_value;
+                                    $totalCost = $investment->total_cost_basis;
+                                    $gainLoss = $investment->unrealized_gain_loss;
+                                    $gainLossPercent = $investment->unrealized_gain_loss_percentage;
+                                    $currencyService = app(\App\Services\CurrencyService::class);
                                 @endphp
                                 <tr class="hover:bg-[color:var(--color-primary-100)] dark:hover:bg-[color:var(--color-dark-200)]">
                                     <td class="px-6 py-4 whitespace-nowrap">
@@ -122,15 +123,15 @@
                                         {{ number_format($investment->quantity, 4) }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
-                                        ${{ number_format($investment->purchase_price, 2) }}
+                                        {{ $investment->formatted_purchase_price }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
-                                        ${{ number_format($totalValue, 2) }}
+                                        {{ $investment->formatted_current_market_value }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm">
                                         <div class="flex items-center">
                                             <span class="font-medium {{ $gainLoss >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400' }}">
-                                                {{ $gainLoss >= 0 ? '+' : '' }}${{ number_format($gainLoss, 2) }}
+                                                {{ $gainLoss >= 0 ? '+' : '' }}{{ $investment->formatted_unrealized_gain_loss }}
                                             </span>
                                             <span class="ml-2 text-xs {{ $gainLoss >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400' }}">
                                                 ({{ $gainLoss >= 0 ? '+' : '' }}{{ number_format($gainLossPercent, 1) }}%)

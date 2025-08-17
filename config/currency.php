@@ -24,7 +24,7 @@ return [
     'supported' => [
         'MKD' => [
             'name' => 'Macedonian Denar',
-            'symbol' => 'ден',
+            'symbol' => 'MKD',
             'decimal_places' => 2,
         ],
         'USD' => [

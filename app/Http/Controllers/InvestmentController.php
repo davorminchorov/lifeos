@@ -10,10 +10,17 @@ use App\Models\Investment;
 use App\Models\InvestmentDividend;
 use App\Models\InvestmentGoal;
 use App\Models\InvestmentTransaction;
+use App\Services\CurrencyService;
 use Illuminate\Http\Request;
 
 class InvestmentController extends Controller
 {
+    protected CurrencyService $currencyService;
+
+    public function __construct(CurrencyService $currencyService)
+    {
+        $this->currencyService = $currencyService;
+    }
     /**
      * Display a listing of the resource.
      */

@@ -107,7 +107,7 @@
                         @if($contract->contract_value)
                             <div class="bg-white dark:bg-gray-800 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                 <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Contract Value</dt>
-                                <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">${{ number_format($contract->contract_value, 2) }}</dd>
+                                <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">{{ $contract->formatted_contract_value }}</dd>
                             </div>
                         @endif
                         @if($contract->payment_terms)

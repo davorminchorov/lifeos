@@ -111,7 +111,7 @@ class Contract extends Model
     }
 
     // Get formatted contract value with currency
-    public function getFormattedValueAttribute()
+    public function getFormattedContractValueAttribute()
     {
         if (! $this->contract_value) {
             return null;

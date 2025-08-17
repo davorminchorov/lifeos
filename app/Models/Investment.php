@@ -146,4 +146,39 @@ class Investment extends Model
 
         return (pow(1 + ($this->total_return_percentage / 100), 1 / $holdingPeriodYears) - 1) * 100;
     }
+
+    // Get formatted purchase price with currency
+    public function getFormattedPurchasePriceAttribute()
+    {
+        $currencyService = app(\App\Services\CurrencyService::class);
+        return $currencyService->format($this->purchase_price);
+    }
+
+    // Get formatted current value with currency
+    public function getFormattedCurrentValueAttribute()
+    {
+        $currencyService = app(\App\Services\CurrencyService::class);
+        return $currencyService->format($this->current_value ?? $this->purchase_price);
+    }
+
+    // Get formatted current market value with currency
+    public function getFormattedCurrentMarketValueAttribute()
+    {
+        $currencyService = app(\App\Services\CurrencyService::class);
+        return $currencyService->format($this->current_market_value);
+    }
+
+    // Get formatted unrealized gain/loss with currency
+    public function getFormattedUnrealizedGainLossAttribute()
+    {
+        $currencyService = app(\App\Services\CurrencyService::class);
+        return $currencyService->format($this->unrealized_gain_loss);
+    }
+
+    // Get formatted total return with currency
+    public function getFormattedTotalReturnAttribute()
+    {
+        $currencyService = app(\App\Services\CurrencyService::class);
+        return $currencyService->format($this->total_return);
+    }
 }

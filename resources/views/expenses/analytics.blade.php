@@ -54,7 +54,7 @@
                     <div class="ml-5 w-0 flex-1">
                         <dl>
                             <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Total Amount</dt>
-                            <dd class="text-lg font-medium text-gray-900 dark:text-white">${{ number_format($analytics['total_amount'], 2) }}</dd>
+                            <dd class="text-lg font-medium text-gray-900 dark:text-white">MKD {{ number_format($analytics['total_amount'], 2) }}</dd>
                         </dl>
                     </div>
                 </div>
@@ -74,7 +74,7 @@
                     <div class="ml-5 w-0 flex-1">
                         <dl>
                             <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Average Expense</dt>
-                            <dd class="text-lg font-medium text-gray-900 dark:text-white">${{ number_format($analytics['average_expense'], 2) }}</dd>
+                            <dd class="text-lg font-medium text-gray-900 dark:text-white">MKD {{ number_format($analytics['average_expense'], 2) }}</dd>
                         </dl>
                     </div>
                 </div>
@@ -94,7 +94,7 @@
                     <div class="ml-5 w-0 flex-1">
                         <dl>
                             <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Tax Deductible</dt>
-                            <dd class="text-lg font-medium text-gray-900 dark:text-white">${{ number_format($analytics['tax_deductible_total'], 2) }}</dd>
+                            <dd class="text-lg font-medium text-gray-900 dark:text-white">MKD {{ number_format($analytics['tax_deductible_total'], 2) }}</dd>
                         </dl>
                     </div>
                 </div>
@@ -117,7 +117,7 @@
                             <div>
                                 <div class="flex justify-between items-center mb-1">
                                     <span class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ $category->category }}</span>
-                                    <span class="text-sm text-gray-500 dark:text-gray-400">${{ number_format($category->total_amount, 2) }} ({{ number_format($percentage, 1) }}%)</span>
+                                    <span class="text-sm text-gray-500 dark:text-gray-400">MKD {{ number_format($category->total_amount, 2) }} ({{ number_format($percentage, 1) }}%)</span>
                                 </div>
                                 <div class="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">
                                     <div class="bg-indigo-600 h-2 rounded-full" style="width: {{ $percentage }}%"></div>
@@ -149,7 +149,7 @@
                             <div>
                                 <div class="flex justify-between items-center mb-1">
                                     <span class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ ucfirst($type->expense_type) }}</span>
-                                    <span class="text-sm text-gray-500 dark:text-gray-400">${{ number_format($type->total_amount, 2) }} ({{ number_format($percentage, 1) }}%)</span>
+                                    <span class="text-sm text-gray-500 dark:text-gray-400">MKD {{ number_format($type->total_amount, 2) }} ({{ number_format($percentage, 1) }}%)</span>
                                 </div>
                                 <div class="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">
                                     <div class="{{ $color }} h-2 rounded-full" style="width: {{ $percentage }}%"></div>

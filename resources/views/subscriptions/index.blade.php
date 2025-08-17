@@ -205,7 +205,23 @@
                             <dl>
                                 <dt class="text-sm font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] truncate">Total Monthly Cost</dt>
                                 <dd class="text-lg font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
-                                    ${{ number_format($subscriptions->where('status', 'active')->sum(function($sub) { return $sub->monthly_cost ?? 0; }), 2) }}
+                                    @php
+                                        $currencyService = app(\App\Services\CurrencyService::class);
+                                        $totalMonthlyMKD = 0;
+                                        foreach ($subscriptions->where('status', 'active') as $subscription) {
+                                            $currency = $subscription->currency ?? config('currency.default', 'MKD');
+                                            $costInMKD = $currencyService->convertToDefault($subscription->cost, $currency);
+                                            $monthlyCostMKD = match ($subscription->billing_cycle) {
+                                                'monthly' => $costInMKD,
+                                                'yearly' => $costInMKD / 12,
+                                                'weekly' => $costInMKD * 4.33,
+                                                'custom' => $subscription->billing_cycle_days ? ($costInMKD * 30.44) / $subscription->billing_cycle_days : 0,
+                                                default => 0,
+                                            };
+                                            $totalMonthlyMKD += $monthlyCostMKD;
+                                        }
+                                    @endphp
+                                    {{ $currencyService->format($totalMonthlyMKD) }}
                                 </dd>
                             </dl>
                         </div>

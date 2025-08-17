@@ -5,11 +5,18 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreUtilityBillRequest;
 use App\Http\Requests\UpdateUtilityBillRequest;
 use App\Models\UtilityBill;
+use App\Services\CurrencyService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class UtilityBillController extends Controller
 {
+    protected CurrencyService $currencyService;
+
+    public function __construct(CurrencyService $currencyService)
+    {
+        $this->currencyService = $currencyService;
+    }
     /**
      * Display a listing of the resource.
      */
@@ -385,29 +392,56 @@ class UtilityBillController extends Controller
     {
         $userId = auth()->id();
 
+        // Get bills and convert amounts to MKD
         $currentMonthBills = UtilityBill::where('user_id', $userId)
             ->whereMonth('bill_period_start', now()->month)
-            ->whereYear('bill_period_start', now()->year);
+            ->whereYear('bill_period_start', now()->year)
+            ->get();
 
         $currentYearBills = UtilityBill::where('user_id', $userId)
-            ->whereYear('bill_period_start', now()->year);
+            ->whereYear('bill_period_start', now()->year)
+            ->get();
+
+        $overdueBills = UtilityBill::where('user_id', $userId)
+            ->where('payment_status', 'overdue')
+            ->get();
+
+        // Convert amounts to MKD
+        $currentMonthTotalMKD = 0;
+        foreach ($currentMonthBills as $bill) {
+            $currency = $bill->currency ?? config('currency.default', 'MKD');
+            $amountInMKD = $this->currencyService->convertToDefault($bill->bill_amount, $currency);
+            $currentMonthTotalMKD += $amountInMKD;
+        }
+
+        $currentYearTotalMKD = 0;
+        foreach ($currentYearBills as $bill) {
+            $currency = $bill->currency ?? config('currency.default', 'MKD');
+            $amountInMKD = $this->currencyService->convertToDefault($bill->bill_amount, $currency);
+            $currentYearTotalMKD += $amountInMKD;
+        }
+
+        $overdueAmountMKD = 0;
+        foreach ($overdueBills as $bill) {
+            $currency = $bill->currency ?? config('currency.default', 'MKD');
+            $amountInMKD = $this->currencyService->convertToDefault($bill->bill_amount, $currency);
+            $overdueAmountMKD += $amountInMKD;
+        }
 
         $summary = [
             'total_bills' => UtilityBill::where('user_id', $userId)->count(),
-            'current_month_total' => $currentMonthBills->sum('bill_amount'),
+            'current_month_total' => $currentMonthTotalMKD,
             'current_month_count' => $currentMonthBills->count(),
-            'current_year_total' => $currentYearBills->sum('bill_amount'),
+            'current_year_total' => $currentYearTotalMKD,
             'current_year_count' => $currentYearBills->count(),
-            'average_monthly_cost' => $currentYearBills->sum('bill_amount') / max(now()->month, 1),
+            'average_monthly_cost' => $currentYearTotalMKD / max(now()->month, 1),
             'pending_bills' => UtilityBill::where('user_id', $userId)
                 ->where('payment_status', 'pending')
                 ->count(),
             'overdue_bills' => UtilityBill::where('user_id', $userId)
                 ->where('payment_status', 'overdue')
                 ->count(),
-            'overdue_amount' => UtilityBill::where('user_id', $userId)
-                ->where('payment_status', 'overdue')
-                ->sum('bill_amount'),
+            'overdue_amount' => $overdueAmountMKD,
             'disputed_bills' => UtilityBill::where('user_id', $userId)
                 ->where('payment_status', 'disputed')
                 ->count(),
@@ -465,11 +499,19 @@ class UtilityBillController extends Controller
             ->where('bill_period_start', '>=', now()->subMonths(24))
             ->get();
 
-        $costByType = $bills->groupBy('utility_type')->map(function ($group, $type) {
+        // Convert amounts to MKD first
+        $billsWithMKD = $bills->map(function ($bill) {
+            $currency = $bill->currency ?? config('currency.default', 'MKD');
+            $amountInMKD = $this->currencyService->convertToDefault($bill->bill_amount, $currency);
+            $bill->bill_amount_mkd = $amountInMKD;
+            return $bill;
+        });
+
+        $costByType = $billsWithMKD->groupBy('utility_type')->map(function ($group, $type) {
             return [
                 'utility_type' => $type,
-                'total_cost' => $group->sum('bill_amount'),
-                'average_cost' => $group->avg('bill_amount'),
+                'total_cost' => $group->sum('bill_amount_mkd'),
+                'average_cost' => $group->avg('bill_amount_mkd'),
                 'cost_per_unit' => $group->whereNotNull('usage_amount')->avg('rate_per_unit'),
                 'cost_trend' => $this->calculateCostTrend($group),
                 'seasonal_cost_variation' => $this->calculateSeasonalCostVariation($group),
@@ -478,10 +520,10 @@ class UtilityBillController extends Controller
 
         $analytics = [
             'cost_by_type' => $costByType->values(),
-            'monthly_cost_trends' => $this->getMonthlyTrends($bills, 'bill_amount'),
-            'cost_spikes' => $this->identifyCostSpikes($bills),
-            'budget_performance' => $this->analyzeBudgetPerformance($bills),
-            'rate_changes' => $this->detectRateChanges($bills),
+            'monthly_cost_trends' => $this->getMonthlyTrends($billsWithMKD, 'bill_amount_mkd'),
+            'cost_spikes' => $this->identifyCostSpikes($billsWithMKD),
+            'budget_performance' => $this->analyzeBudgetPerformance($billsWithMKD),
+            'rate_changes' => $this->detectRateChanges($billsWithMKD),
         ];
 
         return response()->json(['data' => $analytics]);
@@ -498,14 +540,22 @@ class UtilityBillController extends Controller
             ->where('bill_period_start', '>=', now()->subYear())
             ->get();
 
-        $providerPerformance = $bills->groupBy(['utility_type', 'service_provider'])
+        // Convert amounts to MKD first
+        $billsWithMKD = $bills->map(function ($bill) {
+            $currency = $bill->currency ?? config('currency.default', 'MKD');
+            $amountInMKD = $this->currencyService->convertToDefault($bill->bill_amount, $currency);
+            $bill->bill_amount_mkd = $amountInMKD;
+            return $bill;
+        });
+
+        $providerPerformance = $billsWithMKD->groupBy(['utility_type', 'service_provider'])
             ->map(function ($typeGroup, $type) {
                 return $typeGroup->map(function ($providerGroup, $provider) use ($type) {
                     return [
                         'utility_type' => $type,
                         'service_provider' => $provider,
-                        'total_cost' => $providerGroup->sum('bill_amount'),
-                        'average_cost' => $providerGroup->avg('bill_amount'),
+                        'total_cost' => $providerGroup->sum('bill_amount_mkd'),
+                        'average_cost' => $providerGroup->avg('bill_amount_mkd'),
                         'bill_count' => $providerGroup->count(),
                         'reliability_score' => $this->calculateReliabilityScore($providerGroup),
                         'cost_efficiency' => $this->calculateCostEfficiency($providerGroup),
@@ -517,9 +567,9 @@ class UtilityBillController extends Controller
 
         $analytics = [
             'provider_performance' => $providerPerformance->values(),
-            'cost_comparison' => $this->compareProviderCosts($bills),
-            'switching_opportunities' => $this->identifySwitchingOpportunities($bills),
-            'contract_renewals' => $this->getUpcomingContractRenewals($bills),
+            'cost_comparison' => $this->compareProviderCosts($billsWithMKD),
+            'switching_opportunities' => $this->identifySwitchingOpportunities($billsWithMKD),
+            'contract_renewals' => $this->getUpcomingContractRenewals($billsWithMKD),
         ];
 
         return response()->json(['data' => $analytics]);

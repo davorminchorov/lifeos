@@ -82,7 +82,7 @@
                     <div class="ml-5 w-0 flex-1">
                         <dl>
                             <dt class="text-sm font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] truncate">Portfolio Value</dt>
-                            <dd class="text-lg font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">${{ number_format($stats['portfolio_value'] ?? 0, 2) }}</dd>
+                            <dd class="text-lg font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">{{ $stats['portfolio_value_formatted'] ?? 'MKD 0.00' }}</dd>
                         </dl>
                     </div>
                     <div class="ml-5">
@@ -94,7 +94,7 @@
                 <div class="text-sm">
                     <span class="text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">Total return:</span>
                     <span class="font-medium {{ ($stats['total_return'] ?? 0) >= 0 ? 'text-[color:var(--color-success-600)]' : 'text-[color:var(--color-danger-600)]' }}">
-                        {{ ($stats['total_return'] ?? 0) >= 0 ? '+' : '' }}${{ number_format($stats['total_return'] ?? 0, 2) }}
+                        {{ ($stats['total_return'] ?? 0) >= 0 ? '+' : '' }}{{ $stats['total_return_formatted'] ?? 'MKD 0.00' }}
                     </span>
                 </div>
             </div>
@@ -164,7 +164,7 @@
                                     <p class="text-sm text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">{{ $expense->category }} • {{ $expense->expense_date->format('M j, Y') }}</p>
                                 </div>
                                 <div class="flex-shrink-0 ml-4">
-                                    <span class="text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">${{ number_format($expense->amount, 2) }}</span>
+                                    <span class="text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">{{ $expense->formatted_amount }}</span>
                                 </div>
                             </div>
                         @endforeach
@@ -191,7 +191,7 @@
                                     <p class="text-sm text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">{{ ucfirst($bill->utility_type) }} • Due {{ $bill->due_date->format('M j, Y') }}</p>
                                 </div>
                                 <div class="flex-shrink-0 ml-4">
-                                    <span class="text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">${{ number_format($bill->bill_amount, 2) }}</span>
+                                    <span class="text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">{{ $bill->formatted_bill_amount }}</span>
                                 </div>
                             </div>
                         @endforeach

@@ -120,7 +120,6 @@
                 type="number"
                 min="0"
                 step="0.01"
-                prefix="$"
                 placeholder="0.00"
             />
 
@@ -129,7 +128,7 @@
                 label="Currency"
                 required
             >
-                <option value="MKD" {{ old('currency', 'MKD') === 'MKD' ? 'selected' : '' }}>MKD (ден) - Macedonian Denar</option>
+                <option value="MKD" {{ old('currency', 'MKD') === 'MKD' ? 'selected' : '' }}>MKD - Macedonian Denar</option>
                 <option value="USD" {{ old('currency') === 'USD' ? 'selected' : '' }}>USD ($) - US Dollar</option>
                 <option value="EUR" {{ old('currency') === 'EUR' ? 'selected' : '' }}>EUR (€) - Euro</option>
                 <option value="GBP" {{ old('currency') === 'GBP' ? 'selected' : '' }}>GBP (£) - British Pound</option>

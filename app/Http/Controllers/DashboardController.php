@@ -117,7 +117,9 @@ class DashboardController extends Controller
             'total_contract_value' => $totalContractValueMKD,
             'total_contract_value_formatted' => $this->currencyService->format($totalContractValueMKD),
             'portfolio_value' => $portfolioValue,
+            'portfolio_value_formatted' => $this->currencyService->format($portfolioValue),
             'total_return' => $totalReturn,
+            'total_return_formatted' => $this->currencyService->format($totalReturn),
             'total_warranties' => $totalWarranties,
             'total_expenses' => $totalExpenses,
             'total_expenses_amount' => $totalExpensesMKD,
@@ -174,7 +176,9 @@ class DashboardController extends Controller
         // Overdue bills
         $overdueBills = UtilityBill::overdue()->get();
         foreach ($overdueBills as $bill) {
-            $formattedAmount = $this->currencyService->format($bill->bill_amount, $bill->currency);
+            $currency = $bill->currency ?? config('currency.default', 'MKD');
+            $amountInMKD = $this->currencyService->convertToDefault($bill->bill_amount, $currency);
+            $formattedAmount = $this->currencyService->format($amountInMKD);
             $alerts[] = [
                 'type' => 'error',
                 'title' => 'Overdue Bill',
@@ -187,7 +191,9 @@ class DashboardController extends Controller
         // Bills due soon
         $billsDueSoon = UtilityBill::dueSoon(7)->get();
         foreach ($billsDueSoon as $bill) {
-            $formattedAmount = $this->currencyService->format($bill->bill_amount, $bill->currency);
+            $currency = $bill->currency ?? config('currency.default', 'MKD');
+            $amountInMKD = $this->currencyService->convertToDefault($bill->bill_amount, $currency);
+            $formattedAmount = $this->currencyService->format($amountInMKD);
             $alerts[] = [
                 'type' => 'info',
                 'title' => 'Bill Due Soon',

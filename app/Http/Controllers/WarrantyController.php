@@ -5,10 +5,17 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreWarrantyRequest;
 use App\Http\Requests\UpdateWarrantyRequest;
 use App\Models\Warranty;
+use App\Services\CurrencyService;
 use Illuminate\Http\Request;
 
 class WarrantyController extends Controller
 {
+    protected CurrencyService $currencyService;
+
+    public function __construct(CurrencyService $currencyService)
+    {
+        $this->currencyService = $currencyService;
+    }
     /**
      * Display a listing of the resource.
      */
@@ -283,6 +290,18 @@ class WarrantyController extends Controller
     {
         $userId = auth()->id();
 
+        // Get warranties and convert purchase prices to MKD
+        $warranties = Warranty::where('user_id', $userId)
+            ->whereNotNull('purchase_price')
+            ->get();
+
+        $totalPurchaseValueMKD = 0;
+        foreach ($warranties as $warranty) {
+            $currency = $warranty->currency ?? config('currency.default', 'MKD');
+            $priceInMKD = $this->currencyService->convertToDefault($warranty->purchase_price, $currency);
+            $totalPurchaseValueMKD += $priceInMKD;
+        }
+
         $summary = [
             'total_warranties' => Warranty::where('user_id', $userId)->count(),
             'active_warranties' => Warranty::where('user_id', $userId)->where('current_status', 'active')->count(),
@@ -293,8 +312,7 @@ class WarrantyController extends Controller
                 ->where('warranty_expiration_date', '<=', now()->addDays(30))
                 ->where('current_status', 'active')
                 ->count(),
-            'total_purchase_value' => Warranty::where('user_id', $userId)
-                ->sum('purchase_price'),
+            'total_purchase_value' => $totalPurchaseValueMKD,
         ];
 
         return response()->json(['data' => $summary]);

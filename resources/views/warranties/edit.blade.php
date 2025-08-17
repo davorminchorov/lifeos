@@ -126,7 +126,7 @@
                             <label for="currency" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Currency *</label>
                             <select name="currency" id="currency" required
                                     class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                <option value="MKD" {{ old('currency', $warranty->currency) === 'MKD' ? 'selected' : '' }}>MKD (ден) - Macedonian Denar</option>
+                                <option value="MKD" {{ old('currency', $warranty->currency) === 'MKD' ? 'selected' : '' }}>MKD - Macedonian Denar</option>
                                 <option value="USD" {{ old('currency', $warranty->currency) === 'USD' ? 'selected' : '' }}>USD ($) - US Dollar</option>
                                 <option value="EUR" {{ old('currency', $warranty->currency) === 'EUR' ? 'selected' : '' }}>EUR (€) - Euro</option>
                                 <option value="GBP" {{ old('currency', $warranty->currency) === 'GBP' ? 'selected' : '' }}>GBP (£) - British Pound</option>

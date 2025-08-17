@@ -5,10 +5,18 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreSubscriptionRequest;
 use App\Http\Requests\UpdateSubscriptionRequest;
 use App\Models\Subscription;
+use App\Services\CurrencyService;
 use Illuminate\Http\Request;
 
 class SubscriptionController extends Controller
 {
+    protected CurrencyService $currencyService;
+
+    public function __construct(CurrencyService $currencyService)
+    {
+        $this->currencyService = $currencyService;
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -187,19 +195,33 @@ class SubscriptionController extends Controller
     {
         $userId = auth()->id();
 
+        // Calculate spending in MKD
+        $activeSubscriptions = Subscription::where('user_id', $userId)->where('status', 'active')->get();
+        $monthlySpendingMKD = 0;
+
+        foreach ($activeSubscriptions as $subscription) {
+            $currency = $subscription->currency ?? config('currency.default', 'MKD');
+            $costInMKD = $this->currencyService->convertToDefault($subscription->cost, $currency);
+
+            // Convert to monthly equivalent
+            $monthlyCostMKD = match ($subscription->billing_cycle) {
+                'monthly' => $costInMKD,
+                'yearly' => $costInMKD / 12,
+                'weekly' => $costInMKD * 4.33,
+                'custom' => $subscription->billing_cycle_days ? ($costInMKD * 30.44) / $subscription->billing_cycle_days : 0,
+                default => 0,
+            };
+
+            $monthlySpendingMKD += $monthlyCostMKD;
+        }
+
         $data = [
             'total_subscriptions' => Subscription::where('user_id', $userId)->count(),
-            'active_subscriptions' => Subscription::where('user_id', $userId)->where('status', 'active')->count(),
+            'active_subscriptions' => $activeSubscriptions->count(),
             'cancelled_subscriptions' => Subscription::where('user_id', $userId)->where('status', 'cancelled')->count(),
             'paused_subscriptions' => Subscription::where('user_id', $userId)->where('status', 'paused')->count(),
-            'monthly_spending' => Subscription::where('user_id', $userId)
-                ->where('status', 'active')
-                ->get()
-                ->sum('monthly_cost'),
-            'yearly_spending' => Subscription::where('user_id', $userId)
-                ->where('status', 'active')
-                ->get()
-                ->sum('yearly_cost'),
+            'monthly_spending' => $monthlySpendingMKD,
+            'yearly_spending' => $monthlySpendingMKD * 12,
             'due_soon' => Subscription::where('user_id', $userId)
                 ->dueSoon(7)
                 ->count(),
@@ -219,19 +241,47 @@ class SubscriptionController extends Controller
             ->where('status', 'active')
             ->get();
 
+        // Convert all costs to MKD and calculate monthly equivalents
+        $subscriptionsWithMKD = $subscriptions->map(function ($subscription) {
+            $currency = $subscription->currency ?? config('currency.default', 'MKD');
+            $costInMKD = $this->currencyService->convertToDefault($subscription->cost, $currency);
+
+            $monthlyCostMKD = match ($subscription->billing_cycle) {
+                'monthly' => $costInMKD,
+                'yearly' => $costInMKD / 12,
+                'weekly' => $costInMKD * 4.33,
+                'custom' => $subscription->billing_cycle_days ? ($costInMKD * 30.44) / $subscription->billing_cycle_days : 0,
+                default => 0,
+            };
+
+            $subscription->cost_mkd = $costInMKD;
+            $subscription->monthly_cost_mkd = $monthlyCostMKD;
+            $subscription->yearly_cost_mkd = $monthlyCostMKD * 12;
+
+            return $subscription;
+        });
+
         $data = [
-            'monthly_breakdown' => $subscriptions->groupBy('billing_cycle')->map(function ($group, $cycle) {
+            'monthly_breakdown' => $subscriptionsWithMKD->groupBy('billing_cycle')->map(function ($group, $cycle) {
                 return [
                     'count' => $group->count(),
-                    'total_cost' => $group->sum('cost'),
-                    'monthly_equivalent' => $group->sum('monthly_cost'),
+                    'total_cost' => $group->sum('cost_mkd'),
+                    'monthly_equivalent' => $group->sum('monthly_cost_mkd'),
                 ];
             }),
             'spending_trend' => [
-                'current_month' => $subscriptions->sum('monthly_cost'),
-                'projected_year' => $subscriptions->sum('yearly_cost'),
+                'current_month' => $subscriptionsWithMKD->sum('monthly_cost_mkd'),
+                'projected_year' => $subscriptionsWithMKD->sum('yearly_cost_mkd'),
             ],
-            'top_expenses' => $subscriptions->sortByDesc('monthly_cost')->take(5)->values(),
+            'top_expenses' => $subscriptionsWithMKD->sortByDesc('monthly_cost_mkd')->take(5)->map(function ($subscription) {
+                return [
+                    'id' => $subscription->id,
+                    'service_name' => $subscription->service_name,
+                    'category' => $subscription->category,
+                    'monthly_cost' => $subscription->monthly_cost_mkd,
+                    'billing_cycle' => $subscription->billing_cycle,
+                ];
+            })->values(),
         ];
 
         return response()->json(['data' => $data]);
@@ -244,16 +294,37 @@ class SubscriptionController extends Controller
     {
         $userId = auth()->id();
 
-        $categories = Subscription::where('user_id', $userId)
+        $subscriptions = Subscription::where('user_id', $userId)
             ->where('status', 'active')
-            ->get()
+            ->get();
+
+        // Convert all costs to MKD first
+        $subscriptionsWithMKD = $subscriptions->map(function ($subscription) {
+            $currency = $subscription->currency ?? config('currency.default', 'MKD');
+            $costInMKD = $this->currencyService->convertToDefault($subscription->cost, $currency);
+
+            $monthlyCostMKD = match ($subscription->billing_cycle) {
+                'monthly' => $costInMKD,
+                'yearly' => $costInMKD / 12,
+                'weekly' => $costInMKD * 4.33,
+                'custom' => $subscription->billing_cycle_days ? ($costInMKD * 30.44) / $subscription->billing_cycle_days : 0,
+                default => 0,
+            };
+
+            $subscription->monthly_cost_mkd = $monthlyCostMKD;
+            $subscription->yearly_cost_mkd = $monthlyCostMKD * 12;
+
+            return $subscription;
+        });
+
+        $categories = $subscriptionsWithMKD
             ->groupBy('category')
             ->map(function ($group, $category) {
                 return [
                     'category' => $category,
                     'count' => $group->count(),
-                    'monthly_cost' => $group->sum('monthly_cost'),
-                    'yearly_cost' => $group->sum('yearly_cost'),
+                    'monthly_cost' => $group->sum('monthly_cost_mkd'),
+                    'yearly_cost' => $group->sum('yearly_cost_mkd'),
                     'percentage' => 0, // Will be calculated below
                 ];
             });
