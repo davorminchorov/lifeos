@@ -31,6 +31,7 @@ class Subscription extends Model
         'notes',
         'tags',
         'status',
+        'file_attachments',
     ];
 
     protected function casts(): array
@@ -45,6 +46,7 @@ class Subscription extends Model
             'cancellation_difficulty' => 'integer',
             'price_history' => 'array',
             'tags' => 'array',
+            'file_attachments' => 'array',
         ];
     }
 

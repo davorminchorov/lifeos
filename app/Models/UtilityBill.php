@@ -18,6 +18,7 @@ class UtilityBill extends Model
         'account_number',
         'service_address',
         'bill_amount',
+        'currency',
         'usage_amount',
         'usage_unit',
         'rate_per_unit',
@@ -159,5 +160,23 @@ class UtilityBill extends Model
     public function getBillingPeriodDaysAttribute()
     {
         return $this->bill_period_start->diffInDays($this->bill_period_end);
+    }
+
+    // Get formatted bill amount with currency
+    public function getFormattedBillAmountAttribute()
+    {
+        $currency = $this->currency ?? config('currency.default', 'MKD');
+        return app(\App\Services\CurrencyService::class)->format($this->bill_amount, $currency);
+    }
+
+    // Get formatted budget threshold with currency
+    public function getFormattedBudgetThresholdAttribute()
+    {
+        if (!$this->budget_alert_threshold) {
+            return null;
+        }
+
+        $currency = $this->currency ?? config('currency.default', 'MKD');
+        return app(\App\Services\CurrencyService::class)->format($this->budget_alert_threshold, $currency);
     }
 }

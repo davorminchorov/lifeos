@@ -19,6 +19,7 @@ class Warranty extends Model
         'serial_number',
         'purchase_date',
         'purchase_price',
+        'currency',
         'retailer',
         'warranty_duration_months',
         'warranty_type',
@@ -31,6 +32,7 @@ class Warranty extends Model
         'transfer_history',
         'maintenance_reminders',
         'notes',
+        'file_attachments',
     ];
 
     protected function casts(): array
@@ -45,6 +47,7 @@ class Warranty extends Model
             'proof_of_purchase_attachments' => 'array',
             'transfer_history' => 'array',
             'maintenance_reminders' => 'array',
+            'file_attachments' => 'array',
         ];
     }
 
@@ -103,5 +106,16 @@ class Warranty extends Model
     public function getTotalClaimsAttribute()
     {
         return is_array($this->claim_history) ? count($this->claim_history) : 0;
+    }
+
+    // Get formatted purchase price with currency
+    public function getFormattedPurchasePriceAttribute()
+    {
+        if (!$this->purchase_price) {
+            return null;
+        }
+
+        $currency = $this->currency ?? config('currency.default', 'MKD');
+        return app(\App\Services\CurrencyService::class)->format($this->purchase_price, $currency);
     }
 }

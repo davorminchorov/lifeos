@@ -22,6 +22,7 @@ class Contract extends Model
         'notice_period_days',
         'auto_renewal',
         'contract_value',
+        'currency',
         'payment_terms',
         'key_obligations',
         'penalties',
@@ -32,6 +33,7 @@ class Contract extends Model
         'amendments',
         'notes',
         'status',
+        'file_attachments',
     ];
 
     protected function casts(): array
@@ -46,6 +48,7 @@ class Contract extends Model
             'document_attachments' => 'array',
             'renewal_history' => 'array',
             'amendments' => 'array',
+            'file_attachments' => 'array',
         ];
     }
 
@@ -105,5 +108,16 @@ class Contract extends Model
         }
 
         return $this->end_date->subDays($this->notice_period_days);
+    }
+
+    // Get formatted contract value with currency
+    public function getFormattedValueAttribute()
+    {
+        if (!$this->contract_value) {
+            return null;
+        }
+
+        $currency = $this->currency ?? config('currency.default', 'MKD');
+        return app(\App\Services\CurrencyService::class)->format($this->contract_value, $currency);
     }
 }
