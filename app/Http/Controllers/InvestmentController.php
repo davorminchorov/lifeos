@@ -3,9 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreInvestmentRequest;
+use App\Http\Requests\StoreInvestmentDividendRequest;
+use App\Http\Requests\StoreInvestmentTransactionRequest;
 use App\Http\Requests\UpdateInvestmentRequest;
 use App\Models\Investment;
+use App\Models\InvestmentDividend;
 use App\Models\InvestmentGoal;
+use App\Models\InvestmentTransaction;
 use Illuminate\Http\Request;
 
 class InvestmentController extends Controller
@@ -141,32 +145,28 @@ class InvestmentController extends Controller
     /**
      * Record a dividend payment.
      */
-    public function recordDividend(Request $request, Investment $investment)
+    public function recordDividend(StoreInvestmentDividendRequest $request, Investment $investment)
     {
-        $request->validate([
-            'dividend_amount' => 'required|numeric|min:0',
-            'dividend_date' => 'nullable|date',
-        ]);
+        // Ensure user owns the investment
+        if ($investment->user_id !== auth()->id()) {
+            abort(403);
+        }
 
-        $dividendAmount = $request->dividend_amount;
-        $newTotal = $investment->total_dividends_received + $dividendAmount;
+        // Create the dividend record
+        $dividend = InvestmentDividend::create($request->validated());
 
-        // Add transaction to history
-        $transactionHistory = $investment->transaction_history ?? [];
-        $transactionHistory[] = [
-            'date' => $request->get('dividend_date', now()->toDateString()),
-            'type' => 'dividend',
-            'amount' => $dividendAmount,
-            'description' => 'Dividend payment received',
-        ];
-
+        // Update investment total dividends
+        $totalDividends = $investment->dividends()->sum('amount');
         $investment->update([
-            'total_dividends_received' => $newTotal,
-            'transaction_history' => $transactionHistory,
+            'total_dividends_received' => $totalDividends,
         ]);
 
         if ($request->expectsJson()) {
-            return new InvestmentResource($investment);
+            return response()->json([
+                'message' => 'Dividend recorded successfully',
+                'dividend' => $dividend,
+                'investment' => new InvestmentResource($investment->fresh()),
+            ], 201);
         }
 
         return redirect()->route('investments.show', $investment)
@@ -196,55 +196,60 @@ class InvestmentController extends Controller
     }
 
     /**
-     * Record a buy transaction.
+     * Record a transaction.
      */
-    public function recordBuy(Request $request, Investment $investment)
+    public function recordTransaction(StoreInvestmentTransactionRequest $request, Investment $investment)
     {
-        $request->validate([
-            'quantity' => 'required|numeric|min:0',
-            'price_per_unit' => 'required|numeric|min:0',
-            'fees' => 'nullable|numeric|min:0',
-            'transaction_date' => 'nullable|date',
-        ]);
+        // Ensure user owns the investment
+        if ($investment->user_id !== auth()->id()) {
+            abort(403);
+        }
 
-        $quantity = $request->quantity;
-        $pricePerUnit = $request->price_per_unit;
-        $fees = $request->get('fees', 0);
+        // Create the transaction record
+        $transaction = InvestmentTransaction::create($request->validated());
 
-        // Update investment totals
-        $newQuantity = $investment->quantity + $quantity;
-        $newTotalFees = $investment->total_fees_paid + $fees;
-
-        // Add transaction to history
-        $transactionHistory = $investment->transaction_history ?? [];
-        $transactionHistory[] = [
-            'date' => $request->get('transaction_date', now()->toDateString()),
-            'type' => 'buy',
-            'quantity' => $quantity,
-            'price' => $pricePerUnit,
-            'fees' => $fees,
-            'total_cost' => ($quantity * $pricePerUnit) + $fees,
-        ];
-
-        $investment->update([
-            'quantity' => $newQuantity,
-            'total_fees_paid' => $newTotalFees,
-            'transaction_history' => $transactionHistory,
-        ]);
+        // Update investment totals based on transaction type
+        $this->updateInvestmentFromTransaction($investment, $transaction);
 
         if ($request->expectsJson()) {
-            return new InvestmentResource($investment);
+            return response()->json([
+                'message' => 'Transaction recorded successfully',
+                'transaction' => $transaction,
+                'investment' => new InvestmentResource($investment->fresh()),
+            ], 201);
         }
 
         return redirect()->route('investments.show', $investment)
-            ->with('success', 'Buy transaction recorded successfully!');
+            ->with('success', 'Transaction recorded successfully!');
     }
 
     /**
-     * Record a sell transaction.
+     * Record a buy transaction (legacy method for backward compatibility).
+     */
+    public function recordBuy(Request $request, Investment $investment)
+    {
+        // Transform old format to new format
+        $transformedRequest = new StoreInvestmentTransactionRequest([
+            'investment_id' => $investment->id,
+            'transaction_type' => 'buy',
+            'quantity' => $request->quantity,
+            'price_per_share' => $request->price_per_unit,
+            'total_amount' => $request->quantity * $request->price_per_unit,
+            'fees' => $request->get('fees', 0),
+            'taxes' => 0,
+            'transaction_date' => $request->get('transaction_date', now()->toDateString()),
+            'currency' => 'USD',
+        ]);
+
+        return $this->recordTransaction($transformedRequest, $investment);
+    }
+
+    /**
+     * Record a sell transaction (legacy method for backward compatibility).
      */
     public function recordSell(Request $request, Investment $investment)
     {
+        // Validate quantity doesn't exceed current holding
         $request->validate([
             'quantity' => 'required|numeric|min:0|max:'.$investment->quantity,
             'price_per_unit' => 'required|numeric|min:0',
@@ -252,41 +257,43 @@ class InvestmentController extends Controller
             'transaction_date' => 'nullable|date',
         ]);
 
-        $quantity = $request->quantity;
-        $pricePerUnit = $request->price_per_unit;
-        $fees = $request->get('fees', 0);
-
-        // Update investment totals
-        $newQuantity = $investment->quantity - $quantity;
-        $newTotalFees = $investment->total_fees_paid + $fees;
-
-        // Add transaction to history
-        $transactionHistory = $investment->transaction_history ?? [];
-        $transactionHistory[] = [
-            'date' => $request->get('transaction_date', now()->toDateString()),
-            'type' => 'sell',
-            'quantity' => $quantity,
-            'price' => $pricePerUnit,
-            'fees' => $fees,
-            'total_proceeds' => ($quantity * $pricePerUnit) - $fees,
-        ];
-
-        // Update status if all shares sold
-        $status = $newQuantity <= 0 ? 'sold' : $investment->status;
-
-        $investment->update([
-            'quantity' => $newQuantity,
-            'total_fees_paid' => $newTotalFees,
-            'transaction_history' => $transactionHistory,
-            'status' => $status,
+        // Transform old format to new format
+        $transformedRequest = new StoreInvestmentTransactionRequest([
+            'investment_id' => $investment->id,
+            'transaction_type' => 'sell',
+            'quantity' => $request->quantity,
+            'price_per_share' => $request->price_per_unit,
+            'total_amount' => $request->quantity * $request->price_per_unit,
+            'fees' => $request->get('fees', 0),
+            'taxes' => 0,
+            'transaction_date' => $request->get('transaction_date', now()->toDateString()),
+            'currency' => 'USD',
         ]);
 
-        if ($request->expectsJson()) {
-            return new InvestmentResource($investment);
+        return $this->recordTransaction($transformedRequest, $investment);
+    }
+
+    /**
+     * Update investment totals based on transaction.
+     */
+    private function updateInvestmentFromTransaction(Investment $investment, InvestmentTransaction $transaction)
+    {
+        // Calculate new quantity based on transaction type
+        if ($transaction->is_purchase) {
+            $investment->quantity += $transaction->quantity;
+        } elseif ($transaction->is_sale) {
+            $investment->quantity -= $transaction->quantity;
         }
 
-        return redirect()->route('investments.show', $investment)
-            ->with('success', 'Sell transaction recorded successfully!');
+        // Update total fees paid
+        $investment->total_fees_paid += $transaction->fees;
+
+        // Update status if all shares sold
+        if ($investment->quantity <= 0 && $transaction->is_sale) {
+            $investment->status = 'sold';
+        }
+
+        $investment->save();
     }
 
     /**

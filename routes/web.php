@@ -54,6 +54,7 @@ Route::middleware('auth')->group(function () {
     Route::post('warranties/{warranty}/transfer', [WarrantyController::class, 'transfer'])->name('warranties.transfer');
     Route::post('warranties/{warranty}/add-maintenance-reminder', [WarrantyController::class, 'addMaintenanceReminder'])->name('warranties.add-maintenance-reminder');
     Route::resource('investments', InvestmentController::class);
+    Route::post('investments/{investment}/record-transaction', [InvestmentController::class, 'recordTransaction'])->name('investments.record-transaction');
     Route::post('investments/{investment}/record-buy', [InvestmentController::class, 'recordBuy'])->name('investments.record-buy');
     Route::post('investments/{investment}/record-sell', [InvestmentController::class, 'recordSell'])->name('investments.record-sell');
     Route::post('investments/{investment}/record-dividend', [InvestmentController::class, 'recordDividend'])->name('investments.record-dividend');

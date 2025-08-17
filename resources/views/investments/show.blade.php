@@ -284,12 +284,203 @@
             </button>
         </form>
 
-        <button onclick="alert('Record dividend feature coming soon')" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium">
-            Record Dividend
-        </button>
+        <form method="POST" action="{{ route('investments.record-dividend', $investment) }}" class="inline">
+            @csrf
+            <input type="hidden" name="investment_id" value="{{ $investment->id }}">
+            <button type="button" onclick="openDividendModal()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium">
+                Record Dividend
+            </button>
+        </form>
 
-        <button onclick="alert('Record transaction feature coming soon')" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md text-sm font-medium">
-            Record Transaction
-        </button>
+        <form method="POST" action="{{ route('investments.record-transaction', $investment) }}" class="inline">
+            @csrf
+            <input type="hidden" name="investment_id" value="{{ $investment->id }}">
+            <button type="button" onclick="openTransactionModal()" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md text-sm font-medium">
+                Record Transaction
+            </button>
+        </form>
     </div>
+
+    <!-- Record Dividend Modal -->
+    <div id="dividendModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md mx-4">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-medium text-gray-900 dark:text-white">Record Dividend</h3>
+                <button type="button" onclick="closeDividendModal()" class="text-gray-400 hover:text-gray-600">
+                    <span class="sr-only">Close</span>
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <form method="POST" action="{{ route('investments.record-dividend', $investment) }}">
+                @csrf
+                <input type="hidden" name="investment_id" value="{{ $investment->id }}">
+
+                <div class="mb-4">
+                    <label for="dividend_amount" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Dividend Amount ($)</label>
+                    <input type="number" step="0.01" name="amount" id="dividend_amount" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
+                </div>
+
+                <div class="mb-4">
+                    <label for="dividend_per_share" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Dividend per Share ($)</label>
+                    <input type="number" step="0.00000001" name="dividend_per_share" id="dividend_per_share" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
+                </div>
+
+                <div class="mb-4">
+                    <label for="shares_held" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Shares Held</label>
+                    <input type="number" step="0.00000001" name="shares_held" id="shares_held" value="{{ $investment->quantity }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
+                </div>
+
+                <div class="mb-4">
+                    <label for="record_date" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Record Date</label>
+                    <input type="date" name="record_date" id="record_date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
+                </div>
+
+                <div class="mb-4">
+                    <label for="payment_date" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Payment Date</label>
+                    <input type="date" name="payment_date" id="payment_date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
+                </div>
+
+                <div class="mb-4">
+                    <label for="dividend_type" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Dividend Type</label>
+                    <select name="dividend_type" id="dividend_type" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
+                        <option value="ordinary">Ordinary</option>
+                        <option value="qualified">Qualified</option>
+                        <option value="special">Special</option>
+                        <option value="return_of_capital">Return of Capital</option>
+                    </select>
+                </div>
+
+                <div class="mb-4">
+                    <label for="frequency" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Frequency</label>
+                    <select name="frequency" id="frequency" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
+                        <option value="quarterly">Quarterly</option>
+                        <option value="monthly">Monthly</option>
+                        <option value="semi_annual">Semi-Annual</option>
+                        <option value="annual">Annual</option>
+                        <option value="special">Special</option>
+                    </select>
+                </div>
+
+                <input type="hidden" name="currency" value="USD">
+
+                <div class="flex justify-end gap-3">
+                    <button type="button" onclick="closeDividendModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600">
+                        Cancel
+                    </button>
+                    <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-green-600 border border-transparent rounded-md hover:bg-green-700">
+                        Record Dividend
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Record Transaction Modal -->
+    <div id="transactionModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md mx-4">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-medium text-gray-900 dark:text-white">Record Transaction</h3>
+                <button type="button" onclick="closeTransactionModal()" class="text-gray-400 hover:text-gray-600">
+                    <span class="sr-only">Close</span>
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <form method="POST" action="{{ route('investments.record-transaction', $investment) }}">
+                @csrf
+                <input type="hidden" name="investment_id" value="{{ $investment->id }}">
+
+                <div class="mb-4">
+                    <label for="transaction_type" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Transaction Type</label>
+                    <select name="transaction_type" id="transaction_type" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
+                        <option value="buy">Buy</option>
+                        <option value="sell">Sell</option>
+                        <option value="dividend_reinvestment">Dividend Reinvestment</option>
+                    </select>
+                </div>
+
+                <div class="mb-4">
+                    <label for="transaction_quantity" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Quantity</label>
+                    <input type="number" step="0.00000001" name="quantity" id="transaction_quantity" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
+                </div>
+
+                <div class="mb-4">
+                    <label for="price_per_share" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Price per Share ($)</label>
+                    <input type="number" step="0.00000001" name="price_per_share" id="price_per_share" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
+                </div>
+
+                <div class="mb-4">
+                    <label for="total_amount" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Total Amount ($)</label>
+                    <input type="number" step="0.00000001" name="total_amount" id="total_amount" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" required readonly>
+                </div>
+
+                <div class="mb-4">
+                    <label for="transaction_fees" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Fees ($)</label>
+                    <input type="number" step="0.01" name="fees" id="transaction_fees" value="0" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                </div>
+
+                <div class="mb-4">
+                    <label for="transaction_date" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Transaction Date</label>
+                    <input type="date" name="transaction_date" id="transaction_date" value="{{ date('Y-m-d') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
+                </div>
+
+                <input type="hidden" name="currency" value="USD">
+                <input type="hidden" name="taxes" value="0">
+
+                <div class="flex justify-end gap-3">
+                    <button type="button" onclick="closeTransactionModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600">
+                        Cancel
+                    </button>
+                    <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-purple-600 border border-transparent rounded-md hover:bg-purple-700">
+                        Record Transaction
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openDividendModal() {
+            document.getElementById('dividendModal').classList.remove('hidden');
+            document.getElementById('dividendModal').classList.add('flex');
+        }
+
+        function closeDividendModal() {
+            document.getElementById('dividendModal').classList.add('hidden');
+            document.getElementById('dividendModal').classList.remove('flex');
+        }
+
+        function openTransactionModal() {
+            document.getElementById('transactionModal').classList.remove('hidden');
+            document.getElementById('transactionModal').classList.add('flex');
+        }
+
+        function closeTransactionModal() {
+            document.getElementById('transactionModal').classList.add('hidden');
+            document.getElementById('transactionModal').classList.remove('flex');
+        }
+
+        // Auto-calculate dividend amount
+        document.getElementById('dividend_per_share').addEventListener('input', calculateDividendAmount);
+        document.getElementById('shares_held').addEventListener('input', calculateDividendAmount);
+
+        function calculateDividendAmount() {
+            const perShare = parseFloat(document.getElementById('dividend_per_share').value) || 0;
+            const shares = parseFloat(document.getElementById('shares_held').value) || 0;
+            document.getElementById('dividend_amount').value = (perShare * shares).toFixed(2);
+        }
+
+        // Auto-calculate transaction total amount
+        document.getElementById('transaction_quantity').addEventListener('input', calculateTransactionAmount);
+        document.getElementById('price_per_share').addEventListener('input', calculateTransactionAmount);
+
+        function calculateTransactionAmount() {
+            const quantity = parseFloat(document.getElementById('transaction_quantity').value) || 0;
+            const price = parseFloat(document.getElementById('price_per_share').value) || 0;
+            document.getElementById('total_amount').value = (quantity * price).toFixed(8);
+        }
+    </script>
 @endsection
