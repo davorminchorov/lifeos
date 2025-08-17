@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\ContractController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ExpenseController;
+use App\Http\Controllers\FileUploadController;
 use App\Http\Controllers\InvestmentController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SubscriptionController;
@@ -77,4 +78,14 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('utility-bills', UtilityBillController::class);
     Route::patch('utility-bills/{utility_bill}/mark-paid', [UtilityBillController::class, 'markPaid'])->name('utility-bills.mark-paid');
+
+    // File Management Routes
+    Route::prefix('files')->name('files.')->group(function () {
+        Route::post('{category}/upload', [FileUploadController::class, 'upload'])->name('upload');
+        Route::get('{category}/{filename}/download', [FileUploadController::class, 'download'])->name('download');
+        Route::get('{category}/{filename}/view', [FileUploadController::class, 'view'])->name('view');
+        Route::get('{category}/{filename}/info', [FileUploadController::class, 'getFileInfo'])->name('info');
+        Route::delete('{category}/{filename}', [FileUploadController::class, 'delete'])->name('delete');
+        Route::get('types/{category?}', [FileUploadController::class, 'getAllowedTypes'])->name('types');
+    });
 });

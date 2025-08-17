@@ -22,6 +22,7 @@ return new class extends Migration
             $table->integer('notice_period_days')->nullable();
             $table->boolean('auto_renewal')->default(false);
             $table->decimal('contract_value', 12, 2)->nullable();
+            $table->string('currency', 3)->default('MKD');
             $table->string('payment_terms')->nullable();
             $table->text('key_obligations')->nullable();
             $table->text('penalties')->nullable();

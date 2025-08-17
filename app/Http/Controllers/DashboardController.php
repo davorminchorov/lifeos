@@ -8,9 +8,17 @@ use App\Models\Investment;
 use App\Models\Subscription;
 use App\Models\UtilityBill;
 use App\Models\Warranty;
+use App\Services\CurrencyService;
 
 class DashboardController extends Controller
 {
+    protected CurrencyService $currencyService;
+
+    public function __construct(CurrencyService $currencyService)
+    {
+        $this->currencyService = $currencyService;
+    }
+
     /**
      * Display the dashboard with aggregated data from all modules.
      */
@@ -47,34 +55,72 @@ class DashboardController extends Controller
      */
     private function getStats(): array
     {
-        // Subscription stats
+        // Subscription stats with currency conversion to MKD
         $activeSubscriptions = Subscription::active()->count();
-        $monthlySubscriptionCost = Subscription::active()->sum('monthly_cost');
+        $subscriptions = Subscription::active()->get();
+        $monthlySubscriptionCostMKD = 0;
 
-        // Contract stats
+        foreach ($subscriptions as $subscription) {
+            $costInMKD = $this->currencyService->convertToDefault($subscription->cost, $subscription->currency);
+            $monthlySubscriptionCostMKD += $costInMKD;
+        }
+
+        // Contract stats with currency conversion to MKD
         $activeContracts = Contract::active()->count();
         $contractsExpiringSoon = Contract::expiringSoon(30)->count();
+        $contracts = Contract::active()->whereNotNull('contract_value')->get();
+        $totalContractValueMKD = 0;
 
-        // Investment stats
+        foreach ($contracts as $contract) {
+            $valueInMKD = $this->currencyService->convertToDefault($contract->contract_value, $contract->currency);
+            $totalContractValueMKD += $valueInMKD;
+        }
+
+        // Investment stats - assuming these are already in base currency
         $activeInvestments = Investment::active()->get();
         $portfolioValue = $activeInvestments->sum('current_market_value');
         $totalReturn = $activeInvestments->sum('total_return');
 
+        // Utility bills with currency conversion to MKD
+        $pendingBills = UtilityBill::pending()->count();
+        $bills = UtilityBill::pending()->get();
+        $totalPendingBillsMKD = 0;
+
+        foreach ($bills as $bill) {
+            $amountInMKD = $this->currencyService->convertToDefault($bill->bill_amount, $bill->currency);
+            $totalPendingBillsMKD += $amountInMKD;
+        }
+
+        // Current month expenses with currency conversion to MKD
+        $totalExpenses = Expense::currentMonth()->count();
+        $expenses = Expense::currentMonth()->get();
+        $totalExpensesMKD = 0;
+
+        foreach ($expenses as $expense) {
+            $amountInMKD = $this->currencyService->convertToDefault($expense->amount, $expense->currency);
+            $totalExpensesMKD += $amountInMKD;
+        }
+
         // Other stats
         $totalWarranties = Warranty::active()->count();
-        $totalExpenses = Expense::currentMonth()->count();
-        $pendingBills = UtilityBill::pending()->count();
 
         return [
             'active_subscriptions' => $activeSubscriptions,
-            'monthly_subscription_cost' => $monthlySubscriptionCost,
+            'monthly_subscription_cost' => $monthlySubscriptionCostMKD,
+            'monthly_subscription_cost_formatted' => $this->currencyService->format($monthlySubscriptionCostMKD),
             'active_contracts' => $activeContracts,
             'contracts_expiring_soon' => $contractsExpiringSoon,
+            'total_contract_value' => $totalContractValueMKD,
+            'total_contract_value_formatted' => $this->currencyService->format($totalContractValueMKD),
             'portfolio_value' => $portfolioValue,
             'total_return' => $totalReturn,
             'total_warranties' => $totalWarranties,
             'total_expenses' => $totalExpenses,
+            'total_expenses_amount' => $totalExpensesMKD,
+            'total_expenses_formatted' => $this->currencyService->format($totalExpensesMKD),
             'pending_bills' => $pendingBills,
+            'pending_bills_amount' => $totalPendingBillsMKD,
+            'pending_bills_formatted' => $this->currencyService->format($totalPendingBillsMKD),
         ];
     }
 
@@ -124,10 +170,11 @@ class DashboardController extends Controller
         // Overdue bills
         $overdueBills = UtilityBill::overdue()->get();
         foreach ($overdueBills as $bill) {
+            $formattedAmount = $this->currencyService->format($bill->bill_amount, $bill->currency);
             $alerts[] = [
                 'type' => 'error',
                 'title' => 'Overdue Bill',
-                'message' => "{$bill->service_provider} bill was due on {$bill->due_date->format('M j, Y')}",
+                'message' => "{$bill->service_provider} bill ({$formattedAmount}) was due on {$bill->due_date->format('M j, Y')}",
                 'action_url' => route('utility-bills.show', $bill),
                 'action_text' => 'Pay Now',
             ];
@@ -136,10 +183,11 @@ class DashboardController extends Controller
         // Bills due soon
         $billsDueSoon = UtilityBill::dueSoon(7)->get();
         foreach ($billsDueSoon as $bill) {
+            $formattedAmount = $this->currencyService->format($bill->bill_amount, $bill->currency);
             $alerts[] = [
                 'type' => 'info',
                 'title' => 'Bill Due Soon',
-                'message' => "{$bill->service_provider} bill is due on {$bill->due_date->format('M j, Y')}",
+                'message' => "{$bill->service_provider} bill ({$formattedAmount}) is due on {$bill->due_date->format('M j, Y')}",
                 'action_url' => route('utility-bills.show', $bill),
                 'action_text' => 'View',
             ];

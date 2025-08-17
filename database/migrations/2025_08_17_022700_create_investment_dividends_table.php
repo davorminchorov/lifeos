@@ -23,7 +23,7 @@ return new class extends Migration
             $table->decimal('dividend_per_share', 15, 8); // dividend amount per share
             $table->decimal('shares_held', 15, 8); // number of shares held at record date
             $table->decimal('tax_withheld', 12, 2)->default(0); // tax withheld if any
-            $table->string('currency', 3)->default('USD'); // currency code
+            $table->string('currency', 3)->default('MKD'); // currency code
             $table->boolean('reinvested')->default(false); // whether dividend was reinvested
             $table->text('notes')->nullable();
             $table->timestamps();

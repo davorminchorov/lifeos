@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('serial_number')->nullable();
             $table->date('purchase_date');
             $table->decimal('purchase_price', 10, 2);
+            $table->string('currency', 3)->default('MKD');
             $table->string('retailer');
             $table->integer('warranty_duration_months'); // warranty length in months
             $table->enum('warranty_type', ['manufacturer', 'extended', 'both'])->default('manufacturer');

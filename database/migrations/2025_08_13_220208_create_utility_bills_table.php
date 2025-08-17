@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('account_number');
             $table->string('service_address');
             $table->decimal('bill_amount', 10, 2);
+            $table->string('currency', 3)->default('MKD');
             $table->decimal('usage_amount', 12, 4)->nullable(); // kWh, cubic meters, GB, etc.
             $table->string('usage_unit')->nullable(); // kWh, m³, GB, minutes, etc.
             $table->decimal('rate_per_unit', 10, 6)->nullable(); // price per unit

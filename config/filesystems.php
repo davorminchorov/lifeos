@@ -47,6 +47,42 @@ return [
             'report' => false,
         ],
 
+        'documents' => [
+            'driver' => 'local',
+            'root' => storage_path('app/documents'),
+            'serve' => true,
+            'throw' => false,
+            'report' => false,
+            'visibility' => 'private',
+        ],
+
+        'receipts' => [
+            'driver' => 'local',
+            'root' => storage_path('app/receipts'),
+            'serve' => true,
+            'throw' => false,
+            'report' => false,
+            'visibility' => 'private',
+        ],
+
+        'contracts' => [
+            'driver' => 'local',
+            'root' => storage_path('app/contracts'),
+            'serve' => true,
+            'throw' => false,
+            'report' => false,
+            'visibility' => 'private',
+        ],
+
+        'warranties' => [
+            'driver' => 'local',
+            'root' => storage_path('app/warranties'),
+            'serve' => true,
+            'throw' => false,
+            'report' => false,
+            'visibility' => 'private',
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),

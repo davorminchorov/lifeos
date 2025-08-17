@@ -20,7 +20,7 @@ return new class extends Migration
             $table->decimal('cost', 10, 2);
             $table->string('billing_cycle'); // monthly, yearly, weekly, custom
             $table->integer('billing_cycle_days')->nullable(); // for custom cycles
-            $table->string('currency', 3)->default('USD');
+            $table->string('currency', 3)->default('MKD');
             $table->date('start_date');
             $table->date('next_billing_date');
             $table->date('cancellation_date')->nullable();

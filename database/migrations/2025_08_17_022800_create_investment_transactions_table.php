@@ -26,7 +26,7 @@ return new class extends Migration
             $table->string('confirmation_number')->nullable(); // confirmation number
             $table->string('account_number')->nullable(); // account where transaction occurred
             $table->string('broker')->nullable(); // broker/platform
-            $table->string('currency', 3)->default('USD'); // currency code
+            $table->string('currency', 3)->default('MKD'); // currency code
             $table->decimal('exchange_rate', 10, 6)->nullable(); // if foreign currency
             $table->enum('order_type', ['market', 'limit', 'stop', 'stop_limit'])->nullable();
             $table->decimal('limit_price', 15, 8)->nullable(); // limit price if applicable

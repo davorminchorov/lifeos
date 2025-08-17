@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->decimal('amount', 10, 2);
-            $table->string('currency', 3)->default('USD');
+            $table->string('currency', 3)->default('MKD');
             $table->string('category'); // food, transport, entertainment, etc.
             $table->string('subcategory')->nullable(); // restaurants, gas, movies, etc.
             $table->date('expense_date');
