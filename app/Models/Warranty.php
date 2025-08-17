@@ -111,11 +111,12 @@ class Warranty extends Model
     // Get formatted purchase price with currency
     public function getFormattedPurchasePriceAttribute()
     {
-        if (!$this->purchase_price) {
+        if (! $this->purchase_price) {
             return null;
         }
 
         $currency = $this->currency ?? config('currency.default', 'MKD');
+
         return app(\App\Services\CurrencyService::class)->format($this->purchase_price, $currency);
     }
 }

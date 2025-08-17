@@ -166,17 +166,19 @@ class UtilityBill extends Model
     public function getFormattedBillAmountAttribute()
     {
         $currency = $this->currency ?? config('currency.default', 'MKD');
+
         return app(\App\Services\CurrencyService::class)->format($this->bill_amount, $currency);
     }
 
     // Get formatted budget threshold with currency
     public function getFormattedBudgetThresholdAttribute()
     {
-        if (!$this->budget_alert_threshold) {
+        if (! $this->budget_alert_threshold) {
             return null;
         }
 
         $currency = $this->currency ?? config('currency.default', 'MKD');
+
         return app(\App\Services\CurrencyService::class)->format($this->budget_alert_threshold, $currency);
     }
 }

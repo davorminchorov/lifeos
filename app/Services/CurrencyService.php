@@ -38,6 +38,7 @@ class CurrencyService
     public function getCurrencySymbol(string $currencyCode): string
     {
         $currencyInfo = $this->getCurrencyInfo($currencyCode);
+
         return $currencyInfo['symbol'] ?? $currencyCode;
     }
 
@@ -47,19 +48,20 @@ class CurrencyService
     public function getCurrencyName(string $currencyCode): string
     {
         $currencyInfo = $this->getCurrencyInfo($currencyCode);
+
         return $currencyInfo['name'] ?? $currencyCode;
     }
 
     /**
      * Format amount with currency.
      */
-    public function format(float $amount, string $currencyCode = null, bool $showSymbol = true): string
+    public function format(float $amount, ?string $currencyCode = null, bool $showSymbol = true): string
     {
         $currencyCode = $currencyCode ?? $this->getDefaultCurrency();
         $currencyInfo = $this->getCurrencyInfo($currencyCode);
 
-        if (!$currencyInfo) {
-            return number_format($amount, 2) . ' ' . $currencyCode;
+        if (! $currencyInfo) {
+            return number_format($amount, 2).' '.$currencyCode;
         }
 
         $decimalPlaces = $currencyInfo['decimal_places'] ?? 2;
@@ -68,7 +70,7 @@ class CurrencyService
 
         $formattedAmount = number_format($amount, $decimalPlaces, $decimalSep, $thousandSep);
 
-        if (!$showSymbol) {
+        if (! $showSymbol) {
             return $formattedAmount;
         }
 
@@ -77,13 +79,13 @@ class CurrencyService
         $showCurrencyCode = config('currency.display.show_currency_code', true);
 
         if ($symbolPosition === 'before') {
-            $result = $symbol . ' ' . $formattedAmount;
+            $result = $symbol.' '.$formattedAmount;
         } else {
-            $result = $formattedAmount . ' ' . $symbol;
+            $result = $formattedAmount.' '.$symbol;
         }
 
         if ($showCurrencyCode && $currencyCode !== $this->getDefaultCurrency()) {
-            $result .= ' (' . $currencyCode . ')';
+            $result .= ' ('.$currencyCode.')';
         }
 
         return $result;
@@ -98,12 +100,13 @@ class CurrencyService
             return $amount;
         }
 
-        if (!config('currency.conversion.enabled', true)) {
+        if (! config('currency.conversion.enabled', true)) {
             Log::warning('Currency conversion is disabled', [
                 'amount' => $amount,
                 'from' => $fromCurrency,
-                'to' => $toCurrency
+                'to' => $toCurrency,
             ]);
+
             return $amount;
         }
 
@@ -112,8 +115,9 @@ class CurrencyService
         if ($exchangeRate === null) {
             Log::error('Failed to get exchange rate', [
                 'from' => $fromCurrency,
-                'to' => $toCurrency
+                'to' => $toCurrency,
             ]);
+
             return $amount;
         }
 
@@ -151,7 +155,8 @@ class CurrencyService
                 case 'fixer':
                     return $this->fetchFromFixerApi($fromCurrency, $toCurrency);
                 default:
-                    Log::error('Unknown currency API provider: ' . $provider);
+                    Log::error('Unknown currency API provider: '.$provider);
+
                     return null;
             }
         } catch (\Exception $e) {
@@ -159,8 +164,9 @@ class CurrencyService
                 'from' => $fromCurrency,
                 'to' => $toCurrency,
                 'provider' => $provider,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
+
             return null;
         }
     }
@@ -172,7 +178,7 @@ class CurrencyService
     {
         $apiKey = config('currency.conversion.api_key');
 
-        if (!$apiKey) {
+        if (! $apiKey) {
             // Use free tier without API key (limited requests)
             $url = "https://api.exchangerate-api.io/v4/latest/{$fromCurrency}";
         } else {
@@ -181,13 +187,13 @@ class CurrencyService
 
         $response = Http::timeout(10)->get($url);
 
-        if (!$response->successful()) {
+        if (! $response->successful()) {
             return null;
         }
 
         $data = $response->json();
 
-        if (!isset($data['rates'][$toCurrency])) {
+        if (! isset($data['rates'][$toCurrency])) {
             return null;
         }
 
@@ -201,26 +207,27 @@ class CurrencyService
     {
         $apiKey = config('currency.conversion.api_key');
 
-        if (!$apiKey) {
+        if (! $apiKey) {
             Log::error('Fixer.io API key is required');
+
             return null;
         }
 
-        $url = "http://data.fixer.io/api/latest";
+        $url = 'http://data.fixer.io/api/latest';
 
         $response = Http::timeout(10)->get($url, [
             'access_key' => $apiKey,
             'base' => $fromCurrency,
-            'symbols' => $toCurrency
+            'symbols' => $toCurrency,
         ]);
 
-        if (!$response->successful()) {
+        if (! $response->successful()) {
             return null;
         }
 
         $data = $response->json();
 
-        if (!$data['success'] || !isset($data['rates'][$toCurrency])) {
+        if (! $data['success'] || ! isset($data['rates'][$toCurrency])) {
             return null;
         }
 
@@ -236,7 +243,7 @@ class CurrencyService
         $options = [];
 
         foreach ($currencies as $code => $info) {
-            $options[$code] = $code . ' (' . $info['symbol'] . ') - ' . $info['name'];
+            $options[$code] = $code.' ('.$info['symbol'].') - '.$info['name'];
         }
 
         return $options;
@@ -248,6 +255,7 @@ class CurrencyService
     public function convertToDefault(float $amount, string $fromCurrency): float
     {
         $defaultCurrency = $this->getDefaultCurrency();
+
         return $this->convert($amount, $fromCurrency, $defaultCurrency);
     }
 
@@ -257,6 +265,7 @@ class CurrencyService
     public function convertFromDefault(float $amount, string $toCurrency): float
     {
         $defaultCurrency = $this->getDefaultCurrency();
+
         return $this->convert($amount, $defaultCurrency, $toCurrency);
     }
 

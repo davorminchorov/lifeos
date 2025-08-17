@@ -28,17 +28,15 @@ class FileUploadController extends Controller
     /**
      * Upload a file to the specified category disk
      *
-     * @param Request $request
-     * @param string $category
      * @return \Illuminate\Http\JsonResponse
      */
     public function upload(Request $request, string $category)
     {
         // Validate category
-        if (!array_key_exists($category, self::ALLOWED_TYPES)) {
+        if (! array_key_exists($category, self::ALLOWED_TYPES)) {
             return response()->json([
                 'success' => false,
-                'message' => 'Invalid file category'
+                'message' => 'Invalid file category',
             ], 400);
         }
 
@@ -47,18 +45,18 @@ class FileUploadController extends Controller
             'file' => [
                 'required',
                 'file',
-                'max:' . self::MAX_FILE_SIZE,
-                'mimes:' . implode(',', self::ALLOWED_TYPES[$category])
+                'max:'.self::MAX_FILE_SIZE,
+                'mimes:'.implode(',', self::ALLOWED_TYPES[$category]),
             ],
             'name' => 'nullable|string|max:255',
-            'description' => 'nullable|string|max:500'
+            'description' => 'nullable|string|max:500',
         ]);
 
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
                 'message' => 'File validation failed',
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
         }
 
@@ -68,15 +66,15 @@ class FileUploadController extends Controller
             $extension = $file->getClientOriginalExtension();
 
             // Generate unique filename
-            $filename = Str::uuid() . '_' . time() . '.' . $extension;
+            $filename = Str::uuid().'_'.time().'.'.$extension;
 
             // Store file
             $path = $file->storeAs('', $filename, $category);
 
-            if (!$path) {
+            if (! $path) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Failed to upload file'
+                    'message' => 'Failed to upload file',
                 ], 500);
             }
 
@@ -91,14 +89,14 @@ class FileUploadController extends Controller
                     'mime_type' => $file->getMimeType(),
                     'category' => $category,
                     'name' => $request->input('name', $originalName),
-                    'description' => $request->input('description')
-                ]
+                    'description' => $request->input('description'),
+                ],
             ]);
 
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Upload failed: ' . $e->getMessage()
+                'message' => 'Upload failed: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -106,19 +104,17 @@ class FileUploadController extends Controller
     /**
      * Download a file from the specified category disk
      *
-     * @param string $category
-     * @param string $filename
      * @return \Symfony\Component\HttpFoundation\StreamedResponse
      */
     public function download(string $category, string $filename)
     {
         // Validate category
-        if (!array_key_exists($category, self::ALLOWED_TYPES)) {
+        if (! array_key_exists($category, self::ALLOWED_TYPES)) {
             abort(400, 'Invalid file category');
         }
 
         // Check if file exists
-        if (!Storage::disk($category)->exists($filename)) {
+        if (! Storage::disk($category)->exists($filename)) {
             abort(404, 'File not found');
         }
 
@@ -131,26 +127,24 @@ class FileUploadController extends Controller
             ]);
 
         } catch (\Exception $e) {
-            abort(500, 'Failed to download file: ' . $e->getMessage());
+            abort(500, 'Failed to download file: '.$e->getMessage());
         }
     }
 
     /**
      * View a file (for PDFs and images)
      *
-     * @param string $category
-     * @param string $filename
      * @return Response
      */
     public function view(string $category, string $filename)
     {
         // Validate category
-        if (!array_key_exists($category, self::ALLOWED_TYPES)) {
+        if (! array_key_exists($category, self::ALLOWED_TYPES)) {
             abort(400, 'Invalid file category');
         }
 
         // Check if file exists
-        if (!Storage::disk($category)->exists($filename)) {
+        if (! Storage::disk($category)->exists($filename)) {
             abort(404, 'File not found');
         }
 
@@ -161,42 +155,40 @@ class FileUploadController extends Controller
             // Only allow viewing of safe file types
             $viewableMimes = ['application/pdf', 'image/jpeg', 'image/png', 'image/gif', 'text/plain'];
 
-            if (!in_array($mimeType, $viewableMimes)) {
+            if (! in_array($mimeType, $viewableMimes)) {
                 return $this->download($category, $filename);
             }
 
             return response($content, 200, [
                 'Content-Type' => $mimeType,
-                'Content-Disposition' => 'inline; filename="' . $filename . '"'
+                'Content-Disposition' => 'inline; filename="'.$filename.'"',
             ]);
 
         } catch (\Exception $e) {
-            abort(500, 'Failed to view file: ' . $e->getMessage());
+            abort(500, 'Failed to view file: '.$e->getMessage());
         }
     }
 
     /**
      * Delete a file from the specified category disk
      *
-     * @param string $category
-     * @param string $filename
      * @return \Illuminate\Http\JsonResponse
      */
     public function delete(string $category, string $filename)
     {
         // Validate category
-        if (!array_key_exists($category, self::ALLOWED_TYPES)) {
+        if (! array_key_exists($category, self::ALLOWED_TYPES)) {
             return response()->json([
                 'success' => false,
-                'message' => 'Invalid file category'
+                'message' => 'Invalid file category',
             ], 400);
         }
 
         // Check if file exists
-        if (!Storage::disk($category)->exists($filename)) {
+        if (! Storage::disk($category)->exists($filename)) {
             return response()->json([
                 'success' => false,
-                'message' => 'File not found'
+                'message' => 'File not found',
             ], 404);
         }
 
@@ -205,13 +197,13 @@ class FileUploadController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'File deleted successfully'
+                'message' => 'File deleted successfully',
             ]);
 
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to delete file: ' . $e->getMessage()
+                'message' => 'Failed to delete file: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -219,25 +211,23 @@ class FileUploadController extends Controller
     /**
      * Get file information
      *
-     * @param string $category
-     * @param string $filename
      * @return \Illuminate\Http\JsonResponse
      */
     public function getFileInfo(string $category, string $filename)
     {
         // Validate category
-        if (!array_key_exists($category, self::ALLOWED_TYPES)) {
+        if (! array_key_exists($category, self::ALLOWED_TYPES)) {
             return response()->json([
                 'success' => false,
-                'message' => 'Invalid file category'
+                'message' => 'Invalid file category',
             ], 400);
         }
 
         // Check if file exists
-        if (!Storage::disk($category)->exists($filename)) {
+        if (! Storage::disk($category)->exists($filename)) {
             return response()->json([
                 'success' => false,
-                'message' => 'File not found'
+                'message' => 'File not found',
             ], 404);
         }
 
@@ -256,14 +246,14 @@ class FileUploadController extends Controller
                     'mime_type' => $mimeType,
                     'last_modified' => date('Y-m-d H:i:s', $lastModified),
                     'download_url' => route('files.download', ['category' => $category, 'filename' => $filename]),
-                    'view_url' => route('files.view', ['category' => $category, 'filename' => $filename])
-                ]
+                    'view_url' => route('files.view', ['category' => $category, 'filename' => $filename]),
+                ],
             ]);
 
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to get file info: ' . $e->getMessage()
+                'message' => 'Failed to get file info: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -271,33 +261,32 @@ class FileUploadController extends Controller
     /**
      * Format bytes to human readable format
      *
-     * @param int $size
-     * @param int $precision
+     * @param  int  $size
+     * @param  int  $precision
      * @return string
      */
     private function formatBytes($size, $precision = 2)
     {
-        $units = array('B', 'KB', 'MB', 'GB', 'TB');
+        $units = ['B', 'KB', 'MB', 'GB', 'TB'];
 
         for ($i = 0; $size > 1024 && $i < count($units) - 1; $i++) {
             $size /= 1024;
         }
 
-        return round($size, $precision) . ' ' . $units[$i];
+        return round($size, $precision).' '.$units[$i];
     }
 
     /**
      * Get allowed file types for a category
      *
-     * @param string $category
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getAllowedTypes(string $category = null)
+    public function getAllowedTypes(?string $category = null)
     {
-        if ($category && !array_key_exists($category, self::ALLOWED_TYPES)) {
+        if ($category && ! array_key_exists($category, self::ALLOWED_TYPES)) {
             return response()->json([
                 'success' => false,
-                'message' => 'Invalid file category'
+                'message' => 'Invalid file category',
             ], 400);
         }
 
@@ -306,7 +295,7 @@ class FileUploadController extends Controller
         return response()->json([
             'success' => true,
             'data' => $types,
-            'max_size' => self::MAX_FILE_SIZE
+            'max_size' => self::MAX_FILE_SIZE,
         ]);
     }
 }

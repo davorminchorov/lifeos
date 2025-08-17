@@ -113,11 +113,12 @@ class Contract extends Model
     // Get formatted contract value with currency
     public function getFormattedValueAttribute()
     {
-        if (!$this->contract_value) {
+        if (! $this->contract_value) {
             return null;
         }
 
         $currency = $this->currency ?? config('currency.default', 'MKD');
+
         return app(\App\Services\CurrencyService::class)->format($this->contract_value, $currency);
     }
 }
