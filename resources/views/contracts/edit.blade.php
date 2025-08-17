@@ -166,6 +166,27 @@
                         @enderror
                     </div>
 
+                    <!-- Currency -->
+                    <div>
+                        <label for="currency" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Currency *</label>
+                        <select name="currency" id="currency" required
+                                class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 @error('currency') border-red-500 @enderror">
+                            <option value="MKD" {{ old('currency', $contract->currency) === 'MKD' ? 'selected' : '' }}>MKD (ден) - Macedonian Denar</option>
+                            <option value="USD" {{ old('currency', $contract->currency) === 'USD' ? 'selected' : '' }}>USD ($) - US Dollar</option>
+                            <option value="EUR" {{ old('currency', $contract->currency) === 'EUR' ? 'selected' : '' }}>EUR (€) - Euro</option>
+                            <option value="GBP" {{ old('currency', $contract->currency) === 'GBP' ? 'selected' : '' }}>GBP (£) - British Pound</option>
+                            <option value="CAD" {{ old('currency', $contract->currency) === 'CAD' ? 'selected' : '' }}>CAD (C$) - Canadian Dollar</option>
+                            <option value="AUD" {{ old('currency', $contract->currency) === 'AUD' ? 'selected' : '' }}>AUD (A$) - Australian Dollar</option>
+                            <option value="JPY" {{ old('currency', $contract->currency) === 'JPY' ? 'selected' : '' }}>JPY (¥) - Japanese Yen</option>
+                            <option value="CHF" {{ old('currency', $contract->currency) === 'CHF' ? 'selected' : '' }}>CHF (CHF) - Swiss Franc</option>
+                            <option value="RSD" {{ old('currency', $contract->currency) === 'RSD' ? 'selected' : '' }}>RSD (RSD) - Serbian Dinar</option>
+                            <option value="BGN" {{ old('currency', $contract->currency) === 'BGN' ? 'selected' : '' }}>BGN (лв) - Bulgarian Lev</option>
+                        </select>
+                        @error('currency')
+                            <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                        @enderror
+                    </div>
+
                     <!-- Payment Terms -->
                     <div>
                         <label for="payment_terms" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Payment Terms</label>
