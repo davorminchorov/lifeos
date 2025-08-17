@@ -16,7 +16,7 @@ class InvestmentGoalFactory extends Factory
      */
     public function definition(): array
     {
-        $targetAmount = fake()->randomFloat(2, 1000, 100000);
+        $targetAmount = fake()->randomFloat(2, 57000, 5700000);
         $currentProgress = fake()->randomFloat(2, 0, $targetAmount * 0.8);
 
         return [
@@ -25,6 +25,7 @@ class InvestmentGoalFactory extends Factory
             'description' => fake()->paragraph(),
             'target_amount' => $targetAmount,
             'current_progress' => $currentProgress,
+            'currency' => 'MKD',
             'target_date' => fake()->dateTimeBetween('now', '+5 years'),
             'status' => fake()->randomElement(['active', 'achieved', 'paused', 'cancelled']),
         ];

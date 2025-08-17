@@ -47,8 +47,8 @@ class ExpenseFactory extends Factory
 
         return [
             'user_id' => \App\Models\User::factory(),
-            'amount' => $this->faker->randomFloat(2, 1.99, 999.99),
-            'currency' => 'USD',
+            'amount' => $this->faker->randomFloat(2, 113, 57000),
+            'currency' => 'MKD',
             'category' => $category,
             'subcategory' => $subcategory,
             'expense_date' => $this->faker->dateTimeBetween('-1 year', 'now'),
@@ -67,7 +67,7 @@ class ExpenseFactory extends Factory
             'expense_type' => $this->faker->randomElement($expenseTypes),
             'is_recurring' => $isRecurring,
             'recurring_schedule' => $isRecurring ? $this->faker->randomElement($recurringSchedules) : null,
-            'budget_allocated' => $this->faker->optional()->randomFloat(2, 100, 1000),
+            'budget_allocated' => $this->faker->optional()->randomFloat(2, 5700, 57000),
             'notes' => $this->faker->optional()->sentence(),
             'status' => $this->faker->randomElement($statuses),
         ];

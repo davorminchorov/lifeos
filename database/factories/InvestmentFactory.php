@@ -49,7 +49,7 @@ class InvestmentFactory extends Factory
                 $name = $this->faker->words(2, true).' Investment';
         }
 
-        $purchasePrice = $this->faker->randomFloat(8, 0.01, 1000);
+        $purchasePrice = $this->faker->randomFloat(8, 0.57, 57000);
         $quantity = $this->faker->randomFloat(8, 0.1, 1000);
         $currentValue = $purchasePrice * $this->faker->randomFloat(2, 0.5, 3.0); // -50% to +200% change
 
@@ -62,8 +62,9 @@ class InvestmentFactory extends Factory
             'purchase_date' => $purchaseDate,
             'purchase_price' => $purchasePrice,
             'current_value' => $currentValue,
-            'total_dividends_received' => $this->faker->randomFloat(2, 0, 1000),
-            'total_fees_paid' => $this->faker->randomFloat(2, 0, 100),
+            'currency' => 'MKD',
+            'total_dividends_received' => $this->faker->randomFloat(2, 0, 57000),
+            'total_fees_paid' => $this->faker->randomFloat(2, 0, 5700),
             'investment_goals' => $this->faker->optional()->randomElements([
                 'retirement', 'growth', 'income', 'speculation', 'diversification',
             ], 2),

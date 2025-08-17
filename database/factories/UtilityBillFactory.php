@@ -53,7 +53,7 @@ class UtilityBillFactory extends Factory
         // Generate usage and billing data based on utility type
         $usageAmount = null;
         $ratePerUnit = null;
-        $billAmount = $this->faker->randomFloat(2, 25, 500);
+        $billAmount = $this->faker->randomFloat(2, 1425, 28500);
 
         if ($usageUnit) {
             switch ($utilityType) {
@@ -86,6 +86,7 @@ class UtilityBillFactory extends Factory
             'account_number' => $this->faker->bothify('##########'),
             'service_address' => $this->faker->address(),
             'bill_amount' => $billAmount,
+            'currency' => 'MKD',
             'usage_amount' => $usageAmount,
             'usage_unit' => $usageUnit,
             'rate_per_unit' => $ratePerUnit,
@@ -113,7 +114,7 @@ class UtilityBillFactory extends Factory
                 ['month' => 'Feb', 'usage' => 450, 'cost' => 68],
                 ['month' => 'Mar', 'usage' => 520, 'cost' => 78],
             ]),
-            'budget_alert_threshold' => $this->faker->optional()->randomFloat(2, 100, 300),
+            'budget_alert_threshold' => $this->faker->optional()->randomFloat(2, 5700, 17100),
             'notes' => $this->faker->optional()->sentence(),
         ];
     }
