@@ -13,6 +13,7 @@ class InvestmentDividendTest extends TestCase
     use RefreshDatabase;
 
     private User $user;
+
     private Investment $investment;
 
     protected function setUp(): void

@@ -127,7 +127,7 @@ class InvestmentTransaction extends Model
     // Check if transaction affects share count
     public function getAffectsShareCountAttribute()
     {
-        return !in_array($this->transaction_type, ['stock_split', 'stock_dividend']);
+        return ! in_array($this->transaction_type, ['stock_split', 'stock_dividend']);
     }
 
     // Get transaction impact on portfolio (positive for buys, negative for sells)

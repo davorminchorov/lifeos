@@ -136,9 +136,9 @@
                     label="Risk Tolerance"
                     required
                 >
-                    <option value="low" {{ old('risk_tolerance') === 'low' ? 'selected' : '' }}>Low Risk</option>
-                    <option value="medium" {{ old('risk_tolerance', 'medium') === 'medium' ? 'selected' : '' }}>Medium Risk</option>
-                    <option value="high" {{ old('risk_tolerance') === 'high' ? 'selected' : '' }}>High Risk</option>
+                    <option value="conservative" {{ old('risk_tolerance') === 'conservative' ? 'selected' : '' }}>Conservative</option>
+                    <option value="moderate" {{ old('risk_tolerance', 'moderate') === 'moderate' ? 'selected' : '' }}>Moderate</option>
+                    <option value="aggressive" {{ old('risk_tolerance') === 'aggressive' ? 'selected' : '' }}>Aggressive</option>
                 </x-form.select>
 
                 <x-form.input

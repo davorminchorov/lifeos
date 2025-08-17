@@ -11,7 +11,7 @@ class StoreExpenseRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return auth()->check();
     }
 
     /**
@@ -22,7 +22,24 @@ class StoreExpenseRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'amount' => 'required|numeric|min:0.01',
+            'currency' => 'nullable|string|size:3',
+            'category' => 'required|string|max:255',
+            'subcategory' => 'nullable|string|max:255',
+            'expense_date' => 'required|date',
+            'description' => 'required|string|max:65535',
+            'merchant' => 'nullable|string|max:255',
+            'payment_method' => 'nullable|string|max:255',
+            'receipt_attachments' => 'nullable|array',
+            'tags' => 'nullable|array',
+            'location' => 'nullable|string|max:255',
+            'is_tax_deductible' => 'nullable|boolean',
+            'expense_type' => 'nullable|in:business,personal',
+            'is_recurring' => 'nullable|boolean',
+            'recurring_schedule' => 'nullable|string|max:255',
+            'budget_allocated' => 'nullable|numeric|min:0',
+            'notes' => 'nullable|string|max:65535',
+            'status' => 'nullable|in:pending,confirmed,reimbursed',
         ];
     }
 }

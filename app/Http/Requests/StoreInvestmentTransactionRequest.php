@@ -110,12 +110,12 @@ class StoreInvestmentTransactionRequest extends FormRequest
             }
 
             // Validate limit price is provided for limit orders
-            if ($this->order_type === 'limit' && !$this->filled('limit_price')) {
+            if ($this->order_type === 'limit' && ! $this->filled('limit_price')) {
                 $validator->errors()->add('limit_price', 'Limit price is required for limit orders.');
             }
 
             // Validate stop price is provided for stop orders
-            if (in_array($this->order_type, ['stop', 'stop_limit']) && !$this->filled('stop_price')) {
+            if (in_array($this->order_type, ['stop', 'stop_limit']) && ! $this->filled('stop_price')) {
                 $validator->errors()->add('stop_price', 'Stop price is required for stop orders.');
             }
         });

@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreInvestmentRequest;
 use App\Http\Requests\StoreInvestmentDividendRequest;
+use App\Http\Requests\StoreInvestmentRequest;
 use App\Http\Requests\StoreInvestmentTransactionRequest;
 use App\Http\Requests\UpdateInvestmentRequest;
 use App\Models\Investment;

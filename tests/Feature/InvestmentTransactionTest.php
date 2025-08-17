@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use App\Models\Investment;
-use App\Models\InvestmentTransaction;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -13,6 +12,7 @@ class InvestmentTransactionTest extends TestCase
     use RefreshDatabase;
 
     private User $user;
+
     private Investment $investment;
 
     protected function setUp(): void

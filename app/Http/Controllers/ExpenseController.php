@@ -15,7 +15,7 @@ class ExpenseController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Expense::query()->with('user');
+        $query = Expense::where('user_id', auth()->id())->with('user');
 
         // Filter by category
         if ($request->has('category')) {
@@ -111,6 +111,11 @@ class ExpenseController extends Controller
      */
     public function show(Expense $expense)
     {
+        // Ensure the expense belongs to the authenticated user
+        if ($expense->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized access to expense.');
+        }
+
         $expense->load('user');
 
         if (request()->expectsJson()) {
@@ -125,6 +130,11 @@ class ExpenseController extends Controller
      */
     public function edit(Expense $expense)
     {
+        // Ensure the expense belongs to the authenticated user
+        if ($expense->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized access to expense.');
+        }
+
         return view('expenses.edit', compact('expense'));
     }
 
@@ -133,6 +143,11 @@ class ExpenseController extends Controller
      */
     public function update(UpdateExpenseRequest $request, Expense $expense)
     {
+        // Ensure the expense belongs to the authenticated user
+        if ($expense->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized access to expense.');
+        }
+
         $expense->update($request->validated());
 
         if ($request->expectsJson()) {
@@ -148,6 +163,11 @@ class ExpenseController extends Controller
      */
     public function destroy(Expense $expense)
     {
+        // Ensure the expense belongs to the authenticated user
+        if ($expense->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized access to expense.');
+        }
+
         $expense->delete();
 
         if (request()->expectsJson()) {
@@ -163,6 +183,11 @@ class ExpenseController extends Controller
      */
     public function markReimbursed(Expense $expense)
     {
+        // Ensure the expense belongs to the authenticated user
+        if ($expense->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized access to expense.');
+        }
+
         $expense->update(['status' => 'reimbursed']);
 
         if (request()->expectsJson()) {
@@ -178,7 +203,7 @@ class ExpenseController extends Controller
      */
     public function analytics(Request $request)
     {
-        $query = Expense::query();
+        $query = Expense::where('user_id', auth()->id());
 
         // Filter by date range
         if ($request->has('start_date') && $request->has('end_date')) {
@@ -249,6 +274,11 @@ class ExpenseController extends Controller
      */
     public function duplicate(Expense $expense)
     {
+        // Ensure the expense belongs to the authenticated user
+        if ($expense->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized access to expense.');
+        }
+
         $newExpense = $expense->replicate();
         $newExpense->expense_date = now()->toDateString();
         $newExpense->status = 'pending';
@@ -275,27 +305,38 @@ class ExpenseController extends Controller
             'status' => 'required_if:action,change_status|in:pending,confirmed,reimbursed',
         ]);
 
-        $expenses = Expense::whereIn('id', $request->expense_ids)->get();
+        $expenses = Expense::where('user_id', auth()->id())
+            ->whereIn('id', $request->expense_ids)
+            ->get();
         $count = $expenses->count();
+
+        // Validate that all requested expense IDs belong to the user
+        if ($count !== count($request->expense_ids)) {
+            abort(403, 'Unauthorized access to one or more expenses.');
+        }
 
         switch ($request->action) {
             case 'delete':
-                Expense::whereIn('id', $request->expense_ids)->delete();
+                Expense::where('user_id', auth()->id())
+                    ->whereIn('id', $request->expense_ids)->delete();
                 $message = "{$count} expenses deleted successfully!";
                 break;
 
             case 'mark_reimbursed':
-                Expense::whereIn('id', $request->expense_ids)->update(['status' => 'reimbursed']);
+                Expense::where('user_id', auth()->id())
+                    ->whereIn('id', $request->expense_ids)->update(['status' => 'reimbursed']);
                 $message = "{$count} expenses marked as reimbursed!";
                 break;
 
             case 'change_category':
-                Expense::whereIn('id', $request->expense_ids)->update(['category' => $request->category]);
+                Expense::where('user_id', auth()->id())
+                    ->whereIn('id', $request->expense_ids)->update(['category' => $request->category]);
                 $message = "{$count} expenses moved to {$request->category} category!";
                 break;
 
             case 'change_status':
-                Expense::whereIn('id', $request->expense_ids)->update(['status' => $request->status]);
+                Expense::where('user_id', auth()->id())
+                    ->whereIn('id', $request->expense_ids)->update(['status' => $request->status]);
                 $message = "{$count} expenses status changed to {$request->status}!";
                 break;
         }

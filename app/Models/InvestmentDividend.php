@@ -79,7 +79,7 @@ class InvestmentDividend extends Model
     // Calculate dividend yield based on shares held and dividend per share
     public function getDividendYieldAttribute()
     {
-        if ($this->shares_held == 0 || !$this->investment) {
+        if ($this->shares_held == 0 || ! $this->investment) {
             return 0;
         }
 

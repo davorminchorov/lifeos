@@ -1,14 +1,13 @@
 <?php
 
-require_once __DIR__ . '/vendor/autoload.php';
+require_once __DIR__.'/vendor/autoload.php';
 
-use Illuminate\Foundation\Application;
-use Illuminate\Http\Request;
 use App\Http\Controllers\SubscriptionController;
 use App\Models\Subscription;
+use Illuminate\Http\Request;
 
 // Bootstrap Laravel
-$app = require_once __DIR__ . '/bootstrap/app.php';
+$app = require_once __DIR__.'/bootstrap/app.php';
 $kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
 $kernel->bootstrap();
 
@@ -19,7 +18,7 @@ try {
     // Find an active subscription to test with
     $activeSubscription = Subscription::where('status', 'active')->first();
 
-    if (!$activeSubscription) {
+    if (! $activeSubscription) {
         echo "❌ No active subscriptions found. Creating a test subscription...\n";
         $activeSubscription = Subscription::create([
             'user_id' => 1, // Assuming user ID 1 exists
@@ -39,8 +38,8 @@ try {
     echo "   - Initial status: {$activeSubscription->status}\n";
 
     // Test pause functionality
-    $controller = new SubscriptionController();
-    $request = new Request();
+    $controller = new SubscriptionController;
+    $request = new Request;
 
     // Mock the pause request
     $response = $controller->pause($activeSubscription);
@@ -79,18 +78,18 @@ try {
     foreach ($routes as $route) {
         if ($route->getName() === 'subscriptions.pause') {
             $pauseRouteExists = true;
-            echo "   ✅ Pause route exists: " . $route->uri() . "\n";
+            echo '   ✅ Pause route exists: '.$route->uri()."\n";
         }
         if ($route->getName() === 'subscriptions.resume') {
             $resumeRouteExists = true;
-            echo "   ✅ Resume route exists: " . $route->uri() . "\n";
+            echo '   ✅ Resume route exists: '.$route->uri()."\n";
         }
     }
 
-    if (!$pauseRouteExists) {
+    if (! $pauseRouteExists) {
         echo "   ❌ Pause route not found\n";
     }
-    if (!$resumeRouteExists) {
+    if (! $resumeRouteExists) {
         echo "   ❌ Resume route not found\n";
     }
 
@@ -98,6 +97,6 @@ try {
     echo "The pause/resume buttons should now work correctly in the subscription table.\n";
 
 } catch (Exception $e) {
-    echo "❌ Error during testing: " . $e->getMessage() . "\n";
-    echo "Stack trace:\n" . $e->getTraceAsString() . "\n";
+    echo '❌ Error during testing: '.$e->getMessage()."\n";
+    echo "Stack trace:\n".$e->getTraceAsString()."\n";
 }
