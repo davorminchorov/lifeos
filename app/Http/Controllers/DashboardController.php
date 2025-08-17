@@ -61,7 +61,8 @@ class DashboardController extends Controller
         $monthlySubscriptionCostMKD = 0;
 
         foreach ($subscriptions as $subscription) {
-            $costInMKD = $this->currencyService->convertToDefault($subscription->cost, $subscription->currency);
+            $currency = $subscription->currency ?? config('currency.default', 'MKD');
+            $costInMKD = $this->currencyService->convertToDefault($subscription->cost, $currency);
             $monthlySubscriptionCostMKD += $costInMKD;
         }
 
@@ -72,7 +73,8 @@ class DashboardController extends Controller
         $totalContractValueMKD = 0;
 
         foreach ($contracts as $contract) {
-            $valueInMKD = $this->currencyService->convertToDefault($contract->contract_value, $contract->currency);
+            $currency = $contract->currency ?? config('currency.default', 'MKD');
+            $valueInMKD = $this->currencyService->convertToDefault($contract->contract_value, $currency);
             $totalContractValueMKD += $valueInMKD;
         }
 
@@ -87,7 +89,8 @@ class DashboardController extends Controller
         $totalPendingBillsMKD = 0;
 
         foreach ($bills as $bill) {
-            $amountInMKD = $this->currencyService->convertToDefault($bill->bill_amount, $bill->currency);
+            $currency = $bill->currency ?? config('currency.default', 'MKD');
+            $amountInMKD = $this->currencyService->convertToDefault($bill->bill_amount, $currency);
             $totalPendingBillsMKD += $amountInMKD;
         }
 
@@ -97,7 +100,8 @@ class DashboardController extends Controller
         $totalExpensesMKD = 0;
 
         foreach ($expenses as $expense) {
-            $amountInMKD = $this->currencyService->convertToDefault($expense->amount, $expense->currency);
+            $currency = $expense->currency ?? config('currency.default', 'MKD');
+            $amountInMKD = $this->currencyService->convertToDefault($expense->amount, $currency);
             $totalExpensesMKD += $amountInMKD;
         }
 
