@@ -269,8 +269,8 @@ class UtilityBillController extends Controller
         // Monthly spending trends
         $monthlySpending = (clone $query)
             ->select(
-                DB::raw('YEAR(bill_period_start) as year'),
-                DB::raw('MONTH(bill_period_start) as month'),
+                DB::raw('strftime("%Y", bill_period_start) as year'),
+                DB::raw('strftime("%m", bill_period_start) as month'),
                 DB::raw('SUM(bill_amount) as total_amount'),
                 DB::raw('COUNT(*) as count'),
                 DB::raw('AVG(bill_amount) as average_amount')

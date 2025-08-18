@@ -9,6 +9,7 @@ use App\Models\Subscription;
 use App\Models\UtilityBill;
 use App\Models\Warranty;
 use App\Services\CurrencyService;
+use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
@@ -84,7 +85,7 @@ class DashboardController extends Controller
     private function getSpendingTrendsData($startDate, $endDate)
     {
         $expenses = Expense::whereBetween('expense_date', [$startDate, $endDate])
-            ->selectRaw('YEAR(expense_date) as year, MONTH(expense_date) as month, SUM(amount) as total')
+            ->selectRaw('strftime("%Y", expense_date) as year, strftime("%m", expense_date) as month, SUM(amount) as total')
             ->groupBy('year', 'month')
             ->orderBy('year')
             ->orderBy('month')
@@ -103,7 +104,7 @@ class DashboardController extends Controller
                                   ->where('month', $current->month)
                                   ->first();
 
-            $monthlyAmount = $monthExpense ? $this->currencyService->convertToDefault($monthExpense->total, 'MKD') : 0;
+            $monthlyAmount = $monthExpense ? $this->currencyService->convertToDefault((float)$monthExpense->total, 'MKD') : 0;
             $spending[] = $monthlyAmount;
             $budget[] = 50000; // Default budget line
 
@@ -126,14 +127,16 @@ class DashboardController extends Controller
         $subscriptionCost = Subscription::active()
             ->get()
             ->sum(function($sub) {
-                return $this->currencyService->convertToDefault($sub->cost, $sub->currency ?? 'MKD');
+                $currency = $sub->currency ?: 'MKD';
+                return $this->currencyService->convertToDefault($sub->cost, $currency);
             });
 
         // Get utility bills
         $utilityBills = UtilityBill::whereBetween('due_date', [$startDate, $endDate])
             ->get()
             ->sum(function($bill) {
-                return $this->currencyService->convertToDefault($bill->bill_amount, $bill->currency ?? 'MKD');
+                $currency = $bill->currency ?: 'MKD';
+                return $this->currencyService->convertToDefault($bill->bill_amount, $currency);
             });
 
         // Get expenses by category (if you have categories)
