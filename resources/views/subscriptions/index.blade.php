@@ -3,18 +3,23 @@
 @section('title', 'Subscriptions - LifeOS')
 
 @section('header')
-    <div class="flex justify-between items-center">
+    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>
-            <h1 class="text-3xl font-bold text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
+            <h1 class="text-2xl sm:text-3xl font-bold text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                 Subscriptions
             </h1>
             <p class="mt-2 text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)]">
                 Manage your recurring subscriptions and track spending
             </p>
         </div>
-        <a href="{{ route('subscriptions.create') }}" class="bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 shadow-sm">
-            Add Subscription
-        </a>
+        <div class="flex-shrink-0">
+            <a href="{{ route('subscriptions.create') }}" class="w-full sm:w-auto inline-flex justify-center items-center bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] text-white px-6 py-3 sm:px-4 sm:py-2 rounded-lg sm:rounded-md text-base sm:text-sm font-medium transition-colors duration-200 shadow-sm touch-manipulation">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                </svg>
+                Add Subscription
+            </a>
+        </div>
     </div>
 @endsection
 
@@ -28,7 +33,7 @@
                     <label for="search" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Search</label>
                     <input type="text" name="search" id="search" value="{{ request('search') }}"
                            placeholder="Search subscriptions..."
-                           class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">
+                           class="mt-1 block w-full rounded-lg border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)] px-4 py-3 sm:px-3 sm:py-2 text-base sm:text-sm touch-manipulation">
                 </div>
 
                 <!-- Status Filter -->
@@ -67,12 +72,20 @@
                 </div>
 
                 <div class="col-span-full">
-                    <button type="submit" class="bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 shadow-sm">
-                        Apply Filters
-                    </button>
-                    <a href="{{ route('subscriptions.index') }}" class="ml-2 bg-[color:var(--color-primary-200)] hover:bg-[color:var(--color-primary-300)] text-[color:var(--color-primary-700)] dark:bg-[color:var(--color-dark-300)] dark:hover:bg-[color:var(--color-dark-400)] dark:text-[color:var(--color-dark-600)] px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200">
-                        Clear
-                    </a>
+                    <div class="flex flex-col sm:flex-row gap-3 sm:gap-2">
+                        <button type="submit" class="w-full sm:w-auto inline-flex justify-center items-center bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] text-white px-6 py-3 sm:px-4 sm:py-2 rounded-lg sm:rounded-md text-base sm:text-sm font-medium transition-colors duration-200 shadow-sm touch-manipulation">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.414A1 1 0 013 6.707V4z"></path>
+                            </svg>
+                            Apply Filters
+                        </button>
+                        <a href="{{ route('subscriptions.index') }}" class="w-full sm:w-auto inline-flex justify-center items-center bg-[color:var(--color-primary-200)] hover:bg-[color:var(--color-primary-300)] text-[color:var(--color-primary-700)] dark:bg-[color:var(--color-dark-300)] dark:hover:bg-[color:var(--color-dark-400)] dark:text-[color:var(--color-dark-600)] px-6 py-3 sm:px-4 sm:py-2 rounded-lg sm:rounded-md text-base sm:text-sm font-medium transition-colors duration-200 touch-manipulation">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                            </svg>
+                            Clear Filters
+                        </a>
+                    </div>
                 </div>
             </form>
         </div>
@@ -82,7 +95,89 @@
     <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] shadow overflow-hidden sm:rounded-lg border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)]" x-data="{}">
         <div class="px-4 py-5 sm:p-6">
             @if($subscriptions->count() > 0)
-                <div class="overflow-x-auto">
+                <!-- Mobile Card Layout (visible on small screens) -->
+                <div class="block sm:hidden space-y-4">
+                    @foreach($subscriptions as $subscription)
+                        <div class="bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-lg p-4 space-y-3">
+                            <div class="flex justify-between items-start">
+                                <div class="flex-1">
+                                    <h3 class="text-lg font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
+                                        {{ $subscription->service_name }}
+                                    </h3>
+                                    @if($subscription->description)
+                                        <p class="text-sm text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] mt-1">
+                                            {{ Str::limit($subscription->description, 80) }}
+                                        </p>
+                                    @endif
+                                </div>
+                                <div class="flex-shrink-0 ml-4">
+                                    @if($subscription->status === 'active')
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-[color:var(--color-success-50)] text-[color:var(--color-success-600)] dark:bg-[color:var(--color-dark-300)] dark:text-[color:var(--color-success-500)]">
+                                            Active
+                                        </span>
+                                    @elseif($subscription->status === 'cancelled')
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-[color:var(--color-danger-50)] text-[color:var(--color-danger-600)] dark:bg-[color:var(--color-dark-300)] dark:text-[color:var(--color-danger-500)]">
+                                            Cancelled
+                                        </span>
+                                    @else
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-[color:var(--color-warning-50)] text-[color:var(--color-warning-600)] dark:bg-[color:var(--color-dark-300)] dark:text-[color:var(--color-warning-500)]">
+                                            Paused
+                                        </span>
+                                    @endif
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-4 text-sm">
+                                <div>
+                                    <span class="text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">Category:</span>
+                                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-[color:var(--color-info-50)] text-[color:var(--color-info-600)] dark:bg-[color:var(--color-dark-300)] dark:text-[color:var(--color-info-500)] ml-2">
+                                        {{ $subscription->category }}
+                                    </span>
+                                </div>
+                                <div>
+                                    <span class="text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">Cost:</span>
+                                    <span class="font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] ml-2">
+                                        {{ $subscription->currency }} {{ number_format($subscription->cost, 2) }}
+                                    </span>
+                                    <div class="text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">{{ ucfirst($subscription->billing_cycle) }}</div>
+                                </div>
+                                <div class="col-span-2">
+                                    <span class="text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">Next Billing:</span>
+                                    <span class="font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] ml-2">
+                                        {{ $subscription->next_billing_date->format('M j, Y') }}
+                                    </span>
+                                    @php
+                                        $daysUntil = now()->diffInDays($subscription->next_billing_date, false);
+                                    @endphp
+                                    @if($daysUntil <= 7 && $daysUntil >= 0)
+                                        <span class="text-xs text-[color:var(--color-warning-600)] ml-2">Due in {{ $daysUntil }} days</span>
+                                    @endif
+                                </div>
+                            </div>
+
+                            <div class="flex justify-end space-x-2 pt-3 border-t border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-400)]">
+                                <a href="{{ route('subscriptions.show', $subscription) }}" class="bg-[color:var(--color-accent-100)] hover:bg-[color:var(--color-accent-200)] text-[color:var(--color-accent-700)] px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 touch-manipulation">View</a>
+                                <a href="{{ route('subscriptions.edit', $subscription) }}" class="bg-[color:var(--color-warning-100)] hover:bg-[color:var(--color-warning-200)] text-[color:var(--color-warning-700)] px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 touch-manipulation">Edit</a>
+                                @if($subscription->status === 'active')
+                                    <button type="button"
+                                            class="bg-[color:var(--color-warning-100)] hover:bg-[color:var(--color-warning-200)] text-[color:var(--color-warning-700)] px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 touch-manipulation"
+                                            x-on:click="$dispatch('open-modal', { id: 'pauseModal-{{ $subscription->id }}' })">
+                                        Pause
+                                    </button>
+                                @elseif($subscription->status === 'paused')
+                                    <button type="button"
+                                            class="bg-[color:var(--color-success-100)] hover:bg-[color:var(--color-success-200)] text-[color:var(--color-success-700)] px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 touch-manipulation"
+                                            x-on:click="$dispatch('open-modal', { id: 'resumeModal-{{ $subscription->id }}' })">
+                                        Resume
+                                    </button>
+                                @endif
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+
+                <!-- Desktop Table Layout (hidden on small screens) -->
+                <div class="hidden sm:block overflow-x-auto">
                     <table class="min-w-full divide-y divide-[color:var(--color-primary-300)] dark:divide-[color:var(--color-dark-300)]">
                         <thead class="bg-[color:var(--color-primary-200)] dark:bg-[color:var(--color-dark-300)]">
                             <tr>

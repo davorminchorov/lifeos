@@ -56,6 +56,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Get the user's contracts.
+     */
+    public function contracts(): HasMany
+    {
+        return $this->hasMany(Contract::class);
+    }
+
+    /**
      * Get the user's notification preferences.
      */
     public function notificationPreferences(): HasMany

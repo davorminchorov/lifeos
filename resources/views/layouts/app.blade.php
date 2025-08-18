@@ -56,6 +56,23 @@
                         @endauth
                     </div>
 
+                    <!-- Mobile menu button -->
+                    @auth
+                    <div class="flex items-center sm:hidden">
+                        <button type="button" id="mobile-menu-button" class="text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] hover:text-[color:var(--color-primary-600)] dark:hover:text-[color:var(--color-dark-400)] hover:bg-[color:var(--color-primary-200)] dark:hover:bg-[color:var(--color-dark-200)] focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[color:var(--color-accent-500)] p-2 rounded-md" aria-controls="mobile-menu" aria-expanded="false">
+                            <span class="sr-only">Open main menu</span>
+                            <!-- Hamburger icon -->
+                            <svg id="menu-icon" class="block h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                            </svg>
+                            <!-- Close icon -->
+                            <svg id="close-icon" class="hidden h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                    @endauth
+
                     <!-- User Menu & Dark Mode Toggle -->
                     <div class="flex items-center space-x-4">
                         @auth
@@ -106,7 +123,7 @@
 
             <!-- Mobile menu -->
             @auth
-            <div class="sm:hidden">
+            <div id="mobile-menu" class="sm:hidden hidden">
                 <div class="pt-2 pb-3 space-y-1">
                     <a href="{{ route('dashboard') }}" class="block pl-3 pr-4 py-2 border-l-4 {{ request()->routeIs('dashboard') ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-accent-600)] bg-[color:var(--color-accent-50)]' : 'border-transparent text-[color:var(--color-primary-600)] hover:text-[color:var(--color-primary-700)] hover:bg-[color:var(--color-primary-200)] hover:border-[color:var(--color-primary-400)]' }} text-base font-medium transition-colors duration-200">Dashboard</a>
                     <a href="{{ route('subscriptions.index') }}" class="block pl-3 pr-4 py-2 border-l-4 {{ request()->routeIs('subscriptions.*') ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-accent-600)] bg-[color:var(--color-accent-50)]' : 'border-transparent text-[color:var(--color-primary-600)] hover:text-[color:var(--color-primary-700)] hover:bg-[color:var(--color-primary-200)] hover:border-[color:var(--color-primary-400)]' }} text-base font-medium transition-colors duration-200">Subscriptions</a>
@@ -215,6 +232,43 @@
             document.addEventListener('click', function(event) {
                 if (!userMenuButton.contains(event.target) && !userMenu.contains(event.target)) {
                     userMenu.classList.add('hidden');
+                }
+            });
+        }
+
+        // Mobile menu toggle functionality
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const menuIcon = document.getElementById('menu-icon');
+        const closeIcon = document.getElementById('close-icon');
+
+        if (mobileMenuButton && mobileMenu) {
+            mobileMenuButton.addEventListener('click', function() {
+                const isExpanded = mobileMenuButton.getAttribute('aria-expanded') === 'true';
+
+                mobileMenuButton.setAttribute('aria-expanded', !isExpanded);
+                mobileMenu.classList.toggle('hidden');
+                menuIcon.classList.toggle('hidden');
+                closeIcon.classList.toggle('hidden');
+            });
+
+            // Close mobile menu when clicking outside
+            document.addEventListener('click', function(event) {
+                if (!mobileMenuButton.contains(event.target) && !mobileMenu.contains(event.target)) {
+                    mobileMenu.classList.add('hidden');
+                    menuIcon.classList.remove('hidden');
+                    closeIcon.classList.add('hidden');
+                    mobileMenuButton.setAttribute('aria-expanded', 'false');
+                }
+            });
+
+            // Close mobile menu when screen size changes to desktop
+            window.addEventListener('resize', function() {
+                if (window.innerWidth >= 640) { // sm breakpoint
+                    mobileMenu.classList.add('hidden');
+                    menuIcon.classList.remove('hidden');
+                    closeIcon.classList.add('hidden');
+                    mobileMenuButton.setAttribute('aria-expanded', 'false');
                 }
             });
         }
