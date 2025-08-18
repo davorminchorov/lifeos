@@ -95,14 +95,6 @@
                 </button>
             </div>
 
-            <div class="text-center">
-                <p class="text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)]">
-                    Don't have an account?
-                    <a href="{{ route('register') }}" class="font-medium text-[color:var(--color-accent-600)] hover:text-[color:var(--color-accent-500)] transition-colors duration-200">
-                        Create one now
-                    </a>
-                </p>
-            </div>
         </form>
     </div>
 </div>

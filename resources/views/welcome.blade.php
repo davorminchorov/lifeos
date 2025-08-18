@@ -38,13 +38,6 @@
                             Log in
                         </a>
 
-                        @if (Route::has('register'))
-                            <a
-                                href="{{ route('register') }}"
-                                class="inline-block px-5 py-1.5 dark:text-[color:var(--color-dark-600)] border-[color:var(--color-primary-300)] hover:border-[color:var(--color-primary-400)] border text-[color:var(--color-primary-700)] dark:border-[color:var(--color-dark-300)] dark:hover:border-[color:var(--color-dark-400)] rounded-sm text-sm leading-normal">
-                                Register
-                            </a>
-                        @endif
                     @endauth
                 </nav>
             @endif

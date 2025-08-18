@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
-use App\Http\Requests\Auth\RegisterRequest;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -41,30 +40,6 @@ class AuthController extends Controller
         ])->onlyInput('email');
     }
 
-    /**
-     * Display the registration form.
-     */
-    public function showRegister(): View
-    {
-        return view('auth.register');
-    }
-
-    /**
-     * Handle registration request.
-     */
-    public function register(RegisterRequest $request): RedirectResponse
-    {
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
-
-        Auth::login($user);
-
-        return redirect()->route('dashboard')
-            ->with('success', 'Welcome to LifeOS! Your account has been created successfully.');
-    }
 
     /**
      * Handle logout request.
