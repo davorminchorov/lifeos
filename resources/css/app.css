@@ -40,18 +40,27 @@
 
     /* Functional Status Colors */
     --color-success-50: #F0FDF4;
+    --color-success-400: #4ADE80;
     --color-success-500: #22C55E;
     --color-success-600: #16A34A;
 
     --color-warning-50: #FFFBEB;
+    --color-warning-400: #FBBF24;
     --color-warning-500: #F59E0B;
     --color-warning-600: #D97706;
 
     --color-danger-50: #FEF2F2;
+    --color-danger-400: #F87171;
     --color-danger-500: #EF4444;
     --color-danger-600: #DC2626;
 
     --color-info-50: #EFF6FF;
+    --color-info-200: #BFDBFE;
+    --color-info-300: #93C5FD;
+    --color-info-400: #60A5FA;
     --color-info-500: #3B82F6;
     --color-info-600: #2563EB;
+    --color-info-700: #1D4ED8;
+    --color-info-800: #1E40AF;
+    --color-info-900: #1E3A8A;
 }
