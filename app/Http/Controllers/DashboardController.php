@@ -55,6 +55,190 @@ class DashboardController extends Controller
     }
 
     /**
+     * Get chart data for Advanced Analytics Dashboard
+     */
+    public function getChartData(Request $request)
+    {
+        $period = $request->get('period', '6months');
+
+        // Calculate date range based on period
+        $endDate = now();
+        $startDate = match ($period) {
+            '3months' => $endDate->copy()->subMonths(3),
+            '1year' => $endDate->copy()->subYear(),
+            '2years' => $endDate->copy()->subYears(2),
+            default => $endDate->copy()->subMonths(6), // 6months
+        };
+
+        return response()->json([
+            'spendingTrends' => $this->getSpendingTrendsData($startDate, $endDate),
+            'categoryBreakdown' => $this->getCategoryBreakdownData($startDate, $endDate),
+            'portfolioPerformance' => $this->getPortfolioPerformanceData($startDate, $endDate),
+            'monthlyComparison' => $this->getMonthlyComparisonData()
+        ]);
+    }
+
+    /**
+     * Get spending trends data for charts
+     */
+    private function getSpendingTrendsData($startDate, $endDate)
+    {
+        $expenses = Expense::whereBetween('expense_date', [$startDate, $endDate])
+            ->selectRaw('YEAR(expense_date) as year, MONTH(expense_date) as month, SUM(amount) as total')
+            ->groupBy('year', 'month')
+            ->orderBy('year')
+            ->orderBy('month')
+            ->get();
+
+        $labels = [];
+        $spending = [];
+        $budget = [];
+
+        $current = $startDate->copy();
+        while ($current->lte($endDate)) {
+            $monthLabel = $current->format('M Y');
+            $labels[] = $monthLabel;
+
+            $monthExpense = $expenses->where('year', $current->year)
+                                  ->where('month', $current->month)
+                                  ->first();
+
+            $monthlyAmount = $monthExpense ? $this->currencyService->convertToDefault($monthExpense->total, 'MKD') : 0;
+            $spending[] = $monthlyAmount;
+            $budget[] = 50000; // Default budget line
+
+            $current->addMonth();
+        }
+
+        return [
+            'labels' => $labels,
+            'spending' => $spending,
+            'budget' => $budget
+        ];
+    }
+
+    /**
+     * Get category breakdown data for charts
+     */
+    private function getCategoryBreakdownData($startDate, $endDate)
+    {
+        // Get subscription costs
+        $subscriptionCost = Subscription::active()
+            ->get()
+            ->sum(function($sub) {
+                return $this->currencyService->convertToDefault($sub->cost, $sub->currency ?? 'MKD');
+            });
+
+        // Get utility bills
+        $utilityBills = UtilityBill::whereBetween('due_date', [$startDate, $endDate])
+            ->get()
+            ->sum(function($bill) {
+                return $this->currencyService->convertToDefault($bill->bill_amount, $bill->currency ?? 'MKD');
+            });
+
+        // Get expenses by category (if you have categories)
+        $expenses = Expense::whereBetween('expense_date', [$startDate, $endDate])
+            ->selectRaw('category, SUM(amount) as total')
+            ->groupBy('category')
+            ->get();
+
+        $labels = ['Subscriptions', 'Utilities'];
+        $values = [$subscriptionCost, $utilityBills];
+
+        // Add expense categories
+        foreach ($expenses as $expense) {
+            $labels[] = ucfirst($expense->category ?? 'Other');
+            $values[] = $this->currencyService->convertToDefault($expense->total, 'MKD');
+        }
+
+        return [
+            'labels' => $labels,
+            'values' => $values
+        ];
+    }
+
+    /**
+     * Get portfolio performance data for charts
+     */
+    private function getPortfolioPerformanceData($startDate, $endDate)
+    {
+        // This would typically come from historical investment data
+        // For now, we'll generate sample data based on current portfolio
+        $currentValue = Investment::active()->sum('current_market_value');
+        $currentReturn = Investment::active()->sum('total_return');
+
+        $labels = [];
+        $values = [];
+        $returns = [];
+
+        $current = $startDate->copy();
+        $monthCount = 0;
+        while ($current->lte($endDate) && $monthCount < 12) {
+            $labels[] = $current->format('M');
+
+            // Simulate portfolio growth with some volatility
+            $growthFactor = 1 + ($monthCount * 0.02) + (rand(-10, 10) / 100);
+            $values[] = $currentValue * $growthFactor;
+            $returns[] = $currentReturn * $growthFactor;
+
+            $current->addMonth();
+            $monthCount++;
+        }
+
+        return [
+            'labels' => $labels,
+            'values' => $values,
+            'returns' => $returns
+        ];
+    }
+
+    /**
+     * Get monthly comparison data for radar chart
+     */
+    private function getMonthlyComparisonData()
+    {
+        $currentMonth = now();
+        $previousMonth = now()->subMonth();
+
+        // Get current month data
+        $currentData = $this->getMonthlySpendingByCategory($currentMonth);
+        $previousData = $this->getMonthlySpendingByCategory($previousMonth);
+
+        return [
+            'categories' => ['Subscriptions', 'Utilities', 'Food', 'Transport', 'Entertainment'],
+            'current' => array_values($currentData),
+            'previous' => array_values($previousData)
+        ];
+    }
+
+    /**
+     * Get spending by category for a specific month
+     */
+    private function getMonthlySpendingByCategory($month)
+    {
+        $subscriptionCost = Subscription::active()
+            ->get()
+            ->sum(function($sub) {
+                return $this->currencyService->convertToDefault($sub->cost, $sub->currency ?? 'MKD');
+            });
+
+        $utilityBills = UtilityBill::whereYear('due_date', $month->year)
+            ->whereMonth('due_date', $month->month)
+            ->get()
+            ->sum(function($bill) {
+                return $this->currencyService->convertToDefault($bill->bill_amount, $bill->currency ?? 'MKD');
+            });
+
+        return [
+            $subscriptionCost / 1000, // Convert to thousands for better chart readability
+            $utilityBills / 1000,
+            15, // Sample food expenses
+            8,  // Sample transport expenses
+            5   // Sample entertainment expenses
+        ];
+    }
+
+    /**
      * Aggregate statistics from all modules.
      */
     private function getStats(): array
@@ -276,13 +460,9 @@ class DashboardController extends Controller
         // Feature discovery suggestions
         $suggestions = $this->getFeatureDiscoverySuggestions($userId);
 
-        // User retention insights
-        $retentionData = $this->getUserRetentionData($userId);
-
         return [
             'monthly_spending' => $monthlySpending,
             'suggestions' => $suggestions,
-            'retention_data' => $retentionData,
         ];
     }
 
@@ -318,62 +498,4 @@ class DashboardController extends Controller
         return array_slice($suggestions, 0, 3);
     }
 
-    /**
-     * Get user retention insights
-     */
-    private function getUserRetentionData($userId): array
-    {
-        $totalItems = Subscription::where('user_id', $userId)->count() +
-                     Expense::where('user_id', $userId)->count() +
-                     Contract::where('user_id', $userId)->count() +
-                     Investment::where('user_id', $userId)->count() +
-                     UtilityBill::where('user_id', $userId)->count() +
-                     Warranty::where('user_id', $userId)->count();
-
-        $completedActions = 0;
-        if (Subscription::where('user_id', $userId)->count() > 0) {
-            $completedActions++;
-        }
-        if (Expense::where('user_id', $userId)->count() > 0) {
-            $completedActions++;
-        }
-        if (Contract::where('user_id', $userId)->count() > 0) {
-            $completedActions++;
-        }
-        if (Investment::where('user_id', $userId)->count() > 0) {
-            $completedActions++;
-        }
-        if (UtilityBill::where('user_id', $userId)->count() > 0) {
-            $completedActions++;
-        }
-        if (Warranty::where('user_id', $userId)->count() > 0) {
-            $completedActions++;
-        }
-
-        $progressPercentage = $totalItems > 0 ? min(100, ($completedActions / 6) * 100) : 0;
-
-        return [
-            'total_items' => $totalItems,
-            'modules_used' => $completedActions,
-            'progress_percentage' => round($progressPercentage, 0),
-            'next_suggestion' => $this->getNextActionSuggestion($completedActions),
-        ];
-    }
-
-    /**
-     * Get next action suggestion for user
-     */
-    private function getNextActionSuggestion($completedActions): ?string
-    {
-        $suggestions = [
-            0 => 'Start by adding your first subscription to track recurring payments',
-            1 => 'Add an expense to begin tracking your spending patterns',
-            2 => 'Consider adding a contract to manage important agreements',
-            3 => 'Track your investments to monitor portfolio performance',
-            4 => 'Add utility bills to never miss a payment deadline',
-            5 => 'Register warranties to protect your valuable purchases',
-        ];
-
-        return $suggestions[$completedActions] ?? "Great job! You're using all available features.";
-    }
 }

@@ -14,40 +14,6 @@
 @section('content')
     <!-- Analytics Insights Section -->
     @if(isset($insights))
-        <!-- User Progress & Retention -->
-        <div class="mb-8">
-            <div class="bg-gradient-to-r from-[color:var(--color-accent-100)] to-[color:var(--color-primary-100)] dark:from-[color:var(--color-accent-900)] dark:to-[color:var(--color-primary-900)] overflow-hidden shadow rounded-lg border border-[color:var(--color-accent-300)] dark:border-[color:var(--color-accent-700)]">
-                <div class="p-6">
-                    <div class="flex items-center justify-between mb-4">
-                        <h2 class="text-lg font-medium text-[color:var(--color-accent-700)] dark:text-[color:var(--color-accent-200)]">Your LifeOS Journey</h2>
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[color:var(--color-accent-200)] text-[color:var(--color-accent-800)] dark:bg-[color:var(--color-accent-800)] dark:text-[color:var(--color-accent-200)]">
-                            {{ $insights['retention_data']['modules_used'] }}/6 modules used
-                        </span>
-                    </div>
-
-                    <!-- Progress Bar -->
-                    <div class="mb-4">
-                        <div class="flex justify-between text-sm text-[color:var(--color-accent-600)] dark:text-[color:var(--color-accent-400)] mb-1">
-                            <span>Progress</span>
-                            <span>{{ $insights['retention_data']['progress_percentage'] }}%</span>
-                        </div>
-                        <div class="w-full bg-[color:var(--color-accent-200)] dark:bg-[color:var(--color-accent-800)] rounded-full h-2">
-                            <div class="bg-gradient-to-r from-[color:var(--color-accent-500)] to-[color:var(--color-success-500)] h-2 rounded-full transition-all duration-500 ease-out" style="width: {{ $insights['retention_data']['progress_percentage'] }}%"></div>
-                        </div>
-                    </div>
-
-                    <!-- Next Suggestion -->
-                    <div class="flex items-start space-x-3">
-                        <div class="flex-shrink-0">
-                            <svg class="h-5 w-5 text-[color:var(--color-accent-600)] dark:text-[color:var(--color-accent-400)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                        </div>
-                        <p class="text-sm text-[color:var(--color-accent-700)] dark:text-[color:var(--color-accent-300)]">{{ $insights['retention_data']['next_suggestion'] }}</p>
-                    </div>
-                </div>
-            </div>
-        </div>
 
         <!-- Feature Discovery Suggestions -->
         @if(isset($insights['suggestions']) && count($insights['suggestions']) > 0)
@@ -81,34 +47,147 @@
             </div>
         @endif
 
-        <!-- Spending Trends Chart -->
-        <div class="mb-8">
-            <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] shadow overflow-hidden rounded-lg border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)]">
-                <div class="px-6 py-4 border-b border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)]">
-                    <h2 class="text-lg font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] flex items-center">
-                        <svg class="h-5 w-5 mr-2 text-[color:var(--color-success-500)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                        </svg>
-                        Spending Trends (Last 6 Months)
-                    </h2>
-                </div>
-                <div class="p-6">
-                    <div class="space-y-4">
-                        @foreach($insights['monthly_spending'] as $month)
-                            @php
-                                $maxAmount = max(array_column($insights['monthly_spending'], 'amount'));
-                                $barWidth = $maxAmount > 0 ? ($month['amount'] / $maxAmount) * 100 : 0;
-                            @endphp
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center space-x-4 flex-1">
-                                    <span class="text-sm font-medium text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] w-20">{{ $month['month'] }}</span>
-                                    <div class="flex-1 bg-[color:var(--color-primary-200)] dark:bg-[color:var(--color-dark-300)] rounded-full h-2 max-w-xs">
-                                        <div class="bg-gradient-to-r from-[color:var(--color-success-400)] to-[color:var(--color-success-600)] h-2 rounded-full transition-all duration-700 ease-out" style="width: {{ $barWidth }}%"></div>
-                                    </div>
+        <!-- Advanced Analytics Dashboard -->
+        <div x-data="chartControls()" class="mb-8">
+            <!-- Chart Controls -->
+            <div class="mb-6 bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] rounded-lg p-4 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)]">
+                <div class="flex flex-wrap items-center justify-between gap-4">
+                    <div class="flex items-center space-x-4">
+                        <h2 class="text-lg font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
+                            Advanced Analytics Dashboard
+                        </h2>
+                        <div class="flex items-center space-x-2">
+                            <svg class="h-4 w-4 text-[color:var(--color-success-500)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                            </svg>
+                            <span class="text-sm text-[color:var(--color-success-600)] dark:text-[color:var(--color-success-400)]">Interactive Charts</span>
+                        </div>
+                    </div>
+
+                    <!-- Period Selector -->
+                    <div class="flex items-center space-x-2">
+                        <label class="text-sm font-medium text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)]">Period:</label>
+                        <select x-model="selectedPeriod" @change="changePeriod(selectedPeriod)"
+                                class="rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] text-sm">
+                            <option value="3months">3 Months</option>
+                            <option value="6months" selected>6 Months</option>
+                            <option value="1year">1 Year</option>
+                            <option value="2years">2 Years</option>
+                        </select>
+
+                        <!-- Export Dropdown -->
+                        <div class="ml-4 relative" x-data="{ open: false }" @click.away="open = false">
+                            <button @click="open = !open" :disabled="isExporting"
+                                    class="bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] disabled:bg-gray-400 text-white text-sm px-4 py-2 rounded-md transition-colors flex items-center">
+                                <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" x-show="!isExporting">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                                <svg class="animate-spin h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" x-show="isExporting">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                <span x-text="isExporting ? 'Exporting...' : 'Export'"></span>
+                                <svg class="h-4 w-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" x-show="!isExporting">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+
+                            <!-- Dropdown Menu -->
+                            <div x-show="open" x-transition
+                                 class="absolute right-0 mt-2 w-48 bg-white dark:bg-[color:var(--color-dark-100)] rounded-md shadow-lg border border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)] z-50">
+                                <div class="py-1">
+                                    <button @click="exportData('pdf'); open = false"
+                                            class="w-full text-left px-4 py-2 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] hover:bg-[color:var(--color-primary-100)] dark:hover:bg-[color:var(--color-dark-200)] flex items-center">
+                                        <svg class="h-4 w-4 mr-2 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                                        </svg>
+                                        Export as PDF
+                                    </button>
+                                    <button @click="exportData('excel'); open = false"
+                                            class="w-full text-left px-4 py-2 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] hover:bg-[color:var(--color-primary-100)] dark:hover:bg-[color:var(--color-dark-200)] flex items-center">
+                                        <svg class="h-4 w-4 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                        </svg>
+                                        Export as Excel (CSV)
+                                    </button>
                                 </div>
-                                <span class="text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">{{ $month['formatted'] }}</span>
                             </div>
-                        @endforeach
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                <!-- Spending Trends Chart -->
+                <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] rounded-lg shadow border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] chart-container" data-chart-type="spending">
+                    <div class="px-6 py-4 border-b border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)]">
+                        <h3 class="text-md font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] flex items-center">
+                            <svg class="h-4 w-4 mr-2 text-[color:var(--color-success-500)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                            </svg>
+                            Spending Trends
+                        </h3>
+                    </div>
+                    <div class="p-6">
+                        <div class="h-64">
+                            <canvas id="spendingTrendsChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Category Breakdown Chart -->
+                <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] rounded-lg shadow border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] chart-container" data-chart-type="categories">
+                    <div class="px-6 py-4 border-b border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)]">
+                        <h3 class="text-md font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] flex items-center">
+                            <svg class="h-4 w-4 mr-2 text-[color:var(--color-accent-500)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path>
+                            </svg>
+                            Spending by Category
+                        </h3>
+                    </div>
+                    <div class="p-6">
+                        <div class="h-64">
+                            <canvas id="categoryBreakdownChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Extended Charts Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Portfolio Performance Chart -->
+                <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] rounded-lg shadow border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] chart-container" data-chart-type="portfolio">
+                    <div class="px-6 py-4 border-b border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)]">
+                        <h3 class="text-md font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] flex items-center">
+                            <svg class="h-4 w-4 mr-2 text-[color:var(--color-warning-500)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                            </svg>
+                            Investment Portfolio Performance
+                        </h3>
+                    </div>
+                    <div class="p-6">
+                        <div class="h-64">
+                            <canvas id="portfolioPerformanceChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Monthly Comparison Radar Chart -->
+                <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] rounded-lg shadow border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] chart-container" data-chart-type="comparison">
+                    <div class="px-6 py-4 border-b border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)]">
+                        <h3 class="text-md font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] flex items-center">
+                            <svg class="h-4 w-4 mr-2 text-[color:var(--color-info-500)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                            </svg>
+                            Monthly Category Comparison
+                        </h3>
+                    </div>
+                    <div class="p-6">
+                        <div class="h-64">
+                            <canvas id="monthlyComparisonChart"></canvas>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -408,3 +487,5 @@
         </div>
     </div>
 @endsection
+
+@vite(['resources/js/dashboard.js'])
