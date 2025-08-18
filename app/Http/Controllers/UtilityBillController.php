@@ -17,6 +17,7 @@ class UtilityBillController extends Controller
     {
         $this->currencyService = $currencyService;
     }
+
     /**
      * Display a listing of the resource.
      */
@@ -504,6 +505,7 @@ class UtilityBillController extends Controller
             $currency = $bill->currency ?? config('currency.default', 'MKD');
             $amountInMKD = $this->currencyService->convertToDefault($bill->bill_amount, $currency);
             $bill->bill_amount_mkd = $amountInMKD;
+
             return $bill;
         });
 
@@ -545,6 +547,7 @@ class UtilityBillController extends Controller
             $currency = $bill->currency ?? config('currency.default', 'MKD');
             $amountInMKD = $this->currencyService->convertToDefault($bill->bill_amount, $currency);
             $bill->bill_amount_mkd = $amountInMKD;
+
             return $bill;
         });
 

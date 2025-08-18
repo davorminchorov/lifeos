@@ -21,6 +21,7 @@ class InvestmentController extends Controller
     {
         $this->currencyService = $currencyService;
     }
+
     /**
      * Display a listing of the resource.
      */

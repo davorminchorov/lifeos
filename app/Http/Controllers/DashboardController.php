@@ -30,6 +30,9 @@ class DashboardController extends Controller
         // Get alerts and notifications
         $alerts = $this->getAlerts();
 
+        // Get analytics insights
+        $insights = $this->getUserEngagementInsights();
+
         // Get recent activity
         $recent_expenses = Expense::with('user')
             ->orderBy('expense_date', 'desc')
@@ -45,6 +48,7 @@ class DashboardController extends Controller
         return view('dashboard', compact(
             'stats',
             'alerts',
+            'insights',
             'recent_expenses',
             'upcoming_bills'
         ));
@@ -238,5 +242,138 @@ class DashboardController extends Controller
             });
 
         return round($subscriptionSavings + $utilitySavings, 2);
+    }
+
+    /**
+     * Get user engagement insights for analytics enhancement
+     */
+    private function getUserEngagementInsights(): array
+    {
+        $userId = auth()->id();
+
+        // Calculate spending trends (last 6 months)
+        $monthlySpending = [];
+        for ($i = 5; $i >= 0; $i--) {
+            $date = now()->subMonths($i);
+            $expenses = Expense::where('user_id', $userId)
+                ->whereYear('expense_date', $date->year)
+                ->whereMonth('expense_date', $date->month)
+                ->get();
+
+            $totalMKD = 0;
+            foreach ($expenses as $expense) {
+                $currency = $expense->currency ?? config('currency.default', 'MKD');
+                $totalMKD += $this->currencyService->convertToDefault($expense->amount, $currency);
+            }
+
+            $monthlySpending[] = [
+                'month' => $date->format('M Y'),
+                'amount' => $totalMKD,
+                'formatted' => $this->currencyService->format($totalMKD),
+            ];
+        }
+
+        // Feature discovery suggestions
+        $suggestions = $this->getFeatureDiscoverySuggestions($userId);
+
+        // User retention insights
+        $retentionData = $this->getUserRetentionData($userId);
+
+        return [
+            'monthly_spending' => $monthlySpending,
+            'suggestions' => $suggestions,
+            'retention_data' => $retentionData,
+        ];
+    }
+
+    /**
+     * Get feature discovery suggestions based on user data
+     */
+    private function getFeatureDiscoverySuggestions($userId): array
+    {
+        $suggestions = [];
+
+        // Check if user has subscriptions but no budget alerts
+        if (Subscription::where('user_id', $userId)->count() > 0 &&
+            Subscription::where('user_id', $userId)->whereNull('budget_alert_threshold')->count() > 0) {
+            $suggestions[] = [
+                'title' => 'Set Budget Alerts',
+                'description' => 'Get notified when your subscriptions exceed your budget',
+                'action_url' => route('subscriptions.index'),
+                'icon' => 'bell',
+            ];
+        }
+
+        // Check if user has expenses but no categories
+        if (Expense::where('user_id', $userId)->count() > 0 &&
+            Expense::where('user_id', $userId)->whereNull('category')->count() > 0) {
+            $suggestions[] = [
+                'title' => 'Categorize Expenses',
+                'description' => 'Better track your spending by adding categories',
+                'action_url' => route('expenses.index'),
+                'icon' => 'tag',
+            ];
+        }
+
+        return array_slice($suggestions, 0, 3);
+    }
+
+    /**
+     * Get user retention insights
+     */
+    private function getUserRetentionData($userId): array
+    {
+        $totalItems = Subscription::where('user_id', $userId)->count() +
+                     Expense::where('user_id', $userId)->count() +
+                     Contract::where('user_id', $userId)->count() +
+                     Investment::where('user_id', $userId)->count() +
+                     UtilityBill::where('user_id', $userId)->count() +
+                     Warranty::where('user_id', $userId)->count();
+
+        $completedActions = 0;
+        if (Subscription::where('user_id', $userId)->count() > 0) {
+            $completedActions++;
+        }
+        if (Expense::where('user_id', $userId)->count() > 0) {
+            $completedActions++;
+        }
+        if (Contract::where('user_id', $userId)->count() > 0) {
+            $completedActions++;
+        }
+        if (Investment::where('user_id', $userId)->count() > 0) {
+            $completedActions++;
+        }
+        if (UtilityBill::where('user_id', $userId)->count() > 0) {
+            $completedActions++;
+        }
+        if (Warranty::where('user_id', $userId)->count() > 0) {
+            $completedActions++;
+        }
+
+        $progressPercentage = $totalItems > 0 ? min(100, ($completedActions / 6) * 100) : 0;
+
+        return [
+            'total_items' => $totalItems,
+            'modules_used' => $completedActions,
+            'progress_percentage' => round($progressPercentage, 0),
+            'next_suggestion' => $this->getNextActionSuggestion($completedActions),
+        ];
+    }
+
+    /**
+     * Get next action suggestion for user
+     */
+    private function getNextActionSuggestion($completedActions): ?string
+    {
+        $suggestions = [
+            0 => 'Start by adding your first subscription to track recurring payments',
+            1 => 'Add an expense to begin tracking your spending patterns',
+            2 => 'Consider adding a contract to manage important agreements',
+            3 => 'Track your investments to monitor portfolio performance',
+            4 => 'Add utility bills to never miss a payment deadline',
+            5 => 'Register warranties to protect your valuable purchases',
+        ];
+
+        return $suggestions[$completedActions] ?? "Great job! You're using all available features.";
     }
 }

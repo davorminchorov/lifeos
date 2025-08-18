@@ -151,6 +151,7 @@ class Investment extends Model
     public function getFormattedPurchasePriceAttribute()
     {
         $currencyService = app(\App\Services\CurrencyService::class);
+
         return $currencyService->format($this->purchase_price);
     }
 
@@ -158,6 +159,7 @@ class Investment extends Model
     public function getFormattedCurrentValueAttribute()
     {
         $currencyService = app(\App\Services\CurrencyService::class);
+
         return $currencyService->format($this->current_value ?? $this->purchase_price);
     }
 
@@ -165,6 +167,7 @@ class Investment extends Model
     public function getFormattedCurrentMarketValueAttribute()
     {
         $currencyService = app(\App\Services\CurrencyService::class);
+
         return $currencyService->format($this->current_market_value);
     }
 
@@ -172,6 +175,7 @@ class Investment extends Model
     public function getFormattedUnrealizedGainLossAttribute()
     {
         $currencyService = app(\App\Services\CurrencyService::class);
+
         return $currencyService->format($this->unrealized_gain_loss);
     }
 
@@ -179,6 +183,7 @@ class Investment extends Model
     public function getFormattedTotalReturnAttribute()
     {
         $currencyService = app(\App\Services\CurrencyService::class);
+
         return $currencyService->format($this->total_return);
     }
 }

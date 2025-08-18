@@ -16,6 +16,7 @@ class WarrantyController extends Controller
     {
         $this->currencyService = $currencyService;
     }
+
     /**
      * Display a listing of the resource.
      */

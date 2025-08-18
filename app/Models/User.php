@@ -78,7 +78,7 @@ class User extends Authenticatable
     {
         $preference = $this->getNotificationPreference($type);
 
-        if (!$preference) {
+        if (! $preference) {
             // Return default channels if no preference exists
             $defaults = UserNotificationPreference::getDefaultPreferences();
             $defaultPref = $defaults[$type] ?? [];
@@ -107,9 +107,10 @@ class User extends Authenticatable
     {
         $preference = $this->getNotificationPreference($type);
 
-        if (!$preference) {
+        if (! $preference) {
             // Return default days if no preference exists
             $defaults = UserNotificationPreference::getDefaultPreferences();
+
             return $defaults[$type]['settings']['days_before'] ?? [7, 3, 1, 0];
         }
 

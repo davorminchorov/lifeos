@@ -56,6 +56,7 @@ class SendSubscriptionRenewalNotifications implements ShouldQueue
 
                 if (empty($enabledChannels)) {
                     Log::info("Skipping notification for subscription {$subscription->id} - user has disabled all channels");
+
                     continue;
                 }
 
@@ -63,7 +64,7 @@ class SendSubscriptionRenewalNotifications implements ShouldQueue
                     new SubscriptionRenewalAlert($subscription, $days)
                 );
 
-                Log::info("Sent renewal notification for subscription {$subscription->id} ({$subscription->service_name}) to user {$subscription->user->email} via channels: " . implode(', ', $enabledChannels));
+                Log::info("Sent renewal notification for subscription {$subscription->id} ({$subscription->service_name}) to user {$subscription->user->email} via channels: ".implode(', ', $enabledChannels));
             } catch (\Exception $e) {
                 Log::error("Failed to send renewal notification for subscription {$subscription->id}: {$e->getMessage()}");
             }

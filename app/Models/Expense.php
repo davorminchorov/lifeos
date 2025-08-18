@@ -110,6 +110,7 @@ class Expense extends Model
     public function getFormattedAmountAttribute()
     {
         $currencyService = app(\App\Services\CurrencyService::class);
+
         return $currencyService->format($this->amount, $this->currency);
     }
 

@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use App\Models\User;
-use App\Models\UserNotificationPreference;
 use App\Notifications\SubscriptionRenewalAlert;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -51,10 +50,10 @@ class NotificationControllerTest extends TestCase
                         'type',
                         'action_url',
                         'read_at',
-                        'created_at'
-                    ]
+                        'created_at',
+                    ],
                 ],
-                'unread_count'
+                'unread_count',
             ]);
     }
 
@@ -73,7 +72,7 @@ class NotificationControllerTest extends TestCase
             ->assertStatus(200)
             ->assertJson([
                 'success' => true,
-                'unread_count' => 0
+                'unread_count' => 0,
             ]);
 
         $this->assertNotNull($notification->fresh()->read_at);
@@ -94,7 +93,7 @@ class NotificationControllerTest extends TestCase
             ->assertStatus(200)
             ->assertJson([
                 'success' => true,
-                'unread_count' => 0
+                'unread_count' => 0,
             ]);
 
         $this->assertEquals(0, $this->user->unreadNotifications->count());
@@ -134,14 +133,14 @@ class NotificationControllerTest extends TestCase
                 'email_enabled' => true,
                 'database_enabled' => false,
                 'push_enabled' => true,
-                'days_before' => [7, 3, 1]
+                'days_before' => [7, 3, 1],
             ],
             'contract_expiration' => [
                 'email_enabled' => false,
                 'database_enabled' => true,
                 'push_enabled' => false,
-                'days_before' => [30, 7]
-            ]
+                'days_before' => [30, 7],
+            ],
         ];
 
         $this->actingAs($this->user)
@@ -149,7 +148,7 @@ class NotificationControllerTest extends TestCase
             ->assertStatus(200)
             ->assertJson([
                 'success' => true,
-                'message' => 'Notification preferences updated successfully.'
+                'message' => 'Notification preferences updated successfully.',
             ]);
 
         // Check that preferences were saved
@@ -190,7 +189,7 @@ class NotificationControllerTest extends TestCase
                 'total',
                 'unread',
                 'read',
-                'by_type'
+                'by_type',
             ]);
 
         $stats = $response->json();

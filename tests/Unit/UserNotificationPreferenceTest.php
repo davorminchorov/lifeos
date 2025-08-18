@@ -23,7 +23,7 @@ class UserNotificationPreferenceTest extends TestCase
     public function test_can_get_notification_days()
     {
         $preference = UserNotificationPreference::factory()->create([
-            'settings' => ['days_before' => [30, 7, 1]]
+            'settings' => ['days_before' => [30, 7, 1]],
         ]);
 
         $this->assertEquals([30, 7, 1], $preference->getNotificationDays());
@@ -32,7 +32,7 @@ class UserNotificationPreferenceTest extends TestCase
     public function test_returns_default_notification_days_when_not_set()
     {
         $preference = UserNotificationPreference::factory()->create([
-            'settings' => null
+            'settings' => null,
         ]);
 
         $this->assertEquals([7, 3, 1, 0], $preference->getNotificationDays());
@@ -52,7 +52,7 @@ class UserNotificationPreferenceTest extends TestCase
         $preference = UserNotificationPreference::factory()->create([
             'email_enabled' => true,
             'database_enabled' => false,
-            'push_enabled' => true
+            'push_enabled' => true,
         ]);
 
         $this->assertTrue($preference->isChannelEnabled('mail'));
@@ -66,7 +66,7 @@ class UserNotificationPreferenceTest extends TestCase
         $preference = UserNotificationPreference::factory()->create([
             'email_enabled' => true,
             'database_enabled' => false,
-            'push_enabled' => true
+            'push_enabled' => true,
         ]);
 
         $enabledChannels = $preference->getEnabledChannels();
@@ -98,7 +98,7 @@ class UserNotificationPreferenceTest extends TestCase
 
     public function test_fillable_attributes()
     {
-        $preference = new UserNotificationPreference();
+        $preference = new UserNotificationPreference;
         $fillable = $preference->getFillable();
 
         $expectedFillable = [
@@ -119,7 +119,7 @@ class UserNotificationPreferenceTest extends TestCase
             'email_enabled' => '1',
             'database_enabled' => '0',
             'push_enabled' => '1',
-            'settings' => '{"days_before": [7, 3, 1]}'
+            'settings' => '{"days_before": [7, 3, 1]}',
         ]);
 
         $this->assertTrue($preference->email_enabled);
@@ -135,7 +135,7 @@ class UserNotificationPreferenceTest extends TestCase
 
         UserNotificationPreference::factory()->create([
             'user_id' => $user->id,
-            'notification_type' => 'subscription_renewal'
+            'notification_type' => 'subscription_renewal',
         ]);
 
         $this->expectException(\Illuminate\Database\QueryException::class);
@@ -143,7 +143,7 @@ class UserNotificationPreferenceTest extends TestCase
         // This should fail due to unique constraint
         UserNotificationPreference::factory()->create([
             'user_id' => $user->id,
-            'notification_type' => 'subscription_renewal'
+            'notification_type' => 'subscription_renewal',
         ]);
     }
 
@@ -152,8 +152,8 @@ class UserNotificationPreferenceTest extends TestCase
         $preference = UserNotificationPreference::factory()->create([
             'settings' => [
                 'days_before' => [7, 3, 1],
-                'custom_setting' => 'value'
-            ]
+                'custom_setting' => 'value',
+            ],
         ]);
 
         $preference->setNotificationDays([14, 7]);
@@ -165,7 +165,7 @@ class UserNotificationPreferenceTest extends TestCase
     public function test_handles_null_settings_when_setting_days()
     {
         $preference = UserNotificationPreference::factory()->create([
-            'settings' => null
+            'settings' => null,
         ]);
 
         $preference->setNotificationDays([30, 14, 7]);

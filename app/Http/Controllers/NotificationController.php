@@ -112,11 +112,11 @@ class NotificationController extends Controller
 
         // Ensure all notification types have entries
         foreach ($defaultPreferences as $type => $default) {
-            if (!isset($preferences[$type])) {
+            if (! isset($preferences[$type])) {
                 $preferences[$type] = new UserNotificationPreference([
                     'user_id' => $user->id,
                     'notification_type' => $type,
-                    ...$default
+                    ...$default,
                 ]);
             }
         }

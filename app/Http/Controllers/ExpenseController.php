@@ -227,6 +227,7 @@ class ExpenseController extends Controller
             $currency = $expense->currency ?? config('currency.default', 'MKD');
             $amountInMKD = $this->currencyService->convertToDefault($expense->amount, $currency);
             $expense->amount_mkd = $amountInMKD;
+
             return $expense;
         });
 
@@ -244,6 +245,7 @@ class ExpenseController extends Controller
             return $expense->expense_date->format('Y-m');
         })->map(function ($group, $yearMonth) {
             [$year, $month] = explode('-', $yearMonth);
+
             return [
                 'year' => (int) $year,
                 'month' => (int) $month,
