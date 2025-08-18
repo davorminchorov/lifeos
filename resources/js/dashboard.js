@@ -80,6 +80,17 @@ class DashboardManager {
         const canvas = document.getElementById('spendingTrendsChart');
         if (!canvas) return;
 
+        // Destroy existing chart if it exists
+        if (this.charts.spendingTrends) {
+            this.charts.spendingTrends.destroy();
+        }
+
+        // Also check for any existing Chart instance on this canvas
+        const existingChart = Chart.getChart(canvas);
+        if (existingChart) {
+            existingChart.destroy();
+        }
+
         const ctx = canvas.getContext('2d');
         this.charts.spendingTrends = new Chart(ctx, {
             type: 'line',
@@ -113,6 +124,17 @@ class DashboardManager {
         const canvas = document.getElementById('categoryBreakdownChart');
         if (!canvas) return;
 
+        // Destroy existing chart if it exists
+        if (this.charts.categoryBreakdown) {
+            this.charts.categoryBreakdown.destroy();
+        }
+
+        // Also check for any existing Chart instance on this canvas
+        const existingChart = Chart.getChart(canvas);
+        if (existingChart) {
+            existingChart.destroy();
+        }
+
         const ctx = canvas.getContext('2d');
         this.charts.categoryBreakdown = new Chart(ctx, {
             type: 'doughnut',
@@ -140,6 +162,17 @@ class DashboardManager {
     initPortfolioPerformanceChart() {
         const canvas = document.getElementById('portfolioPerformanceChart');
         if (!canvas) return;
+
+        // Destroy existing chart if it exists
+        if (this.charts.portfolioPerformance) {
+            this.charts.portfolioPerformance.destroy();
+        }
+
+        // Also check for any existing Chart instance on this canvas
+        const existingChart = Chart.getChart(canvas);
+        if (existingChart) {
+            existingChart.destroy();
+        }
 
         const ctx = canvas.getContext('2d');
         this.charts.portfolioPerformance = new Chart(ctx, {
@@ -173,6 +206,17 @@ class DashboardManager {
     initMonthlyComparisonChart() {
         const canvas = document.getElementById('monthlyComparisonChart');
         if (!canvas) return;
+
+        // Destroy existing chart if it exists
+        if (this.charts.monthlyComparison) {
+            this.charts.monthlyComparison.destroy();
+        }
+
+        // Also check for any existing Chart instance on this canvas
+        const existingChart = Chart.getChart(canvas);
+        if (existingChart) {
+            existingChart.destroy();
+        }
 
         const ctx = canvas.getContext('2d');
         this.charts.monthlyComparison = new Chart(ctx, {
