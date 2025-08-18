@@ -26,7 +26,7 @@ class SubscriptionRenewalAlert extends Notification implements ShouldQueue
      */
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return $notifiable->getEnabledNotificationChannels('subscription_renewal');
     }
 
     /**
@@ -63,19 +63,37 @@ class SubscriptionRenewalAlert extends Notification implements ShouldQueue
     }
 
     /**
+     * Get the database representation of the notification.
+     *
+     * @return array<string, mixed>
+     */
+    public function toDatabase(object $notifiable): array
+    {
+        return [
+            'title' => $this->daysUntilRenewal === 0
+                ? "{$this->subscription->service_name} renews today!"
+                : "{$this->subscription->service_name} renews in {$this->daysUntilRenewal} days",
+            'message' => $this->daysUntilRenewal === 0
+                ? 'Your subscription is renewing today'
+                : 'Your subscription is renewing soon',
+            'type' => 'subscription_renewal',
+            'subscription_id' => $this->subscription->id,
+            'service_name' => $this->subscription->service_name,
+            'cost' => $this->subscription->cost,
+            'currency' => $this->subscription->currency,
+            'next_billing_date' => $this->subscription->next_billing_date->toDateString(),
+            'days_until_renewal' => $this->daysUntilRenewal,
+            'action_url' => url('/subscriptions/'.$this->subscription->id),
+        ];
+    }
+
+    /**
      * Get the array representation of the notification.
      *
      * @return array<string, mixed>
      */
     public function toArray(object $notifiable): array
     {
-        return [
-            'subscription_id' => $this->subscription->id,
-            'service_name' => $this->subscription->service_name,
-            'cost' => $this->subscription->cost,
-            'currency' => $this->subscription->currency,
-            'next_billing_date' => $this->subscription->next_billing_date,
-            'days_until_renewal' => $this->daysUntilRenewal,
-        ];
+        return $this->toDatabase($notifiable);
     }
 }

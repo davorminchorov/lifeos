@@ -16,9 +16,9 @@ class SendSubscriptionRenewalNotifications implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public function __construct(
-        private array $notificationDays = [7, 3, 1, 0]
+        private ?array $notificationDays = null
     ) {
-        //
+        $this->notificationDays = $notificationDays ?? [7, 3, 1, 0];
     }
 
     /**
@@ -51,11 +51,19 @@ class SendSubscriptionRenewalNotifications implements ShouldQueue
 
         foreach ($subscriptions as $subscription) {
             try {
+                // Check if user has any enabled channels for this notification type
+                $enabledChannels = $subscription->user->getEnabledNotificationChannels('subscription_renewal');
+
+                if (empty($enabledChannels)) {
+                    Log::info("Skipping notification for subscription {$subscription->id} - user has disabled all channels");
+                    continue;
+                }
+
                 $subscription->user->notify(
                     new SubscriptionRenewalAlert($subscription, $days)
                 );
 
-                Log::info("Sent renewal notification for subscription {$subscription->id} ({$subscription->service_name}) to user {$subscription->user->email}");
+                Log::info("Sent renewal notification for subscription {$subscription->id} ({$subscription->service_name}) to user {$subscription->user->email} via channels: " . implode(', ', $enabledChannels));
             } catch (\Exception $e) {
                 Log::error("Failed to send renewal notification for subscription {$subscription->id}: {$e->getMessage()}");
             }
