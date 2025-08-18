@@ -1,8 +1,7 @@
 // Dashboard Charts Module
 // Reusable chart components for Advanced Analytics Dashboard
 
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
+// Note: jsPDF and html2canvas are dynamically imported in exportToPDF method
 
 export class DashboardCharts {
     constructor() {
@@ -233,6 +232,12 @@ export class DashboardCharts {
     // Export dashboard as PDF
     async exportToPDF() {
         try {
+            // Dynamic import of PDF libraries to reduce initial bundle size
+            const [{ default: jsPDF }, { default: html2canvas }] = await Promise.all([
+                import('jspdf'),
+                import('html2canvas')
+            ]);
+
             const dashboardElement = document.querySelector('[x-data="chartControls()"]');
             if (!dashboardElement) {
                 throw new Error('Dashboard element not found');

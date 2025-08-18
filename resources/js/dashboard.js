@@ -9,7 +9,7 @@ import Alpine from 'alpinejs';
 class DashboardManager {
     constructor() {
         this.charts = {};
-        this.apiEndpoint = '/api/dashboard/chart-data';
+        this.apiEndpoint = '/dashboard/chart-data';
         this.init();
     }
 
