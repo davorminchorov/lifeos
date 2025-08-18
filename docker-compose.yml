@@ -6,3 +6,12 @@ services:
   php:
     depends_on:
       - traefik
+
+  mysql:
+      image: mysql:8.4
+
+  redis:
+      image: redis:8
+
+  minio:
+      image: minio/minio:latest

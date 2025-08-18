@@ -4,7 +4,9 @@ services:
     - "80:80"
     - "443:443"
     networks:
-      development:
+      lifeos:
+        aliases:
+          - lifeos.test
     volumes:
       # Mount the Docker socket as read-only so Traefik can listen to events
       - /var/run/docker.sock:/var/run/docker.sock:ro
@@ -21,30 +23,109 @@ services:
     volumes:
       - .:/var/www/html/
     networks:
-      - development
+      - lifeos
     depends_on:
-      - traefik
+      traefik:
+        condition: service_started
+      mysql:
+        condition: service_healthy
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.laravel.rule=HostRegexp(`localhost`)"
       - "traefik.http.routers.laravel.entrypoints=web"
       - "traefik.http.services.laravel.loadbalancer.server.port=8080"
       - "traefik.http.services.laravel.loadbalancer.server.scheme=http"
-  
+
   node:
     image: node:22
     volumes:
       - .:/usr/src/app/
     working_dir: /usr/src/app/
-    networks: 
-      - development
+    networks:
+      - lifeos
 
   mailpit:
       image: axllent/mailpit
       networks:
-        - development
+        - lifeos
       ports:
         - "8025:8025"
 
+  mysql:
+    networks:
+      - lifeos
+    volumes:
+      - mysql_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root}
+      MYSQL_DATABASE: ${DB_DATABASE:-lifeos}
+      MYSQL_USER: ${DB_USERNAME:-lifeos}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-lifeos}
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u$$MYSQL_USER", "-p$$MYSQL_PASSWORD"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    command: "redis-server --appendonly yes"
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    networks:
+      - lifeos
+
+
+  minio:
+    ports:
+      - '${FORWARD_MINIO_PORT:-9000}:9000'
+      - '${FORWARD_MINIO_CONSOLE_PORT:-8900}:8900'
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USERNAME:-lifeos}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-lifeos}
+    volumes:
+      - minio_data:/data/minio
+    networks:
+      - lifeos
+    command: 'minio server /data/minio --console-address ":8900"'
+
+  queue:
+    build:
+      target: development-cli
+      args:
+        USER_ID: ${SPIN_USER_ID}
+        GROUP_ID: ${SPIN_GROUP_ID}
+    volumes:
+      - .:/var/www/html/
+    networks:
+      - lifeos
+    depends_on:
+      mysql:
+        condition: service_healthy
+    command: "php artisan horizon"
+
+  scheduler:
+    build:
+      target: development-cli
+      args:
+        USER_ID: ${SPIN_USER_ID}
+        GROUP_ID: ${SPIN_GROUP_ID}
+    volumes:
+      - .:/var/www/html/
+    networks:
+      - lifeos
+    depends_on:
+      mysql:
+        condition: service_healthy
+    command: "php artisan schedule:work"
+
 networks:
-  development:
+  lifeos:
+
+volumes:
+  mysql_data:
+  redis_data:
+  minio_data:
