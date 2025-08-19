@@ -6,6 +6,7 @@ use App\Http\Requests\StoreInvestmentDividendRequest;
 use App\Http\Requests\StoreInvestmentRequest;
 use App\Http\Requests\StoreInvestmentTransactionRequest;
 use App\Http\Requests\UpdateInvestmentRequest;
+use App\Http\Resources\InvestmentResource;
 use App\Models\Investment;
 use App\Models\InvestmentDividend;
 use App\Models\InvestmentGoal;
@@ -236,20 +237,40 @@ class InvestmentController extends Controller
      */
     public function recordBuy(Request $request, Investment $investment)
     {
-        // Transform old format to new format
-        $transformedRequest = new StoreInvestmentTransactionRequest([
+        // Validate the request first
+        $validated = $request->validate([
+            'quantity' => 'required|numeric|min:0',
+            'price_per_unit' => 'required|numeric|min:0',
+            'fees' => 'nullable|numeric|min:0',
+            'transaction_date' => 'nullable|date',
+        ]);
+
+        // Create the transaction record directly
+        $transaction = InvestmentTransaction::create([
             'investment_id' => $investment->id,
             'transaction_type' => 'buy',
-            'quantity' => $request->quantity,
-            'price_per_share' => $request->price_per_unit,
-            'total_amount' => $request->quantity * $request->price_per_unit,
-            'fees' => $request->get('fees', 0),
+            'quantity' => $validated['quantity'],
+            'price_per_share' => $validated['price_per_unit'],
+            'total_amount' => $validated['quantity'] * $validated['price_per_unit'],
+            'fees' => $validated['fees'] ?? 0,
             'taxes' => 0,
-            'transaction_date' => $request->get('transaction_date', now()->toDateString()),
+            'transaction_date' => $validated['transaction_date'] ?? now()->toDateString(),
             'currency' => 'USD',
         ]);
 
-        return $this->recordTransaction($transformedRequest, $investment);
+        // Update investment totals based on transaction type
+        $this->updateInvestmentFromTransaction($investment, $transaction);
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => 'Transaction recorded successfully',
+                'transaction' => $transaction,
+                'investment' => new InvestmentResource($investment->fresh()),
+            ], 201);
+        }
+
+        return redirect()->route('investments.show', $investment)
+            ->with('success', 'Transaction recorded successfully!');
     }
 
     /**
@@ -258,27 +279,39 @@ class InvestmentController extends Controller
     public function recordSell(Request $request, Investment $investment)
     {
         // Validate quantity doesn't exceed current holding
-        $request->validate([
+        $validated = $request->validate([
             'quantity' => 'required|numeric|min:0|max:'.$investment->quantity,
             'price_per_unit' => 'required|numeric|min:0',
             'fees' => 'nullable|numeric|min:0',
             'transaction_date' => 'nullable|date',
         ]);
 
-        // Transform old format to new format
-        $transformedRequest = new StoreInvestmentTransactionRequest([
+        // Create the transaction record directly
+        $transaction = InvestmentTransaction::create([
             'investment_id' => $investment->id,
             'transaction_type' => 'sell',
-            'quantity' => $request->quantity,
-            'price_per_share' => $request->price_per_unit,
-            'total_amount' => $request->quantity * $request->price_per_unit,
-            'fees' => $request->get('fees', 0),
+            'quantity' => $validated['quantity'],
+            'price_per_share' => $validated['price_per_unit'],
+            'total_amount' => $validated['quantity'] * $validated['price_per_unit'],
+            'fees' => $validated['fees'] ?? 0,
             'taxes' => 0,
-            'transaction_date' => $request->get('transaction_date', now()->toDateString()),
+            'transaction_date' => $validated['transaction_date'] ?? now()->toDateString(),
             'currency' => 'USD',
         ]);
 
-        return $this->recordTransaction($transformedRequest, $investment);
+        // Update investment totals based on transaction type
+        $this->updateInvestmentFromTransaction($investment, $transaction);
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => 'Transaction recorded successfully',
+                'transaction' => $transaction,
+                'investment' => new InvestmentResource($investment->fresh()),
+            ], 201);
+        }
+
+        return redirect()->route('investments.show', $investment)
+            ->with('success', 'Transaction recorded successfully!');
     }
 
     /**

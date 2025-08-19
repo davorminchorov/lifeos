@@ -31,7 +31,6 @@ class Subscription extends Model
         'notes',
         'tags',
         'status',
-        'file_attachments',
     ];
 
     protected function casts(): array

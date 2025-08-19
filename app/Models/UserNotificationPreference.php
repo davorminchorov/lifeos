@@ -19,12 +19,15 @@ class UserNotificationPreference extends Model
         'settings',
     ];
 
-    protected $casts = [
-        'email_enabled' => 'boolean',
-        'database_enabled' => 'boolean',
-        'push_enabled' => 'boolean',
-        'settings' => 'array',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'email_enabled' => 'boolean',
+            'database_enabled' => 'boolean',
+            'push_enabled' => 'boolean',
+            'settings' => 'array',
+        ];
+    }
 
     public function user(): BelongsTo
     {

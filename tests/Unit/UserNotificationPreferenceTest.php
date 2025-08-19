@@ -119,7 +119,7 @@ class UserNotificationPreferenceTest extends TestCase
             'email_enabled' => '1',
             'database_enabled' => '0',
             'push_enabled' => '1',
-            'settings' => '{"days_before": [7, 3, 1]}',
+            'settings' => ['days_before' => [7, 3, 1]],
         ]);
 
         $this->assertTrue($preference->email_enabled);

@@ -16,7 +16,7 @@ class UtilityBillModelTest extends TestCase
     {
         $fillable = [
             'user_id', 'utility_type', 'service_provider', 'account_number', 'service_address',
-            'bill_amount', 'usage_amount', 'usage_unit', 'rate_per_unit', 'bill_period_start',
+            'bill_amount', 'currency', 'usage_amount', 'usage_unit', 'rate_per_unit', 'bill_period_start',
             'bill_period_end', 'due_date', 'payment_status', 'payment_date', 'meter_readings',
             'bill_attachments', 'service_plan', 'contract_terms', 'auto_pay_enabled',
             'usage_history', 'budget_alert_threshold', 'notes',

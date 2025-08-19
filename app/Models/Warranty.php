@@ -19,7 +19,6 @@ class Warranty extends Model
         'serial_number',
         'purchase_date',
         'purchase_price',
-        'currency',
         'retailer',
         'warranty_duration_months',
         'warranty_type',
@@ -32,7 +31,6 @@ class Warranty extends Model
         'transfer_history',
         'maintenance_reminders',
         'notes',
-        'file_attachments',
     ];
 
     protected function casts(): array

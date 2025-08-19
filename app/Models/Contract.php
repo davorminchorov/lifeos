@@ -22,7 +22,6 @@ class Contract extends Model
         'notice_period_days',
         'auto_renewal',
         'contract_value',
-        'currency',
         'payment_terms',
         'key_obligations',
         'penalties',
@@ -33,7 +32,6 @@ class Contract extends Model
         'amendments',
         'notes',
         'status',
-        'file_attachments',
     ];
 
     protected function casts(): array

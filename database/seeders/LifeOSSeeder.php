@@ -20,7 +20,7 @@ class LifeOSSeeder extends Seeder
     {
         // Create a demo user if none exists
         $user = User::firstOrCreate(
-            ['email' => 'davor@lifeos.com'],
+            ['email' => 'davor@lifeos.test'],
             [
                 'name' => 'Davor Minchorov',
                 'email_verified_at' => now(),

@@ -76,6 +76,9 @@ class NotificationController extends Controller
         $user = Auth::user();
         $user->unreadNotifications->markAsRead();
 
+        // Refresh user to get updated notification count
+        $user->refresh();
+
         return response()->json([
             'success' => true,
             'unread_count' => 0,
@@ -91,6 +94,9 @@ class NotificationController extends Controller
         $notification = $user->notifications()->findOrFail($id);
 
         $notification->delete();
+
+        // Refresh user to get updated notification count
+        $user->refresh();
 
         return response()->json([
             'success' => true,
@@ -159,15 +165,17 @@ class NotificationController extends Controller
     {
         $user = Auth::user();
 
+        // Get notifications and group by type in PHP for SQLite compatibility
+        $notifications = $user->notifications()->get();
+        $byType = $notifications->groupBy(function ($notification) {
+            return $notification->data['type'] ?? 'general';
+        })->map->count()->toArray();
+
         $stats = [
             'total' => $user->notifications()->count(),
             'unread' => $user->unreadNotifications()->count(),
             'read' => $user->readNotifications()->count(),
-            'by_type' => $user->notifications()
-                ->selectRaw("JSON_UNQUOTE(JSON_EXTRACT(data, '$.type')) as type, COUNT(*) as count")
-                ->groupBy('type')
-                ->pluck('count', 'type')
-                ->toArray(),
+            'by_type' => $byType,
         ];
 
         return response()->json($stats);

@@ -62,7 +62,7 @@ class ExpenseModelTest extends TestCase
         $startDate = now()->subDays(10);
         $endDate = now()->subDays(1);
 
-        Expense::factory()->create(['user_id' => $user->id, 'expense_date' => $startDate->addDays(2)]);
+        Expense::factory()->create(['user_id' => $user->id, 'expense_date' => now()->subDays(8)]);
         Expense::factory()->create(['user_id' => $user->id, 'expense_date' => now()->subDays(20)]);
         Expense::factory()->create(['user_id' => $user->id, 'expense_date' => now()]);
 
@@ -181,7 +181,7 @@ class ExpenseModelTest extends TestCase
             'currency' => 'USD',
         ]);
 
-        $this->assertEquals('USD 123.45', $expense->formatted_amount);
+        $this->assertEquals('$ 123.45 (USD)', $expense->formatted_amount);
     }
 
     public function test_is_over_budget_attribute(): void

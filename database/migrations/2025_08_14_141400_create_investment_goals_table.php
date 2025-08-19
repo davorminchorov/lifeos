@@ -18,6 +18,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->decimal('target_amount', 15, 2);
             $table->decimal('current_progress', 15, 2)->default(0);
+            $table->string('currency', 3)->default('MKD');
             $table->date('target_date')->nullable();
             $table->enum('status', ['active', 'achieved', 'paused', 'cancelled'])->default('active');
             $table->timestamps();
