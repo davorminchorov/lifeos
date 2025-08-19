@@ -476,8 +476,8 @@ class ExpenseController extends Controller
         $monthlyTrends = Expense::where('user_id', $userId)
             ->where('expense_date', '>=', $startDate)
             ->select(
-                DB::raw('strftime("%Y", expense_date) as year'),
-                DB::raw('strftime("%m", expense_date) as month'),
+                DB::raw('YEAR(expense_date) as year'),
+                DB::raw('MONTH(expense_date) as month'),
                 DB::raw('SUM(amount) as total_amount'),
                 DB::raw('COUNT(*) as count'),
                 DB::raw('AVG(amount) as average_amount')
@@ -490,7 +490,7 @@ class ExpenseController extends Controller
         $weeklyTrends = Expense::where('user_id', $userId)
             ->where('expense_date', '>=', now()->subWeeks(8))
             ->select(
-                DB::raw('strftime("%Y%W", expense_date) as year_week'),
+                DB::raw('YEARWEEK(expense_date) as year_week'),
                 DB::raw('SUM(amount) as total_amount'),
                 DB::raw('COUNT(*) as count')
             )

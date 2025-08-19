@@ -85,8 +85,14 @@ Route::middleware('auth')->group(function () {
     Route::post('expenses/{expense}/duplicate', [ExpenseController::class, 'duplicate'])->name('expenses.duplicate');
     Route::post('expenses/bulk-action', [ExpenseController::class, 'bulkAction'])->name('expenses.bulk-action');
 
+    // Utility Bills Analytics routes must come before resource routes to prevent conflicts
+    Route::get('utility-bills/analytics/summary', [UtilityBillController::class, 'analyticsSummary'])->name('utility-bills.analytics-summary');
+    Route::get('utility-bills/analytics/spending', [UtilityBillController::class, 'spendingAnalytics'])->name('utility-bills.spending-analytics');
+    Route::get('utility-bills/analytics/due-date', [UtilityBillController::class, 'dueDateAnalytics'])->name('utility-bills.due-date-analytics');
+
     Route::resource('utility-bills', UtilityBillController::class);
     Route::patch('utility-bills/{utility_bill}/mark-paid', [UtilityBillController::class, 'markPaid'])->name('utility-bills.mark-paid');
+    Route::patch('utility-bills/{utility_bill}/set-auto-pay', [UtilityBillController::class, 'setAutoPay'])->name('utility-bills.set-auto-pay');
 
     // Notification Routes
     Route::prefix('notifications')->name('notifications.')->group(function () {

@@ -113,7 +113,7 @@ class UtilityBillController extends Controller
             return new UtilityBillResource($utilityBill);
         }
 
-        return redirect()->route('utility-bills.show', $utilityBill)
+        return redirect()->route('utility-bills.index')
             ->with('success', 'Utility bill created successfully!');
     }
 
@@ -122,6 +122,11 @@ class UtilityBillController extends Controller
      */
     public function show(UtilityBill $utilityBill)
     {
+        // Check if the authenticated user owns this utility bill
+        if ($utilityBill->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized');
+        }
+
         $utilityBill->load('user');
 
         if (request()->expectsJson()) {
@@ -269,8 +274,8 @@ class UtilityBillController extends Controller
         // Monthly spending trends
         $monthlySpending = (clone $query)
             ->select(
-                DB::raw('strftime("%Y", bill_period_start) as year'),
-                DB::raw('strftime("%m", bill_period_start) as month'),
+                DB::raw('YEAR(bill_period_start) as year'),
+                DB::raw('MONTH(bill_period_start) as month'),
                 DB::raw('SUM(bill_amount) as total_amount'),
                 DB::raw('COUNT(*) as count'),
                 DB::raw('AVG(bill_amount) as average_amount')
@@ -325,6 +330,7 @@ class UtilityBillController extends Controller
 
         return view('utility-bills.analytics', compact('analytics'));
     }
+
 
     /**
      * Duplicate a utility bill.
@@ -488,6 +494,7 @@ class UtilityBillController extends Controller
 
         return response()->json(['data' => $analytics]);
     }
+
 
     /**
      * Get cost analytics for utility bills.
@@ -912,5 +919,107 @@ class UtilityBillController extends Controller
         $marketRate = $avgCostPerUnit * 1.1; // Assume current rate is 10% below market average
 
         return $avgCostPerUnit < $marketRate ? 'efficient' : 'expensive';
+    }
+
+    /**
+     * Get spending analytics data.
+     */
+    public function spendingAnalytics(Request $request)
+    {
+        $bills = UtilityBill::where('user_id', auth()->id())
+            ->with([])
+            ->get();
+
+        $monthlySpending = $bills->groupBy(function ($bill) {
+            return $bill->bill_period_start->format('Y-m');
+        })->map(function ($monthBills) {
+            return $monthBills->sum('bill_amount');
+        });
+
+        $serviceBreakdown = $bills->groupBy('utility_type')
+            ->map(function ($typeBills, $type) {
+                return [
+                    'service_type' => $type,
+                    'total_amount' => $typeBills->sum('bill_amount'),
+                    'average_amount' => $typeBills->avg('bill_amount'),
+                    'bill_count' => $typeBills->count(),
+                ];
+            })->values();
+
+        $currentYear = now()->year;
+        $previousYear = $currentYear - 1;
+
+        $currentYearTotal = $bills->whereBetween('bill_period_start', [
+            "{$currentYear}-01-01", "{$currentYear}-12-31"
+        ])->sum('bill_amount');
+
+        $previousYearTotal = $bills->whereBetween('bill_period_start', [
+            "{$previousYear}-01-01", "{$previousYear}-12-31"
+        ])->sum('bill_amount');
+
+        $yearOverYearComparison = [
+            'current_year' => $currentYearTotal,
+            'previous_year' => $previousYearTotal,
+            'change_percentage' => $previousYearTotal > 0
+                ? (($currentYearTotal - $previousYearTotal) / $previousYearTotal) * 100
+                : 0,
+        ];
+
+        return response()->json([
+            'monthly_spending' => $monthlySpending,
+            'service_breakdown' => $serviceBreakdown,
+            'year_over_year_comparison' => $yearOverYearComparison,
+        ]);
+    }
+
+    /**
+     * Get due date analytics data.
+     */
+    public function dueDateAnalytics(Request $request)
+    {
+        $now = now();
+        $bills = UtilityBill::where('user_id', auth()->id())
+            ->where('payment_status', '!=', 'paid')
+            ->get();
+
+        $dueThisWeek = $bills->whereBetween('due_date', [
+            $now->startOfWeek(),
+            $now->endOfWeek()
+        ])->count();
+
+        $dueNextWeek = $bills->whereBetween('due_date', [
+            $now->copy()->addWeek()->startOfWeek(),
+            $now->copy()->addWeek()->endOfWeek()
+        ])->count();
+
+        $overdueBills = $bills->where('due_date', '<', $now)->count();
+
+        return response()->json([
+            'due_this_week' => $dueThisWeek,
+            'due_next_week' => $dueNextWeek,
+            'overdue_bills' => $overdueBills,
+        ]);
+    }
+
+    /**
+     * Set auto pay for a utility bill.
+     */
+    public function setAutoPay(Request $request, UtilityBill $utilityBill)
+    {
+        $request->validate([
+            'auto_pay_enabled' => 'required|boolean',
+        ]);
+
+        // Check authorization
+        if ($utilityBill->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $utilityBill->update([
+            'auto_pay_enabled' => $request->auto_pay_enabled,
+        ]);
+
+        return redirect()->route('utility-bills.show', $utilityBill)
+            ->with('success', 'Auto-pay setting updated successfully.');
     }
 }

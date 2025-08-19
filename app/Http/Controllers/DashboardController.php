@@ -85,7 +85,7 @@ class DashboardController extends Controller
     private function getSpendingTrendsData($startDate, $endDate)
     {
         $expenses = Expense::whereBetween('expense_date', [$startDate, $endDate])
-            ->selectRaw('strftime("%Y", expense_date) as year, strftime("%m", expense_date) as month, SUM(amount) as total')
+            ->selectRaw('YEAR(expense_date) as year, MONTH(expense_date) as month, SUM(amount) as total')
             ->groupBy('year', 'month')
             ->orderBy('year')
             ->orderBy('month')
@@ -167,8 +167,8 @@ class DashboardController extends Controller
     {
         // This would typically come from historical investment data
         // For now, we'll generate sample data based on current portfolio
-        $currentValue = Investment::active()->sum('current_market_value');
-        $currentReturn = Investment::active()->sum('total_return');
+        $currentValue = Investment::active()->sum('current_value');
+        $currentReturn = Investment::active()->sum('realized_gain_loss');
 
         $labels = [];
         $values = [];
@@ -271,8 +271,9 @@ class DashboardController extends Controller
 
         // Investment stats - assuming these are already in base currency
         $activeInvestments = Investment::active()->get();
-        $portfolioValue = $activeInvestments->sum('current_market_value');
-        $totalReturn = $activeInvestments->sum('total_return');
+        $totalInvestments = $activeInvestments->count();
+        $portfolioValue = $activeInvestments->sum('current_value');
+        $totalReturn = $activeInvestments->sum('realized_gain_loss');
 
         // Utility bills with currency conversion to MKD
         $pendingBills = UtilityBill::pending()->count();
@@ -307,6 +308,7 @@ class DashboardController extends Controller
             'contracts_expiring_soon' => $contractsExpiringSoon,
             'total_contract_value' => $totalContractValueMKD,
             'total_contract_value_formatted' => $this->currencyService->format($totalContractValueMKD),
+            'total_investments' => $totalInvestments,
             'portfolio_value' => $portfolioValue,
             'portfolio_value_formatted' => $this->currencyService->format($portfolioValue),
             'total_return' => $totalReturn,
@@ -476,13 +478,13 @@ class DashboardController extends Controller
     {
         $suggestions = [];
 
-        // Check if user has subscriptions but no budget alerts
-        if (Subscription::where('user_id', $userId)->count() > 0 &&
-            Subscription::where('user_id', $userId)->whereNull('budget_alert_threshold')->count() > 0) {
+        // Check if user has utility bills but no budget alerts
+        if (UtilityBill::where('user_id', $userId)->count() > 0 &&
+            UtilityBill::where('user_id', $userId)->whereNull('budget_alert_threshold')->count() > 0) {
             $suggestions[] = [
                 'title' => 'Set Budget Alerts',
-                'description' => 'Get notified when your subscriptions exceed your budget',
-                'action_url' => route('subscriptions.index'),
+                'description' => 'Get notified when your utility bills exceed your budget',
+                'action_url' => route('utility-bills.index'),
                 'icon' => 'bell',
             ];
         }
