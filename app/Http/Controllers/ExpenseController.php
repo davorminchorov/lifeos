@@ -26,22 +26,22 @@ class ExpenseController extends Controller
         $query = Expense::where('user_id', auth()->id())->with('user');
 
         // Filter by category
-        if ($request->has('category')) {
+        if ($request->filled('category')) {
             $query->byCategory($request->category);
         }
 
         // Filter by expense type
-        if ($request->has('expense_type')) {
+        if ($request->filled('expense_type')) {
             $query->where('expense_type', $request->expense_type);
         }
 
         // Filter by status
-        if ($request->has('status')) {
+        if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
 
         // Filter by date range
-        if ($request->has('start_date') && $request->has('end_date')) {
+        if ($request->filled('start_date') && $request->filled('end_date')) {
             $query->inDateRange($request->start_date, $request->end_date);
         }
 
@@ -66,7 +66,7 @@ class ExpenseController extends Controller
         }
 
         // Search by description or merchant
-        if ($request->has('search')) {
+        if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('description', 'like', '%'.$search.'%')

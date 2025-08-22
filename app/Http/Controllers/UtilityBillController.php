@@ -26,17 +26,17 @@ class UtilityBillController extends Controller
         $query = UtilityBill::query()->with('user');
 
         // Filter by utility type
-        if ($request->has('utility_type')) {
+        if ($request->filled('utility_type')) {
             $query->byType($request->utility_type);
         }
 
         // Filter by payment status
-        if ($request->has('payment_status')) {
+        if ($request->filled('payment_status')) {
             $query->where('payment_status', $request->payment_status);
         }
 
         // Filter by service provider
-        if ($request->has('service_provider')) {
+        if ($request->filled('service_provider')) {
             $query->where('service_provider', $request->service_provider);
         }
 
@@ -68,7 +68,7 @@ class UtilityBillController extends Controller
         }
 
         // Search by service provider or service address
-        if ($request->has('search')) {
+        if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('service_provider', 'like', '%'.$search.'%')

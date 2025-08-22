@@ -28,30 +28,30 @@ class InvestmentController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Investment::query()->with('user');
+        $query = Investment::query()->where('user_id', auth()->id())->with('user');
 
         // Filter by investment type
-        if ($request->has('investment_type')) {
+        if ($request->filled('investment_type')) {
             $query->byType($request->investment_type);
         }
 
         // Filter by risk tolerance
-        if ($request->has('risk_tolerance')) {
+        if ($request->filled('risk_tolerance')) {
             $query->byRiskTolerance($request->risk_tolerance);
         }
 
         // Filter by status
-        if ($request->has('status')) {
+        if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
 
         // Filter by account broker
-        if ($request->has('account_broker')) {
+        if ($request->filled('account_broker')) {
             $query->where('account_broker', $request->account_broker);
         }
 
         // Search by name or symbol
-        if ($request->has('search')) {
+        if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', '%'.$search.'%')

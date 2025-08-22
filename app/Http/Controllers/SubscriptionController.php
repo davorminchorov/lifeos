@@ -25,12 +25,12 @@ class SubscriptionController extends Controller
         $query = Subscription::where('user_id', auth()->id())->with('user');
 
         // Filter by status
-        if ($request->has('status')) {
+        if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
 
         // Filter by category
-        if ($request->has('category')) {
+        if ($request->filled('category')) {
             $query->where('category', $request->category);
         }
 
@@ -41,7 +41,7 @@ class SubscriptionController extends Controller
         }
 
         // Search by service name
-        if ($request->has('search')) {
+        if ($request->filled('search')) {
             $query->where('service_name', 'like', '%'.$request->search.'%');
         }
 

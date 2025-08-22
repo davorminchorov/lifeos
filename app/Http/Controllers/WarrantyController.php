@@ -25,17 +25,17 @@ class WarrantyController extends Controller
         $query = Warranty::query()->with('user');
 
         // Filter by current status
-        if ($request->has('current_status')) {
+        if ($request->filled('current_status')) {
             $query->where('current_status', $request->current_status);
         }
 
         // Filter by warranty type
-        if ($request->has('warranty_type')) {
+        if ($request->filled('warranty_type')) {
             $query->where('warranty_type', $request->warranty_type);
         }
 
         // Filter by brand
-        if ($request->has('brand')) {
+        if ($request->filled('brand')) {
             $query->where('brand', $request->brand);
         }
 
@@ -51,7 +51,7 @@ class WarrantyController extends Controller
         }
 
         // Search by product name or brand
-        if ($request->has('search')) {
+        if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('product_name', 'like', '%'.$search.'%')

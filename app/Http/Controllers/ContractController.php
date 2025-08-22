@@ -26,12 +26,12 @@ class ContractController extends Controller
         $query = Contract::query()->where('user_id', auth()->id())->with('user');
 
         // Filter by status
-        if ($request->has('status')) {
+        if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
 
         // Filter by contract type
-        if ($request->has('contract_type')) {
+        if ($request->filled('contract_type')) {
             $query->where('contract_type', $request->contract_type);
         }
 
@@ -47,7 +47,7 @@ class ContractController extends Controller
         }
 
         // Search by title or counterparty
-        if ($request->has('search')) {
+        if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('title', 'like', '%'.$search.'%')
