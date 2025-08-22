@@ -2,67 +2,75 @@
 
 @section('title', 'Add New Warranty - LifeOS')
 
-@section('header')
-    <div class="flex justify-between items-center">
-        <div>
-            <h1 class="text-3xl font-bold text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
-                Add New Warranty
-            </h1>
-            <p class="mt-2 text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)]">
-                Register a new product warranty for tracking
-            </p>
-        </div>
-        <a href="{{ route('warranties.index') }}" class="bg-[color:var(--color-primary-200)] hover:bg-[color:var(--color-primary-300)] text-[color:var(--color-primary-700)] dark:bg-[color:var(--color-dark-300)] dark:hover:bg-[color:var(--color-dark-400)] dark:text-[color:var(--color-dark-600)] px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200">
-            Back to List
-        </a>
-    </div>
-@endsection
-
 @section('content')
+<div class="container mx-auto px-4 py-8">
     <div class="max-w-4xl mx-auto">
-        <form method="POST" action="{{ route('warranties.store') }}" class="space-y-6" enctype="multipart/form-data">
-            @csrf
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-8">
+            <div>
+                <h1 class="text-3xl font-bold text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Add New Warranty</h1>
+                <p class="text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] mt-2">Register a new product warranty for tracking</p>
+            </div>
+            <a href="{{ route('warranties.index') }}"
+               class="inline-flex items-center px-4 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] hover:bg-[color:var(--color-primary-200)] dark:hover:bg-[color:var(--color-dark-300)]">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                </svg>
+                Back to List
+            </a>
+        </div>
 
-            <!-- Product Information -->
-            <x-form.section title="Product Information" description="Enter the basic details about the product.">
-                <x-form.input
-                    name="product_name"
-                    label="Product Name"
-                    type="text"
-                    required
-                />
+        <!-- Form -->
+        <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] shadow-md rounded-lg border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)]">
+            <form method="POST" action="{{ route('warranties.store') }}" class="space-y-6 p-6" enctype="multipart/form-data">
+                @csrf
 
-                <x-form.input
-                    name="brand"
-                    label="Brand"
-                    type="text"
-                    required
-                />
+                <!-- Product Information -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="product_name" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Product Name *</label>
+                        <input type="text" name="product_name" id="product_name" required
+                               value="{{ old('product_name') }}"
+                               class="mt-1 block w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
+                        @error('product_name')
+                            <p class="mt-1 text-sm text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]">{{ $message }}</p>
+                        @enderror
+                    </div>
 
-                <x-form.input
-                    name="model"
-                    label="Model"
-                    type="text"
-                />
+                    <div>
+                        <label for="brand" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Brand *</label>
+                        <input type="text" name="brand" id="brand" required
+                               value="{{ old('brand') }}"
+                               class="mt-1 block w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
+                        @error('brand')
+                            <p class="mt-1 text-sm text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]">{{ $message }}</p>
+                        @enderror
+                    </div>
 
-                <x-form.input
-                    name="serial_number"
-                    label="Serial Number"
-                    type="text"
-                />
-            </x-form.section>
+                    <div>
+                        <label for="model" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Model</label>
+                        <input type="text" name="model" id="model"
+                               value="{{ old('model') }}"
+                               class="mt-1 block w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
+                        @error('model')
+                            <p class="mt-1 text-sm text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]">{{ $message }}</p>
+                        @enderror
+                    </div>
 
-            <!-- Purchase Information -->
-            <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] shadow overflow-hidden sm:rounded-lg border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)]">
-                <div class="px-4 py-5 sm:px-6">
-                    <h3 class="text-lg leading-6 font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
-                        Purchase Information
-                    </h3>
-                    <p class="mt-1 max-w-2xl text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)]">
-                        Details about when and where you purchased this product.
-                    </p>
+                    <div>
+                        <label for="serial_number" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Serial Number</label>
+                        <input type="text" name="serial_number" id="serial_number"
+                               value="{{ old('serial_number') }}"
+                               class="mt-1 block w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
+                        @error('serial_number')
+                            <p class="mt-1 text-sm text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]">{{ $message }}</p>
+                        @enderror
+                    </div>
                 </div>
-                <div class="border-t border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)] px-4 py-5 sm:px-6">
+
+                <!-- Purchase Information -->
+                <div class="border-t border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)] pt-6">
+                    <h3 class="text-lg font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] mb-4">Purchase Information</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Purchase Date -->
                         <div>
@@ -122,19 +130,10 @@
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Warranty Information -->
-            <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] shadow overflow-hidden sm:rounded-lg border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)]">
-                <div class="px-4 py-5 sm:px-6">
-                    <h3 class="text-lg leading-6 font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
-                        Warranty Information
-                    </h3>
-                    <p class="mt-1 max-w-2xl text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)]">
-                        Details about the warranty coverage.
-                    </p>
-                </div>
-                <div class="border-t border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)] px-4 py-5 sm:px-6">
+                <!-- Warranty Information -->
+                <div class="border-t border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)] pt-6">
+                    <h3 class="text-lg font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] mb-4">Warranty Information</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Warranty Duration -->
                         <div>
@@ -199,19 +198,10 @@
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Attachments -->
-            <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] shadow overflow-hidden sm:rounded-lg border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)]">
-                <div class="px-4 py-5 sm:px-6">
-                    <h3 class="text-lg leading-6 font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
-                        Attachments
-                    </h3>
-                    <p class="mt-1 max-w-2xl text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)]">
-                        Upload receipts and proof of purchase documents.
-                    </p>
-                </div>
-                <div class="border-t border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)] px-4 py-5 sm:px-6">
+                <!-- Attachments -->
+                <div class="border-t border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)] pt-6">
+                    <h3 class="text-lg font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] mb-4">Attachments</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Receipt Attachments -->
                         <div>
@@ -236,43 +226,39 @@
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Additional Information -->
-            <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] shadow overflow-hidden sm:rounded-lg border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)]">
-                <div class="px-4 py-5 sm:px-6">
-                    <h3 class="text-lg leading-6 font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
-                        Additional Information
-                    </h3>
-                    <p class="mt-1 max-w-2xl text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)]">
-                        Optional notes and reminders.
-                    </p>
-                </div>
-                <div class="border-t border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)] px-4 py-5 sm:px-6">
-                    <!-- Notes -->
+                <!-- Additional Information -->
+                <div class="border-t border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)] pt-6">
+                    <h3 class="text-lg font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] mb-4">Additional Information</h3>
+
                     <div>
                         <label for="notes" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Notes</label>
                         <textarea name="notes" id="notes" rows="4"
                                   placeholder="Any additional notes about this warranty..."
-                                  class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">{{ old('notes') }}</textarea>
+                                  class="mt-1 block w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">{{ old('notes') }}</textarea>
                         @error('notes')
-                            <p class="mt-1 text-sm text-[color:var(--color-danger-600)]">{{ $message }}</p>
+                            <p class="mt-1 text-sm text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]">{{ $message }}</p>
                         @enderror
                     </div>
                 </div>
-            </div>
 
-            <!-- Form Actions -->
-            <div class="flex justify-end space-x-4">
-                <a href="{{ route('warranties.index') }}" class="bg-[color:var(--color-primary-200)] hover:bg-[color:var(--color-primary-300)] text-[color:var(--color-primary-700)] dark:bg-[color:var(--color-dark-300)] dark:hover:bg-[color:var(--color-dark-400)] dark:text-[color:var(--color-dark-600)] px-6 py-2 rounded-md text-sm font-medium transition-colors duration-200">
-                    Cancel
-                </a>
-                <button type="submit" class="bg-[color:var(--color-accent-600)] hover:bg-[color:var(--color-accent-700)] text-white px-6 py-2 rounded-md text-sm font-medium transition-colors duration-200">
-                    Create Warranty
-                </button>
-            </div>
-        </form>
+                <!-- Submit Button -->
+                <div class="border-t border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)] pt-6">
+                    <div class="flex justify-end space-x-3">
+                        <a href="{{ route('warranties.index') }}"
+                           class="inline-flex items-center px-4 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] hover:bg-[color:var(--color-primary-200)] dark:hover:bg-[color:var(--color-dark-300)]">
+                            Cancel
+                        </a>
+                        <button type="submit"
+                                class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[color:var(--color-accent-600)] hover:bg-[color:var(--color-accent-700)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[color:var(--color-accent-500)]">
+                            Create Warranty
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
+</div>
 @endsection
 
 @push('scripts')
