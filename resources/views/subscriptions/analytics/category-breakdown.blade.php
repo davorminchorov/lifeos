@@ -77,59 +77,59 @@
                 </div>
                 <div class="border-t border-gray-200 dark:border-gray-700">
                     <div class="overflow-hidden">
-                        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                            <thead class="bg-gray-50 dark:bg-gray-700">
+                        <table class="min-w-full divide-y divide-[color:var(--color-primary-300)] dark:divide-[color:var(--color-dark-300)]">
+                            <thead class="bg-[color:var(--color-primary-200)] dark:bg-[color:var(--color-dark-300)]">
                                 <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] uppercase tracking-wider">
                                         Category
                                     </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] uppercase tracking-wider">
                                         Count
                                     </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] uppercase tracking-wider">
                                         Monthly Cost
                                     </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] uppercase tracking-wider">
                                         Yearly Cost
                                     </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] uppercase tracking-wider">
                                         Percentage
                                     </th>
                                 </tr>
                             </thead>
-                            <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                            <tbody class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] divide-y divide-[color:var(--color-primary-300)] dark:divide-[color:var(--color-dark-300)]">
                                 @php
                                     $sortedCategories = $categories->sortByDesc('monthly_cost');
                                 @endphp
                                 @foreach($sortedCategories as $categoryData)
-                                    <tr>
+                                    <tr class="hover:bg-[color:var(--color-primary-200)] dark:hover:bg-[color:var(--color-dark-300)]">
                                         <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="text-sm font-medium text-gray-900 dark:text-white capitalize">
+                                            <div class="text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] capitalize">
                                                 {{ $categoryData['category'] }}
                                             </div>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="text-sm text-gray-900 dark:text-white">
+                                            <div class="text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                                                 {{ $categoryData['count'] }}
                                             </div>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="text-sm font-medium text-green-600 dark:text-green-400">
+                                            <div class="text-sm font-medium text-[color:var(--color-success-600)] dark:text-[color:var(--color-success-500)]">
                                                 ${{ number_format($categoryData['monthly_cost'], 2) }}
                                             </div>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="text-sm font-medium text-blue-600 dark:text-blue-400">
+                                            <div class="text-sm font-medium text-[color:var(--color-info-600)] dark:text-[color:var(--color-info-500)]">
                                                 ${{ number_format($categoryData['yearly_cost'], 2) }}
                                             </div>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <div class="flex items-center">
-                                                <div class="text-sm text-gray-900 dark:text-white mr-2">
+                                                <div class="text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] mr-2">
                                                     {{ $categoryData['percentage'] }}%
                                                 </div>
-                                                <div class="w-16 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                                                    <div class="bg-blue-600 h-2 rounded-full" style="width: {{ $categoryData['percentage'] }}%"></div>
+                                                <div class="w-16 bg-[color:var(--color-primary-300)] dark:bg-[color:var(--color-dark-400)] rounded-full h-2">
+                                                    <div class="bg-[color:var(--color-info-600)] h-2 rounded-full" style="width: {{ $categoryData['percentage'] }}%"></div>
                                                 </div>
                                             </div>
                                         </td>

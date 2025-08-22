@@ -264,21 +264,21 @@
             </div>
             <div class="border-t border-gray-200 dark:border-gray-700">
                 <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                        <thead class="bg-gray-50 dark:bg-gray-700">
+                    <table class="min-w-full divide-y divide-[color:var(--color-primary-300)] dark:divide-[color:var(--color-dark-300)]">
+                        <thead class="bg-[color:var(--color-primary-200)] dark:bg-[color:var(--color-dark-300)]">
                             <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Date</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Price</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Change</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] uppercase tracking-wider">Date</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] uppercase tracking-wider">Price</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] uppercase tracking-wider">Change</th>
                             </tr>
                         </thead>
-                        <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                        <tbody class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] divide-y divide-[color:var(--color-primary-300)] dark:divide-[color:var(--color-dark-300)]">
                             @foreach($subscription->price_history as $index => $history)
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                                <tr class="hover:bg-[color:var(--color-primary-200)] dark:hover:bg-[color:var(--color-dark-300)]">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                                         {{ \Carbon\Carbon::parse($history['date'])->format('M j, Y') }}
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                                         {{ $subscription->currency }} {{ number_format($history['price'], 2) }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm">
@@ -289,18 +289,18 @@
                                                 $changePercent = $previousPrice > 0 ? ($change / $previousPrice) * 100 : 0;
                                             @endphp
                                             @if($change > 0)
-                                                <span class="text-red-600 dark:text-red-400">
+                                                <span class="text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-500)]">
                                                     +{{ $subscription->currency }}{{ number_format($change, 2) }} (+{{ number_format($changePercent, 1) }}%)
                                                 </span>
                                             @elseif($change < 0)
-                                                <span class="text-green-600 dark:text-green-400">
+                                                <span class="text-[color:var(--color-success-600)] dark:text-[color:var(--color-success-500)]">
                                                     {{ $subscription->currency }}{{ number_format($change, 2) }} ({{ number_format($changePercent, 1) }}%)
                                                 </span>
                                             @else
-                                                <span class="text-gray-500 dark:text-gray-400">No change</span>
+                                                <span class="text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">No change</span>
                                             @endif
                                         @else
-                                            <span class="text-gray-500 dark:text-gray-400">Initial price</span>
+                                            <span class="text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">Initial price</span>
                                         @endif
                                     </td>
                                 </tr>
