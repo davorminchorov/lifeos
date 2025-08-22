@@ -30,45 +30,53 @@
             <form method="GET" action="{{ route('subscriptions.index') }}" class="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <!-- Search -->
                 <div>
-                    <label for="search" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Search</label>
-                    <input type="text" name="search" id="search" value="{{ request('search') }}"
-                           placeholder="Search subscriptions..."
-                           class="mt-1 block w-full rounded-lg border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)] px-4 py-3 sm:px-3 sm:py-2 text-base sm:text-sm touch-manipulation">
+                    <x-form.input
+                        name="search"
+                        label="Search"
+                        type="text"
+                        placeholder="Search subscriptions..."
+                    />
                 </div>
 
                 <!-- Status Filter -->
                 <div>
-                    <label for="status" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Status</label>
-                    <select name="status" id="status" class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">
-                        <option value="">All Status</option>
+                    <x-form.select
+                        name="status"
+                        label="Status"
+                        placeholder="All Status"
+                    >
                         <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Active</option>
                         <option value="cancelled" {{ request('status') === 'cancelled' ? 'selected' : '' }}>Cancelled</option>
                         <option value="paused" {{ request('status') === 'paused' ? 'selected' : '' }}>Paused</option>
-                    </select>
+                    </x-form.select>
                 </div>
 
                 <!-- Category Filter -->
                 <div>
-                    <label for="category" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Category</label>
-                    <select name="category" id="category" class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">
-                        <option value="">All Categories</option>
+                    <x-form.select
+                        name="category"
+                        label="Category"
+                        placeholder="All Categories"
+                    >
                         <option value="Entertainment" {{ request('category') === 'Entertainment' ? 'selected' : '' }}>Entertainment</option>
                         <option value="Software" {{ request('category') === 'Software' ? 'selected' : '' }}>Software</option>
                         <option value="Fitness" {{ request('category') === 'Fitness' ? 'selected' : '' }}>Fitness</option>
                         <option value="Storage" {{ request('category') === 'Storage' ? 'selected' : '' }}>Storage</option>
                         <option value="Productivity" {{ request('category') === 'Productivity' ? 'selected' : '' }}>Productivity</option>
-                    </select>
+                    </x-form.select>
                 </div>
 
                 <!-- Due Soon -->
                 <div>
-                    <label for="due_soon" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Due Soon</label>
-                    <select name="due_soon" id="due_soon" class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">
-                        <option value="">All</option>
+                    <x-form.select
+                        name="due_soon"
+                        label="Due Soon"
+                        placeholder="All"
+                    >
                         <option value="7" {{ request('due_soon') === '7' ? 'selected' : '' }}>Due in 7 days</option>
                         <option value="14" {{ request('due_soon') === '14' ? 'selected' : '' }}>Due in 14 days</option>
                         <option value="30" {{ request('due_soon') === '30' ? 'selected' : '' }}>Due in 30 days</option>
-                    </select>
+                    </x-form.select>
                 </div>
 
                 <div class="col-span-full">

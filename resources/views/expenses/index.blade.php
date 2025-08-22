@@ -25,17 +25,21 @@
             <form method="GET" action="{{ route('expenses.index') }}" class="grid grid-cols-1 md:grid-cols-5 gap-4">
                 <!-- Search -->
                 <div>
-                    <label for="search" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Search</label>
-                    <input type="text" name="search" id="search" value="{{ request('search') }}"
-                           placeholder="Search expenses..."
-                           class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">
+                    <x-form.input
+                        name="search"
+                        label="Search"
+                        type="text"
+                        placeholder="Search expenses..."
+                    />
                 </div>
 
                 <!-- Category Filter -->
                 <div>
-                    <label for="category" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Category</label>
-                    <select name="category" id="category" class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">
-                        <option value="">All Categories</option>
+                    <x-form.select
+                        name="category"
+                        label="Category"
+                        placeholder="All Categories"
+                    >
                         <option value="Food & Dining" {{ request('category') === 'Food & Dining' ? 'selected' : '' }}>Food & Dining</option>
                         <option value="Transportation" {{ request('category') === 'Transportation' ? 'selected' : '' }}>Transportation</option>
                         <option value="Shopping" {{ request('category') === 'Shopping' ? 'selected' : '' }}>Shopping</option>
@@ -44,33 +48,39 @@
                         <option value="Healthcare" {{ request('category') === 'Healthcare' ? 'selected' : '' }}>Healthcare</option>
                         <option value="Travel" {{ request('category') === 'Travel' ? 'selected' : '' }}>Travel</option>
                         <option value="Other" {{ request('category') === 'Other' ? 'selected' : '' }}>Other</option>
-                    </select>
+                    </x-form.select>
                 </div>
 
                 <!-- Payment Method Filter -->
                 <div>
-                    <label for="payment_method" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Payment Method</label>
-                    <select name="payment_method" id="payment_method" class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">
-                        <option value="">All Methods</option>
+                    <x-form.select
+                        name="payment_method"
+                        label="Payment Method"
+                        placeholder="All Methods"
+                    >
                         <option value="cash" {{ request('payment_method') === 'cash' ? 'selected' : '' }}>Cash</option>
                         <option value="credit_card" {{ request('payment_method') === 'credit_card' ? 'selected' : '' }}>Credit Card</option>
                         <option value="debit_card" {{ request('payment_method') === 'debit_card' ? 'selected' : '' }}>Debit Card</option>
                         <option value="bank_transfer" {{ request('payment_method') === 'bank_transfer' ? 'selected' : '' }}>Bank Transfer</option>
                         <option value="digital_wallet" {{ request('payment_method') === 'digital_wallet' ? 'selected' : '' }}>Digital Wallet</option>
-                    </select>
+                    </x-form.select>
                 </div>
 
                 <!-- Date Range -->
                 <div>
-                    <label for="date_from" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Date From</label>
-                    <input type="date" name="date_from" id="date_from" value="{{ request('date_from') }}"
-                           class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">
+                    <x-form.input
+                        name="date_from"
+                        label="Date From"
+                        type="date"
+                    />
                 </div>
 
                 <div>
-                    <label for="date_to" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Date To</label>
-                    <input type="date" name="date_to" id="date_to" value="{{ request('date_to') }}"
-                           class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">
+                    <x-form.input
+                        name="date_to"
+                        label="Date To"
+                        type="date"
+                    />
                 </div>
 
                 <div class="col-span-full">

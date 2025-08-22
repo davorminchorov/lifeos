@@ -25,42 +25,50 @@
             <form method="GET" action="{{ route('investments.index') }}" class="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <!-- Search -->
                 <div>
-                    <label for="search" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Search</label>
-                    <input type="text" name="search" id="search" value="{{ request('search') }}"
-                           placeholder="Search investments..."
-                           class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">
+                    <x-form.input
+                        name="search"
+                        label="Search"
+                        type="text"
+                        placeholder="Search investments..."
+                    />
                 </div>
 
                 <!-- Type Filter -->
                 <div>
-                    <label for="investment_type" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Type</label>
-                    <select name="investment_type" id="investment_type" class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">
-                        <option value="">All Types</option>
+                    <x-form.select
+                        name="investment_type"
+                        label="Type"
+                        placeholder="All Types"
+                    >
                         <option value="stock" {{ request('investment_type') === 'stock' ? 'selected' : '' }}>Stock</option>
                         <option value="bond" {{ request('investment_type') === 'bond' ? 'selected' : '' }}>Bond</option>
                         <option value="crypto" {{ request('investment_type') === 'crypto' ? 'selected' : '' }}>Cryptocurrency</option>
                         <option value="etf" {{ request('investment_type') === 'etf' ? 'selected' : '' }}>ETF</option>
                         <option value="mutual_fund" {{ request('investment_type') === 'mutual_fund' ? 'selected' : '' }}>Mutual Fund</option>
                         <option value="real_estate" {{ request('investment_type') === 'real_estate' ? 'selected' : '' }}>Real Estate</option>
-                    </select>
+                    </x-form.select>
                 </div>
 
                 <!-- Account Filter -->
                 <div>
-                    <label for="account" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Account</label>
-                    <input type="text" name="account" id="account" value="{{ request('account') }}"
-                           placeholder="Filter by account..."
-                           class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">
+                    <x-form.input
+                        name="account"
+                        label="Account"
+                        type="text"
+                        placeholder="Filter by account..."
+                    />
                 </div>
 
                 <!-- Performance Filter -->
                 <div>
-                    <label for="performance" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Performance</label>
-                    <select name="performance" id="performance" class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">
-                        <option value="">All</option>
+                    <x-form.select
+                        name="performance"
+                        label="Performance"
+                        placeholder="All"
+                    >
                         <option value="gains" {{ request('performance') === 'gains' ? 'selected' : '' }}>Gains Only</option>
                         <option value="losses" {{ request('performance') === 'losses' ? 'selected' : '' }}>Losses Only</option>
-                    </select>
+                    </x-form.select>
                 </div>
 
                 <div class="col-span-full">

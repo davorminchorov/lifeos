@@ -27,51 +27,56 @@
             <form method="GET" action="{{ route('contracts.index') }}" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <!-- Search -->
                 <div>
-                    <label for="search" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Search</label>
-                    <input type="text" name="search" id="search" value="{{ request('search') }}"
-                           placeholder="Contract title, counterparty..."
-                           class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">
+                    <x-form.input
+                        name="search"
+                        label="Search"
+                        type="text"
+                        placeholder="Contract title, counterparty..."
+                    />
                 </div>
 
                 <!-- Status Filter -->
                 <div>
-                    <label for="status" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Status</label>
-                    <select name="status" id="status"
-                            class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">
-                        <option value="">All Statuses</option>
+                    <x-form.select
+                        name="status"
+                        label="Status"
+                        placeholder="All Statuses"
+                    >
                         <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Active</option>
                         <option value="expired" {{ request('status') === 'expired' ? 'selected' : '' }}>Expired</option>
                         <option value="terminated" {{ request('status') === 'terminated' ? 'selected' : '' }}>Terminated</option>
                         <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Pending</option>
-                    </select>
+                    </x-form.select>
                 </div>
 
                 <!-- Contract Type Filter -->
                 <div>
-                    <label for="contract_type" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Type</label>
-                    <select name="contract_type" id="contract_type"
-                            class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">
-                        <option value="">All Types</option>
+                    <x-form.select
+                        name="contract_type"
+                        label="Type"
+                        placeholder="All Types"
+                    >
                         <option value="lease" {{ request('contract_type') === 'lease' ? 'selected' : '' }}>Lease</option>
                         <option value="employment" {{ request('contract_type') === 'employment' ? 'selected' : '' }}>Employment</option>
                         <option value="service" {{ request('contract_type') === 'service' ? 'selected' : '' }}>Service</option>
                         <option value="insurance" {{ request('contract_type') === 'insurance' ? 'selected' : '' }}>Insurance</option>
                         <option value="maintenance" {{ request('contract_type') === 'maintenance' ? 'selected' : '' }}>Maintenance</option>
                         <option value="other" {{ request('contract_type') === 'other' ? 'selected' : '' }}>Other</option>
-                    </select>
+                    </x-form.select>
                 </div>
 
                 <!-- Sort By -->
                 <div>
-                    <label for="sort_by" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Sort By</label>
-                    <select name="sort_by" id="sort_by"
-                            class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">
+                    <x-form.select
+                        name="sort_by"
+                        label="Sort By"
+                    >
                         <option value="end_date" {{ request('sort_by', 'end_date') === 'end_date' ? 'selected' : '' }}>End Date</option>
                         <option value="title" {{ request('sort_by') === 'title' ? 'selected' : '' }}>Title</option>
                         <option value="counterparty" {{ request('sort_by') === 'counterparty' ? 'selected' : '' }}>Counterparty</option>
                         <option value="start_date" {{ request('sort_by') === 'start_date' ? 'selected' : '' }}>Start Date</option>
                         <option value="contract_value" {{ request('sort_by') === 'contract_value' ? 'selected' : '' }}>Value</option>
-                    </select>
+                    </x-form.select>
                 </div>
 
                 <div class="flex items-end space-x-2">

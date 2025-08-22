@@ -25,17 +25,21 @@
             <form method="GET" action="{{ route('utility-bills.index') }}" class="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <!-- Search -->
                 <div>
-                    <label for="search" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Search</label>
-                    <input type="text" name="search" id="search" value="{{ request('search') }}"
-                           placeholder="Search utility bills..."
-                           class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">
+                    <x-form.input
+                        name="search"
+                        label="Search"
+                        type="text"
+                        placeholder="Search utility bills..."
+                    />
                 </div>
 
                 <!-- Utility Type Filter -->
                 <div>
-                    <label for="utility_type" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Utility Type</label>
-                    <select name="utility_type" id="utility_type" class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">
-                        <option value="">All Types</option>
+                    <x-form.select
+                        name="utility_type"
+                        label="Utility Type"
+                        placeholder="All Types"
+                    >
                         <option value="electricity" {{ request('utility_type') === 'electricity' ? 'selected' : '' }}>Electricity</option>
                         <option value="gas" {{ request('utility_type') === 'gas' ? 'selected' : '' }}>Gas</option>
                         <option value="water" {{ request('utility_type') === 'water' ? 'selected' : '' }}>Water</option>
@@ -44,29 +48,33 @@
                         <option value="cable_tv" {{ request('utility_type') === 'cable_tv' ? 'selected' : '' }}>Cable TV</option>
                         <option value="trash" {{ request('utility_type') === 'trash' ? 'selected' : '' }}>Trash</option>
                         <option value="sewer" {{ request('utility_type') === 'sewer' ? 'selected' : '' }}>Sewer</option>
-                    </select>
+                    </x-form.select>
                 </div>
 
                 <!-- Payment Status Filter -->
                 <div>
-                    <label for="payment_status" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Payment Status</label>
-                    <select name="payment_status" id="payment_status" class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">
-                        <option value="">All Status</option>
+                    <x-form.select
+                        name="payment_status"
+                        label="Payment Status"
+                        placeholder="All Status"
+                    >
                         <option value="paid" {{ request('payment_status') === 'paid' ? 'selected' : '' }}>Paid</option>
                         <option value="pending" {{ request('payment_status') === 'pending' ? 'selected' : '' }}>Pending</option>
                         <option value="overdue" {{ request('payment_status') === 'overdue' ? 'selected' : '' }}>Overdue</option>
-                    </select>
+                    </x-form.select>
                 </div>
 
                 <!-- Due Soon -->
                 <div>
-                    <label for="due_soon" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Due Soon</label>
-                    <select name="due_soon" id="due_soon" class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">
-                        <option value="">All</option>
+                    <x-form.select
+                        name="due_soon"
+                        label="Due Soon"
+                        placeholder="All"
+                    >
                         <option value="7" {{ request('due_soon') === '7' ? 'selected' : '' }}>Due in 7 days</option>
                         <option value="14" {{ request('due_soon') === '14' ? 'selected' : '' }}>Due in 14 days</option>
                         <option value="30" {{ request('due_soon') === '30' ? 'selected' : '' }}>Due in 30 days</option>
-                    </select>
+                    </x-form.select>
                 </div>
 
                 <div class="col-span-full">
