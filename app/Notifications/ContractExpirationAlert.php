@@ -27,7 +27,7 @@ class ContractExpirationAlert extends Notification implements ShouldQueue
      */
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return $notifiable->getEnabledNotificationChannels('contract_expiration');
     }
 
     /**
@@ -113,23 +113,53 @@ class ContractExpirationAlert extends Notification implements ShouldQueue
     }
 
     /**
+     * Get the database representation of the notification.
+     *
+     * @return array<string, mixed>
+     */
+    public function toDatabase(object $notifiable): array
+    {
+        if ($this->isNoticeAlert) {
+            $title = $this->daysUntilExpiration === 0
+                ? "Notice period deadline for {$this->contract->title} is today!"
+                : "Notice period for {$this->contract->title} ends in {$this->daysUntilExpiration} days";
+            $message = $this->daysUntilExpiration === 0
+                ? 'Your contract notice period deadline is today'
+                : 'Your contract notice period is ending soon';
+        } else {
+            $title = $this->daysUntilExpiration === 0
+                ? "{$this->contract->title} contract expires today!"
+                : "{$this->contract->title} contract expires in {$this->daysUntilExpiration} days";
+            $message = $this->daysUntilExpiration === 0
+                ? 'Your contract is expiring today'
+                : 'Your contract is expiring soon';
+        }
+
+        return [
+            'title' => $title,
+            'message' => $message,
+            'type' => 'contract_expiration',
+            'contract_id' => $this->contract->id,
+            'contract_title' => $this->contract->title,
+            'counterparty' => $this->contract->counterparty,
+            'contract_type' => $this->contract->contract_type,
+            'start_date' => $this->contract->start_date->toDateString(),
+            'end_date' => $this->contract->end_date->toDateString(),
+            'contract_value' => $this->contract->contract_value,
+            'days_until_expiration' => $this->daysUntilExpiration,
+            'is_notice_alert' => $this->isNoticeAlert,
+            'notice_period_days' => $this->contract->notice_period_days,
+            'action_url' => url('/contracts/'.$this->contract->id),
+        ];
+    }
+
+    /**
      * Get the array representation of the notification.
      *
      * @return array<string, mixed>
      */
     public function toArray(object $notifiable): array
     {
-        return [
-            'contract_id' => $this->contract->id,
-            'title' => $this->contract->title,
-            'counterparty' => $this->contract->counterparty,
-            'contract_type' => $this->contract->contract_type,
-            'start_date' => $this->contract->start_date,
-            'end_date' => $this->contract->end_date,
-            'contract_value' => $this->contract->contract_value,
-            'days_until_expiration' => $this->daysUntilExpiration,
-            'is_notice_alert' => $this->isNoticeAlert,
-            'notice_period_days' => $this->contract->notice_period_days,
-        ];
+        return $this->toDatabase($notifiable);
     }
 }

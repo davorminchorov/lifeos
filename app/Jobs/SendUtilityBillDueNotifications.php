@@ -51,11 +51,19 @@ class SendUtilityBillDueNotifications implements ShouldQueue
 
         foreach ($utilityBills as $bill) {
             try {
+                // Check if user has any enabled channels for this notification type
+                $enabledChannels = $bill->user->getEnabledNotificationChannels('utility_bill_due');
+
+                if (empty($enabledChannels)) {
+                    Log::info("Skipping notification for utility bill {$bill->id} - user has disabled all channels");
+                    continue;
+                }
+
                 $bill->user->notify(
                     new UtilityBillDueAlert($bill, $days)
                 );
 
-                Log::info("Sent payment reminder for utility bill {$bill->id} ({$bill->utility_type} - {$bill->service_provider}) to user {$bill->user->email}");
+                Log::info("Sent payment reminder for utility bill {$bill->id} ({$bill->utility_type} - {$bill->service_provider}) to user {$bill->user->email} via channels: ".implode(', ', $enabledChannels));
             } catch (\Exception $e) {
                 Log::error("Failed to send payment reminder for utility bill {$bill->id}: {$e->getMessage()}");
             }

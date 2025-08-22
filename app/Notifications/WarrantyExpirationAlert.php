@@ -26,7 +26,7 @@ class WarrantyExpirationAlert extends Notification implements ShouldQueue
      */
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return $notifiable->getEnabledNotificationChannels('warranty_expiration');
     }
 
     /**
@@ -67,20 +67,44 @@ class WarrantyExpirationAlert extends Notification implements ShouldQueue
     }
 
     /**
+     * Get the database representation of the notification.
+     *
+     * @return array<string, mixed>
+     */
+    public function toDatabase(object $notifiable): array
+    {
+        $title = $this->daysUntilExpiration === 0
+            ? "{$this->warranty->product_name} warranty expires today!"
+            : "{$this->warranty->product_name} warranty expires in {$this->daysUntilExpiration} days";
+
+        $message = $this->daysUntilExpiration === 0
+            ? 'Your warranty is expiring today'
+            : 'Your warranty is expiring soon';
+
+        return [
+            'title' => $title,
+            'message' => $message,
+            'type' => 'warranty_expiration',
+            'warranty_id' => $this->warranty->id,
+            'product_name' => $this->warranty->product_name,
+            'brand' => $this->warranty->brand,
+            'model' => $this->warranty->model,
+            'purchase_date' => $this->warranty->purchase_date->toDateString(),
+            'warranty_expiration_date' => $this->warranty->warranty_expiration_date->toDateString(),
+            'days_until_expiration' => $this->daysUntilExpiration,
+            'warranty_type' => $this->warranty->warranty_type,
+            'retailer' => $this->warranty->retailer,
+            'action_url' => url('/warranties/'.$this->warranty->id),
+        ];
+    }
+
+    /**
      * Get the array representation of the notification.
      *
      * @return array<string, mixed>
      */
     public function toArray(object $notifiable): array
     {
-        return [
-            'warranty_id' => $this->warranty->id,
-            'product_name' => $this->warranty->product_name,
-            'brand' => $this->warranty->brand,
-            'model' => $this->warranty->model,
-            'purchase_date' => $this->warranty->purchase_date,
-            'warranty_expiration_date' => $this->warranty->warranty_expiration_date,
-            'days_until_expiration' => $this->daysUntilExpiration,
-        ];
+        return $this->toDatabase($notifiable);
     }
 }

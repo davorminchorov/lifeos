@@ -70,6 +70,14 @@ class SendContractExpirationNotifications implements ShouldQueue
 
         foreach ($contracts as $contract) {
             try {
+                // Check if user has any enabled channels for this notification type
+                $enabledChannels = $contract->user->getEnabledNotificationChannels('contract_expiration');
+
+                if (empty($enabledChannels)) {
+                    Log::info("Skipping notification for contract {$contract->id} - user has disabled all channels");
+                    continue;
+                }
+
                 // Determine notification type
                 $isNoticeAlert = $contract->notice_period_days &&
                     $contract->end_date->subDays($contract->notice_period_days)->toDateString() === $targetDate;
@@ -79,7 +87,7 @@ class SendContractExpirationNotifications implements ShouldQueue
                 );
 
                 $alertType = $isNoticeAlert ? 'notice period' : 'expiration';
-                Log::info("Sent {$alertType} notification for contract {$contract->id} ({$contract->title}) to user {$contract->user->email}");
+                Log::info("Sent {$alertType} notification for contract {$contract->id} ({$contract->title}) to user {$contract->user->email} via channels: ".implode(', ', $enabledChannels));
             } catch (\Exception $e) {
                 Log::error("Failed to send notification for contract {$contract->id}: {$e->getMessage()}");
             }

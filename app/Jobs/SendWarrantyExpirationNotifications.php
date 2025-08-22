@@ -51,11 +51,19 @@ class SendWarrantyExpirationNotifications implements ShouldQueue
 
         foreach ($warranties as $warranty) {
             try {
+                // Check if user has any enabled channels for this notification type
+                $enabledChannels = $warranty->user->getEnabledNotificationChannels('warranty_expiration');
+
+                if (empty($enabledChannels)) {
+                    Log::info("Skipping notification for warranty {$warranty->id} - user has disabled all channels");
+                    continue;
+                }
+
                 $warranty->user->notify(
                     new WarrantyExpirationAlert($warranty, $days)
                 );
 
-                Log::info("Sent expiration notification for warranty {$warranty->id} ({$warranty->product_name}) to user {$warranty->user->email}");
+                Log::info("Sent expiration notification for warranty {$warranty->id} ({$warranty->product_name}) to user {$warranty->user->email} via channels: ".implode(', ', $enabledChannels));
             } catch (\Exception $e) {
                 Log::error("Failed to send expiration notification for warranty {$warranty->id}: {$e->getMessage()}");
             }
