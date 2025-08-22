@@ -331,7 +331,6 @@ class UtilityBillController extends Controller
         return view('utility-bills.analytics', compact('analytics'));
     }
 
-
     /**
      * Duplicate a utility bill.
      */
@@ -494,7 +493,6 @@ class UtilityBillController extends Controller
 
         return response()->json(['data' => $analytics]);
     }
-
 
     /**
      * Get cost analytics for utility bills.
@@ -950,11 +948,11 @@ class UtilityBillController extends Controller
         $previousYear = $currentYear - 1;
 
         $currentYearTotal = $bills->whereBetween('bill_period_start', [
-            "{$currentYear}-01-01", "{$currentYear}-12-31"
+            "{$currentYear}-01-01", "{$currentYear}-12-31",
         ])->sum('bill_amount');
 
         $previousYearTotal = $bills->whereBetween('bill_period_start', [
-            "{$previousYear}-01-01", "{$previousYear}-12-31"
+            "{$previousYear}-01-01", "{$previousYear}-12-31",
         ])->sum('bill_amount');
 
         $yearOverYearComparison = [
@@ -984,12 +982,12 @@ class UtilityBillController extends Controller
 
         $dueThisWeek = $bills->whereBetween('due_date', [
             $now->startOfWeek(),
-            $now->endOfWeek()
+            $now->endOfWeek(),
         ])->count();
 
         $dueNextWeek = $bills->whereBetween('due_date', [
             $now->copy()->addWeek()->startOfWeek(),
-            $now->copy()->addWeek()->endOfWeek()
+            $now->copy()->addWeek()->endOfWeek(),
         ])->count();
 
         $overdueBills = $bills->where('due_date', '<', $now)->count();

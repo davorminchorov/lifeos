@@ -75,7 +75,7 @@ class DashboardController extends Controller
             'spendingTrends' => $this->getSpendingTrendsData($startDate, $endDate),
             'categoryBreakdown' => $this->getCategoryBreakdownData($startDate, $endDate),
             'portfolioPerformance' => $this->getPortfolioPerformanceData($startDate, $endDate),
-            'monthlyComparison' => $this->getMonthlyComparisonData()
+            'monthlyComparison' => $this->getMonthlyComparisonData(),
         ]);
     }
 
@@ -101,10 +101,10 @@ class DashboardController extends Controller
             $labels[] = $monthLabel;
 
             $monthExpense = $expenses->where('year', $current->year)
-                                  ->where('month', $current->month)
-                                  ->first();
+                ->where('month', $current->month)
+                ->first();
 
-            $monthlyAmount = $monthExpense ? $this->currencyService->convertToDefault((float)$monthExpense->total, 'MKD') : 0;
+            $monthlyAmount = $monthExpense ? $this->currencyService->convertToDefault((float) $monthExpense->total, 'MKD') : 0;
             $spending[] = $monthlyAmount;
             $budget[] = 50000; // Default budget line
 
@@ -114,7 +114,7 @@ class DashboardController extends Controller
         return [
             'labels' => $labels,
             'spending' => $spending,
-            'budget' => $budget
+            'budget' => $budget,
         ];
     }
 
@@ -126,16 +126,18 @@ class DashboardController extends Controller
         // Get subscription costs
         $subscriptionCost = Subscription::active()
             ->get()
-            ->sum(function($sub) {
+            ->sum(function ($sub) {
                 $currency = $sub->currency ?: 'MKD';
+
                 return $this->currencyService->convertToDefault($sub->cost, $currency);
             });
 
         // Get utility bills
         $utilityBills = UtilityBill::whereBetween('due_date', [$startDate, $endDate])
             ->get()
-            ->sum(function($bill) {
+            ->sum(function ($bill) {
                 $currency = $bill->currency ?: 'MKD';
+
                 return $this->currencyService->convertToDefault($bill->bill_amount, $currency);
             });
 
@@ -156,7 +158,7 @@ class DashboardController extends Controller
 
         return [
             'labels' => $labels,
-            'values' => $values
+            'values' => $values,
         ];
     }
 
@@ -191,7 +193,7 @@ class DashboardController extends Controller
         return [
             'labels' => $labels,
             'values' => $values,
-            'returns' => $returns
+            'returns' => $returns,
         ];
     }
 
@@ -210,7 +212,7 @@ class DashboardController extends Controller
         return [
             'categories' => ['Subscriptions', 'Utilities', 'Food', 'Transport', 'Entertainment'],
             'current' => array_values($currentData),
-            'previous' => array_values($previousData)
+            'previous' => array_values($previousData),
         ];
     }
 
@@ -221,14 +223,14 @@ class DashboardController extends Controller
     {
         $subscriptionCost = Subscription::active()
             ->get()
-            ->sum(function($sub) {
+            ->sum(function ($sub) {
                 return $this->currencyService->convertToDefault($sub->cost, $sub->currency ?? 'MKD');
             });
 
         $utilityBills = UtilityBill::whereYear('due_date', $month->year)
             ->whereMonth('due_date', $month->month)
             ->get()
-            ->sum(function($bill) {
+            ->sum(function ($bill) {
                 return $this->currencyService->convertToDefault($bill->bill_amount, $bill->currency ?? 'MKD');
             });
 
@@ -237,7 +239,7 @@ class DashboardController extends Controller
             $utilityBills / 1000,
             15, // Sample food expenses
             8,  // Sample transport expenses
-            5   // Sample entertainment expenses
+            5,   // Sample entertainment expenses
         ];
     }
 
@@ -502,5 +504,4 @@ class DashboardController extends Controller
 
         return array_slice($suggestions, 0, 3);
     }
-
 }

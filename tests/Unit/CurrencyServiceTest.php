@@ -12,7 +12,7 @@ class CurrencyServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->currencyService = new CurrencyService();
+        $this->currencyService = new CurrencyService;
     }
 
     public function test_can_convert_mkd_to_default_currency(): void
@@ -73,7 +73,6 @@ class CurrencyServiceTest extends TestCase
         // Should return original amount for unknown currencies
         $this->assertEquals($amount, $result);
     }
-
 
     public function test_handles_empty_currency(): void
     {

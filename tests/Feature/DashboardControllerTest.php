@@ -9,7 +9,6 @@ use App\Models\Subscription;
 use App\Models\User;
 use App\Models\UtilityBill;
 use App\Models\Warranty;
-use App\Services\CurrencyService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -36,7 +35,7 @@ class DashboardControllerTest extends TestCase
             'alerts',
             'insights',
             'recent_expenses',
-            'upcoming_bills'
+            'upcoming_bills',
         ]);
     }
 
@@ -44,7 +43,7 @@ class DashboardControllerTest extends TestCase
     {
         Expense::factory()->count(7)->create([
             'user_id' => $this->user->id,
-            'expense_date' => now()->subDays(1)
+            'expense_date' => now()->subDays(1),
         ]);
 
         $response = $this->actingAs($this->user)->get(route('dashboard'));
@@ -59,7 +58,7 @@ class DashboardControllerTest extends TestCase
         UtilityBill::factory()->count(7)->create([
             'user_id' => $this->user->id,
             'payment_status' => 'pending',
-            'due_date' => now()->addWeek()
+            'due_date' => now()->addWeek(),
         ]);
 
         $response = $this->actingAs($this->user)->get(route('dashboard'));
@@ -87,14 +86,14 @@ class DashboardControllerTest extends TestCase
             'spendingTrends' => [
                 'labels',
                 'spending',
-                'budget'
+                'budget',
             ],
             'categoryBreakdown' => [
                 'labels',
-                'values'
+                'values',
             ],
             'portfolioPerformance',
-            'monthlyComparison'
+            'monthlyComparison',
         ]);
     }
 
@@ -141,13 +140,13 @@ class DashboardControllerTest extends TestCase
         Expense::factory()->create([
             'user_id' => $this->user->id,
             'amount' => 1000,
-            'expense_date' => now()->subMonths(2)
+            'expense_date' => now()->subMonths(2),
         ]);
 
         Expense::factory()->create([
             'user_id' => $this->user->id,
             'amount' => 1500,
-            'expense_date' => now()->subMonth()
+            'expense_date' => now()->subMonth(),
         ]);
 
         $response = $this->actingAs($this->user)->get('/dashboard/chart-data');
@@ -165,13 +164,13 @@ class DashboardControllerTest extends TestCase
         Subscription::factory()->create([
             'user_id' => $this->user->id,
             'cost' => 500,
-            'status' => 'active'
+            'status' => 'active',
         ]);
 
         UtilityBill::factory()->create([
             'user_id' => $this->user->id,
             'bill_amount' => 300,
-            'due_date' => now()->addWeek()
+            'due_date' => now()->addWeek(),
         ]);
 
         $response = $this->actingAs($this->user)->get('/dashboard/chart-data');
@@ -205,13 +204,13 @@ class DashboardControllerTest extends TestCase
         // Create data that would generate alerts
         Contract::factory()->create([
             'user_id' => $this->user->id,
-            'end_date' => now()->addDays(5) // Contract expiring soon
+            'end_date' => now()->addDays(5), // Contract expiring soon
         ]);
 
         UtilityBill::factory()->create([
             'user_id' => $this->user->id,
             'due_date' => now()->addDays(2), // Bill due soon
-            'payment_status' => 'pending'
+            'payment_status' => 'pending',
         ]);
 
         $response = $this->actingAs($this->user)->get(route('dashboard'));
@@ -229,7 +228,7 @@ class DashboardControllerTest extends TestCase
         Expense::factory()->count(3)->create(['user_id' => $this->user->id]);
         Subscription::factory()->count(2)->create([
             'user_id' => $this->user->id,
-            'status' => 'active'
+            'status' => 'active',
         ]);
         UtilityBill::factory()->count(2)->create(['user_id' => $this->user->id]);
         Contract::factory()->count(1)->create(['user_id' => $this->user->id]);

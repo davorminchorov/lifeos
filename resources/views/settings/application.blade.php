@@ -131,6 +131,7 @@
                                 Currency Format
                             </label>
                             <select name="currency_format" id="currency_format" class="mt-1 block w-full border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)] bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
+                                <option value="MKD">MKD (MKD1,234.56)</option>
                                 <option value="USD">USD ($1,234.56)</option>
                                 <option value="EUR">EUR (€1,234.56)</option>
                                 <option value="GBP">GBP (£1,234.56)</option>
@@ -368,7 +369,7 @@
         if (savedPreferences) {
             const prefs = JSON.parse(savedPreferences);
             document.getElementById('date_format').value = prefs.date_format || 'm/d/Y';
-            document.getElementById('currency_format').value = prefs.currency_format || 'USD';
+            document.getElementById('currency_format').value = prefs.currency_format || 'MKD';
             document.getElementById('items_per_page').value = prefs.items_per_page || '25';
             document.getElementById('timezone').value = prefs.timezone || 'America/New_York';
         }

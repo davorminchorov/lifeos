@@ -3,14 +3,13 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Subscription;
-use App\Models\Contract;
-use App\Models\Investment;
 use App\Models\Expense;
+use App\Models\Investment;
+use App\Models\Subscription;
 use App\Models\UtilityBill;
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
-use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
@@ -46,14 +45,14 @@ class DashboardController extends Controller
 
             $monthlySpending[] = [
                 'month' => $monthName,
-                'amount' => (float) $totalSpending
+                'amount' => (float) $totalSpending,
             ];
         }
 
         return [
             'labels' => array_column($monthlySpending, 'month'),
             'spending' => array_column($monthlySpending, 'amount'),
-            'budget' => array_fill(0, count($monthlySpending), 50000) // Default budget
+            'budget' => array_fill(0, count($monthlySpending), 50000), // Default budget
         ];
     }
 
@@ -70,12 +69,12 @@ class DashboardController extends Controller
 
         // Mock data for other categories
         return [
-            'labels' => ["Subscriptions", "Utilities", "Food", "Transport", "Entertainment", "Other"],
+            'labels' => ['Subscriptions', 'Utilities', 'Food', 'Transport', 'Entertainment', 'Other'],
             'values' => [
                 (float) $subscriptionCost,
                 (float) $pendingBills,
-                15000, 8000, 5000, 7000
-            ]
+                15000, 8000, 5000, 7000,
+            ],
         ];
     }
 
@@ -89,14 +88,14 @@ class DashboardController extends Controller
 
         // Generate historical performance data
         return [
-            'labels' => ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+            'labels' => ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
             'values' => [
                 $portfolioValue * 0.8,
                 $portfolioValue * 0.9,
                 $portfolioValue * 0.85,
                 $portfolioValue * 0.95,
                 $portfolioValue * 1.1,
-                (float) $portfolioValue
+                (float) $portfolioValue,
             ],
             'returns' => [
                 $totalReturn * 0.3,
@@ -104,8 +103,8 @@ class DashboardController extends Controller
                 $totalReturn * 0.4,
                 $totalReturn * 0.7,
                 $totalReturn * 0.9,
-                (float) $totalReturn
-            ]
+                (float) $totalReturn,
+            ],
         ];
     }
 
@@ -121,17 +120,17 @@ class DashboardController extends Controller
             ->sum('bill_amount');
 
         return [
-            'categories' => ["Subscriptions", "Utilities", "Food", "Transport", "Entertainment"],
+            'categories' => ['Subscriptions', 'Utilities', 'Food', 'Transport', 'Entertainment'],
             'current' => [
                 $subscriptionCost / 1000,
                 $pendingBills / 1000,
-                15, 8, 5
+                15, 8, 5,
             ],
             'previous' => [
                 ($subscriptionCost / 1000) * 0.9,
                 ($pendingBills / 1000) * 1.1,
-                12, 10, 7
-            ]
+                12, 10, 7,
+            ],
         ];
     }
 }

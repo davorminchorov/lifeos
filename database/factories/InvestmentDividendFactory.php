@@ -3,7 +3,6 @@
 namespace Database\Factories;
 
 use App\Models\Investment;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -23,8 +22,8 @@ class InvestmentDividendFactory extends Factory
         $currencies = ['USD', 'EUR', 'MKD'];
 
         $recordDate = $this->faker->dateTimeBetween('-1 year', 'now');
-        $paymentDate = (clone $recordDate)->modify('+' . $this->faker->numberBetween(1, 30) . ' days');
-        $exDividendDate = (clone $recordDate)->modify('-' . $this->faker->numberBetween(1, 5) . ' days');
+        $paymentDate = (clone $recordDate)->modify('+'.$this->faker->numberBetween(1, 30).' days');
+        $exDividendDate = (clone $recordDate)->modify('-'.$this->faker->numberBetween(1, 5).' days');
 
         $sharesHeld = $this->faker->randomFloat(8, 1, 1000);
         $dividendPerShare = $this->faker->randomFloat(8, 0.01, 5.00);

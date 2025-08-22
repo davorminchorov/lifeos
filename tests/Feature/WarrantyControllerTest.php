@@ -34,12 +34,12 @@ class WarrantyControllerTest extends TestCase
     {
         Warranty::factory()->create([
             'user_id' => $this->user->id,
-            'product_name' => 'iPhone 14'
+            'product_name' => 'iPhone 14',
         ]);
 
         Warranty::factory()->create([
             'user_id' => $this->user->id,
-            'product_name' => 'MacBook Pro'
+            'product_name' => 'MacBook Pro',
         ]);
 
         $response = $this->actingAs($this->user)->get(route('warranties.index', ['search' => 'iPhone']));
@@ -53,12 +53,12 @@ class WarrantyControllerTest extends TestCase
     {
         Warranty::factory()->create([
             'user_id' => $this->user->id,
-            'current_status' => 'active'
+            'current_status' => 'active',
         ]);
 
         Warranty::factory()->create([
             'user_id' => $this->user->id,
-            'current_status' => 'expired'
+            'current_status' => 'expired',
         ]);
 
         $response = $this->actingAs($this->user)->get(route('warranties.index', ['status' => 'active']));
@@ -88,7 +88,7 @@ class WarrantyControllerTest extends TestCase
             'retailer' => $this->faker->company,
             'warranty_type' => 'manufacturer',
             'warranty_terms' => $this->faker->paragraph,
-            'current_status' => 'active'
+            'current_status' => 'active',
         ];
 
         $response = $this->actingAs($this->user)->post(route('warranties.store'), $warrantyData);
@@ -98,7 +98,7 @@ class WarrantyControllerTest extends TestCase
         $this->assertDatabaseHas('warranties', [
             'user_id' => $this->user->id,
             'product_name' => $warrantyData['product_name'],
-            'serial_number' => $warrantyData['serial_number']
+            'serial_number' => $warrantyData['serial_number'],
         ]);
     }
 
@@ -109,7 +109,7 @@ class WarrantyControllerTest extends TestCase
         $response->assertSessionHasErrors([
             'product_name',
             'purchase_date',
-            'warranty_expiration_date'
+            'warranty_expiration_date',
         ]);
     }
 
@@ -148,7 +148,7 @@ class WarrantyControllerTest extends TestCase
             'purchase_price' => $warranty->purchase_price,
             'retailer' => $warranty->retailer,
             'warranty_type' => $warranty->warranty_type,
-            'current_status' => 'active'
+            'current_status' => 'active',
         ];
 
         $response = $this->actingAs($this->user)->put(route('warranties.update', $warranty), $updateData);
@@ -157,7 +157,7 @@ class WarrantyControllerTest extends TestCase
         $response->assertSessionHas('success');
         $this->assertDatabaseHas('warranties', [
             'id' => $warranty->id,
-            'product_name' => 'Updated Product Name'
+            'product_name' => 'Updated Product Name',
         ]);
     }
 
@@ -171,8 +171,6 @@ class WarrantyControllerTest extends TestCase
         $response->assertSessionHas('success');
         $this->assertDatabaseMissing('warranties', ['id' => $warranty->id]);
     }
-
-
 
     public function test_unauthenticated_users_cannot_access_warranties(): void
     {

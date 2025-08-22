@@ -75,7 +75,7 @@ class InvestmentDividendModelTest extends TestCase
         $dividend = InvestmentDividend::factory()->create([
             'investment_id' => $investment->id,
             'amount' => 100.50,
-            'currency' => 'USD'
+            'currency' => 'USD',
         ]);
 
         $this->assertInstanceOf(InvestmentDividend::class, $dividend);
@@ -108,7 +108,7 @@ class InvestmentDividendModelTest extends TestCase
             'investment_id' => $investment->id,
             'amount' => 250.75,
             'currency' => 'EUR',
-            'dividend_type' => 'ordinary'
+            'dividend_type' => 'ordinary',
         ];
 
         $dividend = InvestmentDividend::factory()->create($dividendData);
@@ -128,7 +128,7 @@ class InvestmentDividendModelTest extends TestCase
         InvestmentDividend::create([
             'investment_id' => $investment->id,
             'record_date' => now(),
-            'dividend_type' => 'ordinary'
+            'dividend_type' => 'ordinary',
             // missing amount
         ]);
     }
@@ -139,7 +139,7 @@ class InvestmentDividendModelTest extends TestCase
         InvestmentDividend::create([
             'amount' => 100.00,
             'record_date' => now(),
-            'dividend_type' => 'ordinary'
+            'dividend_type' => 'ordinary',
             // missing investment_id
         ]);
     }
@@ -162,7 +162,7 @@ class InvestmentDividendModelTest extends TestCase
 
         $dividend = InvestmentDividend::factory()->create([
             'investment_id' => $investment->id,
-            'dividend_type' => 'special'
+            'dividend_type' => 'special',
         ]);
 
         $this->assertEquals('special', $dividend->dividend_type);
@@ -175,7 +175,7 @@ class InvestmentDividendModelTest extends TestCase
 
         $dividend = InvestmentDividend::factory()->create([
             'investment_id' => $investment->id,
-            'tax_withheld' => 0.00
+            'tax_withheld' => 0.00,
         ]);
 
         $this->assertEquals(0.00, $dividend->tax_withheld);
@@ -192,7 +192,7 @@ class InvestmentDividendModelTest extends TestCase
         $dividend = InvestmentDividend::factory()->create([
             'investment_id' => $investment->id,
             'record_date' => $recordDate,
-            'payment_date' => $paymentDate
+            'payment_date' => $paymentDate,
         ]);
 
         $this->assertEquals($recordDate->format('Y-m-d'), $dividend->record_date->format('Y-m-d'));

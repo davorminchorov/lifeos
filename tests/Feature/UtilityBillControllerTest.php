@@ -34,12 +34,12 @@ class UtilityBillControllerTest extends TestCase
     {
         UtilityBill::factory()->create([
             'user_id' => $this->user->id,
-            'service_provider' => 'Electric Company'
+            'service_provider' => 'Electric Company',
         ]);
 
         UtilityBill::factory()->create([
             'user_id' => $this->user->id,
-            'service_provider' => 'Gas Company'
+            'service_provider' => 'Gas Company',
         ]);
 
         $response = $this->actingAs($this->user)->get(route('utility-bills.index', ['search' => 'Electric']));
@@ -53,12 +53,12 @@ class UtilityBillControllerTest extends TestCase
     {
         UtilityBill::factory()->create([
             'user_id' => $this->user->id,
-            'payment_status' => 'paid'
+            'payment_status' => 'paid',
         ]);
 
         UtilityBill::factory()->create([
             'user_id' => $this->user->id,
-            'payment_status' => 'pending'
+            'payment_status' => 'pending',
         ]);
 
         $response = $this->actingAs($this->user)->get(route('utility-bills.index', ['status' => 'paid']));
@@ -96,7 +96,7 @@ class UtilityBillControllerTest extends TestCase
         $this->assertDatabaseHas('utility_bills', [
             'user_id' => $this->user->id,
             'service_provider' => $billData['service_provider'],
-            'bill_amount' => $billData['bill_amount']
+            'bill_amount' => $billData['bill_amount'],
         ]);
     }
 
@@ -108,7 +108,7 @@ class UtilityBillControllerTest extends TestCase
             'service_provider',
             'utility_type',
             'bill_amount',
-            'due_date'
+            'due_date',
         ]);
     }
 
@@ -147,7 +147,7 @@ class UtilityBillControllerTest extends TestCase
             'due_date' => $bill->due_date->format('Y-m-d'),
             'account_number' => $bill->account_number,
             'service_address' => $bill->service_address,
-            'payment_status' => 'paid'
+            'payment_status' => 'paid',
         ];
 
         $response = $this->actingAs($this->user)->put(route('utility-bills.update', $bill), $updateData);
@@ -157,7 +157,7 @@ class UtilityBillControllerTest extends TestCase
         $this->assertDatabaseHas('utility_bills', [
             'id' => $bill->id,
             'service_provider' => 'Updated Provider',
-            'payment_status' => 'paid'
+            'payment_status' => 'paid',
         ]);
     }
 
@@ -176,7 +176,7 @@ class UtilityBillControllerTest extends TestCase
     {
         $bill = UtilityBill::factory()->create([
             'user_id' => $this->user->id,
-            'payment_status' => 'pending'
+            'payment_status' => 'pending',
         ]);
 
         $response = $this->actingAs($this->user)->patch(route('utility-bills.mark-paid', $bill));
@@ -185,7 +185,7 @@ class UtilityBillControllerTest extends TestCase
         $response->assertSessionHas('success');
         $this->assertDatabaseHas('utility_bills', [
             'id' => $bill->id,
-            'payment_status' => 'paid'
+            'payment_status' => 'paid',
         ]);
     }
 
@@ -202,8 +202,8 @@ class UtilityBillControllerTest extends TestCase
                 'pending_bills',
                 'overdue_bills',
                 'overdue_amount',
-                'average_monthly_cost'
-            ]
+                'average_monthly_cost',
+            ],
         ]);
     }
 
@@ -212,7 +212,7 @@ class UtilityBillControllerTest extends TestCase
         UtilityBill::factory()->create([
             'user_id' => $this->user->id,
             'utility_type' => 'electricity',
-            'bill_amount' => 150.00
+            'bill_amount' => 150.00,
         ]);
 
         $response = $this->actingAs($this->user)->get(route('utility-bills.spending-analytics'));
@@ -221,7 +221,7 @@ class UtilityBillControllerTest extends TestCase
         $response->assertJsonStructure([
             'monthly_spending',
             'service_breakdown',
-            'year_over_year_comparison'
+            'year_over_year_comparison',
         ]);
     }
 
@@ -229,7 +229,7 @@ class UtilityBillControllerTest extends TestCase
     {
         UtilityBill::factory()->create([
             'user_id' => $this->user->id,
-            'due_date' => now()->addDays(5)
+            'due_date' => now()->addDays(5),
         ]);
 
         $response = $this->actingAs($this->user)->get(route('utility-bills.due-date-analytics'));
@@ -238,7 +238,7 @@ class UtilityBillControllerTest extends TestCase
         $response->assertJsonStructure([
             'due_this_week',
             'due_next_week',
-            'overdue_bills'
+            'overdue_bills',
         ]);
     }
 
@@ -269,7 +269,7 @@ class UtilityBillControllerTest extends TestCase
             'bill_period_end' => now()->format('Y-m-d'),
             'due_date' => now()->addWeeks(2)->format('Y-m-d'),
             'account_number' => '1234567890',
-            'service_address' => 'Test Address'
+            'service_address' => 'Test Address',
         ]);
 
         $response->assertSessionHasErrors('bill_amount');
@@ -285,7 +285,7 @@ class UtilityBillControllerTest extends TestCase
             'bill_period_end' => now()->format('Y-m-d'),
             'due_date' => 'invalid-date',
             'account_number' => '1234567890',
-            'service_address' => 'Test Address'
+            'service_address' => 'Test Address',
         ]);
 
         $response->assertSessionHasErrors('due_date');
@@ -296,14 +296,14 @@ class UtilityBillControllerTest extends TestCase
         $bill = UtilityBill::factory()->create(['user_id' => $this->user->id]);
 
         $response = $this->actingAs($this->user)->patch(route('utility-bills.set-auto-pay', $bill), [
-            'auto_pay_enabled' => true
+            'auto_pay_enabled' => true,
         ]);
 
         $response->assertRedirect(route('utility-bills.show', $bill));
         $response->assertSessionHas('success');
         $this->assertDatabaseHas('utility_bills', [
             'id' => $bill->id,
-            'auto_pay_enabled' => true
+            'auto_pay_enabled' => true,
         ]);
     }
 }
