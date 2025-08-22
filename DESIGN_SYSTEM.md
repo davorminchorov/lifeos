@@ -170,6 +170,38 @@ This document outlines a comprehensive modern design system to unify the LifeOS 
 - Maintained accessibility standards
 - Seamless dark mode experience
 
+## Error Pages
+
+### Custom Error Page Design
+All error pages follow the LifeOS design system and provide consistent user experience:
+
+#### 404 - Page Not Found
+- **Color**: Accent red (#F53003) for error code
+- **Content**: User-friendly message explaining the error
+- **Actions**: Dashboard/Login buttons, Go Back, Return to Homepage
+- **Features**: Context-aware navigation based on authentication status
+
+#### 500 - Server Error  
+- **Color**: Danger red (#EF4444) for error code
+- **Content**: Reassuring message about temporary issues
+- **Actions**: Try Again (reload), Go Back, contextual navigation
+- **Features**: Debug mode technical details (development only)
+
+#### 503 - Service Unavailable
+- **Color**: Warning yellow (#F59E0B) for error code
+- **Content**: Maintenance explanation with improvement details
+- **Actions**: Check Again (reload)
+- **Features**: LifeOS-specific maintenance information, estimated completion time
+
+### Error Page Guidelines
+- Consistent LifeOS branding and color scheme
+- User-friendly, non-technical language
+- Clear call-to-action buttons
+- Appropriate icons and visual hierarchy
+- Dark mode support
+- Mobile-responsive design
+- Context-aware navigation options
+
 ## Next Steps
 1. Implement core design tokens
 2. Update main layout file
