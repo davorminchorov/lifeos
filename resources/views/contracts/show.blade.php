@@ -51,15 +51,15 @@
         <div class="flex space-x-3">
             @if($contract->status === 'active')
                 <button type="button" onclick="document.getElementById('terminate-modal').classList.remove('hidden')"
-                        class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium">
+                        class="bg-[color:var(--color-danger-500)] hover:bg-[color:var(--color-danger-600)] text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200">
                     Terminate
                 </button>
                 <button type="button" onclick="document.getElementById('renew-modal').classList.remove('hidden')"
-                        class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium">
+                        class="bg-[color:var(--color-success-500)] hover:bg-[color:var(--color-success-600)] text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200">
                     Renew
                 </button>
             @endif
-            <a href="{{ route('contracts.edit', $contract) }}" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium">
+            <a href="{{ route('contracts.edit', $contract) }}" class="bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200">
                 Edit Contract
             </a>
         </div>

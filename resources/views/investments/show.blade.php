@@ -5,21 +5,21 @@
 @section('header')
     <div class="flex justify-between items-center">
         <div>
-            <h1 class="text-3xl font-bold text-gray-900 dark:text-white">
+            <h1 class="text-3xl font-bold text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                 {{ $investment->name }}
                 @if($investment->symbol_identifier)
-                    <span class="text-xl text-gray-500 dark:text-gray-400">({{ $investment->symbol_identifier }})</span>
+                    <span class="text-xl text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">({{ $investment->symbol_identifier }})</span>
                 @endif
             </h1>
-            <p class="mt-2 text-gray-600 dark:text-gray-400">
+            <p class="mt-2 text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)]">
                 {{ ucfirst(str_replace('_', ' ', $investment->investment_type)) }} investment
             </p>
         </div>
         <div class="flex space-x-3">
-            <a href="{{ route('investments.edit', $investment) }}" class="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-md text-sm font-medium">
+            <a href="{{ route('investments.edit', $investment) }}" class="bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200">
                 Edit
             </a>
-            <a href="{{ route('investments.index') }}" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-md text-sm font-medium">
+            <a href="{{ route('investments.index') }}" class="bg-[color:var(--color-primary-500)] hover:bg-[color:var(--color-primary-600)] text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200">
                 Back to List
             </a>
         </div>

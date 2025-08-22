@@ -5,23 +5,23 @@
 @section('header')
     <div class="flex justify-between items-center">
         <div>
-            <h1 class="text-3xl font-bold text-gray-900 dark:text-white">
+            <h1 class="text-3xl font-bold text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                 {{ $warranty->product_name }}
             </h1>
-            <p class="mt-2 text-gray-600 dark:text-gray-400">
+            <p class="mt-2 text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)]">
                 {{ $warranty->brand }} {{ $warranty->model ? '- ' . $warranty->model : '' }}
             </p>
         </div>
         <div class="flex space-x-3">
             @if($warranty->current_status === 'active' && !$warranty->is_expired)
-                <button onclick="openClaimModal({{ $warranty->id }})" class="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-md text-sm font-medium">
+                <button onclick="openClaimModal({{ $warranty->id }})" class="bg-[color:var(--color-warning-500)] hover:bg-[color:var(--color-warning-600)] text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200">
                     File Claim
                 </button>
             @endif
-            <a href="{{ route('warranties.edit', $warranty) }}" class="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-md text-sm font-medium">
+            <a href="{{ route('warranties.edit', $warranty) }}" class="bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200">
                 Edit
             </a>
-            <a href="{{ route('warranties.index') }}" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-md text-sm font-medium">
+            <a href="{{ route('warranties.index') }}" class="bg-[color:var(--color-primary-500)] hover:bg-[color:var(--color-primary-600)] text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200">
                 Back to List
             </a>
         </div>
@@ -31,25 +31,25 @@
 @section('content')
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <!-- Product Details -->
-        <div class="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg">
+        <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] shadow overflow-hidden sm:rounded-lg border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)]">
             <div class="px-4 py-5 sm:px-6">
-                <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">
+                <h3 class="text-lg leading-6 font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                     Product Information
                 </h3>
-                <p class="mt-1 max-w-2xl text-sm text-gray-500 dark:text-gray-400">
+                <p class="mt-1 max-w-2xl text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)]">
                     Details about the product under warranty.
                 </p>
             </div>
-            <div class="border-t border-gray-200 dark:border-gray-700">
+            <div class="border-t border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)]">
                 <dl>
-                    <div class="bg-gray-50 dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                        <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">Product Name</dt>
-                        <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">{{ $warranty->product_name }}</dd>
+                    <div class="bg-[color:var(--color-primary-200)] dark:bg-[color:var(--color-dark-300)] px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <dt class="text-sm font-medium text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)]">Product Name</dt>
+                        <dd class="mt-1 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] sm:mt-0 sm:col-span-2">{{ $warranty->product_name }}</dd>
                     </div>
-                    <div class="bg-white dark:bg-gray-800 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                        <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">Brand</dt>
-                        <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">
-                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                    <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <dt class="text-sm font-medium text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)]">Brand</dt>
+                        <dd class="mt-1 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] sm:mt-0 sm:col-span-2">
+                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-[color:var(--color-info-200)] text-[color:var(--color-info-800)] dark:bg-[color:var(--color-info-900)] dark:text-[color:var(--color-info-200)]">
                                 {{ $warranty->brand }}
                             </span>
                         </dd>
