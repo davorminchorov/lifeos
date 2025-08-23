@@ -104,20 +104,35 @@
                     <div class="bg-gray-50 dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                         <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">Cost</dt>
                         <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">
-                            <div class="text-lg font-semibold">{{ $subscription->currency }} {{ number_format($subscription->cost, 2) }}</div>
+                            @php
+                                $currencyService = app(\App\Services\CurrencyService::class);
+                                $currency = $subscription->currency ?? config('currency.default', 'MKD');
+                                $costInMKD = $currencyService->convertToDefault($subscription->cost, $currency);
+                            @endphp
+                            <div class="text-lg font-semibold">{{ $currencyService->format($costInMKD) }}</div>
                             <div class="text-xs text-gray-500 dark:text-gray-400">per {{ $subscription->billing_cycle }}</div>
                         </dd>
                     </div>
                     <div class="bg-white dark:bg-gray-800 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                         <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">Monthly Cost</dt>
                         <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">
-                            <span class="text-lg font-semibold">${{ number_format($subscription->monthly_cost, 2) }}</span>
+                            @php
+                                $currencyService = app(\App\Services\CurrencyService::class);
+                                $currency = $subscription->currency ?? config('currency.default', 'MKD');
+                                $monthlyCostInMKD = $currencyService->convertToDefault($subscription->monthly_cost, $currency);
+                            @endphp
+                            <span class="text-lg font-semibold">{{ $currencyService->format($monthlyCostInMKD) }}</span>
                         </dd>
                     </div>
                     <div class="bg-gray-50 dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                         <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">Yearly Cost</dt>
                         <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">
-                            <span class="text-lg font-semibold">${{ number_format($subscription->yearly_cost, 2) }}</span>
+                            @php
+                                $currencyService = app(\App\Services\CurrencyService::class);
+                                $currency = $subscription->currency ?? config('currency.default', 'MKD');
+                                $yearlyCostInMKD = $currencyService->convertToDefault($subscription->yearly_cost, $currency);
+                            @endphp
+                            <span class="text-lg font-semibold">{{ $currencyService->format($yearlyCostInMKD) }}</span>
                         </dd>
                     </div>
                     <div class="bg-white dark:bg-gray-800 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">

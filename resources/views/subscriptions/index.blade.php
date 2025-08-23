@@ -142,7 +142,12 @@
                                 <div>
                                     <span class="text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">Cost:</span>
                                     <span class="font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] ml-2">
-                                        {{ $subscription->currency }} {{ number_format($subscription->cost, 2) }}
+                                        @php
+                                            $currencyService = app(\App\Services\CurrencyService::class);
+                                            $currency = $subscription->currency ?? config('currency.default', 'MKD');
+                                            $costInMKD = $currencyService->convertToDefault($subscription->cost, $currency);
+                                        @endphp
+                                        {{ $currencyService->format($costInMKD) }}
                                     </span>
                                     <div class="text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">{{ ucfirst($subscription->billing_cycle) }}</div>
                                 </div>
@@ -217,7 +222,12 @@
                                         </span>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
-                                        <div>{{ $subscription->currency }} {{ number_format($subscription->cost, 2) }}</div>
+                                        @php
+                                            $currencyService = app(\App\Services\CurrencyService::class);
+                                            $currency = $subscription->currency ?? config('currency.default', 'MKD');
+                                            $costInMKD = $currencyService->convertToDefault($subscription->cost, $currency);
+                                        @endphp
+                                        <div>{{ $currencyService->format($costInMKD) }}</div>
                                         <div class="text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">{{ ucfirst($subscription->billing_cycle) }}</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
