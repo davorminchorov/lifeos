@@ -36,80 +36,24 @@ class ContractExpirationAlert extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         if ($this->isNoticeAlert) {
-            return $this->buildNoticeAlert($notifiable);
+            $subject = $this->daysUntilExpiration === 0
+                ? "🔔 Notice period deadline for {$this->contract->title} is today!"
+                : "⏰ Notice period for {$this->contract->title} ends in {$this->daysUntilExpiration} days";
+        } else {
+            $subject = $this->daysUntilExpiration === 0
+                ? "🔔 {$this->contract->title} contract expires today!"
+                : "⏰ {$this->contract->title} contract expires in {$this->daysUntilExpiration} days";
         }
 
-        return $this->buildExpirationAlert($notifiable);
-    }
-
-    /**
-     * Build notice period alert email.
-     */
-    private function buildNoticeAlert(object $notifiable): MailMessage
-    {
-        $subject = $this->daysUntilExpiration === 0
-            ? "🔔 Notice period deadline for {$this->contract->title} is today!"
-            : "⏰ Notice period for {$this->contract->title} ends in {$this->daysUntilExpiration} days";
-
-        $greeting = $this->daysUntilExpiration === 0
-            ? 'Your contract notice period deadline is today'
-            : 'Your contract notice period is ending soon';
-
         return (new MailMessage)
             ->subject($subject)
-            ->greeting("Hello {$notifiable->name}!")
-            ->line($greeting)
-            ->line("**Contract:** {$this->contract->title}")
-            ->when($this->contract->counterparty, function ($mail) {
-                return $mail->line("**Counterparty:** {$this->contract->counterparty}");
-            })
-            ->line("**Contract expires:** {$this->contract->end_date->format('F j, Y')}")
-            ->line("**Notice period:** {$this->contract->notice_period_days} days")
-            ->line("**Notice deadline:** {$this->contract->notice_deadline->format('F j, Y')}")
-            ->when($this->contract->contract_value, function ($mail) {
-                return $mail->line("**Contract value:** \${$this->contract->contract_value}");
-            })
-            ->line('If you want to terminate this contract, you must provide notice before the deadline.')
-            ->action('View Contract Details', url('/contracts/'.$this->contract->id))
-            ->line('Review the contract terms and termination clauses for specific requirements.')
-            ->salutation('Best regards, LifeOS Team');
-    }
-
-    /**
-     * Build expiration alert email.
-     */
-    private function buildExpirationAlert(object $notifiable): MailMessage
-    {
-        $subject = $this->daysUntilExpiration === 0
-            ? "🔔 {$this->contract->title} contract expires today!"
-            : "⏰ {$this->contract->title} contract expires in {$this->daysUntilExpiration} days";
-
-        $greeting = $this->daysUntilExpiration === 0
-            ? 'Your contract is expiring today'
-            : 'Your contract is expiring soon';
-
-        return (new MailMessage)
-            ->subject($subject)
-            ->greeting("Hello {$notifiable->name}!")
-            ->line($greeting)
-            ->line("**Contract:** {$this->contract->title}")
-            ->when($this->contract->counterparty, function ($mail) {
-                return $mail->line("**Counterparty:** {$this->contract->counterparty}");
-            })
-            ->line("**Contract type:** {$this->contract->contract_type}")
-            ->line("**Start date:** {$this->contract->start_date->format('F j, Y')}")
-            ->line("**End date:** {$this->contract->end_date->format('F j, Y')}")
-            ->when($this->contract->contract_value, function ($mail) {
-                return $mail->line("**Contract value:** \${$this->contract->contract_value}");
-            })
-            ->when($this->contract->auto_renewal, function ($mail) {
-                return $mail->line('This contract has auto-renewal enabled.');
-            }, function ($mail) {
-                return $mail->line('This contract requires manual renewal.');
-            })
-            ->action('View Contract Details', url('/contracts/'.$this->contract->id))
-            ->line('Consider renewing or renegotiating terms if you wish to continue.')
-            ->salutation('Best regards, LifeOS Team');
+            ->view('emails.notifications.contract-expiration-alert', [
+                'user' => $notifiable,
+                'contract' => $this->contract,
+                'daysUntilExpiration' => $this->daysUntilExpiration,
+                'isNoticeAlert' => $this->isNoticeAlert,
+                'subject' => $subject,
+            ]);
     }
 
     /**

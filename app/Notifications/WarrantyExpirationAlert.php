@@ -38,32 +38,14 @@ class WarrantyExpirationAlert extends Notification implements ShouldQueue
             ? "🔔 {$this->warranty->product_name} warranty expires today!"
             : "⏰ {$this->warranty->product_name} warranty expires in {$this->daysUntilExpiration} days";
 
-        $greeting = $this->daysUntilExpiration === 0
-            ? 'Your warranty is expiring today'
-            : 'Your warranty is expiring soon';
-
         return (new MailMessage)
             ->subject($subject)
-            ->greeting("Hello {$notifiable->name}!")
-            ->line($greeting)
-            ->line("**Product:** {$this->warranty->product_name}")
-            ->when($this->warranty->brand, function ($mail) {
-                return $mail->line("**Brand:** {$this->warranty->brand}");
-            })
-            ->when($this->warranty->model, function ($mail) {
-                return $mail->line("**Model:** {$this->warranty->model}");
-            })
-            ->line("**Purchase Date:** {$this->warranty->purchase_date->format('F j, Y')}")
-            ->line("**Warranty Expires:** {$this->warranty->warranty_expiration_date->format('F j, Y')}")
-            ->when($this->warranty->warranty_type, function ($mail) {
-                return $mail->line("**Warranty Type:** {$this->warranty->warranty_type}");
-            })
-            ->when($this->warranty->retailer, function ($mail) {
-                return $mail->line("**Purchased from:** {$this->warranty->retailer}");
-            })
-            ->action('View Warranty Details', url('/warranties/'.$this->warranty->id))
-            ->line('Consider renewing or extending your warranty if available.')
-            ->salutation('Best regards, LifeOS Team');
+            ->view('emails.notifications.warranty-expiration-alert', [
+                'user' => $notifiable,
+                'warranty' => $this->warranty,
+                'daysUntilExpiration' => $this->daysUntilExpiration,
+                'subject' => $subject,
+            ]);
     }
 
     /**
