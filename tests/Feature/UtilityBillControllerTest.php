@@ -107,6 +107,7 @@ class UtilityBillControllerTest extends TestCase
         $response->assertSessionHasErrors([
             'service_provider',
             'utility_type',
+            'account_number',
             'bill_amount',
             'due_date',
         ]);

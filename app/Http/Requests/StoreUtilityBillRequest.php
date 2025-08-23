@@ -24,7 +24,7 @@ class StoreUtilityBillRequest extends FormRequest
         return [
             'utility_type' => ['required', 'string', 'max:255'],
             'service_provider' => ['required', 'string', 'max:255'],
-            'account_number' => ['nullable', 'string', 'max:255'],
+            'account_number' => ['required', 'string', 'max:255'],
             'service_address' => ['nullable', 'string'],
             'bill_amount' => ['required', 'numeric', 'min:1', 'max:9999999'],
             'usage_amount' => ['nullable', 'numeric', 'min:1', 'max:999999'],
@@ -54,6 +54,7 @@ class StoreUtilityBillRequest extends FormRequest
         return [
             'utility_type.required' => 'Please select a utility type.',
             'service_provider.required' => 'Please enter the service provider name.',
+            'account_number.required' => 'Please enter the account number.',
             'bill_amount.required' => 'Please enter the bill amount.',
             'bill_amount.min' => 'Bill amount must be a positive number.',
             'bill_period_start.required' => 'Please enter the billing period start date.',
