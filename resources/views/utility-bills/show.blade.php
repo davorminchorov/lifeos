@@ -150,7 +150,7 @@
                     <dl class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
                             <dt class="text-sm font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">Bill Amount</dt>
-                            <dd class="mt-1 text-2xl font-semibold text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">${{ number_format($utilityBill->bill_amount, 2) }}</dd>
+                            <dd class="mt-1 text-2xl font-semibold text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">{{ number_format($utilityBill->bill_amount, 2) }} MKD</dd>
                         </div>
                         @if($utilityBill->usage_amount)
                         <div>
@@ -166,20 +166,20 @@
                         @if($utilityBill->rate_per_unit)
                         <div>
                             <dt class="text-sm font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">Rate per Unit</dt>
-                            <dd class="mt-1 text-lg text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">${{ number_format($utilityBill->rate_per_unit, 6) }}</dd>
+                            <dd class="mt-1 text-lg text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">{{ number_format($utilityBill->rate_per_unit, 6) }} MKD</dd>
                         </div>
                         @endif
                         @if($utilityBill->usage_efficiency)
                         <div>
                             <dt class="text-sm font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">Cost Efficiency</dt>
-                            <dd class="mt-1 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">${{ number_format($utilityBill->usage_efficiency, 4) }} per unit</dd>
+                            <dd class="mt-1 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">{{ number_format($utilityBill->usage_efficiency, 4) }} MKD per unit</dd>
                         </div>
                         @endif
                         @if($utilityBill->budget_alert_threshold)
                         <div>
                             <dt class="text-sm font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">Budget Threshold</dt>
                             <dd class="mt-1 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
-                                ${{ number_format($utilityBill->budget_alert_threshold, 2) }}
+                                {{ number_format($utilityBill->budget_alert_threshold, 2) }} MKD
                                 @if($utilityBill->is_over_budget)
                                     <span class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[color:var(--color-danger-50)] text-[color:var(--color-danger-600)] dark:bg-[color:var(--color-dark-300)] dark:text-[color:var(--color-danger-500)]">
                                         Over Budget
@@ -190,7 +190,7 @@
                         @endif
                         <div>
                             <dt class="text-sm font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">Cost per Day</dt>
-                            <dd class="mt-1 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">${{ number_format($utilityBill->cost_per_day, 2) }}</dd>
+                            <dd class="mt-1 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">{{ number_format($utilityBill->cost_per_day, 2) }} MKD</dd>
                         </div>
                     </dl>
                 </div>
