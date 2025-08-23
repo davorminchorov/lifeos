@@ -6,7 +6,6 @@ use App\Http\Requests\StoreInvestmentDividendRequest;
 use App\Http\Requests\StoreInvestmentRequest;
 use App\Http\Requests\StoreInvestmentTransactionRequest;
 use App\Http\Requests\UpdateInvestmentRequest;
-use App\Http\Resources\InvestmentResource;
 use App\Models\Investment;
 use App\Models\InvestmentDividend;
 use App\Models\InvestmentGoal;
@@ -66,10 +65,6 @@ class InvestmentController extends Controller
 
         $investments = $query->paginate($request->get('per_page', 15));
 
-        if ($request->expectsJson()) {
-            return InvestmentResource::collection($investments);
-        }
-
         return view('investments.index', compact('investments'));
     }
 
@@ -91,10 +86,6 @@ class InvestmentController extends Controller
             ...$request->validated(),
         ]);
 
-        if ($request->expectsJson()) {
-            return new InvestmentResource($investment);
-        }
-
         return redirect()->route('investments.show', $investment)
             ->with('success', 'Investment created successfully!');
     }
@@ -105,10 +96,6 @@ class InvestmentController extends Controller
     public function show(Investment $investment)
     {
         $investment->load('user');
-
-        if (request()->expectsJson()) {
-            return new InvestmentResource($investment);
-        }
 
         return view('investments.show', compact('investment'));
     }
@@ -128,10 +115,6 @@ class InvestmentController extends Controller
     {
         $investment->update($request->validated());
 
-        if ($request->expectsJson()) {
-            return new InvestmentResource($investment);
-        }
-
         return redirect()->route('investments.show', $investment)
             ->with('success', 'Investment updated successfully!');
     }
@@ -142,10 +125,6 @@ class InvestmentController extends Controller
     public function destroy(Investment $investment)
     {
         $investment->delete();
-
-        if (request()->expectsJson()) {
-            return response()->json(['message' => 'Investment deleted successfully']);
-        }
 
         return redirect()->route('investments.index')
             ->with('success', 'Investment deleted successfully!');
@@ -170,14 +149,6 @@ class InvestmentController extends Controller
             'total_dividends_received' => $totalDividends,
         ]);
 
-        if ($request->expectsJson()) {
-            return response()->json([
-                'message' => 'Dividend recorded successfully',
-                'dividend' => $dividend,
-                'investment' => new InvestmentResource($investment->fresh()),
-            ], 201);
-        }
-
         return redirect()->route('investments.show', $investment)
             ->with('success', 'Dividend recorded successfully!');
     }
@@ -195,10 +166,6 @@ class InvestmentController extends Controller
             'current_value' => $request->current_value,
             'last_price_update' => now(),
         ]);
-
-        if ($request->expectsJson()) {
-            return new InvestmentResource($investment);
-        }
 
         return redirect()->route('investments.show', $investment)
             ->with('success', 'Price updated successfully!');
@@ -219,14 +186,6 @@ class InvestmentController extends Controller
 
         // Update investment totals based on transaction type
         $this->updateInvestmentFromTransaction($investment, $transaction);
-
-        if ($request->expectsJson()) {
-            return response()->json([
-                'message' => 'Transaction recorded successfully',
-                'transaction' => $transaction,
-                'investment' => new InvestmentResource($investment->fresh()),
-            ], 201);
-        }
 
         return redirect()->route('investments.show', $investment)
             ->with('success', 'Transaction recorded successfully!');
@@ -261,14 +220,6 @@ class InvestmentController extends Controller
         // Update investment totals based on transaction type
         $this->updateInvestmentFromTransaction($investment, $transaction);
 
-        if ($request->expectsJson()) {
-            return response()->json([
-                'message' => 'Transaction recorded successfully',
-                'transaction' => $transaction,
-                'investment' => new InvestmentResource($investment->fresh()),
-            ], 201);
-        }
-
         return redirect()->route('investments.show', $investment)
             ->with('success', 'Transaction recorded successfully!');
     }
@@ -301,14 +252,6 @@ class InvestmentController extends Controller
 
         // Update investment totals based on transaction type
         $this->updateInvestmentFromTransaction($investment, $transaction);
-
-        if ($request->expectsJson()) {
-            return response()->json([
-                'message' => 'Transaction recorded successfully',
-                'transaction' => $transaction,
-                'investment' => new InvestmentResource($investment->fresh()),
-            ], 201);
-        }
 
         return redirect()->route('investments.show', $investment)
             ->with('success', 'Transaction recorded successfully!');
@@ -361,10 +304,6 @@ class InvestmentController extends Controller
         $summary['total_return_percentage'] = $summary['total_cost_basis'] > 0
             ? ($summary['total_return'] / $summary['total_cost_basis']) * 100
             : 0;
-
-        if ($request->expectsJson()) {
-            return response()->json($summary);
-        }
 
         return view('investments.portfolio', compact('summary', 'investments'));
     }
@@ -538,10 +477,6 @@ class InvestmentController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        if ($request->expectsJson()) {
-            return response()->json(['data' => $goals]);
-        }
-
         return view('investments.goals.index', compact('goals'));
     }
 
@@ -565,10 +500,6 @@ class InvestmentController extends Controller
             'description' => $request->description,
         ]);
 
-        if ($request->expectsJson()) {
-            return response()->json(['data' => $goal], 201);
-        }
-
         return redirect()->route('investments.goals.index')
             ->with('success', 'Investment goal created successfully!');
     }
@@ -590,10 +521,6 @@ class InvestmentController extends Controller
 
         $goal->update($request->validated());
 
-        if ($request->expectsJson()) {
-            return response()->json(['data' => $goal]);
-        }
-
         return redirect()->route('investments.goals.index')
             ->with('success', 'Investment goal updated successfully!');
     }
@@ -607,10 +534,6 @@ class InvestmentController extends Controller
             ->findOrFail($goalId);
 
         $goal->delete();
-
-        if (request()->expectsJson()) {
-            return response()->json(['message' => 'Goal deleted successfully']);
-        }
 
         return redirect()->route('investments.goals.index')
             ->with('success', 'Investment goal deleted successfully!');
@@ -642,10 +565,6 @@ class InvestmentController extends Controller
         $taxSummary['total_realized_gains'] = $soldInvestments->where('realized_gain_loss', '>', 0)->sum('realized_gain_loss');
         $taxSummary['total_realized_losses'] = abs($soldInvestments->where('realized_gain_loss', '<', 0)->sum('realized_gain_loss'));
         $taxSummary['total_dividend_income'] = $activeInvestments->sum('total_dividends_received');
-
-        if ($request->expectsJson()) {
-            return response()->json(['data' => $taxSummary]);
-        }
 
         return view('investments.tax-reports.index', compact('taxSummary'));
     }
@@ -687,10 +606,6 @@ class InvestmentController extends Controller
             'transactions' => $capitalGains,
         ];
 
-        if ($request->expectsJson()) {
-            return response()->json(['data' => $report]);
-        }
-
         return view('investments.tax-reports.capital-gains', compact('report'));
     }
 
@@ -724,10 +639,6 @@ class InvestmentController extends Controller
             'total_non_qualified_dividends' => $dividendReport->sum('non_qualified_dividends'),
             'dividend_details' => $dividendReport,
         ];
-
-        if ($request->expectsJson()) {
-            return response()->json(['data' => $report]);
-        }
 
         return view('investments.tax-reports.dividend-income', compact('report'));
     }
@@ -783,10 +694,6 @@ class InvestmentController extends Controller
             ];
         }
 
-        if ($request->expectsJson()) {
-            return response()->json(['data' => $alerts]);
-        }
-
         return view('investments.rebalancing.alerts', compact('alerts'));
     }
 
@@ -832,10 +739,6 @@ class InvestmentController extends Controller
                     'amount' => abs($difference),
                 ];
             }
-        }
-
-        if ($request->expectsJson()) {
-            return response()->json(['data' => $recommendations]);
         }
 
         return view('investments.rebalancing.recommendations', compact('recommendations'));

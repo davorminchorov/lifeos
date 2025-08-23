@@ -62,10 +62,6 @@ class ContractController extends Controller
 
         $contracts = $query->paginate($request->get('per_page', 15));
 
-        if ($request->expectsJson()) {
-            return ContractResource::collection($contracts);
-        }
-
         return view('contracts.index', compact('contracts'));
     }
 
@@ -87,10 +83,6 @@ class ContractController extends Controller
             ...$request->validated(),
         ]);
 
-        if ($request->expectsJson()) {
-            return new ContractResource($contract);
-        }
-
         return redirect()->route('contracts.show', $contract)
             ->with('success', 'Contract created successfully!');
     }
@@ -106,10 +98,6 @@ class ContractController extends Controller
         }
 
         $contract->load('user');
-
-        if (request()->expectsJson()) {
-            return new ContractResource($contract);
-        }
 
         return view('contracts.show', compact('contract'));
     }
@@ -139,10 +127,6 @@ class ContractController extends Controller
 
         $contract->update($request->validated());
 
-        if ($request->expectsJson()) {
-            return new ContractResource($contract);
-        }
-
         return redirect()->route('contracts.show', $contract)
             ->with('success', 'Contract updated successfully!');
     }
@@ -158,10 +142,6 @@ class ContractController extends Controller
         }
 
         $contract->delete();
-
-        if (request()->expectsJson()) {
-            return response()->json(['message' => 'Contract deleted successfully']);
-        }
 
         return redirect()->route('contracts.index')
             ->with('success', 'Contract deleted successfully!');
@@ -181,10 +161,6 @@ class ContractController extends Controller
             'status' => 'terminated',
             'end_date' => now(),
         ]);
-
-        if (request()->expectsJson()) {
-            return new ContractResource($contract);
-        }
 
         return redirect()->route('contracts.show', $contract)
             ->with('success', 'Contract terminated successfully!');
@@ -219,10 +195,6 @@ class ContractController extends Controller
             'renewal_history' => $renewalHistory,
         ]);
 
-        if ($request->expectsJson()) {
-            return new ContractResource($contract);
-        }
-
         return redirect()->route('contracts.show', $contract)
             ->with('success', 'Contract renewed successfully!');
     }
@@ -248,10 +220,6 @@ class ContractController extends Controller
         ];
 
         $contract->update(['amendments' => $amendments]);
-
-        if ($request->expectsJson()) {
-            return new ContractResource($contract);
-        }
 
         return redirect()->route('contracts.show', $contract)
             ->with('success', 'Amendment added successfully!');

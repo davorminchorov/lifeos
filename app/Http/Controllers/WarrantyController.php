@@ -67,10 +67,6 @@ class WarrantyController extends Controller
 
         $warranties = $query->paginate($request->get('per_page', 15));
 
-        if ($request->expectsJson()) {
-            return WarrantyResource::collection($warranties);
-        }
-
         return view('warranties.index', compact('warranties'));
     }
 
@@ -92,10 +88,6 @@ class WarrantyController extends Controller
             ...$request->validated(),
         ]);
 
-        if ($request->expectsJson()) {
-            return new WarrantyResource($warranty);
-        }
-
         return redirect()->route('warranties.show', $warranty)
             ->with('success', 'Warranty created successfully!');
     }
@@ -106,10 +98,6 @@ class WarrantyController extends Controller
     public function show(Warranty $warranty)
     {
         $warranty->load('user');
-
-        if (request()->expectsJson()) {
-            return new WarrantyResource($warranty);
-        }
 
         return view('warranties.show', compact('warranty'));
     }
@@ -129,10 +117,6 @@ class WarrantyController extends Controller
     {
         $warranty->update($request->validated());
 
-        if ($request->expectsJson()) {
-            return new WarrantyResource($warranty);
-        }
-
         return redirect()->route('warranties.show', $warranty)
             ->with('success', 'Warranty updated successfully!');
     }
@@ -143,10 +127,6 @@ class WarrantyController extends Controller
     public function destroy(Warranty $warranty)
     {
         $warranty->delete();
-
-        if (request()->expectsJson()) {
-            return response()->json(['message' => 'Warranty deleted successfully']);
-        }
 
         return redirect()->route('warranties.index')
             ->with('success', 'Warranty deleted successfully!');
@@ -174,10 +154,6 @@ class WarrantyController extends Controller
             'claim_history' => $claimHistory,
             'current_status' => 'claimed',
         ]);
-
-        if ($request->expectsJson()) {
-            return new WarrantyResource($warranty);
-        }
 
         return redirect()->route('warranties.show', $warranty)
             ->with('success', 'Warranty claim filed successfully!');
@@ -207,10 +183,6 @@ class WarrantyController extends Controller
 
         $warranty->update(['claim_history' => $claimHistory]);
 
-        if ($request->expectsJson()) {
-            return new WarrantyResource($warranty);
-        }
-
         return redirect()->route('warranties.show', $warranty)
             ->with('success', 'Warranty claim updated successfully!');
     }
@@ -239,10 +211,6 @@ class WarrantyController extends Controller
             'current_status' => 'transferred',
         ]);
 
-        if ($request->expectsJson()) {
-            return new WarrantyResource($warranty);
-        }
-
         return redirect()->route('warranties.show', $warranty)
             ->with('success', 'Warranty transferred successfully!');
     }
@@ -267,10 +235,6 @@ class WarrantyController extends Controller
         ];
 
         $warranty->update(['maintenance_reminders' => $maintenanceReminders]);
-
-        if ($request->expectsJson()) {
-            return new WarrantyResource($warranty);
-        }
 
         return redirect()->route('warranties.show', $warranty)
             ->with('success', 'Maintenance reminder added successfully!');

@@ -81,10 +81,6 @@ class ExpenseController extends Controller
 
         $expenses = $query->paginate($request->get('per_page', 15));
 
-        if ($request->expectsJson()) {
-            return ExpenseResource::collection($expenses);
-        }
-
         return view('expenses.index', compact('expenses'));
     }
 
@@ -106,10 +102,6 @@ class ExpenseController extends Controller
             ...$request->validated(),
         ]);
 
-        if ($request->expectsJson()) {
-            return new ExpenseResource($expense);
-        }
-
         return redirect()->route('expenses.show', $expense)
             ->with('success', 'Expense created successfully!');
     }
@@ -125,10 +117,6 @@ class ExpenseController extends Controller
         }
 
         $expense->load('user');
-
-        if (request()->expectsJson()) {
-            return new ExpenseResource($expense);
-        }
 
         return view('expenses.show', compact('expense'));
     }
@@ -158,10 +146,6 @@ class ExpenseController extends Controller
 
         $expense->update($request->validated());
 
-        if ($request->expectsJson()) {
-            return new ExpenseResource($expense);
-        }
-
         return redirect()->route('expenses.show', $expense)
             ->with('success', 'Expense updated successfully!');
     }
@@ -178,10 +162,6 @@ class ExpenseController extends Controller
 
         $expense->delete();
 
-        if (request()->expectsJson()) {
-            return response()->json(['message' => 'Expense deleted successfully']);
-        }
-
         return redirect()->route('expenses.index')
             ->with('success', 'Expense deleted successfully!');
     }
@@ -197,10 +177,6 @@ class ExpenseController extends Controller
         }
 
         $expense->update(['status' => 'reimbursed']);
-
-        if (request()->expectsJson()) {
-            return new ExpenseResource($expense);
-        }
 
         return redirect()->route('expenses.show', $expense)
             ->with('success', 'Expense marked as reimbursed!');
@@ -293,10 +269,6 @@ class ExpenseController extends Controller
             'top_merchants' => $topMerchants,
         ];
 
-        if ($request->expectsJson()) {
-            return response()->json($analytics);
-        }
-
         return view('expenses.analytics', compact('analytics'));
     }
 
@@ -314,10 +286,6 @@ class ExpenseController extends Controller
         $newExpense->expense_date = now()->toDateString();
         $newExpense->status = 'pending';
         $newExpense->save();
-
-        if (request()->expectsJson()) {
-            return new ExpenseResource($newExpense);
-        }
 
         return redirect()->route('expenses.show', $newExpense)
             ->with('success', 'Expense duplicated successfully!');
@@ -370,10 +338,6 @@ class ExpenseController extends Controller
                     ->whereIn('id', $request->expense_ids)->update(['status' => $request->status]);
                 $message = "{$count} expenses status changed to {$request->status}!";
                 break;
-        }
-
-        if ($request->expectsJson()) {
-            return response()->json(['message' => $message]);
         }
 
         return redirect()->route('expenses.index')->with('success', $message);

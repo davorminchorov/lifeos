@@ -84,10 +84,6 @@ class UtilityBillController extends Controller
 
         $utilityBills = $query->paginate($request->get('per_page', 15));
 
-        if ($request->expectsJson()) {
-            return UtilityBillResource::collection($utilityBills);
-        }
-
         return view('utility-bills.index', compact('utilityBills'));
     }
 
@@ -109,10 +105,6 @@ class UtilityBillController extends Controller
             ...$request->validated(),
         ]);
 
-        if ($request->expectsJson()) {
-            return new UtilityBillResource($utilityBill);
-        }
-
         return redirect()->route('utility-bills.index')
             ->with('success', 'Utility bill created successfully!');
     }
@@ -128,10 +120,6 @@ class UtilityBillController extends Controller
         }
 
         $utilityBill->load('user');
-
-        if (request()->expectsJson()) {
-            return new UtilityBillResource($utilityBill);
-        }
 
         return view('utility-bills.show', compact('utilityBill'));
     }
@@ -151,10 +139,6 @@ class UtilityBillController extends Controller
     {
         $utilityBill->update($request->validated());
 
-        if ($request->expectsJson()) {
-            return new UtilityBillResource($utilityBill);
-        }
-
         return redirect()->route('utility-bills.show', $utilityBill)
             ->with('success', 'Utility bill updated successfully!');
     }
@@ -165,10 +149,6 @@ class UtilityBillController extends Controller
     public function destroy(UtilityBill $utilityBill)
     {
         $utilityBill->delete();
-
-        if (request()->expectsJson()) {
-            return response()->json(['message' => 'Utility bill deleted successfully']);
-        }
 
         return redirect()->route('utility-bills.index')
             ->with('success', 'Utility bill deleted successfully!');
@@ -188,10 +168,6 @@ class UtilityBillController extends Controller
             'payment_date' => $request->get('payment_date', now()),
         ]);
 
-        if ($request->expectsJson()) {
-            return new UtilityBillResource($utilityBill);
-        }
-
         return redirect()->route('utility-bills.show', $utilityBill)
             ->with('success', 'Bill marked as paid successfully!');
     }
@@ -209,10 +185,6 @@ class UtilityBillController extends Controller
             'payment_status' => 'disputed',
             'notes' => $utilityBill->notes."\n\nDispute: ".$request->get('dispute_reason', 'No reason provided'),
         ]);
-
-        if ($request->expectsJson()) {
-            return new UtilityBillResource($utilityBill);
-        }
 
         return redirect()->route('utility-bills.show', $utilityBill)
             ->with('success', 'Bill marked as disputed successfully!');
@@ -240,10 +212,6 @@ class UtilityBillController extends Controller
         ];
 
         $utilityBill->update(['meter_readings' => $meterReadings]);
-
-        if ($request->expectsJson()) {
-            return new UtilityBillResource($utilityBill);
-        }
 
         return redirect()->route('utility-bills.show', $utilityBill)
             ->with('success', 'Meter reading added successfully!');
@@ -324,10 +292,6 @@ class UtilityBillController extends Controller
             'over_budget_count' => $overBudget,
         ];
 
-        if ($request->expectsJson()) {
-            return response()->json($analytics);
-        }
-
         return view('utility-bills.analytics', compact('analytics'));
     }
 
@@ -350,10 +314,6 @@ class UtilityBillController extends Controller
         $newBill->usage_amount = null; // Will need to be updated
 
         $newBill->save();
-
-        if (request()->expectsJson()) {
-            return new UtilityBillResource($newBill);
-        }
 
         return redirect()->route('utility-bills.show', $newBill)
             ->with('success', 'Utility bill duplicated successfully! Please update the amount and usage.');
@@ -381,10 +341,6 @@ class UtilityBillController extends Controller
             }
 
             $utilityBill->update(['usage_history' => $usageHistory]);
-        }
-
-        if (request()->expectsJson()) {
-            return new UtilityBillResource($utilityBill);
         }
 
         return redirect()->route('utility-bills.show', $utilityBill)
