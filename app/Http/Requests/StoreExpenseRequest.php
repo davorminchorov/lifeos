@@ -22,7 +22,7 @@ class StoreExpenseRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'amount' => 'required|numeric|min:0.01',
+            'amount' => 'required|numeric|min:1|max:99999999',
             'currency' => 'nullable|string|size:3',
             'category' => 'required|string|max:255',
             'subcategory' => 'nullable|string|max:255',

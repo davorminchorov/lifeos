@@ -26,10 +26,10 @@ class StoreUtilityBillRequest extends FormRequest
             'service_provider' => ['required', 'string', 'max:255'],
             'account_number' => ['nullable', 'string', 'max:255'],
             'service_address' => ['nullable', 'string'],
-            'bill_amount' => ['required', 'numeric', 'min:0'],
-            'usage_amount' => ['nullable', 'numeric', 'min:0'],
+            'bill_amount' => ['required', 'numeric', 'min:1', 'max:9999999'],
+            'usage_amount' => ['nullable', 'numeric', 'min:1', 'max:999999'],
             'usage_unit' => ['nullable', 'string', 'max:50'],
-            'rate_per_unit' => ['nullable', 'numeric', 'min:0'],
+            'rate_per_unit' => ['nullable', 'numeric', 'min:0.01', 'max:9999'],
             'bill_period_start' => ['required', 'date'],
             'bill_period_end' => ['required', 'date', 'after:bill_period_start'],
             'due_date' => ['required', 'date', 'after:bill_period_start'],
@@ -41,7 +41,7 @@ class StoreUtilityBillRequest extends FormRequest
             'contract_terms' => ['nullable', 'string'],
             'auto_pay_enabled' => ['boolean'],
             'usage_history' => ['nullable', 'array'],
-            'budget_alert_threshold' => ['nullable', 'numeric', 'min:0'],
+            'budget_alert_threshold' => ['nullable', 'numeric', 'min:1', 'max:9999999'],
             'notes' => ['nullable', 'string'],
         ];
     }

@@ -29,7 +29,7 @@ class StoreContractRequest extends FormRequest
             'end_date' => ['nullable', 'date', 'after:start_date'],
             'notice_period_days' => ['nullable', 'integer', 'min:1', 'max:365'],
             'auto_renewal' => ['boolean'],
-            'contract_value' => ['nullable', 'numeric', 'min:0', 'max:999999999.99'],
+            'contract_value' => ['nullable', 'numeric', 'min:1', 'max:999999999'],
             'payment_terms' => ['nullable', 'string', 'max:255'],
             'key_obligations' => ['nullable', 'string', 'max:5000'],
             'penalties' => ['nullable', 'string', 'max:2000'],

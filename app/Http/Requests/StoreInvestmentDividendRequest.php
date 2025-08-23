@@ -23,7 +23,7 @@ class StoreInvestmentDividendRequest extends FormRequest
     {
         return [
             'investment_id' => ['required', 'exists:investments,id'],
-            'amount' => ['required', 'numeric', 'min:0', 'decimal:0,2'],
+            'amount' => ['required', 'numeric', 'min:1', 'max:999999999', 'decimal:0,2'],
             'record_date' => ['required', 'date', 'before_or_equal:today'],
             'payment_date' => ['required', 'date', 'after_or_equal:record_date'],
             'ex_dividend_date' => ['nullable', 'date', 'before_or_equal:record_date'],
@@ -31,7 +31,7 @@ class StoreInvestmentDividendRequest extends FormRequest
             'frequency' => ['required', 'in:monthly,quarterly,semi_annual,annual,special'],
             'dividend_per_share' => ['required', 'numeric', 'min:0', 'decimal:0,8'],
             'shares_held' => ['required', 'numeric', 'min:0', 'decimal:0,8'],
-            'tax_withheld' => ['nullable', 'numeric', 'min:0', 'decimal:0,2'],
+            'tax_withheld' => ['nullable', 'numeric', 'min:0', 'max:999999999', 'decimal:0,2'],
             'currency' => ['required', 'string', 'size:3'],
             'reinvested' => ['boolean'],
             'notes' => ['nullable', 'string', 'max:65535'],

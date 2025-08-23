@@ -22,7 +22,24 @@ class UpdateExpenseRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'amount' => 'sometimes|numeric|min:1|max:99999999',
+            'currency' => 'nullable|string|size:3',
+            'category' => 'sometimes|string|max:255',
+            'subcategory' => 'nullable|string|max:255',
+            'expense_date' => 'sometimes|date',
+            'description' => 'sometimes|string|max:65535',
+            'merchant' => 'nullable|string|max:255',
+            'payment_method' => 'nullable|string|max:255',
+            'receipt_attachments' => 'nullable|array',
+            'tags' => 'nullable|array',
+            'location' => 'nullable|string|max:255',
+            'is_tax_deductible' => 'nullable|boolean',
+            'expense_type' => 'nullable|in:business,personal',
+            'is_recurring' => 'nullable|boolean',
+            'recurring_schedule' => 'nullable|string|max:255',
+            'budget_allocated' => 'nullable|numeric|min:0',
+            'notes' => 'nullable|string|max:65535',
+            'status' => 'nullable|in:pending,confirmed,reimbursed',
         ];
     }
 }
