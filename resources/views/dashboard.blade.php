@@ -15,37 +15,6 @@
     <!-- Analytics Insights Section -->
     @if(isset($insights))
 
-        <!-- Feature Discovery Suggestions -->
-        @if(isset($insights['suggestions']) && count($insights['suggestions']) > 0)
-            <div class="mb-8">
-                <h2 class="text-lg font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] mb-4 flex items-center">
-                    <svg class="h-5 w-5 mr-2 text-[color:var(--color-accent-500)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
-                    </svg>
-                    Discover More Features
-                </h2>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    @foreach($insights['suggestions'] as $suggestion)
-                        <div class="bg-[color:var(--color-info-50)] dark:bg-[color:var(--color-info-900)] border border-[color:var(--color-info-200)] dark:border-[color:var(--color-info-700)] rounded-lg p-4 hover:shadow-md transition-shadow">
-                            <div class="flex items-center mb-3">
-                                <svg class="h-5 w-5 text-[color:var(--color-info-600)] dark:text-[color:var(--color-info-400)] mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    @if($suggestion['icon'] === 'bell')
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5zM4.006 7l.017.01L4 7zm.017.01l.04.04-.04-.04zM8 13h8m-4 4h4M4.006 7.044L8 11h8l-4 4-4-4-3.994-3.956z"></path>
-                                    @else
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
-                                    @endif
-                                </svg>
-                                <h3 class="text-sm font-medium text-[color:var(--color-info-800)] dark:text-[color:var(--color-info-200)]">{{ $suggestion['title'] }}</h3>
-                            </div>
-                            <p class="text-xs text-[color:var(--color-info-600)] dark:text-[color:var(--color-info-400)] mb-3">{{ $suggestion['description'] }}</p>
-                            <a href="{{ $suggestion['action_url'] }}" class="text-xs font-medium text-[color:var(--color-info-700)] hover:text-[color:var(--color-info-800)] dark:text-[color:var(--color-info-300)] dark:hover:text-[color:var(--color-info-200)]">
-                                Get Started →
-                            </a>
-                        </div>
-                    @endforeach
-                </div>
-            </div>
-        @endif
 
         <!-- Advanced Analytics Dashboard -->
         <div x-data="chartControls()" class="mb-8">
