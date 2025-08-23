@@ -135,4 +135,10 @@ class Expense extends Model
     {
         return (int) round($this->expense_date->startOfDay()->diffInDays(now()->startOfDay()));
     }
+
+    // Check if expense is reimbursed
+    public function getIsReimbursedAttribute()
+    {
+        return $this->status === 'reimbursed';
+    }
 }
