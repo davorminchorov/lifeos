@@ -157,17 +157,6 @@
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                                         {{ $bill->due_date->format('M d, Y') }}
-                                        @if($daysUntilDue !== null)
-                                            <div class="text-xs {{ $isOverdue ? 'text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]' : ($isDueSoon ? 'text-[color:var(--color-warning-600)] dark:text-[color:var(--color-warning-400)]' : 'text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]') }}">
-                                                @if($isOverdue)
-                                                    {{ abs($daysUntilDue) }} days overdue
-                                                @elseif($daysUntilDue === 0)
-                                                    Due today
-                                                @else
-                                                    {{ $daysUntilDue }} days left
-                                                @endif
-                                            </div>
-                                        @endif
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         @if($bill->payment_status === 'paid')
