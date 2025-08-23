@@ -90,11 +90,11 @@ class UtilityBillFactory extends Factory
             'usage_amount' => $usageAmount,
             'usage_unit' => $usageUnit,
             'rate_per_unit' => $ratePerUnit,
-            'bill_period_start' => $billPeriodStart,
-            'bill_period_end' => $billPeriodEnd,
-            'due_date' => $dueDate,
+            'bill_period_start' => $billPeriodStart->format('Y-m-d'),
+            'bill_period_end' => $billPeriodEnd->format('Y-m-d'),
+            'due_date' => $dueDate->format('Y-m-d'),
             'payment_status' => $this->faker->randomElement(['pending', 'paid', 'overdue', 'disputed']),
-            'payment_date' => $this->faker->optional(0.7)->dateTimeBetween($billPeriodEnd, $dueDate),
+            'payment_date' => $this->faker->optional(0.7)->dateTimeBetween($billPeriodEnd, $dueDate)?->format('Y-m-d'),
             'meter_readings' => $this->faker->optional()->randomElements([
                 [
                     'current' => $this->faker->numberBetween(10000, 99999),

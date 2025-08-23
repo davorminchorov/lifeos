@@ -110,7 +110,7 @@
                         <tbody class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] divide-y divide-[color:var(--color-primary-300)] dark:divide-[color:var(--color-dark-300)]">
                             @foreach($utilityBills as $bill)
                                 @php
-                                    $daysUntilDue = $bill->due_date ? now()->diffInDays($bill->due_date, false) : null;
+                                    $daysUntilDue = $bill->due_date ? (int) round(now()->diffInDays($bill->due_date, false)) : null;
                                     $isOverdue = $daysUntilDue !== null && $daysUntilDue < 0;
                                     $isDueSoon = $daysUntilDue !== null && $daysUntilDue <= 7 && $daysUntilDue >= 0;
                                 @endphp
