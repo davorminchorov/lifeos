@@ -66,7 +66,10 @@
                                 Bill Overdue
                             </h3>
                             <div class="mt-1 text-sm text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-500)]">
-                                Due {{ $utilityBill->due_date->format('M j, Y') }} ({{ abs($utilityBill->days_until_due) }} days ago)
+                                Due {{ $utilityBill->due_date->format('M j, Y') }}
+                                @if($utilityBill->is_overdue)
+                                    ({{ abs($utilityBill->days_until_due) }} days ago)
+                                @endif
                             </div>
                         </div>
                     </div>

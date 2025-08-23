@@ -111,7 +111,7 @@
                             @foreach($utilityBills as $bill)
                                 @php
                                     $daysUntilDue = $bill->due_date ? (int) round(now()->diffInDays($bill->due_date, false)) : null;
-                                    $isOverdue = $daysUntilDue !== null && $daysUntilDue < 0;
+                                    $isOverdue = $bill->is_overdue;
                                     $isDueSoon = $daysUntilDue !== null && $daysUntilDue <= 7 && $daysUntilDue >= 0;
                                 @endphp
                                 <tr class="hover:bg-[color:var(--color-primary-200)] dark:hover:bg-[color:var(--color-dark-300)] {{ $isOverdue ? 'bg-[color:var(--color-danger-50)] dark:bg-[color:var(--color-danger-800)]/20' : ($isDueSoon ? 'bg-[color:var(--color-warning-50)] dark:bg-[color:var(--color-warning-800)]/20' : '') }}">
