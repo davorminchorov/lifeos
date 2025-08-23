@@ -138,7 +138,7 @@
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-[color:var(--color-info-50)] text-[color:var(--color-info-600)] dark:bg-[color:var(--color-dark-300)] dark:text-[color:var(--color-info-500)]">
+                                        <span class="inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full bg-[color:var(--color-info-50)] text-[color:var(--color-info-600)] dark:bg-[color:var(--color-dark-300)] dark:text-[color:var(--color-info-500)]">
                                             {{ ucfirst(str_replace('_', ' ', $contract->contract_type)) }}
                                         </span>
                                     </td>
@@ -146,15 +146,15 @@
                                         {{ $contract->counterparty }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                            @if($contract->status === 'active') bg-[color:var(--color-success-50)] text-[color:var(--color-success-800)] dark:bg-[color:var(--color-success-800)] dark:text-[color:var(--color-success-100)]
-                                            @elseif($contract->status === 'expired') bg-[color:var(--color-danger-50)] text-[color:var(--color-danger-800)] dark:bg-[color:var(--color-danger-800)] dark:text-[color:var(--color-danger-100)]
-                                            @elseif($contract->status === 'terminated') bg-[color:var(--color-primary-100)] text-[color:var(--color-primary-800)] dark:bg-[color:var(--color-primary-800)] dark:text-[color:var(--color-primary-100)]
-                                            @else bg-[color:var(--color-warning-50)] text-[color:var(--color-warning-800)] dark:bg-[color:var(--color-warning-800)] dark:text-[color:var(--color-warning-100)] @endif">
+                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold
+                                            @if($contract->status === 'active') bg-[color:var(--color-success-50)] text-[color:var(--color-success-600)] dark:bg-[color:var(--color-dark-300)] dark:text-[color:var(--color-success-500)]
+                                            @elseif($contract->status === 'expired') bg-[color:var(--color-danger-50)] text-[color:var(--color-danger-600)] dark:bg-[color:var(--color-dark-300)] dark:text-[color:var(--color-danger-500)]
+                                            @elseif($contract->status === 'terminated') bg-[color:var(--color-primary-200)] text-[color:var(--color-primary-700)] dark:bg-[color:var(--color-dark-300)] dark:text-[color:var(--color-primary-700)]
+                                            @else bg-[color:var(--color-warning-50)] text-[color:var(--color-warning-600)] dark:bg-[color:var(--color-dark-300)] dark:text-[color:var(--color-warning-500)] @endif">
                                             {{ ucfirst($contract->status) }}
                                         </span>
                                         @if($contract->notice_deadline && $contract->notice_deadline->isFuture() && $contract->notice_deadline->diffInDays(now()) <= 30)
-                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[color:var(--color-danger-50)] text-[color:var(--color-danger-800)] dark:bg-[color:var(--color-danger-800)] dark:text-[color:var(--color-danger-100)] ml-1">
+                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-[color:var(--color-danger-50)] text-[color:var(--color-danger-600)] dark:bg-[color:var(--color-dark-300)] dark:text-[color:var(--color-danger-500)] ml-1">
                                                 Notice Required
                                             </span>
                                         @endif
