@@ -188,7 +188,7 @@
             <div class="bg-[color:var(--color-primary-200)] dark:bg-[color:var(--color-dark-300)] px-5 py-3">
                 <div class="text-sm">
                     <span class="text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">Monthly cost:</span>
-                    <span class="font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">${{ number_format($stats['monthly_subscription_cost'] ?? 0, 2) }}</span>
+                    <span class="font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">{{ $stats['monthly_subscription_cost_formatted'] ?? 'MKD 0.00' }}</span>
                 </div>
             </div>
         </div>
