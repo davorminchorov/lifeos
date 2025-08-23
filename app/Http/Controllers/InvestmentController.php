@@ -149,6 +149,15 @@ class InvestmentController extends Controller
             'total_dividends_received' => $totalDividends,
         ]);
 
+        // Return JSON response for API requests
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => 'Dividend recorded successfully!',
+                'dividend' => $dividend,
+                'investment' => $investment->fresh(),
+            ], 201);
+        }
+
         return redirect()->route('investments.show', $investment)
             ->with('success', 'Dividend recorded successfully!');
     }
@@ -186,6 +195,15 @@ class InvestmentController extends Controller
 
         // Update investment totals based on transaction type
         $this->updateInvestmentFromTransaction($investment, $transaction);
+
+        // Return JSON response for API requests
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => 'Transaction recorded successfully!',
+                'transaction' => $transaction,
+                'investment' => $investment->fresh(),
+            ], 201);
+        }
 
         return redirect()->route('investments.show', $investment)
             ->with('success', 'Transaction recorded successfully!');
