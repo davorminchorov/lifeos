@@ -352,7 +352,7 @@ class CurrencyService
             return null;
         }
 
-        $url = 'http://data.fixer.io/api/latest';
+        $url = 'https://data.fixer.io/api/latest';
 
         $response = Http::timeout(10)->get($url, [
             'access_key' => $apiKey,
