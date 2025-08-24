@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use http\Exception\InvalidArgumentException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -317,12 +318,11 @@ class CurrencyService
     {
         $apiKey = config('currency.conversion.api_key');
 
-        if (! $apiKey) {
-            // Use free tier without API key (limited requests)
-            $url = "https://api.exchangerate-api.io/v4/latest/{$fromCurrency}";
-        } else {
-            $url = "https://v6.exchangerate-api.io/v6/{$apiKey}/latest/{$fromCurrency}";
+        if (!$apiKey) {
+            throw new InvalidArgumentException('The API key is required for exchangerate-api.io');
         }
+
+        $url = "https://v6.exchangerate-api.com/v6/{$apiKey}/latest/{$fromCurrency}";
 
         $response = Http::timeout(10)->get($url);
 
@@ -332,11 +332,11 @@ class CurrencyService
 
         $data = $response->json();
 
-        if (! isset($data['rates'][$toCurrency])) {
+        if (! isset($data['conversion_rates'][$toCurrency])) {
             return null;
         }
 
-        return (float) $data['rates'][$toCurrency];
+        return (float) $data['conversion_rates'][$toCurrency];
     }
 
     /**
@@ -354,7 +354,7 @@ class CurrencyService
 
         $url = 'https://data.fixer.io/api/latest';
 
-        $response = Http::timeout(10)->get($url, [
+        $response = Http::timeout(15)->get($url, [
             'access_key' => $apiKey,
             'base' => $fromCurrency,
             'symbols' => $toCurrency,
