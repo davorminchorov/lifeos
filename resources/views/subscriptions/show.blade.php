@@ -24,6 +24,7 @@
 @endsection
 
 @section('content')
+<div x-data="{}">
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <!-- Main Details -->
         <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] shadow overflow-hidden sm:rounded-lg border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)]">
@@ -389,6 +390,7 @@
             confirm-text="Pause"
             confirm-button-class="bg-[color:var(--color-warning-500)] hover:bg-[color:var(--color-warning-600)] text-white"
             :action="route('subscriptions.pause', $subscription)"
+            method="PATCH"
         />
 
         <x-confirmation-modal
@@ -398,6 +400,7 @@
             confirm-text="Cancel Subscription"
             confirm-button-class="bg-[color:var(--color-danger-500)] hover:bg-[color:var(--color-danger-600)] text-white"
             :action="route('subscriptions.cancel', $subscription)"
+            method="PATCH"
         />
     @elseif($subscription->status === 'paused')
         <x-confirmation-modal
@@ -407,6 +410,7 @@
             confirm-text="Resume"
             confirm-button-class="bg-[color:var(--color-success-500)] hover:bg-[color:var(--color-success-600)] text-white"
             :action="route('subscriptions.resume', $subscription)"
+            method="PATCH"
         />
 
         <x-confirmation-modal
@@ -416,6 +420,7 @@
             confirm-text="Cancel Subscription"
             confirm-button-class="bg-[color:var(--color-danger-500)] hover:bg-[color:var(--color-danger-600)] text-white"
             :action="route('subscriptions.cancel', $subscription)"
+            method="PATCH"
         />
     @endif
 
@@ -428,4 +433,5 @@
         :action="route('subscriptions.destroy', $subscription)"
         method="DELETE"
     />
+</div>
 @endsection
