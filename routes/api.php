@@ -7,4 +7,5 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['auth:sanctum'])->group(function () {
     // Dashboard API endpoints
     Route::get('/dashboard/chart-data', [DashboardController::class, 'chartData'])->name('api.dashboard.chart-data');
+
 });

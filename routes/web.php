@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\ContractController;
+use App\Http\Controllers\CurrencyController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\FileUploadController;
@@ -104,6 +105,13 @@ Route::middleware('auth')->group(function () {
         Route::post('/mark-all-as-read', [NotificationController::class, 'markAllAsRead'])->name('mark-all-as-read');
         Route::delete('/{id}', [NotificationController::class, 'destroy'])->name('destroy');
         Route::get('/stats', [NotificationController::class, 'stats'])->name('stats');
+    });
+
+    // Currency Routes
+    Route::prefix('currency')->name('currency.')->group(function () {
+        Route::get('/', [CurrencyController::class, 'index'])->name('index');
+        Route::post('/refresh-rate', [CurrencyController::class, 'refreshRate'])->name('refresh-rate');
+        Route::get('/freshness-info', [CurrencyController::class, 'getFreshnessInfo'])->name('freshness-info');
     });
 
     // File Management Routes

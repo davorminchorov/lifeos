@@ -114,6 +114,15 @@ class Expense extends Model
         return $currencyService->format($this->amount, $this->currency);
     }
 
+    // Get formatted amount converted to MKD (unified display)
+    public function getFormattedAmountMkdAttribute()
+    {
+        $currencyService = app(\App\Services\CurrencyService::class);
+        $amountInMKD = $currencyService->convertToDefault($this->amount, $this->currency ?? 'MKD');
+
+        return $currencyService->format($amountInMKD);
+    }
+
     // Check if expense is over budget (if budget allocated)
     public function getIsOverBudgetAttribute()
     {

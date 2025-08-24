@@ -170,6 +170,16 @@ class UtilityBill extends Model
         return app(\App\Services\CurrencyService::class)->format($this->bill_amount, $currency);
     }
 
+    // Get formatted bill amount converted to MKD (unified display)
+    public function getFormattedBillAmountMkdAttribute()
+    {
+        $currencyService = app(\App\Services\CurrencyService::class);
+        $currency = $this->currency ?? config('currency.default', 'MKD');
+        $amountInMKD = $currencyService->convertToDefault($this->bill_amount, $currency);
+
+        return $currencyService->format($amountInMKD);
+    }
+
     // Get formatted budget threshold with currency
     public function getFormattedBudgetThresholdAttribute()
     {

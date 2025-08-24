@@ -315,7 +315,7 @@
                                     <p class="text-sm text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">{{ $expense->category }} • {{ $expense->expense_date->format('M j, Y') }}</p>
                                 </div>
                                 <div class="flex-shrink-0 ml-4">
-                                    <span class="text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">{{ $expense->formatted_amount }}</span>
+                                    <span class="text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">{{ $expense->formatted_amount_mkd }}</span>
                                 </div>
                             </div>
                         @endforeach
@@ -342,7 +342,7 @@
                                     <p class="text-sm text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">{{ ucfirst($bill->utility_type) }} • Due {{ $bill->due_date->format('M j, Y') }}</p>
                                 </div>
                                 <div class="flex-shrink-0 ml-4">
-                                    <span class="text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">{{ $bill->formatted_bill_amount }}</span>
+                                    <span class="text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">{{ $bill->formatted_bill_amount_mkd }}</span>
                                 </div>
                             </div>
                         @endforeach

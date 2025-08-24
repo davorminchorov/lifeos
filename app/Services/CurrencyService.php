@@ -136,9 +136,148 @@ class CurrencyService
         $cacheKey = "exchange_rate_{$fromCurrency}_{$toCurrency}";
         $cacheDuration = config('currency.conversion.cache_duration', 3600);
 
-        return Cache::remember($cacheKey, $cacheDuration, function () use ($fromCurrency, $toCurrency) {
-            return $this->fetchExchangeRate($fromCurrency, $toCurrency);
+        return Cache::remember($cacheKey, $cacheDuration, function () use ($fromCurrency, $toCurrency, $cacheDuration) {
+            $rate = $this->fetchExchangeRate($fromCurrency, $toCurrency);
+
+            if ($rate !== null) {
+                // Store timestamp when rate was fetched
+                $timestampKey = "exchange_rate_timestamp_{$fromCurrency}_{$toCurrency}";
+                Cache::put($timestampKey, now()->timestamp, $cacheDuration);
+            }
+
+            return $rate;
         });
+    }
+
+    /**
+     * Get exchange rate with freshness information.
+     */
+    public function getExchangeRateWithFreshness(string $fromCurrency, string $toCurrency): array
+    {
+        if ($fromCurrency === $toCurrency) {
+            return [
+                'rate' => 1.0,
+                'freshness' => 'fresh',
+                'last_updated' => now()->timestamp,
+                'age_seconds' => 0,
+            ];
+        }
+
+        $rate = $this->getExchangeRate($fromCurrency, $toCurrency);
+        $timestampKey = "exchange_rate_timestamp_{$fromCurrency}_{$toCurrency}";
+        $lastUpdated = Cache::get($timestampKey);
+
+        $freshness = $this->calculateFreshness($lastUpdated);
+        $ageSeconds = $lastUpdated ? (now()->timestamp - $lastUpdated) : null;
+
+        return [
+            'rate' => $rate,
+            'freshness' => $freshness,
+            'last_updated' => $lastUpdated,
+            'age_seconds' => $ageSeconds,
+        ];
+    }
+
+    /**
+     * Calculate freshness level based on timestamp.
+     */
+    public function calculateFreshness(?int $timestamp): string
+    {
+        if (!$timestamp) {
+            return 'unknown';
+        }
+
+        $ageSeconds = now()->timestamp - $timestamp;
+        $freshThreshold = config('currency.freshness.fresh_threshold', 3600 * 4);
+        $staleThreshold = config('currency.freshness.stale_threshold', 3600 * 12);
+        $warningThreshold = config('currency.freshness.warning_threshold', 3600 * 24);
+
+        if ($ageSeconds <= $freshThreshold) {
+            return 'fresh';
+        } elseif ($ageSeconds <= $staleThreshold) {
+            return 'stale';
+        } elseif ($ageSeconds <= $warningThreshold) {
+            return 'warning';
+        }
+
+        return 'unknown';
+    }
+
+    /**
+     * Get freshness label for display.
+     */
+    public function getFreshnessLabel(string $freshness): string
+    {
+        return config("currency.freshness.labels.{$freshness}", ucfirst($freshness));
+    }
+
+    /**
+     * Get freshness color for styling.
+     */
+    public function getFreshnessColor(string $freshness): string
+    {
+        return config("currency.freshness.colors.{$freshness}", 'gray');
+    }
+
+    /**
+     * Check if exchange rate is considered fresh.
+     */
+    public function isRateFresh(string $fromCurrency, string $toCurrency): bool
+    {
+        $rateInfo = $this->getExchangeRateWithFreshness($fromCurrency, $toCurrency);
+        return $rateInfo['freshness'] === 'fresh';
+    }
+
+    /**
+     * Check if exchange rate needs warning indicator.
+     */
+    public function isRateStale(string $fromCurrency, string $toCurrency): bool
+    {
+        $rateInfo = $this->getExchangeRateWithFreshness($fromCurrency, $toCurrency);
+        return in_array($rateInfo['freshness'], ['warning', 'unknown']);
+    }
+
+    /**
+     * Get formatted age string for display.
+     */
+    public function getFormattedAge(?int $ageSeconds): string
+    {
+        if (!$ageSeconds) {
+            return 'Unknown';
+        }
+
+        if ($ageSeconds < 60) {
+            return 'Less than 1 minute ago';
+        } elseif ($ageSeconds < 3600) {
+            $minutes = floor($ageSeconds / 60);
+            return $minutes . ' minute' . ($minutes > 1 ? 's' : '') . ' ago';
+        } elseif ($ageSeconds < 86400) {
+            $hours = floor($ageSeconds / 3600);
+            return $hours . ' hour' . ($hours > 1 ? 's' : '') . ' ago';
+        } else {
+            $days = floor($ageSeconds / 86400);
+            return $days . ' day' . ($days > 1 ? 's' : '') . ' ago';
+        }
+    }
+
+    /**
+     * Force refresh of exchange rate (bypass cache).
+     */
+    public function refreshExchangeRate(string $fromCurrency, string $toCurrency): ?float
+    {
+        if ($fromCurrency === $toCurrency) {
+            return 1.0;
+        }
+
+        // Clear cached rate and timestamp
+        $cacheKey = "exchange_rate_{$fromCurrency}_{$toCurrency}";
+        $timestampKey = "exchange_rate_timestamp_{$fromCurrency}_{$toCurrency}";
+
+        Cache::forget($cacheKey);
+        Cache::forget($timestampKey);
+
+        // Fetch fresh rate
+        return $this->getExchangeRate($fromCurrency, $toCurrency);
     }
 
     /**

@@ -87,8 +87,36 @@ return [
         'enabled' => env('CURRENCY_CONVERSION_ENABLED', true),
         'api_provider' => env('CURRENCY_API_PROVIDER', 'exchangerate'),
         'api_key' => env('CURRENCY_API_KEY', null),
-        'cache_duration' => env('CURRENCY_CACHE_DURATION', 3600), // 1 hour in seconds
+        'cache_duration' => env('CURRENCY_CACHE_DURATION', 3600 * 24), // 1 day in seconds
         'base_currency' => 'MKD', // Base currency for conversions
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Exchange Rate Freshness Indicators
+    |--------------------------------------------------------------------------
+    |
+    | Configuration for showing users how fresh/stale exchange rates are.
+    | This helps users understand the reliability of currency conversions.
+    |
+    */
+    'freshness' => [
+        'show_indicators' => env('CURRENCY_SHOW_FRESHNESS_INDICATORS', true),
+        'fresh_threshold' => env('CURRENCY_FRESH_THRESHOLD', 3600 * 4), // 4 hours in seconds
+        'stale_threshold' => env('CURRENCY_STALE_THRESHOLD', 3600 * 12), // 12 hours in seconds
+        'warning_threshold' => env('CURRENCY_WARNING_THRESHOLD', 3600 * 24), // 24 hours in seconds
+        'labels' => [
+            'fresh' => 'Fresh',
+            'stale' => 'Stale',
+            'warning' => 'Very Stale',
+            'unknown' => 'Unknown',
+        ],
+        'colors' => [
+            'fresh' => 'green',
+            'stale' => 'yellow',
+            'warning' => 'red',
+            'unknown' => 'gray',
+        ],
     ],
 
     /*

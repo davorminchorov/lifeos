@@ -136,7 +136,12 @@
                                         {{ $bill->bill_period_start->format('M d') }} - {{ $bill->bill_period_end->format('M d, Y') }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
-                                        {{ $bill->formatted_bill_amount }}
+                                        {{ $bill->formatted_bill_amount_mkd }}
+                                        @if($bill->currency && $bill->currency !== config('currency.default', 'MKD'))
+                                            <span class="text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] ml-1">
+                                                ({{ $bill->formatted_bill_amount }})
+                                            </span>
+                                        @endif
                                         @if($bill->rate_per_unit)
                                             <div class="text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">
                                                 MKD {{ number_format($bill->rate_per_unit, 4) }}/{{ $bill->usage_unit }}

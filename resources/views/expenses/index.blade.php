@@ -143,7 +143,12 @@
                                         </span>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
-                                        {{ $expense->formatted_amount }}
+                                        {{ $expense->formatted_amount_mkd }}
+                                        @if($expense->currency && $expense->currency !== config('currency.default', 'MKD'))
+                                            <span class="text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] ml-1">
+                                                ({{ $expense->formatted_amount }})
+                                            </span>
+                                        @endif
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                                         {{ ucfirst(str_replace('_', ' ', $expense->payment_method)) }}
