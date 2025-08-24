@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreExpenseRequest;
 use App\Http\Requests\UpdateExpenseRequest;
 use App\Models\Expense;
+use App\Models\Budget;
 use App\Services\CurrencyService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -480,38 +481,84 @@ class ExpenseController extends Controller
     {
         $userId = auth()->id();
 
-        // This would typically integrate with a budgets table, but for now we'll use estimates
-        $currentMonthExpenses = Expense::where('user_id', $userId)
-            ->whereMonth('expense_date', now()->month)
-            ->whereYear('expense_date', now()->year)
+        // Get current active budgets
+        $activeBudgets = Budget::where('user_id', $userId)
+            ->active()
+            ->current()
             ->get();
 
-        $categorySpending = $currentMonthExpenses->groupBy('category')->map(function ($group, $category) {
-            return [
-                'category' => $category,
-                'spent' => $group->sum('amount'),
-                'count' => $group->count(),
-                // These would come from a budgets table in a real implementation
-                'budget' => $this->getEstimatedBudget($category),
-                'remaining' => max(0, $this->getEstimatedBudget($category) - $group->sum('amount')),
-            ];
-        })->map(function ($item) {
-            $item['percentage_used'] = $item['budget'] > 0 ?
-                round(($item['spent'] / $item['budget']) * 100, 2) : 0;
-            $item['status'] = $item['percentage_used'] > 100 ? 'over_budget' :
-                ($item['percentage_used'] > 80 ? 'warning' : 'on_track');
+        // Get expense categories that have budgets
+        $budgetedCategories = $activeBudgets->pluck('category')->unique();
 
-            return $item;
+        // Get current period expenses for budgeted categories
+        $currentPeriodExpenses = Expense::where('user_id', $userId)
+            ->whereIn('category', $budgetedCategories)
+            ->where('expense_date', '>=', now()->startOfMonth())
+            ->where('expense_date', '<=', now()->endOfMonth())
+            ->get();
+
+        // Calculate budget vs spending analysis
+        $categoryAnalysis = $activeBudgets->map(function ($budget) {
+            $spent = $budget->getCurrentSpending();
+            $remaining = $budget->getRemainingAmount();
+            $utilizationPercentage = $budget->getUtilizationPercentage();
+            $status = $budget->getStatus();
+
+            return [
+                'category' => $budget->category,
+                'budget_id' => $budget->id,
+                'budget' => $budget->amount,
+                'spent' => $spent,
+                'remaining' => $remaining,
+                'count' => $budget->user->expenses()
+                    ->where('category', $budget->category)
+                    ->whereBetween('expense_date', [$budget->start_date, $budget->end_date])
+                    ->count(),
+                'percentage_used' => $utilizationPercentage,
+                'status' => $status,
+                'alert_threshold' => $budget->alert_threshold,
+                'days_remaining' => now()->diffInDays($budget->end_date, false),
+                'period' => $budget->budget_period,
+                'currency' => $budget->currency,
+            ];
         });
 
+        // Calculate overall statistics
+        $totalBudgeted = $categoryAnalysis->sum('budget');
+        $totalSpent = $categoryAnalysis->sum('spent');
+        $totalRemaining = $categoryAnalysis->sum('remaining');
+
+        // Get unburdeted spending (expenses without budgets)
+        $allExpenseCategories = Expense::where('user_id', $userId)
+            ->whereMonth('expense_date', now()->month)
+            ->whereYear('expense_date', now()->year)
+            ->distinct()
+            ->pluck('category');
+
+        $unbudgetedCategories = $allExpenseCategories->diff($budgetedCategories);
+
+        $unbudgetedSpending = 0;
+        if ($unbudgetedCategories->isNotEmpty()) {
+            $unbudgetedSpending = Expense::where('user_id', $userId)
+                ->whereIn('category', $unbudgetedCategories)
+                ->whereMonth('expense_date', now()->month)
+                ->whereYear('expense_date', now()->year)
+                ->sum('amount');
+        }
+
         $analytics = [
-            'total_budget' => $categorySpending->sum('budget'),
-            'total_spent' => $categorySpending->sum('spent'),
-            'total_remaining' => $categorySpending->sum('remaining'),
-            'categories_over_budget' => $categorySpending->where('status', 'over_budget')->count(),
-            'categories_warning' => $categorySpending->where('status', 'warning')->count(),
-            'category_breakdown' => $categorySpending->values(),
-            'projected_monthly_total' => $this->calculateProjectedMonthlyTotal($currentMonthExpenses),
+            'total_budget' => $totalBudgeted,
+            'total_spent' => $totalSpent,
+            'total_remaining' => $totalRemaining,
+            'unbudgeted_spending' => $unbudgetedSpending,
+            'overall_utilization' => $totalBudgeted > 0 ? round(($totalSpent / $totalBudgeted) * 100, 2) : 0,
+            'categories_over_budget' => $categoryAnalysis->where('status', 'exceeded')->count(),
+            'categories_warning' => $categoryAnalysis->where('status', 'warning')->count(),
+            'categories_on_track' => $categoryAnalysis->where('status', 'on_track')->count(),
+            'category_breakdown' => $categoryAnalysis->values(),
+            'unbudgeted_categories' => $unbudgetedCategories->values(),
+            'projected_monthly_total' => $this->calculateProjectedMonthlyTotal($currentPeriodExpenses),
+            'budgets_count' => $activeBudgets->count(),
         ];
 
         return response()->json(['data' => $analytics]);
@@ -560,23 +607,6 @@ class ExpenseController extends Controller
         return round($recentExpenses / 4, 1);
     }
 
-    /**
-     * Get estimated budget for category (placeholder - would come from budgets table).
-     */
-    private function getEstimatedBudget($category)
-    {
-        $budgetEstimates = [
-            'Food & Dining' => 800,
-            'Transportation' => 400,
-            'Shopping' => 300,
-            'Entertainment' => 200,
-            'Bills & Utilities' => 600,
-            'Health & Fitness' => 150,
-            'Travel' => 500,
-        ];
-
-        return $budgetEstimates[$category] ?? 250;
-    }
 
     /**
      * Calculate projected monthly total based on current spending.

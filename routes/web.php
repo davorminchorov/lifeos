@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\BudgetController;
 use App\Http\Controllers\ContractController;
 use App\Http\Controllers\CurrencyController;
 use App\Http\Controllers\DashboardController;
@@ -85,6 +86,11 @@ Route::middleware('auth')->group(function () {
     Route::patch('expenses/{expense}/mark-reimbursed', [ExpenseController::class, 'markReimbursed'])->name('expenses.mark-reimbursed');
     Route::post('expenses/{expense}/duplicate', [ExpenseController::class, 'duplicate'])->name('expenses.duplicate');
     Route::post('expenses/bulk-action', [ExpenseController::class, 'bulkAction'])->name('expenses.bulk-action');
+
+    // Budget Analytics routes must come before resource routes to prevent conflicts
+    Route::get('budgets/analytics', [BudgetController::class, 'analytics'])->name('budgets.analytics');
+
+    Route::resource('budgets', BudgetController::class);
 
     // Utility Bills Analytics routes must come before resource routes to prevent conflicts
     Route::get('utility-bills/analytics/summary', [UtilityBillController::class, 'analyticsSummary'])->name('utility-bills.analytics-summary');
