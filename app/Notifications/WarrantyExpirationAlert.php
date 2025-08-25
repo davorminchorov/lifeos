@@ -40,6 +40,7 @@ class WarrantyExpirationAlert extends Notification implements ShouldQueue
 
         return (new MailMessage)
             ->subject($subject)
+            ->replyTo(config('mail.from.address'), config('mail.from.name'))
             ->view('emails.notifications.warranty-expiration-alert', [
                 'user' => $notifiable,
                 'warranty' => $this->warranty,

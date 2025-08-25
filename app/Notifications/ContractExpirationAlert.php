@@ -47,6 +47,7 @@ class ContractExpirationAlert extends Notification implements ShouldQueue
 
         return (new MailMessage)
             ->subject($subject)
+            ->replyTo(config('mail.from.address'), config('mail.from.name'))
             ->view('emails.notifications.contract-expiration-alert', [
                 'user' => $notifiable,
                 'contract' => $this->contract,

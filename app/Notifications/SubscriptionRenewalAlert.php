@@ -40,6 +40,7 @@ class SubscriptionRenewalAlert extends Notification implements ShouldQueue
 
         return (new MailMessage)
             ->subject($subject)
+            ->replyTo(config('mail.from.address'), config('mail.from.name'))
             ->view('emails.notifications.subscription-renewal-alert', [
                 'user' => $notifiable,
                 'subscription' => $this->subscription,
