@@ -11,13 +11,25 @@
         @endif
     </div>
 
+    @php
+        $currencyService = app(\App\Services\CurrencyService::class);
+        $billCurrency = $bill->currency ?? config('currency.default', 'MKD');
+        $billAmountDefault = $currencyService->convertToDefault($bill->bill_amount, $billCurrency);
+        $billAmountMkd = $currencyService->format($billAmountDefault);
+        $budgetThresholdMkd = null;
+        if (!is_null($bill->budget_alert_threshold)) {
+            $thresholdDefault = $currencyService->convertToDefault($bill->budget_alert_threshold, $billCurrency);
+            $budgetThresholdMkd = $currencyService->format($thresholdDefault);
+        }
+    @endphp
+
     @if($bill->is_over_budget ?? false)
         <div class="highlight" style="border-left-color: #F59E0B; background-color: #FFFBEB;">
-            <strong>⚠️ Budget Alert:</strong> This bill of <strong>${{ number_format($bill->bill_amount, 2) }}</strong> exceeds your budget threshold of ${{ number_format($bill->budget_alert_threshold ?? 0, 2) }}.
+            <strong>⚠️ Budget Alert:</strong> This bill of <strong>{{ $billAmountMkd }}</strong> exceeds your budget threshold of {{ $budgetThresholdMkd }}.
         </div>
     @else
         <div class="highlight">
-            <strong>{{ $bill->utility_type }}</strong> bill of <strong>${{ number_format($bill->bill_amount, 2) }}</strong>
+            <strong>{{ $bill->utility_type }}</strong> bill of <strong>{{ $billAmountMkd }}</strong>
             @if($daysTillDue === 0)
                 is due today
             @else
@@ -29,7 +41,7 @@
     @php
         $details = [
             'Utility Type' => $bill->utility_type,
-            'Bill Amount' => '$' . number_format($bill->bill_amount, 2),
+            'Bill Amount' => $billAmountMkd,
             'Due Date' => $bill->due_date->format('F j, Y'),
             'Billing Period' => $bill->bill_period_start->format('M j') . ' - ' . $bill->bill_period_end->format('M j, Y'),
         ];
