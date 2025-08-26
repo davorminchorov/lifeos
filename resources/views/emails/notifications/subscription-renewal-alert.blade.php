@@ -21,9 +21,14 @@
     </div>
 
     @php
+        $currencyService = app(\App\Services\CurrencyService::class);
+        $subscriptionCurrency = $subscription->currency ?? config('currency.default', 'MKD');
+        $costInDefault = $currencyService->convertToDefault($subscription->cost, $subscriptionCurrency);
+        $formattedCost = $currencyService->format($costInDefault);
+
         $details = [
             'Service' => $subscription->service_name,
-            'Cost' => $subscription->currency . ' ' . number_format($subscription->cost, 2),
+            'Cost' => $formattedCost,
             'Next Billing Date' => $subscription->next_billing_date->format('F j, Y'),
         ];
 

@@ -51,7 +51,10 @@
         $details['End Date'] = $contract->end_date->format('F j, Y');
 
         if ($contract->contract_value) {
-            $details['Contract Value'] = '$' . number_format($contract->contract_value, 2);
+            $currencyService = app(\App\Services\CurrencyService::class);
+            $contractCurrency = $contract->currency ?? config('currency.default', 'MKD');
+            $valueInDefault = $currencyService->convertToDefault($contract->contract_value, $contractCurrency);
+            $details['Contract Value'] = $currencyService->format($valueInDefault);
         }
 
         if ($isNoticeAlert && $contract->notice_period_days) {
