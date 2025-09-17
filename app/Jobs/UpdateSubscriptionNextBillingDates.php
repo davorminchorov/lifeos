@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Models\Expense;
 use App\Models\Subscription;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
@@ -54,6 +55,11 @@ class UpdateSubscriptionNextBillingDates implements ShouldQueue
                         continue;
                     }
 
+                    // If the subscription is due today and auto-renewal is enabled, create an expense once
+                    if ($subscription->auto_renewal && $originalDate->isSameDay($today)) {
+                        $this->createAutopayExpenseForSubscription($subscription, $originalDate);
+                    }
+
                     $next = $originalDate->copy();
 
                     // If it's due or overdue, keep advancing until it's in the future
@@ -89,5 +95,47 @@ class UpdateSubscriptionNextBillingDates implements ShouldQueue
             'custom' => max(0, (int) ($subscription->billing_cycle_days ?? 0)),
             default => max(0, (int) ($subscription->billing_cycle_days ?? 0)), // fallback to custom days if provided
         };
+    }
+
+    private function createAutopayExpenseForSubscription(Subscription $subscription, Carbon $billingDate): void
+    {
+        try {
+            $defaults = [
+                'user_id' => $subscription->user_id,
+                'expense_date' => $billingDate->toDateString(),
+                'amount' => $subscription->cost,
+                'currency' => $subscription->currency ?? config('currency.default', 'MKD'),
+                'category' => $subscription->category ?: 'Subscriptions',
+                'subcategory' => null,
+                'description' => 'Auto-pay for subscription: '.$subscription->service_name,
+                'merchant' => $subscription->merchant_info ?: $subscription->service_name,
+                'payment_method' => $subscription->payment_method,
+                'tags' => ['autopay', 'subscription'],
+                'location' => null,
+                'is_tax_deductible' => false,
+                'expense_type' => 'personal',
+                'is_recurring' => true,
+                'recurring_schedule' => $subscription->billing_cycle,
+                'budget_allocated' => null,
+                'notes' => null,
+                'status' => 'paid',
+            ];
+
+            // Idempotency: do not create duplicates for same user+date+amount+merchant+description
+            Expense::firstOrCreate(
+                [
+                    'user_id' => $subscription->user_id,
+                    'expense_date' => $billingDate->toDateString(),
+                    'amount' => $subscription->cost,
+                    'merchant' => $subscription->merchant_info ?: $subscription->service_name,
+                    'description' => 'Auto-pay for subscription: '.$subscription->service_name,
+                ],
+                $defaults
+            );
+
+            Log::info("Created auto-pay expense for subscription {$subscription->id} on {$billingDate->toDateString()}");
+        } catch (\Throwable $e) {
+            Log::error("Failed creating auto-pay expense for subscription {$subscription->id}: {$e->getMessage()}");
+        }
     }
 }
