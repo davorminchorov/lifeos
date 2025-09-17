@@ -59,3 +59,16 @@ Schedule::command('utility-bills:check-due')
     ->name('utility-bill-due-direct')
     ->description('Check and send utility bill payment due notifications (direct execution)')
     ->when(config('app.debug', false)); // Only in debug mode
+
+// Schedule updating of subscription next billing dates shortly after midnight
+Schedule::command('subscriptions:update-next-billing --dispatch-job')
+    ->dailyAt('00:10')
+    ->name('subscription-update-next-billing')
+    ->description('Advance subscription next_billing_date for due or overdue subscriptions');
+
+// Alternative direct execution in debug
+Schedule::command('subscriptions:update-next-billing')
+    ->dailyAt('00:15')
+    ->name('subscription-update-next-billing-direct')
+    ->description('Advance subscription next_billing_date (direct execution)')
+    ->when(config('app.debug', false)); // Only in debug mode
