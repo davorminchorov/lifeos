@@ -2,8 +2,8 @@
 
 namespace App\Jobs;
 
+use App\Events\ContractNotificationDue;
 use App\Models\Contract;
-use App\Notifications\ContractExpirationAlert;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -29,16 +29,16 @@ class SendContractExpirationNotifications implements ShouldQueue
         Log::info('Starting contract expiration notification job');
 
         foreach ($this->notificationDays as $days) {
-            $this->sendNotificationsForDay($days);
+            $this->dispatchEventsForDay($days);
         }
 
         Log::info('Completed contract expiration notification job');
     }
 
     /**
-     * Send notifications for contracts expiring in specific days.
+     * Dispatch events for contracts expiring in specific days.
      */
-    private function sendNotificationsForDay(int $days): void
+    private function dispatchEventsForDay(int $days): void
     {
         $targetDate = now()->addDays($days)->toDateString();
 
@@ -70,26 +70,12 @@ class SendContractExpirationNotifications implements ShouldQueue
 
         foreach ($contracts as $contract) {
             try {
-                // Check if user has any enabled channels for this notification type
-                $enabledChannels = $contract->user->getEnabledNotificationChannels('contract_expiration');
+                $isNoticeAlert = (bool) ($contract->notice_period_days &&
+                    $contract->end_date->subDays($contract->notice_period_days)->toDateString() === $targetDate);
 
-                if (empty($enabledChannels)) {
-                    Log::info("Skipping notification for contract {$contract->id} - user has disabled all channels");
-                    continue;
-                }
-
-                // Determine notification type
-                $isNoticeAlert = $contract->notice_period_days &&
-                    $contract->end_date->subDays($contract->notice_period_days)->toDateString() === $targetDate;
-
-                $contract->user->notify(
-                    new ContractExpirationAlert($contract, $days, $isNoticeAlert)
-                );
-
-                $alertType = $isNoticeAlert ? 'notice period' : 'expiration';
-                Log::info("Sent {$alertType} notification for contract {$contract->id} ({$contract->title}) to user {$contract->user->email} via channels: ".implode(', ', $enabledChannels));
+                event(new ContractNotificationDue($contract, $days, $isNoticeAlert));
             } catch (\Exception $e) {
-                Log::error("Failed to send notification for contract {$contract->id}: {$e->getMessage()}");
+                Log::error("Failed to dispatch ContractNotificationDue for contract {$contract->id}: {$e->getMessage()}");
             }
         }
     }

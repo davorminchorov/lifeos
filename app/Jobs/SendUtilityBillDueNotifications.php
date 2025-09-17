@@ -2,8 +2,8 @@
 
 namespace App\Jobs;
 
+use App\Events\UtilityBillDueSoon;
 use App\Models\UtilityBill;
-use App\Notifications\UtilityBillDueAlert;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -29,16 +29,16 @@ class SendUtilityBillDueNotifications implements ShouldQueue
         Log::info('Starting utility bill due notification job');
 
         foreach ($this->notificationDays as $days) {
-            $this->sendNotificationsForDay($days);
+            $this->dispatchEventsForDay($days);
         }
 
         Log::info('Completed utility bill due notification job');
     }
 
     /**
-     * Send notifications for utility bills due in specific days.
+     * Dispatch events for utility bills due in specific days.
      */
-    private function sendNotificationsForDay(int $days): void
+    private function dispatchEventsForDay(int $days): void
     {
         $targetDate = now()->addDays($days)->toDateString();
 
@@ -51,21 +51,9 @@ class SendUtilityBillDueNotifications implements ShouldQueue
 
         foreach ($utilityBills as $bill) {
             try {
-                // Check if user has any enabled channels for this notification type
-                $enabledChannels = $bill->user->getEnabledNotificationChannels('utility_bill_due');
-
-                if (empty($enabledChannels)) {
-                    Log::info("Skipping notification for utility bill {$bill->id} - user has disabled all channels");
-                    continue;
-                }
-
-                $bill->user->notify(
-                    new UtilityBillDueAlert($bill, $days)
-                );
-
-                Log::info("Sent payment reminder for utility bill {$bill->id} ({$bill->utility_type} - {$bill->service_provider}) to user {$bill->user->email} via channels: ".implode(', ', $enabledChannels));
+                event(new UtilityBillDueSoon($bill, $days));
             } catch (\Exception $e) {
-                Log::error("Failed to send payment reminder for utility bill {$bill->id}: {$e->getMessage()}");
+                Log::error("Failed to dispatch UtilityBillDueSoon for utility bill {$bill->id}: {$e->getMessage()}");
             }
         }
     }

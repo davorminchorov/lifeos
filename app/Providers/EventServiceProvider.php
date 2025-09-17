@@ -18,5 +18,18 @@ class EventServiceProvider extends ServiceProvider
         \App\Events\BudgetThresholdCrossed::class => [
             \App\Listeners\SendBudgetThresholdNotification::class,
         ],
+        // Inter-module events for due/expiring entities
+        \App\Events\SubscriptionRenewalDue::class => [
+            \App\Listeners\SendSubscriptionRenewalNotification::class,
+        ],
+        \App\Events\ContractNotificationDue::class => [
+            \App\Listeners\SendContractExpirationNotification::class,
+        ],
+        \App\Events\UtilityBillDueSoon::class => [
+            \App\Listeners\SendUtilityBillDueNotification::class,
+        ],
+        \App\Events\WarrantyExpirationDue::class => [
+            \App\Listeners\SendWarrantyExpirationNotification::class,
+        ],
     ];
 }

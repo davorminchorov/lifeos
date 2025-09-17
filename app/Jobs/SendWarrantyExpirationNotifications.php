@@ -2,8 +2,8 @@
 
 namespace App\Jobs;
 
+use App\Events\WarrantyExpirationDue;
 use App\Models\Warranty;
-use App\Notifications\WarrantyExpirationAlert;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -29,16 +29,16 @@ class SendWarrantyExpirationNotifications implements ShouldQueue
         Log::info('Starting warranty expiration notification job');
 
         foreach ($this->notificationDays as $days) {
-            $this->sendNotificationsForDay($days);
+            $this->dispatchEventsForDay($days);
         }
 
         Log::info('Completed warranty expiration notification job');
     }
 
     /**
-     * Send notifications for warranties expiring in specific days.
+     * Dispatch events for warranties expiring in specific days.
      */
-    private function sendNotificationsForDay(int $days): void
+    private function dispatchEventsForDay(int $days): void
     {
         $targetDate = now()->addDays($days)->toDateString();
 
@@ -51,21 +51,9 @@ class SendWarrantyExpirationNotifications implements ShouldQueue
 
         foreach ($warranties as $warranty) {
             try {
-                // Check if user has any enabled channels for this notification type
-                $enabledChannels = $warranty->user->getEnabledNotificationChannels('warranty_expiration');
-
-                if (empty($enabledChannels)) {
-                    Log::info("Skipping notification for warranty {$warranty->id} - user has disabled all channels");
-                    continue;
-                }
-
-                $warranty->user->notify(
-                    new WarrantyExpirationAlert($warranty, $days)
-                );
-
-                Log::info("Sent expiration notification for warranty {$warranty->id} ({$warranty->product_name}) to user {$warranty->user->email} via channels: ".implode(', ', $enabledChannels));
+                event(new WarrantyExpirationDue($warranty, $days));
             } catch (\Exception $e) {
-                Log::error("Failed to send expiration notification for warranty {$warranty->id}: {$e->getMessage()}");
+                Log::error("Failed to dispatch WarrantyExpirationDue for warranty {$warranty->id}: {$e->getMessage()}");
             }
         }
     }
