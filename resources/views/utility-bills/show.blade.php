@@ -12,6 +12,16 @@
                 <p class="text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] mt-2">{{ $utilityBill->service_provider }}</p>
             </div>
             <div class="flex space-x-3">
+                <form method="POST" action="{{ route('utility-bills.duplicate', $utilityBill) }}">
+                    @csrf
+                    <button type="submit"
+                            class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[color:var(--color-success-600)] hover:bg-[color:var(--color-success-700)]">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h8m-8 4h8m-8 4h5"></path>
+                        </svg>
+                        Duplicate
+                    </button>
+                </form>
                 <a href="{{ route('utility-bills.edit', $utilityBill) }}"
                    class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[color:var(--color-accent-600)] hover:bg-[color:var(--color-accent-700)]">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

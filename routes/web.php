@@ -100,6 +100,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('utility-bills', UtilityBillController::class);
     Route::patch('utility-bills/{utility_bill}/mark-paid', [UtilityBillController::class, 'markPaid'])->name('utility-bills.mark-paid');
     Route::patch('utility-bills/{utility_bill}/set-auto-pay', [UtilityBillController::class, 'setAutoPay'])->name('utility-bills.set-auto-pay');
+    Route::post('utility-bills/{utility_bill}/duplicate', [UtilityBillController::class, 'duplicate'])->name('utility-bills.duplicate');
 
     // Notification Routes
     Route::prefix('notifications')->name('notifications.')->group(function () {
