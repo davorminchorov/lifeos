@@ -307,4 +307,45 @@ class UtilityBillControllerTest extends TestCase
             'auto_pay_enabled' => true,
         ]);
     }
+
+    public function test_can_duplicate_utility_bill(): void
+    {
+        $bill = UtilityBill::factory()->create([
+            'user_id' => $this->user->id,
+            'bill_period_start' => now()->startOfMonth()->subMonth(),
+            'bill_period_end' => now()->startOfMonth()->subDay(),
+            'due_date' => now()->startOfMonth()->addDays(14),
+            'bill_amount' => 123.45,
+            'usage_amount' => 67.89,
+            'payment_status' => 'paid',
+            'payment_date' => now()->subDay(),
+        ]);
+
+        $response = $this->actingAs($this->user)->post(route('utility-bills.duplicate', $bill));
+
+        $response->assertRedirect();
+        $this->assertDatabaseCount('utility_bills', 2);
+
+        $newBill = UtilityBill::latest('id')->first();
+        $this->assertNotEquals($bill->id, $newBill->id);
+        $this->assertEquals($this->user->id, $newBill->user_id);
+        $this->assertNull($newBill->bill_amount);
+        $this->assertNull($newBill->usage_amount);
+        $this->assertEquals('pending', $newBill->payment_status);
+        $this->assertNull($newBill->payment_date);
+
+        $this->assertTrue($newBill->bill_period_start->eq($bill->bill_period_end->copy()->addDay()));
+        $this->assertTrue($newBill->bill_period_end->eq($newBill->bill_period_start->copy()->addMonth()->subDay()));
+        $this->assertTrue($newBill->due_date->eq($newBill->bill_period_end->copy()->addWeeks(2)));
+    }
+
+    public function test_cannot_duplicate_other_users_bill(): void
+    {
+        $otherUser = User::factory()->create();
+        $bill = UtilityBill::factory()->create(['user_id' => $otherUser->id]);
+
+        $response = $this->actingAs($this->user)->post(route('utility-bills.duplicate', $bill));
+
+        $response->assertStatus(403);
+    }
 }

@@ -300,14 +300,22 @@ class UtilityBillController extends Controller
      */
     public function duplicate(UtilityBill $utilityBill)
     {
+        // Authorization: only the owner can duplicate
+        if ($utilityBill->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized');
+        }
+
         $newBill = $utilityBill->replicate();
 
-        // Update dates for next billing period
-        $newBill->bill_period_start = $utilityBill->bill_period_end->addDay();
-        $newBill->bill_period_end = $newBill->bill_period_start->copy()->addMonth()->subDay();
-        $newBill->due_date = $newBill->bill_period_end->copy()->addWeeks(2);
+        // Update dates for next billing period (defensive if any date is null)
+        $start = $utilityBill->bill_period_end ? $utilityBill->bill_period_end->copy()->addDay() : now()->startOfMonth();
+        $end = $start->copy()->addMonth()->subDay();
 
-        // Reset payment status
+        $newBill->bill_period_start = $start;
+        $newBill->bill_period_end = $end;
+        $newBill->due_date = $end->copy()->addWeeks(2);
+
+        // Reset payment-related and variable fields
         $newBill->payment_status = 'pending';
         $newBill->payment_date = null;
         $newBill->bill_amount = null; // Will need to be updated
