@@ -2,8 +2,8 @@
 
 namespace App\Jobs;
 
+use App\Events\SubscriptionRenewalDue;
 use App\Models\Subscription;
-use App\Notifications\SubscriptionRenewalAlert;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -29,16 +29,16 @@ class SendSubscriptionRenewalNotifications implements ShouldQueue
         Log::info('Starting subscription renewal notification job');
 
         foreach ($this->notificationDays as $days) {
-            $this->sendNotificationsForDay($days);
+            $this->dispatchEventsForDay($days);
         }
 
         Log::info('Completed subscription renewal notification job');
     }
 
     /**
-     * Send notifications for subscriptions due in specific days.
+     * Dispatch events for subscriptions due in specific days.
      */
-    private function sendNotificationsForDay(int $days): void
+    private function dispatchEventsForDay(int $days): void
     {
         $targetDate = now()->addDays($days)->toDateString();
 
@@ -51,22 +51,9 @@ class SendSubscriptionRenewalNotifications implements ShouldQueue
 
         foreach ($subscriptions as $subscription) {
             try {
-                // Check if user has any enabled channels for this notification type
-                $enabledChannels = $subscription->user->getEnabledNotificationChannels('subscription_renewal');
-
-                if (empty($enabledChannels)) {
-                    Log::info("Skipping notification for subscription {$subscription->id} - user has disabled all channels");
-
-                    continue;
-                }
-
-                $subscription->user->notify(
-                    new SubscriptionRenewalAlert($subscription, $days)
-                );
-
-                Log::info("Sent renewal notification for subscription {$subscription->id} ({$subscription->service_name}) to user {$subscription->user->email} via channels: ".implode(', ', $enabledChannels));
+                event(new SubscriptionRenewalDue($subscription, $days));
             } catch (\Exception $e) {
-                Log::error("Failed to send renewal notification for subscription {$subscription->id}: {$e->getMessage()}");
+                Log::error("Failed to dispatch SubscriptionRenewalDue for subscription {$subscription->id}: {$e->getMessage()}");
             }
         }
     }

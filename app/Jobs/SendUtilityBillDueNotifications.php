@@ -2,9 +2,8 @@
 
 namespace App\Jobs;
 
-use App\Models\Expense;
+use App\Events\UtilityBillDueSoon;
 use App\Models\UtilityBill;
-use App\Notifications\UtilityBillDueAlert;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -30,16 +29,16 @@ class SendUtilityBillDueNotifications implements ShouldQueue
         Log::info('Starting utility bill due notification job');
 
         foreach ($this->notificationDays as $days) {
-            $this->sendNotificationsForDay($days);
+            $this->dispatchEventsForDay($days);
         }
 
         Log::info('Completed utility bill due notification job');
     }
 
     /**
-     * Send notifications for utility bills due in specific days.
+     * Dispatch events for utility bills due in specific days.
      */
-    private function sendNotificationsForDay(int $days): void
+    private function dispatchEventsForDay(int $days): void
     {
         $targetDate = now()->addDays($days)->toDateString();
 
@@ -52,69 +51,10 @@ class SendUtilityBillDueNotifications implements ShouldQueue
 
         foreach ($utilityBills as $bill) {
             try {
-                // Check if user has any enabled channels for this notification type
-                $enabledChannels = $bill->user->getEnabledNotificationChannels('utility_bill_due');
-
-                if (empty($enabledChannels)) {
-                    Log::info("Skipping notification for utility bill {$bill->id} - user has disabled all channels");
-
-                    continue;
-                }
-
-                $bill->user->notify(
-                    new UtilityBillDueAlert($bill, $days)
-                );
-
-                Log::info("Sent payment reminder for utility bill {$bill->id} ({$bill->utility_type} - {$bill->service_provider}) to user {$bill->user->email} via channels: ".implode(', ', $enabledChannels));
-
-                // If due today and auto-pay is enabled, create an expense (idempotent)
-                if ($days === 0 && $bill->auto_pay_enabled) {
-                    $this->createAutopayExpenseForUtility($bill);
-                }
+                event(new UtilityBillDueSoon($bill, $days));
             } catch (\Exception $e) {
-                Log::error("Failed to send payment reminder for utility bill {$bill->id}: {$e->getMessage()}");
+                Log::error("Failed to dispatch UtilityBillDueSoon for utility bill {$bill->id}: {$e->getMessage()}");
             }
-        }
-    }
-
-    private function createAutopayExpenseForUtility(UtilityBill $bill): void
-    {
-        try {
-            $defaults = [
-                'user_id' => $bill->user_id,
-                'expense_date' => $bill->due_date?->toDateString() ?? now()->toDateString(),
-                'amount' => $bill->bill_amount,
-                'currency' => $bill->currency ?? config('currency.default', 'MKD'),
-                'category' => 'Utilities',
-                'subcategory' => $bill->utility_type,
-                'description' => 'Auto-pay for utility bill: '.$bill->utility_type,
-                'merchant' => $bill->service_provider,
-                'payment_method' => null,
-                'tags' => ['autopay', 'utility'],
-                'location' => null,
-                'is_tax_deductible' => false,
-                'expense_type' => 'personal',
-                'is_recurring' => false,
-                'recurring_schedule' => null,
-                'budget_allocated' => null,
-                'notes' => null,
-                'status' => 'paid',
-            ];
-
-            Expense::firstOrCreate(
-                [
-                    'user_id' => $bill->user_id,
-                    'expense_date' => $defaults['expense_date'],
-                    'amount' => $bill->bill_amount,
-                    'merchant' => $bill->service_provider,
-                    'description' => $defaults['description'],
-                ],
-                $defaults
-            );
-
-            Log::info("Created auto-pay expense for utility bill {$bill->id} on {$defaults['expense_date']}");
-        } catch (\Throwable $e) {
-            Log::error("Failed creating auto-pay expense for utility bill {$bill->id}: {$e->getMessage()}");
         }
     }
 
