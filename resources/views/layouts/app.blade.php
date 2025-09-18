@@ -151,7 +151,7 @@
         @endif
 
         <!-- Page Content -->
-        <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <main class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
             <!-- Success/Error Messages -->
             @if(session('success'))
                 <div class="mb-4 bg-[color:var(--color-success-50)] border border-[color:var(--color-success-500)] text-[color:var(--color-success-600)] px-4 py-3 rounded-lg relative" role="alert">

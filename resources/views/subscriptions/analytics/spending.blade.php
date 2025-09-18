@@ -66,7 +66,7 @@
             </div>
             <div class="border-t border-gray-200 dark:border-gray-700">
                 @if($analytics['monthly_breakdown']->count() > 0)
-                    <div class="overflow-hidden">
+                    <div class="overflow-x-auto">
                         <table class="min-w-full divide-y divide-[color:var(--color-primary-300)] dark:divide-[color:var(--color-dark-300)]">
                             <thead class="bg-[color:var(--color-primary-200)] dark:bg-[color:var(--color-dark-300)]">
                                 <tr>
