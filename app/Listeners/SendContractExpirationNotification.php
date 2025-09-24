@@ -4,6 +4,7 @@ namespace App\Listeners;
 
 use App\Events\ContractNotificationDue;
 use App\Notifications\ContractExpirationAlert;
+use App\Support\NotificationDeduplicator;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Log;
 
@@ -21,6 +22,14 @@ class SendContractExpirationNotification implements ShouldQueue
 
             if (empty($enabledChannels)) {
                 Log::info("Skipping notification for contract {$contract->id} - user has disabled all channels");
+
+                return;
+            }
+
+            // Prevent duplicate sends within the same day
+            $variant = ($isNoticeAlert ? 'notice' : 'expire').':D'.$days;
+            if (! NotificationDeduplicator::acquire('contract_expiration', $user->id, 'contract', $contract->id, $variant)) {
+                Log::info("Skipping duplicate contract notification for contract {$contract->id} ({$variant})");
 
                 return;
             }
