@@ -4,6 +4,7 @@ namespace App\Listeners;
 
 use App\Events\UtilityBillDueSoon;
 use App\Notifications\UtilityBillDueAlert;
+use App\Support\NotificationDeduplicator;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Log;
 
@@ -20,6 +21,13 @@ class SendUtilityBillDueNotification implements ShouldQueue
 
             if (empty($enabledChannels)) {
                 Log::info("Skipping notification for utility bill {$bill->id} - user has disabled all channels");
+
+                return;
+            }
+
+            // Prevent duplicate sends within the same day
+            if (! NotificationDeduplicator::acquire('utility_bill_due', $user->id, 'utility_bill', $bill->id, 'D'.$days)) {
+                Log::info("Skipping duplicate utility bill notification for bill {$bill->id} (days {$days})");
 
                 return;
             }

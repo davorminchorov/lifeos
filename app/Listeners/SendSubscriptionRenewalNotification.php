@@ -4,6 +4,7 @@ namespace App\Listeners;
 
 use App\Events\SubscriptionRenewalDue;
 use App\Notifications\SubscriptionRenewalAlert;
+use App\Support\NotificationDeduplicator;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Log;
 
@@ -20,6 +21,13 @@ class SendSubscriptionRenewalNotification implements ShouldQueue
 
             if (empty($enabledChannels)) {
                 Log::info("Skipping notification for subscription {$subscription->id} - user has disabled all channels");
+
+                return;
+            }
+
+            // Prevent duplicate sends across jobs/listeners within the same day
+            if (! NotificationDeduplicator::acquire('subscription_renewal', $user->id, 'subscription', $subscription->id, 'D'.$days)) {
+                Log::info("Skipping duplicate subscription renewal notification for subscription {$subscription->id} (days {$days})");
 
                 return;
             }
