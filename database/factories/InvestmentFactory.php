@@ -98,16 +98,19 @@ class InvestmentFactory extends Factory
         ];
 
         if ($investmentType === 'project') {
+            $projectStartDate = $this->faker->optional()->dateTimeBetween('-3 years', 'now');
             $data = array_merge($data, [
-                'project_type' => $this->faker->randomElement(['SaaS','Marketplace','Mobile App','Open Source']),
+                'project_type' => $this->faker->randomElement(['SaaS', 'Marketplace', 'Mobile App', 'Open Source']),
                 'project_website' => $this->faker->optional()->url(),
                 'project_repository' => $this->faker->optional()->url(),
-                'project_stage' => $this->faker->randomElement(['idea','prototype','mvp','growth','mature']),
-                'project_business_model' => $this->faker->randomElement(['subscription','ads','one-time','freemium']),
+                'project_stage' => $this->faker->randomElement(['idea', 'prototype', 'mvp', 'growth', 'mature']),
+                'project_business_model' => $this->faker->randomElement(['subscription', 'ads', 'one-time', 'freemium']),
                 'equity_percentage' => $this->faker->optional()->randomFloat(2, 1, 50),
-                'project_start_date' => $this->faker->optional()->dateTimeBetween('-3 years', 'now'),
-                'project_end_date' => $this->faker->optional()->dateTimeBetween('now', '+3 years'),
+                'project_start_date' => $projectStartDate,
+                'project_end_date' => $projectStartDate ? $this->faker->optional()->dateTimeBetween($projectStartDate, '+3 years') : null,
                 'project_notes' => $this->faker->optional()->paragraph(),
+                'project_amount' => $this->faker->optional()->randomFloat(2, 100, 100000),
+                'project_currency' => $this->faker->optional()->randomElement(['USD', 'EUR', 'MKD']),
             ]);
         }
 

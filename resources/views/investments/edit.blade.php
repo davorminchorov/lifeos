@@ -260,6 +260,11 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:col-span-2">
+                    <x-form.input name="project_amount" label="Project Amount" type="number" step="0.01" min="0" prefix="$" placeholder="0.00" value="{{ old('project_amount', $investment->project_amount) }}" />
+                    <x-form.input name="project_currency" label="Project Currency" type="text" placeholder="USD" value="{{ old('project_currency', $investment->project_currency) }}" />
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:col-span-2">
                     <x-form.input name="project_start_date" label="Project Start Date" type="date" value="{{ old('project_start_date', optional($investment->project_start_date)->format('Y-m-d')) }}" />
                     <x-form.input name="project_end_date" label="Project End Date" type="date" value="{{ old('project_end_date', optional($investment->project_end_date)->format('Y-m-d')) }}" />
                 </div>

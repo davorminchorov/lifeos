@@ -51,6 +51,8 @@ class UpdateInvestmentRequest extends FormRequest
             'project_start_date' => 'nullable|date',
             'project_end_date' => 'nullable|date|after_or_equal:project_start_date',
             'project_notes' => 'nullable|string',
+            'project_amount' => 'nullable|numeric|min:0|max:999999999',
+            'project_currency' => 'nullable|string|size:3|alpha',
         ];
     }
 
