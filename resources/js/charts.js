@@ -6,13 +6,15 @@
 export class DashboardCharts {
     constructor() {
         this.charts = {};
+        const css = getComputedStyle(document.documentElement);
+        const getVar = (name, fallback) => css.getPropertyValue(name)?.trim() || fallback;
         this.defaultColors = {
-            primary: '#3B82F6',
-            secondary: '#10B981',
-            accent: '#8B5CF6',
-            warning: '#F59E0B',
-            danger: '#EF4444',
-            info: '#06B6D4'
+            primary: getVar('--color-accent-500', '#F53003'),
+            secondary: getVar('--color-success-500', '#22C55E'),
+            accent: getVar('--color-info-500', '#3B82F6'),
+            warning: getVar('--color-warning-500', '#F59E0B'),
+            danger: getVar('--color-danger-500', '#EF4444'),
+            info: getVar('--color-primary-600', '#706F6C')
         };
     }
 
@@ -248,7 +250,7 @@ export class DashboardCharts {
                 scale: 2,
                 useCORS: true,
                 allowTaint: true,
-                backgroundColor: '#ffffff'
+                backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--color-primary-50')?.trim() || '#FDFDFC'
             });
 
             // Create PDF
@@ -489,8 +491,8 @@ document.addEventListener('alpine:init', () => {
             const notification = document.createElement('div');
             notification.className = `fixed top-4 right-4 p-4 rounded-md shadow-lg z-50 transition-opacity duration-300 ${
                 type === 'success'
-                    ? 'bg-green-100 text-green-800 border border-green-200'
-                    : 'bg-red-100 text-red-800 border border-red-200'
+                    ? 'bg-success-50 text-success-600 border border-success-400'
+                    : 'bg-danger-50 text-danger-600 border border-danger-400'
             }`;
             notification.textContent = message;
 

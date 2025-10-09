@@ -5,18 +5,18 @@
 @section('header')
     <div class="flex justify-between items-center">
         <div>
-            <h1 class="text-3xl font-bold text-gray-900 dark:text-white">
+            <h1 class="text-3xl font-bold text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                 Edit Budget
             </h1>
-            <p class="mt-2 text-gray-600 dark:text-gray-400">
+            <p class="mt-2 text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)]">
                 Update spending limits for {{ $budget->category }}
             </p>
         </div>
         <div class="flex gap-3">
-            <a href="{{ route('budgets.show', $budget) }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium">
+            <a href="{{ route('budgets.show', $budget) }}" class="bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200">
                 View Details
             </a>
-            <a href="{{ route('budgets.index') }}" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-md text-sm font-medium">
+            <a href="{{ route('budgets.index') }}" class="px-4 py-2 rounded-md text-sm font-medium border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] bg-[color:var(--color-primary-200)] hover:bg-[color:var(--color-primary-300)] text-[color:var(--color-primary-700)] dark:bg-[color:var(--color-dark-200)] dark:hover:bg-[color:var(--color-dark-300)] dark:text-[color:var(--color-dark-600)] transition-colors duration-200">
                 Back to Budgets
             </a>
         </div>
@@ -29,7 +29,7 @@
             @csrf
             @method('PATCH')
 
-            <div class="bg-white dark:bg-gray-800 shadow rounded-lg">
+            <div class="bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] shadow-sm rounded-lg">
                 <div class="px-4 py-5 sm:p-6">
                     <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white mb-6">Budget Information</h3>
 
@@ -41,7 +41,7 @@
                             </label>
                             <div class="mt-1 flex">
                                 <select name="category" id="category"
-                                        class="flex-1 rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 @error('category') border-red-300 @enderror"
+                                        class="flex-1 rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-[color:var(--color-dark-100)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)] @error('category') border-red-300 @enderror"
                                         onchange="toggleCustomCategory(this)">
                                     <option value="">Select a category</option>
                                     @foreach($categories as $cat)
@@ -54,7 +54,7 @@
                                 </select>
                             </div>
                             <input type="text" name="custom_category" id="custom_category"
-                                   class="mt-2 hidden flex-1 rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                   class="mt-2 hidden flex-1 rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-[color:var(--color-dark-100)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]"
                                    placeholder="Enter custom category name" value="{{ old('custom_category') }}">
                             @error('category')
                                 <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
@@ -67,7 +67,7 @@
                                 Budget Period <span class="text-red-500">*</span>
                             </label>
                             <select name="budget_period" id="budget_period"
-                                    class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 @error('budget_period') border-red-300 @enderror"
+                                    class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-[color:var(--color-dark-100)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)] @error('budget_period') border-red-300 @enderror"
                                     onchange="toggleCustomDates(this)">
                                 <option value="">Select period</option>
                                 <option value="monthly" {{ old('budget_period', $budget->budget_period) === 'monthly' ? 'selected' : '' }}>Monthly</option>
@@ -87,11 +87,11 @@
                             </label>
                             <div class="mt-1 relative rounded-md shadow-sm">
                                 <input type="number" name="amount" id="amount" step="0.01" min="0.01" max="999999.99"
-                                       class="block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 pr-12 @error('amount') border-red-300 @enderror"
+                                       class="block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-[color:var(--color-dark-100)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)] pr-12 @error('amount') border-red-300 @enderror"
                                        placeholder="0.00" value="{{ old('amount', $budget->amount) }}">
                                 <div class="absolute inset-y-0 right-0 flex items-center">
                                     <select name="currency" id="currency"
-                                            class="h-full rounded-md border-0 bg-transparent py-0 pl-2 pr-7 text-gray-500 dark:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm">
+                                            class="h-full rounded-md border-0 bg-transparent py-0 pl-2 pr-7 text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] focus:ring-2 focus:ring-inset focus:ring-[color:var(--color-accent-600)] sm:text-sm">
                                         @foreach($currencies as $code => $name)
                                             @php $currencyCode = explode(' ', $code)[0]; @endphp
                                             <option value="{{ $currencyCode }}" {{ (old('currency', $budget->currency) === $currencyCode) ? 'selected' : '' }}>
@@ -116,7 +116,7 @@
                                     Start Date <span class="text-red-500">*</span>
                                 </label>
                                 <input type="date" name="start_date" id="start_date"
-                                       class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 @error('start_date') border-red-300 @enderror"
+                                       class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-[color:var(--color-dark-100)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)] @error('start_date') border-red-300 @enderror"
                                        value="{{ old('start_date', $budget->start_date->format('Y-m-d')) }}">
                                 @error('start_date')
                                     <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
@@ -127,7 +127,7 @@
                                     End Date <span class="text-red-500">*</span>
                                 </label>
                                 <input type="date" name="end_date" id="end_date"
-                                       class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 @error('end_date') border-red-300 @enderror"
+                                       class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-[color:var(--color-dark-100)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)] @error('end_date') border-red-300 @enderror"
                                        value="{{ old('end_date', $budget->end_date->format('Y-m-d')) }}">
                                 @error('end_date')
                                     <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
@@ -141,7 +141,7 @@
                                 Alert Threshold (%)
                             </label>
                             <input type="number" name="alert_threshold" id="alert_threshold" min="1" max="100"
-                                   class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 @error('alert_threshold') border-red-300 @enderror"
+                                   class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-[color:var(--color-dark-100)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)] @error('alert_threshold') border-red-300 @enderror"
                                    placeholder="80" value="{{ old('alert_threshold', $budget->alert_threshold) }}">
                             <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Get notified when spending reaches this percentage</p>
                             @error('alert_threshold')
@@ -154,7 +154,7 @@
                             <div class="flex items-start">
                                 <div class="flex items-center h-5">
                                     <input id="is_active" name="is_active" type="checkbox" value="1"
-                                           class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 dark:border-gray-700 rounded"
+                                           class="focus:ring-[color:var(--color-accent-500)] h-4 w-4 text-[color:var(--color-accent-600)] border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded"
                                            {{ old('is_active', $budget->is_active) ? 'checked' : '' }}>
                                 </div>
                                 <div class="ml-3 text-sm">
@@ -169,7 +169,7 @@
                             <div class="flex items-start">
                                 <div class="flex items-center h-5">
                                     <input id="rollover_unused" name="rollover_unused" type="checkbox" value="1"
-                                           class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 dark:border-gray-700 rounded"
+                                           class="focus:ring-[color:var(--color-accent-500)] h-4 w-4 text-[color:var(--color-accent-600)] border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded"
                                            {{ old('rollover_unused', $budget->rollover_unused) ? 'checked' : '' }}>
                                 </div>
                                 <div class="ml-3 text-sm">
@@ -185,7 +185,7 @@
                                 Notes
                             </label>
                             <textarea name="notes" id="notes" rows="3"
-                                      class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 @error('notes') border-red-300 @enderror"
+                                      class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-[color:var(--color-dark-100)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)] @error('notes') border-red-300 @enderror"
                                       placeholder="Optional notes about this budget...">{{ old('notes', $budget->notes) }}</textarea>
                             @error('notes')
                                 <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
@@ -196,21 +196,21 @@
             </div>
 
             <!-- Budget Status Summary -->
-            <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+            <div class="bg-[color:var(--color-info-50)] dark:bg-[color:var(--color-dark-100)] border border-[color:var(--color-info-500)] dark:border-[color:var(--color-dark-300)] rounded-lg p-4">
                 <div class="flex">
                     <div class="flex-shrink-0">
-                        <svg class="h-5 w-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="h-5 w-5 text-[color:var(--color-info-500)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
                     </div>
                     <div class="ml-3 flex-1 md:flex md:justify-between">
-                        <p class="text-sm text-blue-700 dark:text-blue-300">
+                        <p class="text-sm text-[color:var(--color-info-600)] dark:text-[color:var(--color-info-500)]">
                             <strong>Current Status:</strong>
                             {{ number_format($budget->getCurrentSpending(), 2) }} {{ $budget->currency }} spent of {{ number_format($budget->amount, 2) }} {{ $budget->currency }}
                             ({{ $budget->getUtilizationPercentage() }}% used)
                         </p>
                         <p class="mt-3 text-sm md:mt-0 md:ml-6">
-                            <span class="font-medium text-blue-700 dark:text-blue-300">
+                            <span class="font-medium text-[color:var(--color-info-600)] dark:text-[color:var(--color-info-500)]">
                                 {{ number_format($budget->getRemainingAmount(), 2) }} {{ $budget->currency }} remaining
                             </span>
                         </p>
@@ -221,11 +221,11 @@
             <!-- Form Actions -->
             <div class="flex justify-end gap-3">
                 <a href="{{ route('budgets.show', $budget) }}"
-                   class="bg-white dark:bg-gray-800 py-2 px-4 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                   class="py-2 px-4 rounded-md text-sm font-medium border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] bg-[color:var(--color-primary-200)] hover:bg-[color:var(--color-primary-300)] text-[color:var(--color-primary-700)] dark:bg-[color:var(--color-dark-200)] dark:hover:bg-[color:var(--color-dark-300)] dark:text-[color:var(--color-dark-600)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[color:var(--color-accent-500)] transition-colors duration-200">
                     Cancel
                 </a>
                 <button type="submit"
-                        class="bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded-md text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        class="bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] text-white py-2 px-4 rounded-md text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[color:var(--color-accent-500)] transition-colors duration-200">
                     Update Budget
                 </button>
             </div>
