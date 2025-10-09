@@ -37,6 +37,10 @@ class SyncTrading212OrdersJob implements ShouldQueue
 
         // In a real app we might have per-user brokerage accounts. For now, attach to the first user.
         $userId = $this->userId ?? \App\Models\User::query()->value('id');
+        if (!$userId) {
+            Log::warning('Trading212 sync aborted: no user available to attach investments.');
+            return;
+        }
 
         DB::transaction(function () use ($orders, $userId) {
             foreach ($orders as $o) {
