@@ -2,11 +2,13 @@
 
 namespace Tests\Feature;
 
+use App\Jobs\ImportInvestmentsCsv;
 use App\Models\Investment;
 use App\Models\InvestmentTransaction;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Queue;
 use Tests\TestCase;
 
 class InvestmentCsvImportTest extends TestCase
@@ -26,11 +28,24 @@ class InvestmentCsvImportTest extends TestCase
 
         $file = UploadedFile::fake()->createWithContent('investments.csv', $csv);
 
+        Queue::fake();
+
         $response = $this->post(route('investments.import'), [
             'file' => $file,
         ]);
 
         $response->assertRedirect(route('investments.index'));
+
+        $capturedJob = null;
+        Queue::assertPushed(ImportInvestmentsCsv::class, function ($job) use ($user, &$capturedJob) {
+            $capturedJob = $job;
+
+            return $job->userId === $user->id && $job->queue === 'imports';
+        });
+
+        // Run the job synchronously to verify DB side-effects
+        $this->assertNotNull($capturedJob, 'Job was not captured for execution');
+        $capturedJob->handle();
 
         $this->assertDatabaseHas('investments', [
             'user_id' => $user->id,
