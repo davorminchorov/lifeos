@@ -34,7 +34,10 @@ class ImportInvestmentsCsv implements ShouldQueue
     public int $userId;
 
     /**
-     * Create a new job instance.
+     * Create a new ImportInvestmentsCsv job instance for importing a user's CSV file.
+     *
+     * @param int $userId ID of the user who initiated the import.
+     * @param string $storedPath Storage path to the uploaded CSV file.
      */
     public function __construct(int $userId, string $storedPath)
     {
@@ -43,7 +46,12 @@ class ImportInvestmentsCsv implements ShouldQueue
     }
 
     /**
-     * Execute the job.
+     * Import investments and their transactions from the CSV file at the job's stored path.
+     *
+     * Reads and parses the CSV, maps columns by header names (with common aliases), and for each data row
+     * creates or finds the user's Investment and creates an InvestmentTransaction. After saving each transaction
+     * the corresponding investment aggregates are updated. Invalid rows are skipped and logged; at completion
+     * the stored CSV is removed and an import summary is logged.
      */
     public function handle(): void
     {
@@ -227,6 +235,15 @@ class ImportInvestmentsCsv implements ShouldQueue
         ]);
     }
 
+    /**
+     * Update an investment's aggregate fields to reflect a processed transaction and persist the changes.
+     *
+     * Adjusts the investment's quantity based on purchase or sale, accumulates fees from the transaction,
+     * sets the investment status to "sold" when the quantity becomes zero or less due to a sale, and saves the investment.
+     *
+     * @param Investment $investment The investment record to update.
+     * @param InvestmentTransaction $transaction The transaction whose values are applied to the investment.
+     */
     private function updateInvestmentFromTransaction(Investment $investment, InvestmentTransaction $transaction): void
     {
         if ($transaction->is_purchase) {
