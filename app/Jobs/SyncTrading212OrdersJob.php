@@ -121,12 +121,17 @@ class SyncTrading212OrdersJob implements ShouldQueue
                     // Sell: reduce quantity, possibly mark sold
                     $investment->quantity = max(0, (float) $investment->quantity - $qty);
                     $investment->total_fees_paid = (float) $investment->total_fees_paid + $fees;
-                    if ($investment->quantity == 0) {
-                        $investment->status = 'sold';
-                        $investment->sale_date = $executedAtDate;
-                        $investment->sale_price = $price;
-                        $investment->sale_proceeds = $total - $fees;
-                    }
+                 } else {
+                     // Sell: reduce quantity, possibly mark sold
+                     $investment->quantity = max(0, (float) $investment->quantity - $qty);
+                     $investment->total_fees_paid = (float) $investment->total_fees_paid + $fees;
+                     $investment->sale_proceeds = ((float) $investment->sale_proceeds ?? 0) + ($total - $fees);
+                     if ($investment->quantity == 0) {
+                         $investment->status = 'sold';
+                         $investment->sale_date = $executedAtDate;
+                         $investment->sale_price = $price;
+                     }
+                 }
                 }
 
                 $investment->save();
