@@ -45,7 +45,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          composer install --no-ansi --no-interaction --no-progress --prefer-dist
+          composer install --no-ansi --no-progress --prefer-dist
 
       - name: Prepare application
         env:
@@ -58,7 +58,7 @@ jobs:
           DB_PASSWORD: root
         run: |
           cp .env.example .env || true
-          php artisan key:generate --no-interaction --ansi
+          php artisan key:generate --ansi
           # Wait for MySQL to be ready
           for i in {1..30}; do
             if mysqladmin ping -h 127.0.0.1 -uroot -proot --silent; then
