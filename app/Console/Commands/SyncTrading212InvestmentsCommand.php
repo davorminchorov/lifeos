@@ -24,8 +24,8 @@ class SyncTrading212InvestmentsCommand extends Command
             return self::SUCCESS;
         }
 
-        // Run inline
-        (new SyncTrading212OrdersJob)->handle($t212);
+        // Run inline synchronously via the queue system
+        SyncTrading212OrdersJob::dispatchSync();
         $this->info('Sync completed.');
 
         return self::SUCCESS;

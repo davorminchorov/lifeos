@@ -27,8 +27,8 @@ class Trading212Service
      */
     public function fetchFilledOrdersSince(CarbonInterface $since): array
     {
-        // If the official SDK is installed, use it. Otherwise, throw a helpful exception.
-        if (! class_exists('MarekSkopal\\Trading212\\Client')) {
+        // If the official SDK is installed, use it. Otherwise, log and skip.
+        if (! class_exists('MarekSkopal\\Trading212\\Trading212')) {
             Log::warning('Trading212 SDK not installed; please run composer install to fetch marekskopal/trading212.');
 
             return [];
@@ -37,12 +37,22 @@ class Trading212Service
         // Defer actual integration details to the SDK; keep normalization here.
         $client = $this->makeSdkClient();
 
-        // The exact SDK calls may differ; adapt as needed. We keep a defensive approach.
+        // Try to fetch filled orders since the timestamp using available SDK methods.
         $orders = [];
         try {
-            // Hypothetical SDK usage — adjust to actual methods when dependency is installed.
-            // $sdkOrders = $client->orders()->list(['status' => 'filled', 'from' => $since->toIso8601String()]);
             $sdkOrders = [];
+            // Common patterns we attempt defensively to avoid hard dependency on exact SDK signature
+            if (method_exists($client, 'orders')) {
+                $ordersApi = $client->orders();
+                // Try a few likely method names/signatures
+                if (method_exists($ordersApi, 'list')) {
+                    $sdkOrders = $ordersApi->list(['status' => 'filled', 'from' => $since->toIso8601String()]);
+                } elseif (method_exists($ordersApi, 'filledSince')) {
+                    $sdkOrders = $ordersApi->filledSince($since);
+                } elseif (method_exists($ordersApi, 'all')) {
+                    $sdkOrders = $ordersApi->all(['status' => 'filled', 'from' => $since->toIso8601String()]);
+                }
+            }
         } catch (\Throwable $e) {
             Log::error('Trading212 API error: '.$e->getMessage(), ['exception' => $e]);
 
@@ -83,13 +93,15 @@ class Trading212Service
             throw new \RuntimeException('TRADING212_API_KEY is not set.');
         }
 
-        // Hypothetical constructor – to be validated once SDK is installed.
-        $clientClass = 'MarekSkopal\\Trading212\\Client';
-        if ($baseUrl) {
-            return new $clientClass($apiKey, $baseUrl);
-        }
+        // Construct the SDK using the documented Config + Trading212 classes.
+        $configClass = 'MarekSkopal\\Trading212\\Config\\Config';
+        $clientClass = 'MarekSkopal\\Trading212\\Trading212';
 
-        return new $clientClass($apiKey, $env === 'live' ? 'live' : 'practice');
+        $cfg = class_exists($configClass)
+            ? new $configClass($apiKey, $env === 'live' ? 'live' : 'practice', $baseUrl)
+            : null;
+
+        return $cfg ? new $clientClass($cfg) : new $clientClass;
     }
 
     public function lastSyncKey(): string

@@ -37,8 +37,9 @@ class SyncTrading212OrdersJob implements ShouldQueue
 
         // In a real app we might have per-user brokerage accounts. For now, attach to the first user.
         $userId = $this->userId ?? \App\Models\User::query()->value('id');
-        if (!$userId) {
+        if (! $userId) {
             Log::warning('Trading212 sync aborted: no user available to attach investments.');
+
             return;
         }
 
@@ -46,6 +47,8 @@ class SyncTrading212OrdersJob implements ShouldQueue
             foreach ($orders as $o) {
                 $symbol = $o['symbol'];
                 $name = $o['name'] ?? $symbol;
+                $executedAt = Carbon::parse($o['executed_at']);
+                $executedAtDate = $executedAt->toDateString();
 
                 // Find or create Investment by user + symbol (stocks type by default)
                 $investment = Investment::query()->firstOrCreate(
@@ -57,7 +60,7 @@ class SyncTrading212OrdersJob implements ShouldQueue
                     [
                         'name' => $name,
                         'quantity' => 0,
-                        'purchase_date' => now()->toDateString(),
+                        'purchase_date' => $executedAtDate,
                         'purchase_price' => 0,
                         'account_broker' => config('trading212.broker_name', 'Trading212'),
                         'account_number' => config('trading212.account_number'),
@@ -78,7 +81,6 @@ class SyncTrading212OrdersJob implements ShouldQueue
                 $price = (float) $o['price'];
                 $total = $qty * $price;
                 $fees = (float) ($o['fee'] ?? 0);
-                $executedAt = Carbon::parse($o['executed_at'])->toDateString();
 
                 $tx = new InvestmentTransaction([
                     'transaction_type' => $o['side'] === 'sell' ? 'sell' : 'buy',
@@ -86,7 +88,7 @@ class SyncTrading212OrdersJob implements ShouldQueue
                     'price_per_share' => $price,
                     'total_amount' => $total,
                     'fees' => $fees,
-                    'transaction_date' => $executedAt,
+                    'transaction_date' => $executedAtDate,
                     'order_id' => (string) $o['id'],
                     'account_number' => config('trading212.account_number'),
                     'broker' => config('trading212.broker_name', 'Trading212'),
@@ -105,7 +107,9 @@ class SyncTrading212OrdersJob implements ShouldQueue
                     $newCost = $oldCost + $total + $fees;
                     $investment->quantity = $newQty;
                     $investment->purchase_price = $newQty > 0 ? $newCost / $newQty : 0;
-                    $investment->purchase_date = $investment->purchase_date ?? $executedAt;
+                    if (! $investment->purchase_date || $executedAt->lt(Carbon::parse($investment->purchase_date))) {
+                        $investment->purchase_date = $executedAtDate;
+                    }
                     $investment->total_fees_paid = (float) $investment->total_fees_paid + $fees;
                     $investment->status = 'active';
                 } else {
@@ -114,7 +118,7 @@ class SyncTrading212OrdersJob implements ShouldQueue
                     $investment->total_fees_paid = (float) $investment->total_fees_paid + $fees;
                     if ($investment->quantity == 0) {
                         $investment->status = 'sold';
-                        $investment->sale_date = $executedAt;
+                        $investment->sale_date = $executedAtDate;
                         $investment->sale_price = $price;
                         $investment->sale_proceeds = $total - $fees;
                     }
