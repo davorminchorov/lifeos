@@ -31,6 +31,7 @@ class Expense extends Model
         'budget_allocated',
         'notes',
         'status',
+        'unique_key',
     ];
 
     protected function casts(): array

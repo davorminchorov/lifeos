@@ -36,43 +36,40 @@ class CreateSubscriptionAutoRenewExpenses implements ShouldQueue
 
         foreach ($subscriptions as $subscription) {
             try {
-                // Idempotency: if an expense already exists today tagged with this subscription, skip
                 $tag = 'subscription:'.$subscription->id;
-                $existing = Expense::query()
-                    ->where('user_id', $subscription->user_id)
-                    ->whereDate('expense_date', $today)
-                    ->whereJsonContains('tags', $tag)
-                    ->exists();
+                $uniqueKey = $tag.':'.$today; // one expense per subscription per billing date
 
-                if ($existing) {
+                // Atomic create-or-skip via DB unique key to avoid race conditions
+                $expense = Expense::firstOrCreate(
+                    ['unique_key' => $uniqueKey],
+                    [
+                        'user_id' => $subscription->user_id,
+                        'amount' => $subscription->cost,
+                        'currency' => $subscription->currency ?? config('currency.default', 'MKD'),
+                        'category' => $subscription->category ?? 'subscriptions',
+                        'subcategory' => null,
+                        'expense_date' => $today,
+                        'description' => sprintf('Auto-renewal for %s', $subscription->service_name),
+                        'merchant' => $subscription->merchant_info ?: $subscription->service_name,
+                        'payment_method' => $subscription->payment_method,
+                        'receipt_attachments' => [],
+                        'tags' => [$tag, 'auto-renewal'],
+                        'location' => null,
+                        'is_tax_deductible' => false,
+                        'expense_type' => 'personal',
+                        'is_recurring' => true,
+                        'recurring_schedule' => $subscription->billing_cycle ?: 'custom',
+                        'budget_allocated' => null,
+                        'notes' => 'Created automatically on renewal date',
+                        'status' => 'confirmed',
+                    ]
+                );
+
+                if ($expense->wasRecentlyCreated) {
+                    $created++;
+                } else {
                     Log::info("Skipping duplicate expense for subscription {$subscription->id} on {$today}");
-
-                    continue;
                 }
-
-                Expense::create([
-                    'user_id' => $subscription->user_id,
-                    'amount' => $subscription->cost,
-                    'currency' => $subscription->currency ?? config('currency.default', 'MKD'),
-                    'category' => $subscription->category ?? 'subscriptions',
-                    'subcategory' => null,
-                    'expense_date' => $today,
-                    'description' => sprintf('Auto-renewal for %s', $subscription->service_name),
-                    'merchant' => $subscription->merchant_info ?: $subscription->service_name,
-                    'payment_method' => $subscription->payment_method,
-                    'receipt_attachments' => [],
-                    'tags' => [$tag, 'auto-renewal'],
-                    'location' => null,
-                    'is_tax_deductible' => false,
-                    'expense_type' => 'personal',
-                    'is_recurring' => true,
-                    'recurring_schedule' => $subscription->billing_cycle ?: 'custom',
-                    'budget_allocated' => null,
-                    'notes' => 'Created automatically on renewal date',
-                    'status' => 'confirmed',
-                ]);
-
-                $created++;
             } catch (\Throwable $e) {
                 Log::error("Failed creating expense for subscription {$subscription->id}: {$e->getMessage()}");
             }

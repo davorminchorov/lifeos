@@ -29,36 +29,32 @@ class UtilityBillObserver
     {
         $paymentDate = optional($bill->payment_date)?->toDateString() ?? now()->toDateString();
         $tag = 'utility-bill:'.$bill->id;
+        $uniqueKey = $tag; // single expense per bill
 
-        $exists = Expense::query()
-            ->where('user_id', $bill->user_id)
-            ->whereJsonContains('tags', $tag)
-            ->exists();
-
-        if ($exists) {
-            return; // idempotent
-        }
-
-        Expense::create([
-            'user_id' => $bill->user_id,
-            'amount' => $bill->bill_amount,
-            'currency' => $bill->currency ?? config('currency.default', 'MKD'),
-            'category' => 'utilities',
-            'subcategory' => strtolower((string) $bill->utility_type) ?: null,
-            'expense_date' => $paymentDate,
-            'description' => sprintf('Payment for %s utility bill (%s)', $bill->utility_type, $bill->service_provider),
-            'merchant' => $bill->service_provider,
-            'payment_method' => $bill->payment_method ?? 'Unknown',
-            'receipt_attachments' => [],
-            'tags' => [$tag, 'utility-bill'],
-            'location' => null,
-            'is_tax_deductible' => $bill->is_tax_deductible ?? config('expenses.default_tax_deductible', false),
-            'expense_type' => $bill->expense_type ?? config('expenses.default_type', 'personal'),
-            'is_recurring' => false,
-            'recurring_schedule' => null,
-            'budget_allocated' => null,
-            'notes' => 'Created automatically when bill marked as paid',
-            'status' => 'confirmed',
-        ]);
+        // Create or update atomically by unique key; also keep expense_date in sync if it changes later
+        Expense::updateOrCreate(
+            ['unique_key' => $uniqueKey],
+            [
+                'user_id' => $bill->user_id,
+                'amount' => $bill->bill_amount,
+                'currency' => $bill->currency ?? config('currency.default', 'MKD'),
+                'category' => 'utilities',
+                'subcategory' => strtolower((string) $bill->utility_type) ?: null,
+                'expense_date' => $paymentDate,
+                'description' => sprintf('Payment for %s utility bill (%s)', $bill->utility_type, $bill->service_provider),
+                'merchant' => $bill->service_provider,
+                'payment_method' => $bill->payment_method ?? 'Unknown',
+                'receipt_attachments' => [],
+                'tags' => [$tag, 'utility-bill'],
+                'location' => null,
+                'is_tax_deductible' => $bill->is_tax_deductible ?? config('expenses.default_tax_deductible', false),
+                'expense_type' => $bill->expense_type ?? config('expenses.default_type', 'personal'),
+                'is_recurring' => false,
+                'recurring_schedule' => null,
+                'budget_allocated' => null,
+                'notes' => 'Created automatically when bill marked as paid',
+                'status' => 'confirmed',
+            ]
+        );
     }
 }
