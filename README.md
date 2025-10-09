@@ -1,5 +1,7 @@
 # LifeOS
 
+![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/davorminchorov/lifeos?utm_source=oss&utm_medium=github&utm_campaign=davorminchorov%2Flifeos&labelColor=171717&color=FF570A&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+Reviews)
+
 LifeOS is a Laravel-based application designed to help you organize and manage your life effectively.
 
 ## Features
