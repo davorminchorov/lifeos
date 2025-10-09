@@ -32,7 +32,7 @@ class CreateSubscriptionAutoRenewExpenses extends Command
             CreateSubscriptionAutoRenewExpensesJob::dispatch();
             $this->info('📤 Job dispatched to queue');
         } else {
-            (new CreateSubscriptionAutoRenewExpenses)->handle();
+            (new CreateSubscriptionAutoRenewExpensesJob)->handle();
             $this->info('✅ Expenses created');
         }
 
