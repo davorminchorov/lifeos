@@ -9,12 +9,41 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class ImportInvestmentsCsv implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
+    /**
+     * Map of header aliases to support different broker exports.
+     */
+    private const HEADER_ALIASES = [
+        'no. of shares' => ['shares', 'quantity', 'no of shares', 'number of shares'],
+        'price / share' => ['price per share', 'price'],
+        'currency (price / share)' => ['currency', 'currency (price)'],
+        'total' => ['amount', 'gross amount'],
+        'time' => ['date', 'transaction date'],
+        'id' => ['order id', 'order_id'],
+        'ticker' => ['symbol', 'symbol_identifier'],
+    ];
+
+    /**
+     * Mapping of inbound actions to internal transaction types.
+     */
+    private const TYPE_MAP = [
+        'buy' => 'buy',
+        'purchase' => 'buy',
+        'sell' => 'sell',
+        'dividend' => 'dividend_reinvestment',
+        'reinvest' => 'dividend_reinvestment',
+        'transfer in' => 'transfer_in',
+        'transfer out' => 'transfer_out',
+        'deposit' => 'transfer_in',
+        'withdrawal' => 'transfer_out',
+    ];
 
     /**
      * The queue the job should run on.
@@ -88,43 +117,7 @@ class ImportInvestmentsCsv implements ShouldQueue
             return;
         }
 
-        // Normalize headers to map values by name
-        $index = [];
-        foreach ($header as $i => $col) {
-            $normalized = strtolower(trim($col));
-            $index[$normalized] = $i;
-        }
-
-        // Helper to get column by name safely
-        $get = function (array $row, string $name, $default = null) use ($index) {
-            foreach ([$name, trim($name), strtolower($name)] as $key) {
-                if (array_key_exists($key, $index)) {
-                    $pos = $index[$key];
-
-                    return isset($row[$pos]) ? trim($row[$pos]) : $default;
-                }
-            }
-
-            // Try alternative synonyms
-            $aliases = [
-                'no. of shares' => ['shares', 'quantity', 'no of shares', 'number of shares'],
-                'price / share' => ['price per share', 'price'],
-                'currency (price / share)' => ['currency', 'currency (price)'],
-                'total' => ['amount', 'gross amount'],
-                'time' => ['date', 'transaction date'],
-                'id' => ['order id', 'order_id'],
-            ];
-            foreach (($aliases[$name] ?? []) as $alias) {
-                $alias = strtolower($alias);
-                if (array_key_exists($alias, $index)) {
-                    $pos = $index[$alias];
-
-                    return isset($row[$pos]) ? trim($row[$pos]) : $default;
-                }
-            }
-
-            return $default;
-        };
+        $index = $this->buildHeaderIndex($header);
 
         $created = 0;
         $skipped = 0;
@@ -136,40 +129,28 @@ class ImportInvestmentsCsv implements ShouldQueue
             }
 
             try {
-                $action = strtolower($get($row, 'action', 'buy'));
-                $dateRaw = $get($row, 'time', now()->toDateString());
-                $ticker = $get($row, 'ticker');
+                $action = strtolower((string) $this->getValue($row, $index, 'action', 'buy'));
+                $dateRaw = (string) $this->getValue($row, $index, 'time', now()->toDateString());
+                $ticker = (string) $this->getValue($row, $index, 'ticker');
                 if (! $ticker || trim($ticker) === '') {
                     $skipped++;
                     Log::warning('ImportInvestmentsCsv: skipped row due to missing ticker/symbol_identifier');
 
                     continue;
                 }
-                $name = $get($row, 'name');
-                $isin = $get($row, 'isin');
-                $notes = $get($row, 'notes');
-                $orderId = $get($row, 'id');
-                $shares = (float) str_replace([','], [''], $get($row, 'no. of shares', 0));
-                $pricePerShare = (float) str_replace([','], [''], $get($row, 'price / share', 0));
-                $currencyPrice = strtoupper(substr($get($row, 'currency (price / share)', 'USD'), 0, 3));
-                $exchangeRate = $get($row, 'exchange rate');
-                $currencyResult = strtoupper(substr($get($row, 'currency (result)', $currencyPrice), 0, 3));
-                $total = (float) str_replace([','], [''], $get($row, 'total', $shares * $pricePerShare));
-                $currencyTotal = strtoupper(substr($get($row, 'currency (total) deposit', $currencyResult), 0, 3));
+                $name = (string) $this->getValue($row, $index, 'name');
+                $isin = (string) $this->getValue($row, $index, 'isin');
+                $notes = (string) $this->getValue($row, $index, 'notes');
+                $orderId = (string) $this->getValue($row, $index, 'id');
+                $shares = $this->parseDecimal((string) $this->getValue($row, $index, 'no. of shares', '0'));
+                $pricePerShare = $this->parseDecimal((string) $this->getValue($row, $index, 'price / share', '0'));
+                $currencyPrice = $this->normalizeCurrency((string) $this->getValue($row, $index, 'currency (price / share)', 'USD'));
+                $exchangeRate = (string) $this->getValue($row, $index, 'exchange rate');
+                $currencyResult = $this->normalizeCurrency((string) $this->getValue($row, $index, 'currency (result)', $currencyPrice));
+                $total = $this->parseDecimal((string) $this->getValue($row, $index, 'total', (string) ($shares * $pricePerShare)));
+                $currencyTotal = $this->normalizeCurrency((string) $this->getValue($row, $index, 'currency (total) deposit', $currencyResult));
 
-                // Map action to our supported transaction types
-                $typeMap = [
-                    'buy' => 'buy',
-                    'purchase' => 'buy',
-                    'sell' => 'sell',
-                    'dividend' => 'dividend_reinvestment',
-                    'reinvest' => 'dividend_reinvestment',
-                    'transfer in' => 'transfer_in',
-                    'transfer out' => 'transfer_out',
-                    'deposit' => 'transfer_in',
-                    'withdrawal' => 'transfer_out',
-                ];
-                $transactionType = $typeMap[$action] ?? 'buy';
+                $transactionType = self::TYPE_MAP[$action] ?? 'buy';
 
                 // Find or create the Investment for this user/symbol (do not include name in the lookup to avoid duplicates)
                 $investment = Investment::firstOrCreate(
@@ -178,7 +159,7 @@ class ImportInvestmentsCsv implements ShouldQueue
                         'symbol_identifier' => $ticker,
                     ],
                     [
-                        'name' => $name ?? ($ticker ?: 'Unknown'),
+                        'name' => $name ?: ($ticker ?: 'Unknown'),
                         'investment_type' => 'stock',
                         'quantity' => 0,
                         'purchase_date' => now()->toDateString(),
@@ -209,9 +190,7 @@ class ImportInvestmentsCsv implements ShouldQueue
                     'total_amount' => $total,
                     'fees' => 0,
                     'taxes' => 0,
-                    'transaction_date' => ($dateRaw && ($timestamp = strtotime($dateRaw)) !== false)
-                                            ? date('Y-m-d', $timestamp)
-                                            : now()->toDateString(),
+                    'transaction_date' => $this->parseDate($dateRaw),
                     'order_id' => $orderId,
                     'currency' => $currencyTotal ?: $currencyPrice,
                     'exchange_rate' => $exchangeRate ?: null,
@@ -246,6 +225,109 @@ class ImportInvestmentsCsv implements ShouldQueue
             'created' => $created,
             'skipped' => $skipped,
         ]);
+    }
+
+    /**
+     * Build a case-insensitive header index map.
+     *
+     * @param  array<int, string>  $header
+     * @return array<string, int>
+     */
+    private function buildHeaderIndex(array $header): array
+    {
+        $index = [];
+        foreach ($header as $i => $col) {
+            $normalized = strtolower(trim((string) $col));
+            $index[$normalized] = $i;
+        }
+
+        return $index;
+    }
+
+    /**
+     * Retrieve a value by header name or alias from the given row.
+     *
+     * @param  array<int, string|null>  $row
+     * @param  array<string, int>  $index
+     */
+    private function getValue(array $row, array $index, string $name, mixed $default = null): mixed
+    {
+        foreach ([$name, trim($name), strtolower($name)] as $key) {
+            if (array_key_exists($key, $index)) {
+                $pos = $index[$key];
+
+                return isset($row[$pos]) ? trim((string) $row[$pos]) : $default;
+            }
+        }
+
+        foreach ((self::HEADER_ALIASES[$name] ?? []) as $alias) {
+            $alias = strtolower($alias);
+            if (array_key_exists($alias, $index)) {
+                $pos = $index[$alias];
+
+                return isset($row[$pos]) ? trim((string) $row[$pos]) : $default;
+            }
+        }
+
+        return $default;
+    }
+
+    /**
+     * Parse a decimal number from a user/broker formatted string.
+     */
+    private function parseDecimal(?string $value): float
+    {
+        if ($value === null) {
+            return 0.0;
+        }
+
+        $v = trim($value);
+        if ($v === '') {
+            return 0.0;
+        }
+
+        // Handle parentheses for negatives and common thousand separators
+        $negative = false;
+        if (str_starts_with($v, '(') && str_ends_with($v, ')')) {
+            $negative = true;
+            $v = substr($v, 1, -1);
+        }
+        $v = str_replace([',', ' '], ['', ''], $v);
+
+        $num = (float) $v;
+
+        return $negative ? -$num : $num;
+    }
+
+    /**
+     * Normalize a currency code to 3-letter uppercase.
+     */
+    private function normalizeCurrency(?string $code): string
+    {
+        $code = strtoupper(substr((string) ($code ?: 'USD'), 0, 3));
+
+        return $code ?: 'USD';
+    }
+
+    /**
+     * Robustly parse a date string into Y-m-d, with fallback to today.
+     */
+    private function parseDate(?string $value): string
+    {
+        if ($value) {
+            try {
+                return Carbon::parse($value)->toDateString();
+            } catch (\Throwable $e) {
+                // fall back below
+            }
+
+            $timestamp = strtotime($value);
+            if ($timestamp !== false) {
+                return date('Y-m-d', $timestamp);
+            }
+        }
+
+        return now()->toDateString();
     }
 
     /**
