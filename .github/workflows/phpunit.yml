@@ -1,0 +1,80 @@
+name: PHPUnit Tests
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  phpunit:
+    name: Run PHPUnit
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_DATABASE: lifeos
+          MYSQL_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd "mysqladmin ping -h 127.0.0.1 -uroot -proot"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, intl, pdo_mysql, pcntl, bcmath
+          coverage: none
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.composer/cache/files
+            vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Install dependencies
+        run: |
+          composer install --no-ansi --no-interaction --no-progress --prefer-dist
+
+      - name: Prepare application
+        env:
+          APP_ENV: testing
+          DB_CONNECTION: mysql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_DATABASE: lifeos
+          DB_USERNAME: root
+          DB_PASSWORD: root
+        run: |
+          cp .env.example .env || true
+          php artisan key:generate --no-interaction --ansi
+          # Wait for MySQL to be ready
+          for i in {1..30}; do
+            if mysqladmin ping -h 127.0.0.1 -uroot -proot --silent; then
+              break
+            fi
+            sleep 2
+          done
+          php artisan migrate --force --no-interaction --ansi
+
+      - name: Run tests
+        env:
+          APP_ENV: testing
+          DB_CONNECTION: mysql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_DATABASE: lifeos
+          DB_USERNAME: root
+          DB_PASSWORD: root
+        run: php artisan test --no-interaction --colors=always
