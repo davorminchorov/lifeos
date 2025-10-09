@@ -32,7 +32,6 @@ class UtilityBillObserver
 
         $exists = Expense::query()
             ->where('user_id', $bill->user_id)
-            ->whereDate('expense_date', $paymentDate)
             ->whereJsonContains('tags', $tag)
             ->exists();
 
