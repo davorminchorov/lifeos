@@ -37,22 +37,12 @@ class Trading212Service
         // Defer actual integration details to the SDK; keep normalization here.
         $client = $this->makeSdkClient();
 
-        // Try to fetch filled orders since the timestamp using available SDK methods.
+        // Try to fetch filled orders since the timestamp using the SDK's documented endpoint.
         $orders = [];
         try {
-            $sdkOrders = [];
-            // Common patterns we attempt defensively to avoid hard dependency on exact SDK signature
-            if (method_exists($client, 'orders')) {
-                $ordersApi = $client->orders();
-                // Try a few likely method names/signatures
-                if (method_exists($ordersApi, 'list')) {
-                    $sdkOrders = $ordersApi->list(['status' => 'filled', 'from' => $since->toIso8601String()]);
-                } elseif (method_exists($ordersApi, 'filledSince')) {
-                    $sdkOrders = $ordersApi->filledSince($since);
-                } elseif (method_exists($ordersApi, 'all')) {
-                    $sdkOrders = $ordersApi->all(['status' => 'filled', 'from' => $since->toIso8601String()]);
-                }
-            }
+            $sdkOrders = $client->orders()->getFilledOrders([
+                'from' => $since->toIso8601String(),
+            ]);
         } catch (\Throwable $e) {
             Log::error('Trading212 API error: '.$e->getMessage(), ['exception' => $e]);
 

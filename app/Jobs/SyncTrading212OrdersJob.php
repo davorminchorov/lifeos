@@ -43,6 +43,11 @@ class SyncTrading212OrdersJob implements ShouldQueue
             return;
         }
 
+        // Pre-compute latest executed_at for cursor advancement after successful processing
+        $latestExecutedAt = collect($orders)
+            ->map(fn ($o) => Carbon::parse($o['executed_at']))
+            ->max();
+
         DB::transaction(function () use ($orders, $userId) {
             foreach ($orders as $o) {
                 $symbol = $o['symbol'];
@@ -128,7 +133,13 @@ class SyncTrading212OrdersJob implements ShouldQueue
             }
         });
 
-        // Update last sync only after success
-        $t212->setLastSync($now);
+        // Update last sync only after success; advance to latest observed fill to avoid skipping late arrivals
+        if ($latestExecutedAt instanceof Carbon) {
+            // Optional small safety buffer to capture near-concurrent fills
+            $cursor = $latestExecutedAt->copy()->subSeconds(5);
+            $t212->setLastSync($cursor);
+        } else {
+            $t212->setLastSync($now);
+        }
     }
 }
