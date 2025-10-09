@@ -51,6 +51,7 @@
                             <option value="etf" {{ old('investment_type') === 'etf' ? 'selected' : '' }}>ETF</option>
                             <option value="commodity" {{ old('investment_type') === 'commodity' ? 'selected' : '' }}>Commodity</option>
                             <option value="other" {{ old('investment_type') === 'other' ? 'selected' : '' }}>Other</option>
+                            <option value="project" {{ old('investment_type') === 'project' ? 'selected' : '' }}>Project</option>
                         </select>
                         @error('investment_type')
                             <p class="mt-1 text-sm text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]">{{ $message }}</p>
@@ -263,6 +264,132 @@
                             <p class="mt-1 text-sm text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]">{{ $message }}</p>
                         @enderror
                     </div>
+                </div>
+
+                <!-- Project Details (visible when type is Project) -->
+                <div class="border-t border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)] pt-6">
+                    <h3 class="text-lg font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] mb-4">Project Details</h3>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="project_type" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Project Type</label>
+                            <input type="text" name="project_type" id="project_type"
+                                   value="{{ old('project_type') }}"
+                                   class="mt-1 block w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]"
+                                   placeholder="e.g., SaaS, Mobile App, Marketplace">
+                            @error('project_type')
+                                <p class="mt-1 text-sm text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label for="equity_percentage" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Equity %</label>
+                            <div class="mt-1 relative rounded-md shadow-sm">
+                                <input type="number" step="0.01" name="equity_percentage" id="equity_percentage" min="0" max="100"
+                                       value="{{ old('equity_percentage') }}"
+                                       class="block w-full pr-8 py-2 px-3 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]"
+                                       placeholder="0.00">
+                                <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                    <span class="text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] sm:text-sm">%</span>
+                                </div>
+                            </div>
+                            @error('equity_percentage')
+                                <p class="mt-1 text-sm text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label for="project_website" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Project Website</label>
+                            <input type="url" name="project_website" id="project_website"
+                                   value="{{ old('project_website') }}"
+                                   class="mt-1 block w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]"
+                                   placeholder="https://example.com">
+                            @error('project_website')
+                                <p class="mt-1 text-sm text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label for="project_repository" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Repository URL</label>
+                            <input type="url" name="project_repository" id="project_repository"
+                                   value="{{ old('project_repository') }}"
+                                   class="mt-1 block w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]"
+                                   placeholder="https://github.com/org/repo">
+                            @error('project_repository')
+                                <p class="mt-1 text-sm text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label for="project_stage" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Stage</label>
+                            <input type="text" name="project_stage" id="project_stage"
+                                   value="{{ old('project_stage') }}"
+                                   class="mt-1 block w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]"
+                                   placeholder="idea, prototype, mvp, growth, mature">
+                            @error('project_stage')
+                                <p class="mt-1 text-sm text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label for="project_business_model" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Business Model</label>
+                            <input type="text" name="project_business_model" id="project_business_model"
+                                   value="{{ old('project_business_model') }}"
+                                   class="mt-1 block w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]"
+                                   placeholder="subscription, ads, one-time, etc.">
+                            @error('project_business_model')
+                                <p class="mt-1 text-sm text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label for="project_start_date" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Project Start Date</label>
+                            <input type="date" name="project_start_date" id="project_start_date"
+                                   value="{{ old('project_start_date') }}"
+                                   class="mt-1 block w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
+                            @error('project_start_date')
+                                <p class="mt-1 text-sm text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label for="project_end_date" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Project End Date</label>
+                            <input type="date" name="project_end_date" id="project_end_date"
+                                   value="{{ old('project_end_date') }}"
+                                   class="mt-1 block w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
+                            @error('project_end_date')
+                                <p class="mt-1 text-sm text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div class="md:col-span-2">
+                            <label for="project_amount_invested" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Amount Invested (Optional)</label>
+                            <div class="mt-1 relative rounded-md shadow-sm">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <span class="text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] sm:text-sm">$</span>
+                                </div>
+                                <input type="number" step="0.00000001" name="project_amount_invested" id="project_amount_invested" min="0"
+                                       value="{{ old('project_amount_invested') }}"
+                                       class="block w-full pl-7 pr-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]"
+                                       placeholder="0.00">
+                            </div>
+                            @error('project_amount_invested')
+                                <p class="mt-1 text-sm text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div class="md:col-span-2">
+                            <label for="project_notes" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Project Notes</label>
+                            <textarea name="project_notes" id="project_notes" rows="4"
+                                      class="mt-1 block w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]"
+                                      placeholder="Key milestones, KPIs, roadmap, team, etc.">{{ old('project_notes') }}</textarea>
+                            @error('project_notes')
+                                <p class="mt-1 text-sm text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <p class="mt-4 text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)]">Tip: For projects, you can set quantity to 1 and purchase price to the total invested amount.</p>
                 </div>
 
                 <!-- Submit Button -->

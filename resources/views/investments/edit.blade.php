@@ -54,6 +54,7 @@
                     <option value="etf" {{ old('investment_type', $investment->investment_type) === 'etf' ? 'selected' : '' }}>ETF</option>
                     <option value="commodity" {{ old('investment_type', $investment->investment_type) === 'commodity' ? 'selected' : '' }}>Commodity</option>
                     <option value="other" {{ old('investment_type', $investment->investment_type) === 'other' ? 'selected' : '' }}>Other</option>
+                    <option value="project" {{ old('investment_type', $investment->investment_type) === 'project' ? 'selected' : '' }}>Project</option>
                 </x-form.select>
 
                 <x-form.input
@@ -237,6 +238,39 @@
                             </div>
                         </div>
                     </fieldset>
+                </div>
+            </x-form.section>
+
+            <!-- Project Details -->
+            <x-form.section title="Project Details" description="Describe the project specifics for project-based investments.">
+                <x-form.input name="project_type" label="Project Type" placeholder="SaaS, Mobile App, Marketplace" value="{{ old('project_type', $investment->project_type) }}" />
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:col-span-2">
+                    <div>
+                        <x-form.input name="project_website" label="Project Website" type="url" placeholder="https://example.com" value="{{ old('project_website', $investment->project_website) }}" />
+                    </div>
+                    <div>
+                        <x-form.input name="project_repository" label="Repository URL" type="url" placeholder="https://github.com/org/repo" value="{{ old('project_repository', $investment->project_repository) }}" />
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:col-span-2">
+                    <x-form.input name="project_stage" label="Stage" placeholder="idea, prototype, mvp, growth, mature" value="{{ old('project_stage', $investment->project_stage) }}" />
+                    <x-form.input name="equity_percentage" label="Equity %" type="number" step="0.01" min="0" max="100" value="{{ old('equity_percentage', $investment->equity_percentage) }}" />
+                    <x-form.input name="project_amount_invested" label="Amount Invested" type="number" step="0.00000001" min="0" value="{{ old('project_amount_invested', $investment->project_amount_invested) }}" />
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:col-span-2">
+                    <x-form.input name="project_start_date" label="Project Start Date" type="date" value="{{ old('project_start_date', optional($investment->project_start_date)->format('Y-m-d')) }}" />
+                    <x-form.input name="project_end_date" label="Project End Date" type="date" value="{{ old('project_end_date', optional($investment->project_end_date)->format('Y-m-d')) }}" />
+                </div>
+
+                <div class="md:col-span-2">
+                    <x-form.input name="project_business_model" label="Business Model" placeholder="subscription, ads, one-time, etc." value="{{ old('project_business_model', $investment->project_business_model) }}" />
+                </div>
+
+                <div class="md:col-span-2">
+                    <x-form.input name="project_notes" label="Project Notes" type="textarea" rows="4" placeholder="Key milestones, KPIs, roadmap, team, etc." value="{{ old('project_notes', $investment->project_notes) }}" />
                 </div>
             </x-form.section>
 
