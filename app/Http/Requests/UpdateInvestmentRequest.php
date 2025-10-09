@@ -22,6 +22,7 @@ class UpdateInvestmentRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'symbol_identifier' => 'sometimes|required|string|max:20',
             'investment_type' => 'sometimes|required|string|in:stocks,bonds,etf,mutual_fund,crypto,real_estate,commodities,cash,project',
             'symbol_identifier' => 'nullable|string|max:20',
             'name' => 'sometimes|required|string|max:255',

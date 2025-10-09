@@ -30,7 +30,7 @@ class InvestmentFactory extends Factory
         $name = '';
 
         switch ($investmentType) {
-            case 'stocks':
+            case 'stock':
                 $symbol = $this->faker->randomElement($stockSymbols);
                 $name = $symbol.' Stock';
                 break;
