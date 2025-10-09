@@ -43,14 +43,14 @@
                         <select name="investment_type" id="investment_type" required
                                 class="mt-1 block w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                             <option value="">Select Investment Type</option>
-                            <option value="stock" {{ old('investment_type') === 'stock' ? 'selected' : '' }}>Stock</option>
-                            <option value="bond" {{ old('investment_type') === 'bond' ? 'selected' : '' }}>Bond</option>
+                            <option value="stocks" {{ old('investment_type') === 'stocks' ? 'selected' : '' }}>Stocks</option>
+                            <option value="bonds" {{ old('investment_type') === 'bonds' ? 'selected' : '' }}>Bonds</option>
                             <option value="crypto" {{ old('investment_type') === 'crypto' ? 'selected' : '' }}>Cryptocurrency</option>
                             <option value="real_estate" {{ old('investment_type') === 'real_estate' ? 'selected' : '' }}>Real Estate</option>
                             <option value="mutual_fund" {{ old('investment_type') === 'mutual_fund' ? 'selected' : '' }}>Mutual Fund</option>
                             <option value="etf" {{ old('investment_type') === 'etf' ? 'selected' : '' }}>ETF</option>
-                            <option value="commodity" {{ old('investment_type') === 'commodity' ? 'selected' : '' }}>Commodity</option>
-                            <option value="other" {{ old('investment_type') === 'other' ? 'selected' : '' }}>Other</option>
+                            <option value="commodities" {{ old('investment_type') === 'commodities' ? 'selected' : '' }}>Commodities</option>
+                            <option value="cash" {{ old('investment_type') === 'cash' ? 'selected' : '' }}>Cash</option>
                             <option value="project" {{ old('investment_type') === 'project' ? 'selected' : '' }}>Project</option>
                         </select>
                         @error('investment_type')
@@ -362,21 +362,6 @@
                             @enderror
                         </div>
 
-                        <div class="md:col-span-2">
-                            <label for="project_amount_invested" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Amount Invested (Optional)</label>
-                            <div class="mt-1 relative rounded-md shadow-sm">
-                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <span class="text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] sm:text-sm">$</span>
-                                </div>
-                                <input type="number" step="0.00000001" name="project_amount_invested" id="project_amount_invested" min="0"
-                                       value="{{ old('project_amount_invested') }}"
-                                       class="block w-full pl-7 pr-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]"
-                                       placeholder="0.00">
-                            </div>
-                            @error('project_amount_invested')
-                                <p class="mt-1 text-sm text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]">{{ $message }}</p>
-                            @enderror
-                        </div>
 
                         <div class="md:col-span-2">
                             <label for="project_notes" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Project Notes</label>

@@ -108,7 +108,6 @@ class InvestmentFactory extends Factory
                 'project_start_date' => $this->faker->optional()->dateTimeBetween('-3 years', 'now'),
                 'project_end_date' => $this->faker->optional()->dateTimeBetween('now', '+3 years'),
                 'project_notes' => $this->faker->optional()->paragraph(),
-                'project_amount_invested' => $this->faker->optional()->randomFloat(8, 10, 500000),
             ]);
         }
 

@@ -43,7 +43,6 @@ class Investment extends Model
         'project_start_date',
         'project_end_date',
         'project_notes',
-        'project_amount_invested',
     ];
 
     protected function casts(): array
@@ -64,7 +63,6 @@ class Investment extends Model
             'equity_percentage' => 'decimal:2',
             'project_start_date' => 'date',
             'project_end_date' => 'date',
-            'project_amount_invested' => 'decimal:8',
         ];
     }
 

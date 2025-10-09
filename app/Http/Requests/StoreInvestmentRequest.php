@@ -22,8 +22,8 @@ class StoreInvestmentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            // Accept both legacy singular types used in views/tests and plural types used in schema, plus the new 'project' type
-            'investment_type' => 'required|string|in:stock,stocks,bond,bonds,etf,mutual_fund,crypto,real_estate,commodity,commodities,cash,project',
+            // Accept only canonical plural types stored in DB, plus the new 'project' type
+            'investment_type' => 'required|string|in:stocks,bonds,etf,mutual_fund,crypto,real_estate,commodities,cash,project',
             'symbol_identifier' => 'nullable|string|max:20',
             'name' => 'required|string|max:255',
             'quantity' => 'required|numeric|min:0',
@@ -52,7 +52,6 @@ class StoreInvestmentRequest extends FormRequest
             'project_start_date' => 'nullable|date',
             'project_end_date' => 'nullable|date|after_or_equal:project_start_date',
             'project_notes' => 'nullable|string',
-            'project_amount_invested' => 'nullable|numeric|min:0',
         ];
     }
 

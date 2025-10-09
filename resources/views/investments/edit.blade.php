@@ -46,14 +46,14 @@
                     required
                     placeholder="Select Investment Type"
                 >
-                    <option value="stock" {{ old('investment_type', $investment->investment_type) === 'stock' ? 'selected' : '' }}>Stock</option>
-                    <option value="bond" {{ old('investment_type', $investment->investment_type) === 'bond' ? 'selected' : '' }}>Bond</option>
+                    <option value="stocks" {{ old('investment_type', $investment->investment_type) === 'stocks' ? 'selected' : '' }}>Stocks</option>
+                    <option value="bonds" {{ old('investment_type', $investment->investment_type) === 'bonds' ? 'selected' : '' }}>Bonds</option>
                     <option value="crypto" {{ old('investment_type', $investment->investment_type) === 'crypto' ? 'selected' : '' }}>Cryptocurrency</option>
                     <option value="real_estate" {{ old('investment_type', $investment->investment_type) === 'real_estate' ? 'selected' : '' }}>Real Estate</option>
                     <option value="mutual_fund" {{ old('investment_type', $investment->investment_type) === 'mutual_fund' ? 'selected' : '' }}>Mutual Fund</option>
                     <option value="etf" {{ old('investment_type', $investment->investment_type) === 'etf' ? 'selected' : '' }}>ETF</option>
-                    <option value="commodity" {{ old('investment_type', $investment->investment_type) === 'commodity' ? 'selected' : '' }}>Commodity</option>
-                    <option value="other" {{ old('investment_type', $investment->investment_type) === 'other' ? 'selected' : '' }}>Other</option>
+                    <option value="commodities" {{ old('investment_type', $investment->investment_type) === 'commodities' ? 'selected' : '' }}>Commodities</option>
+                    <option value="cash" {{ old('investment_type', $investment->investment_type) === 'cash' ? 'selected' : '' }}>Cash</option>
                     <option value="project" {{ old('investment_type', $investment->investment_type) === 'project' ? 'selected' : '' }}>Project</option>
                 </x-form.select>
 
@@ -257,7 +257,6 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:col-span-2">
                     <x-form.input name="project_stage" label="Stage" placeholder="idea, prototype, mvp, growth, mature" value="{{ old('project_stage', $investment->project_stage) }}" />
                     <x-form.input name="equity_percentage" label="Equity %" type="number" step="0.01" min="0" max="100" value="{{ old('equity_percentage', $investment->equity_percentage) }}" />
-                    <x-form.input name="project_amount_invested" label="Amount Invested" type="number" step="0.00000001" min="0" value="{{ old('project_amount_invested', $investment->project_amount_invested) }}" />
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:col-span-2">

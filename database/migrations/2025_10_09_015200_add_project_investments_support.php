@@ -23,8 +23,6 @@ return new class extends Migration
             $table->date('project_start_date')->nullable()->after('equity_percentage');
             $table->date('project_end_date')->nullable()->after('project_start_date');
             $table->text('project_notes')->nullable()->after('project_end_date');
-            // amount invested is already captured by quantity * purchase_price; keeping additional explicit field for clarity
-            $table->decimal('project_amount_invested', 15, 8)->nullable()->after('project_notes');
         });
 
         // 2) Expand enum to include 'project' on MySQL. SQLite/PostgreSQL fallbacks are handled gracefully.
@@ -55,7 +53,6 @@ return new class extends Migration
                 'project_start_date',
                 'project_end_date',
                 'project_notes',
-                'project_amount_invested',
             ]);
         });
 
