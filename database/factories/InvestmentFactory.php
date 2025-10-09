@@ -16,7 +16,7 @@ class InvestmentFactory extends Factory
      */
     public function definition(): array
     {
-        $investmentTypes = ['stocks', 'bonds', 'etf', 'mutual_fund', 'crypto', 'real_estate', 'commodities', 'cash'];
+        $investmentTypes = ['stock', 'bond', 'etf', 'mutual_fund', 'crypto', 'real_estate', 'commodities', 'cash'];
         $stockSymbols = ['AAPL', 'GOOGL', 'MSFT', 'AMZN', 'TSLA', 'NVDA', 'META', 'NFLX', 'AMD', 'UBER'];
         $cryptoSymbols = ['BTC', 'ETH', 'ADA', 'SOL', 'DOT', 'MATIC', 'AVAX', 'LINK'];
         $etfSymbols = ['SPY', 'QQQ', 'VTI', 'VOO', 'IWM', 'EFA', 'VEA', 'BND'];
@@ -30,7 +30,7 @@ class InvestmentFactory extends Factory
         $name = '';
 
         switch ($investmentType) {
-            case 'stocks':
+            case 'stock':
                 $symbol = $this->faker->randomElement($stockSymbols);
                 $name = $symbol.' Stock';
                 break;
