@@ -717,7 +717,21 @@ class InvestmentController extends Controller
     }
 
     /**
-     * Generate rebalancing recommendations.
+     * Builds rebalancing recommendations by comparing the portfolio's current allocations to the supplied target allocations.
+     *
+     * Validates that `target_allocation` is an array of objects containing `type` (investment type) and `percentage` (0–100).
+     * Only includes recommendations where the absolute difference between current and target value exceeds 5% of the portfolio total.
+     *
+     * @param \Illuminate\Http\Request $request Expects `target_allocation` as an array of items with keys `type` (string) and `percentage` (numeric).
+     * @return \Illuminate\View\View View `investments.rebalancing.recommendations` with a `recommendations` array. Each recommendation contains:
+     *                                - `investment_type`: string
+     *                                - `current_percentage`: float
+     *                                - `target_percentage`: float
+     *                                - `current_value`: float
+     *                                - `target_value`: float
+     *                                - `difference`: float (target_value - current_value)
+     *                                - `action`: string (`buy` or `sell`)
+     *                                - `amount`: float (absolute value of `difference`)
      */
     public function rebalancingRecommendations(Request $request)
     {
@@ -764,10 +778,13 @@ class InvestmentController extends Controller
     }
 
     /**
-     * Import investment transactions from a CSV file.
-     * Expected columns (case-insensitive):
-     * Action, Time, ISIN, Ticker, Name, Notes, ID, No. of shares, Price / share,
-     * Currency (Price / share), Exchange rate, Currency (Result), Total, Currency (Total) Deposit
+     * Queue an import of investment transactions from an uploaded CSV.
+     *
+     * Stores the validated CSV in a user-scoped temporary location accessible to queue workers
+     * and dispatches an ImportInvestmentsCsv job to process the file on the `imports` queue.
+     *
+     * @param \App\Http\Requests\ImportInvestmentCsvRequest $request Validated request containing the uploaded CSV file.
+     * @return \Illuminate\Http\RedirectResponse Redirects to the investments index with a success message indicating the import was queued.
      */
     public function importCsv(ImportInvestmentCsvRequest $request)
     {
