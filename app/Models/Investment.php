@@ -33,6 +33,18 @@ class Investment extends Model
         'last_price_update',
         'notes',
         'status',
+        // Project-specific fields
+        'project_type',
+        'project_website',
+        'project_repository',
+        'project_stage',
+        'project_business_model',
+        'equity_percentage',
+        'project_start_date',
+        'project_end_date',
+        'project_notes',
+        'project_amount',
+        'project_currency',
     ];
 
     protected function casts(): array
@@ -49,6 +61,11 @@ class Investment extends Model
             'tax_lots' => 'array',
             'target_allocation_percentage' => 'decimal:2',
             'last_price_update' => 'date',
+            // Project-specific casts
+            'equity_percentage' => 'decimal:2',
+            'project_start_date' => 'date',
+            'project_end_date' => 'date',
+            'project_amount' => 'decimal:2',
         ];
     }
 

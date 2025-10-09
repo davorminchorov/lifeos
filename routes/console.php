@@ -14,13 +14,11 @@ Schedule::command('subscriptions:check-renewals --dispatch-job')
     ->name('subscription-renewals')
     ->description('Check and send subscription renewal notifications');
 
-
 // Schedule warranty expiration notifications to run daily at 9:30 AM
 Schedule::command('warranties:check-expiration --dispatch-job')
     ->dailyAt('09:30')
     ->name('warranty-expiration')
     ->description('Check and send warranty expiration notifications');
-
 
 // Schedule contract expiration notifications to run daily at 10:00 AM
 Schedule::command('contracts:check-expiration --dispatch-job')
@@ -28,13 +26,17 @@ Schedule::command('contracts:check-expiration --dispatch-job')
     ->name('contract-expiration')
     ->description('Check and send contract expiration and notice period notifications');
 
-
 // Schedule utility bill due notifications to run daily at 10:30 AM
 Schedule::command('utility-bills:check-due --dispatch-job')
     ->dailyAt('10:30')
     ->name('utility-bill-due')
     ->description('Check and send utility bill payment due notifications');
 
+// Create expenses for auto-renewed subscriptions before advancing billing dates
+Schedule::command('subscriptions:create-expenses --dispatch-job')
+    ->dailyAt('00:05')
+    ->name('subscription-create-expenses')
+    ->description('Create expenses for subscriptions with auto-renewal due today');
 
 // Schedule updating of subscription next billing dates shortly after midnight
 Schedule::command('subscriptions:update-next-billing --dispatch-job')

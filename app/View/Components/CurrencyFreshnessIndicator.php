@@ -53,10 +53,10 @@ class CurrencyFreshnessIndicator extends Component
         $freshness = $this->rateInfo['freshness'];
 
         return match($freshness) {
-            'fresh' => 'bg-green-100 text-green-800 border-green-200',
-            'stale' => 'bg-yellow-100 text-yellow-800 border-yellow-200',
-            'warning' => 'bg-red-100 text-red-800 border-red-200',
-            default => 'bg-gray-100 text-gray-800 border-gray-200',
+            'fresh' => 'bg-success-50 text-success-600 border-success-400',
+            'stale' => 'bg-warning-50 text-warning-600 border-warning-400',
+            'warning' => 'bg-danger-50 text-danger-600 border-danger-400',
+            default => 'bg-primary-200 text-primary-700 border-primary-300',
         };
     }
 

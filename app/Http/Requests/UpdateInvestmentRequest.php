@@ -22,8 +22,9 @@ class UpdateInvestmentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'investment_type' => 'sometimes|required|string|in:stock,bond,etf,mutual_fund,crypto,real_estate,commodities,cash',
             'symbol_identifier' => 'sometimes|required|string|max:20',
+            'investment_type' => 'sometimes|required|string|in:stocks,bonds,etf,mutual_fund,crypto,real_estate,commodities,cash,project',
+            'symbol_identifier' => 'nullable|string|max:20',
             'name' => 'sometimes|required|string|max:255',
             'quantity' => 'sometimes|required|numeric|min:0',
             'purchase_date' => 'sometimes|required|date|before_or_equal:today',
@@ -40,6 +41,19 @@ class UpdateInvestmentRequest extends FormRequest
             'target_allocation_percentage' => 'nullable|numeric|min:0|max:100',
             'notes' => 'nullable|string|max:1000',
             'status' => 'nullable|string|in:active,sold,pending',
+
+            // Project-specific fields for updates
+            'project_type' => 'nullable|string|max:100',
+            'project_website' => 'nullable|url|max:255',
+            'project_repository' => 'nullable|url|max:255',
+            'project_stage' => 'nullable|string|max:50',
+            'project_business_model' => 'nullable|string|max:100',
+            'equity_percentage' => 'nullable|numeric|min:0|max:100',
+            'project_start_date' => 'nullable|date',
+            'project_end_date' => 'nullable|date|after_or_equal:project_start_date',
+            'project_notes' => 'nullable|string',
+            'project_amount' => 'nullable|numeric|min:0|max:999999999',
+            'project_currency' => 'nullable|string|size:3|alpha',
         ];
     }
 
