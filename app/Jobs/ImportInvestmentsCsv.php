@@ -165,14 +165,14 @@ class ImportInvestmentsCsv implements ShouldQueue
                 ];
                 $transactionType = $typeMap[$action] ?? 'buy';
 
-                // Find or create the Investment for this user/symbol
+                // Find or create the Investment for this user/symbol (do not include name in the lookup to avoid duplicates)
                 $investment = Investment::firstOrCreate(
                     [
                         'user_id' => $this->userId,
                         'symbol_identifier' => $ticker,
-                        'name' => $name ?? ($ticker ?: 'Unknown'),
                     ],
                     [
+                        'name' => $name ?? ($ticker ?: 'Unknown'),
                         'investment_type' => 'stock',
                         'quantity' => 0,
                         'purchase_date' => now()->toDateString(),
@@ -182,6 +182,11 @@ class ImportInvestmentsCsv implements ShouldQueue
                         'notes' => null,
                     ]
                 );
+
+                // If the investment already existed and the incoming name differs, update it
+                if ($name && $investment->name !== $name) {
+                    $investment->update(['name' => $name]);
+                }
 
                 // Build notes (append ISIN if present)
                 $mergedNotes = trim(collect([
