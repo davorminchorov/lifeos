@@ -87,11 +87,12 @@ class Trading212Service
         $configClass = 'MarekSkopal\\Trading212\\Config\\Config';
         $clientClass = 'MarekSkopal\\Trading212\\Trading212';
 
-        $cfg = class_exists($configClass)
-            ? new $configClass($apiKey, $env === 'live' ? 'live' : 'practice', $baseUrl)
-            : null;
+        if (!class_exists($configClass)) {
+            throw new \RuntimeException('Trading212 SDK Config class not found. Please run composer install.');
+        }
 
-        return $cfg ? new $clientClass($cfg) : new $clientClass;
+        $cfg = new $configClass($apiKey, $env === 'live' ? 'live' : 'practice', $baseUrl);
+        return new $clientClass($cfg);
     }
 
     public function lastSyncKey(): string
