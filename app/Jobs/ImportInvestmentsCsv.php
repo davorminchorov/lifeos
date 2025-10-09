@@ -36,8 +36,8 @@ class ImportInvestmentsCsv implements ShouldQueue
     /**
      * Create a new ImportInvestmentsCsv job instance for importing a user's CSV file.
      *
-     * @param int $userId ID of the user who initiated the import.
-     * @param string $storedPath Storage path to the uploaded CSV file.
+     * @param  int  $userId  ID of the user who initiated the import.
+     * @param  string  $storedPath  Storage path to the uploaded CSV file.
      */
     public function __construct(int $userId, string $storedPath)
     {
@@ -139,6 +139,12 @@ class ImportInvestmentsCsv implements ShouldQueue
                 $action = strtolower($get($row, 'action', 'buy'));
                 $dateRaw = $get($row, 'time', now()->toDateString());
                 $ticker = $get($row, 'ticker');
+                if (! $ticker || trim($ticker) === '') {
+                    $skipped++;
+                    Log::warning('ImportInvestmentsCsv: skipped row due to missing ticker/symbol_identifier');
+
+                    continue;
+                }
                 $name = $get($row, 'name');
                 $isin = $get($row, 'isin');
                 $notes = $get($row, 'notes');
@@ -203,7 +209,9 @@ class ImportInvestmentsCsv implements ShouldQueue
                     'total_amount' => $total,
                     'fees' => 0,
                     'taxes' => 0,
-                    'transaction_date' => $dateRaw ? date('Y-m-d', strtotime($dateRaw)) : now()->toDateString(),
+                    'transaction_date' => ($dateRaw && ($timestamp = strtotime($dateRaw)) !== false)
+                                            ? date('Y-m-d', $timestamp)
+                                            : now()->toDateString(),
                     'order_id' => $orderId,
                     'currency' => $currencyTotal ?: $currencyPrice,
                     'exchange_rate' => $exchangeRate ?: null,
@@ -246,8 +254,8 @@ class ImportInvestmentsCsv implements ShouldQueue
      * Adjusts the investment's quantity based on purchase or sale, accumulates fees from the transaction,
      * sets the investment status to "sold" when the quantity becomes zero or less due to a sale, and saves the investment.
      *
-     * @param Investment $investment The investment record to update.
-     * @param InvestmentTransaction $transaction The transaction whose values are applied to the investment.
+     * @param  Investment  $investment  The investment record to update.
+     * @param  InvestmentTransaction  $transaction  The transaction whose values are applied to the investment.
      */
     private function updateInvestmentFromTransaction(Investment $investment, InvestmentTransaction $transaction): void
     {

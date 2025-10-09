@@ -22,8 +22,8 @@ class StoreInvestmentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'investment_type' => 'required|string|in:stocks,bonds,etf,mutual_fund,crypto,real_estate,commodities,cash',
-            'symbol_identifier' => 'nullable|string|max:20',
+            'investment_type' => 'required|string|in:stock,bond,etf,mutual_fund,crypto,real_estate,commodities,cash',
+            'symbol_identifier' => 'required|string|max:20',
             'name' => 'required|string|max:255',
             'quantity' => 'required|numeric|min:0',
             'purchase_date' => 'required|date|before_or_equal:today',
