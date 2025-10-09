@@ -3,7 +3,7 @@
 @section('title', $subscription->service_name . ' - Subscriptions - LifeOS')
 
 @section('header')
-    <div class="flex justify-between items-center">
+    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>
             <h1 class="text-3xl font-bold text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                 {{ $subscription->service_name }}
@@ -12,11 +12,11 @@
                 {{ $subscription->description ?? 'Subscription details' }}
             </p>
         </div>
-        <div class="flex space-x-3">
-            <a href="{{ route('subscriptions.edit', $subscription) }}" class="bg-[color:var(--color-warning-500)] hover:bg-[color:var(--color-warning-600)] text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200">
+        <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+            <a href="{{ route('subscriptions.edit', $subscription) }}" class="w-full sm:w-auto inline-flex justify-center bg-[color:var(--color-warning-500)] hover:bg-[color:var(--color-warning-600)] text-white px-6 py-3 sm:px-4 sm:py-2 rounded-md text-base sm:text-sm font-medium transition-colors duration-200">
                 Edit
             </a>
-            <a href="{{ route('subscriptions.index') }}" class="bg-[color:var(--color-primary-500)] hover:bg-[color:var(--color-primary-600)] text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200">
+            <a href="{{ route('subscriptions.index') }}" class="w-full sm:w-auto inline-flex justify-center bg-[color:var(--color-primary-500)] hover:bg-[color:var(--color-primary-600)] text-white px-6 py-3 sm:px-4 sm:py-2 rounded-md text-base sm:text-sm font-medium transition-colors duration-200">
                 Back to List
             </a>
         </div>

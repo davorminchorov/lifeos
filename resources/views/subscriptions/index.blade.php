@@ -165,18 +165,18 @@
                                 </div>
                             </div>
 
-                            <div class="flex justify-end space-x-2 pt-3 border-t border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-400)]">
-                                <a href="{{ route('subscriptions.show', $subscription) }}" class="bg-[color:var(--color-accent-100)] hover:bg-[color:var(--color-accent-200)] text-[color:var(--color-accent-700)] px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 touch-manipulation">View</a>
-                                <a href="{{ route('subscriptions.edit', $subscription) }}" class="bg-[color:var(--color-warning-100)] hover:bg-[color:var(--color-warning-200)] text-[color:var(--color-warning-700)] px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 touch-manipulation">Edit</a>
+                            <div class="flex flex-col sm:flex-row sm:justify-end gap-2 pt-3 border-t border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-400)]">
+                                <a href="{{ route('subscriptions.show', $subscription) }}" class="w-full sm:w-auto inline-flex justify-center bg-[color:var(--color-accent-100)] hover:bg-[color:var(--color-accent-200)] text-[color:var(--color-accent-700)] px-4 py-3 sm:px-3 sm:py-2 rounded-md text-base sm:text-sm font-medium transition-colors duration-200 touch-manipulation">View</a>
+                                <a href="{{ route('subscriptions.edit', $subscription) }}" class="w-full sm:w-auto inline-flex justify-center bg-[color:var(--color-warning-100)] hover:bg-[color:var(--color-warning-200)] text-[color:var(--color-warning-700)] px-4 py-3 sm:px-3 sm:py-2 rounded-md text-base sm:text-sm font-medium transition-colors duration-200 touch-manipulation">Edit</a>
                                 @if($subscription->status === 'active')
                                     <button type="button"
-                                            class="bg-[color:var(--color-warning-100)] hover:bg-[color:var(--color-warning-200)] text-[color:var(--color-warning-700)] px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 touch-manipulation"
+                                            class="w-full sm:w-auto inline-flex justify-center bg-[color:var(--color-warning-100)] hover:bg-[color:var(--color-warning-200)] text-[color:var(--color-warning-700)] px-4 py-3 sm:px-3 sm:py-2 rounded-md text-base sm:text-sm font-medium transition-colors duration-200 touch-manipulation"
                                             x-on:click="$dispatch('open-modal', { id: 'pauseModal-{{ $subscription->id }}' })">
                                         Pause
                                     </button>
                                 @elseif($subscription->status === 'paused')
                                     <button type="button"
-                                            class="bg-[color:var(--color-success-100)] hover:bg-[color:var(--color-success-200)] text-[color:var(--color-success-700)] px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 touch-manipulation"
+                                            class="w-full sm:w-auto inline-flex justify-center bg-[color:var(--color-success-100)] hover:bg-[color:var(--color-success-200)] text-[color:var(--color-success-700)] px-4 py-3 sm:px-3 sm:py-2 rounded-md text-base sm:text-sm font-medium transition-colors duration-200 touch-manipulation"
                                             x-on:click="$dispatch('open-modal', { id: 'resumeModal-{{ $subscription->id }}' })">
                                         Resume
                                     </button>
