@@ -50,7 +50,7 @@ class ImportInvestmentsCsv implements ShouldQueue
      *
      * Keeping both property and explicit ->onQueue('imports') in dispatch for clarity.
      */
-    public string $queue = 'imports';
+    public $queue = 'imports';
 
     /**
      * Path in storage where the uploaded CSV is stored.
