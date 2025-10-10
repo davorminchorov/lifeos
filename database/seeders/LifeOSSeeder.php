@@ -232,7 +232,7 @@ class LifeOSSeeder extends Seeder
     {
         $investments = [
             [
-                'investment_type' => 'stock',
+                'investment_type' => 'stocks',
                 'symbol_identifier' => 'AAPL',
                 'name' => 'Apple Inc.',
                 'quantity' => 50.00000000,
