@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Jobs\CreateSubscriptionAutoRenewExpenses;
+use App\Jobs\CreateSubscriptionAutoRenewExpenses as CreateSubscriptionAutoRenewExpensesJob;
 use Illuminate\Console\Command;
 
 class CreateSubscriptionAutoRenewExpenses extends Command
@@ -29,10 +29,10 @@ class CreateSubscriptionAutoRenewExpenses extends Command
         $this->info('🧾 Creating expenses for auto-renewed subscriptions due today...');
 
         if ($this->option('dispatch-job')) {
-            CreateSubscriptionAutoRenewExpenses::dispatch();
+            CreateSubscriptionAutoRenewExpensesJob::dispatch();
             $this->info('📤 Job dispatched to queue');
         } else {
-            (new CreateSubscriptionAutoRenewExpenses)->handle();
+            (new CreateSubscriptionAutoRenewExpensesJob)->handle();
             $this->info('✅ Expenses created');
         }
 
