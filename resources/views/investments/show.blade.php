@@ -116,11 +116,11 @@
                         <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">Investment Type</dt>
                         <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">
                             <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full
-                                {{ $investment->investment_type === 'stock' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' : '' }}
+                                {{ $investment->investment_type === 'stocks' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' : '' }}
                                 {{ $investment->investment_type === 'crypto' ? 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200' : '' }}
                                 {{ $investment->investment_type === 'bond' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : '' }}
                                 {{ $investment->investment_type === 'real_estate' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' : '' }}
-                                {{ !in_array($investment->investment_type, ['stock', 'crypto', 'bond', 'real_estate']) ? 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200' : '' }}
+                                {{ !in_array($investment->investment_type, ['stocks', 'crypto', 'bond', 'real_estate']) ? 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200' : '' }}
                             ">
                                 {{ ucfirst(str_replace('_', ' ', $investment->investment_type)) }}
                             </span>

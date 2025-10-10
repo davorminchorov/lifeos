@@ -68,7 +68,7 @@
                         label="Type"
                         placeholder="All Types"
                     >
-                        <option value="stock" {{ request('investment_type') === 'stock' ? 'selected' : '' }}>Stock</option>
+                        <option value="stocks" {{ request('investment_type') === 'stocks' ? 'selected' : '' }}>Stocks</option>
                         <option value="bond" {{ request('investment_type') === 'bond' ? 'selected' : '' }}>Bond</option>
                         <option value="crypto" {{ request('investment_type') === 'crypto' ? 'selected' : '' }}>Cryptocurrency</option>
                         <option value="etf" {{ request('investment_type') === 'etf' ? 'selected' : '' }}>ETF</option>
