@@ -17,7 +17,7 @@
         "alpinejs": "^3.14.9",
         "chart.js": "^4.5.0",
         "html2canvas": "^1.4.1",
-        "jspdf": "^3.0.1"
+        "jspdf": "^3.0.2"
     },
     "optionalDependencies": {
         "@rollup/rollup-linux-x64-gnu": "^4.48.0"
