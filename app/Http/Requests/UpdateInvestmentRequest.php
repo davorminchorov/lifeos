@@ -21,19 +21,24 @@ class UpdateInvestmentRequest extends FormRequest
      */
     public function rules(): array
     {
+        $investmentType = $this->input('investment_type');
+
         return [
-            'symbol_identifier' => 'sometimes|required|string|max:20',
             'investment_type' => 'sometimes|required|string|in:stocks,bonds,etf,mutual_fund,crypto,real_estate,commodities,cash,project',
             'symbol_identifier' => 'nullable|string|max:20',
             'name' => 'sometimes|required|string|max:255',
-            'quantity' => 'sometimes|required|numeric|min:0',
-            'purchase_date' => 'sometimes|required|date|before_or_equal:today',
-            'purchase_price' => 'sometimes|required|numeric|min:1|max:999999999',
+
+            // Stock/traditional investment fields - required unless investment_type is 'project'
+            'quantity' => ($investmentType === 'project' ? 'nullable' : 'sometimes|required') . '|numeric|min:0',
+            'purchase_date' => ($investmentType === 'project' ? 'nullable' : 'sometimes|required') . '|date|before_or_equal:today',
+            'purchase_price' => ($investmentType === 'project' ? 'nullable' : 'sometimes|required') . '|numeric|min:1|max:999999999',
+            'currency' => 'nullable|string|in:MKD,USD,EUR,GBP,CAD,AUD,JPY,CHF,RSD,BGN',
+
             'current_value' => 'nullable|numeric|min:1|max:999999999',
             'total_dividends_received' => 'nullable|numeric|min:0|max:999999999',
             'total_fees_paid' => 'nullable|numeric|min:0|max:999999999',
             'investment_goals' => 'nullable|array',
-            'risk_tolerance' => 'sometimes|required|string|in:conservative,moderate,aggressive',
+            'risk_tolerance' => ($investmentType === 'project' ? 'nullable' : 'sometimes|required') . '|string|in:conservative,moderate,aggressive',
             'account_broker' => 'nullable|string|max:255',
             'account_number' => 'nullable|string|max:50',
             'transaction_history' => 'nullable|array',
@@ -53,7 +58,7 @@ class UpdateInvestmentRequest extends FormRequest
             'project_end_date' => 'nullable|date|after_or_equal:project_start_date',
             'project_notes' => 'nullable|string',
             'project_amount' => 'nullable|numeric|min:0|max:999999999',
-            'project_currency' => 'nullable|string|size:3|alpha',
+            'project_currency' => 'nullable|string|in:MKD,USD,EUR,GBP,CAD,AUD,JPY,CHF,RSD,BGN',
         ];
     }
 

@@ -104,6 +104,22 @@
                     value="{{ old('purchase_price', $investment->purchase_price) }}"
                 />
 
+                <x-form.select
+                    name="currency"
+                    label="Currency"
+                >
+                    <option value="MKD" {{ old('currency', $investment->currency ?? 'MKD') === 'MKD' ? 'selected' : '' }}>MKD - Macedonian Denar</option>
+                    <option value="USD" {{ old('currency', $investment->currency) === 'USD' ? 'selected' : '' }}>USD ($) - US Dollar</option>
+                    <option value="EUR" {{ old('currency', $investment->currency) === 'EUR' ? 'selected' : '' }}>EUR (€) - Euro</option>
+                    <option value="GBP" {{ old('currency', $investment->currency) === 'GBP' ? 'selected' : '' }}>GBP (£) - British Pound</option>
+                    <option value="CAD" {{ old('currency', $investment->currency) === 'CAD' ? 'selected' : '' }}>CAD (C$) - Canadian Dollar</option>
+                    <option value="AUD" {{ old('currency', $investment->currency) === 'AUD' ? 'selected' : '' }}>AUD (A$) - Australian Dollar</option>
+                    <option value="JPY" {{ old('currency', $investment->currency) === 'JPY' ? 'selected' : '' }}>JPY (¥) - Japanese Yen</option>
+                    <option value="CHF" {{ old('currency', $investment->currency) === 'CHF' ? 'selected' : '' }}>CHF (CHF) - Swiss Franc</option>
+                    <option value="RSD" {{ old('currency', $investment->currency) === 'RSD' ? 'selected' : '' }}>RSD (RSD) - Serbian Dinar</option>
+                    <option value="BGN" {{ old('currency', $investment->currency) === 'BGN' ? 'selected' : '' }}>BGN (лв) - Bulgarian Lev</option>
+                </x-form.select>
+
                 <x-form.input
                     name="purchase_date"
                     label="Purchase Date"
@@ -261,7 +277,23 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:col-span-2">
                     <x-form.input name="project_amount" label="Project Amount" type="number" step="0.01" min="0" prefix="$" placeholder="0.00" value="{{ old('project_amount', $investment->project_amount) }}" />
-                    <x-form.input name="project_currency" label="Project Currency" type="text" placeholder="USD" value="{{ old('project_currency', $investment->project_currency) }}" />
+                    <div>
+                        <x-form.select
+                            name="project_currency"
+                            label="Project Currency"
+                        >
+                            <option value="MKD" {{ old('project_currency', $investment->project_currency ?? 'MKD') === 'MKD' ? 'selected' : '' }}>MKD - Macedonian Denar</option>
+                            <option value="USD" {{ old('project_currency', $investment->project_currency) === 'USD' ? 'selected' : '' }}>USD ($) - US Dollar</option>
+                            <option value="EUR" {{ old('project_currency', $investment->project_currency) === 'EUR' ? 'selected' : '' }}>EUR (€) - Euro</option>
+                            <option value="GBP" {{ old('project_currency', $investment->project_currency) === 'GBP' ? 'selected' : '' }}>GBP (£) - British Pound</option>
+                            <option value="CAD" {{ old('project_currency', $investment->project_currency) === 'CAD' ? 'selected' : '' }}>CAD (C$) - Canadian Dollar</option>
+                            <option value="AUD" {{ old('project_currency', $investment->project_currency) === 'AUD' ? 'selected' : '' }}>AUD (A$) - Australian Dollar</option>
+                            <option value="JPY" {{ old('project_currency', $investment->project_currency) === 'JPY' ? 'selected' : '' }}>JPY (¥) - Japanese Yen</option>
+                            <option value="CHF" {{ old('project_currency', $investment->project_currency) === 'CHF' ? 'selected' : '' }}>CHF (CHF) - Swiss Franc</option>
+                            <option value="RSD" {{ old('project_currency', $investment->project_currency) === 'RSD' ? 'selected' : '' }}>RSD (RSD) - Serbian Dinar</option>
+                            <option value="BGN" {{ old('project_currency', $investment->project_currency) === 'BGN' ? 'selected' : '' }}>BGN (лв) - Bulgarian Lev</option>
+                        </x-form.select>
+                    </div>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:col-span-2">
@@ -330,4 +362,45 @@
             </div>
         </form>
     </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const investmentTypeSelect = document.querySelector('select[name="investment_type"]');
+
+    // Get field containers - x-form components wrap inputs
+    const quantityInput = document.querySelector('input[name="quantity"]');
+    const purchasePriceInput = document.querySelector('input[name="purchase_price"]');
+    const purchaseDateInput = document.querySelector('input[name="purchase_date"]');
+    const riskToleranceSelect = document.querySelector('select[name="risk_tolerance"]');
+
+    function toggleFields() {
+        if (!investmentTypeSelect) return;
+
+        const isProject = investmentTypeSelect.value === 'project';
+
+        if (isProject) {
+            // For projects, make stock fields optional
+            if (quantityInput) quantityInput.removeAttribute('required');
+            if (purchasePriceInput) purchasePriceInput.removeAttribute('required');
+            if (purchaseDateInput) purchaseDateInput.removeAttribute('required');
+            if (riskToleranceSelect) riskToleranceSelect.removeAttribute('required');
+        } else {
+            // For non-projects, make stock fields required
+            if (quantityInput) quantityInput.setAttribute('required', 'required');
+            if (purchasePriceInput) purchasePriceInput.setAttribute('required', 'required');
+            if (purchaseDateInput) purchaseDateInput.setAttribute('required', 'required');
+            if (riskToleranceSelect) riskToleranceSelect.setAttribute('required', 'required');
+        }
+    }
+
+    // Run on page load
+    toggleFields();
+
+    // Run when investment type changes
+    if (investmentTypeSelect) {
+        investmentTypeSelect.addEventListener('change', toggleFields);
+    }
+});
+</script>
+
 @endsection

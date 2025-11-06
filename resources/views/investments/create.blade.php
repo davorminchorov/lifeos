@@ -119,6 +119,26 @@
                         </div>
 
                         <div>
+                            <label for="currency" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Currency</label>
+                            <select name="currency" id="currency"
+                                    class="mt-1 block w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
+                                <option value="MKD" {{ old('currency', 'MKD') === 'MKD' ? 'selected' : '' }}>MKD - Macedonian Denar</option>
+                                <option value="USD" {{ old('currency') === 'USD' ? 'selected' : '' }}>USD ($) - US Dollar</option>
+                                <option value="EUR" {{ old('currency') === 'EUR' ? 'selected' : '' }}>EUR (€) - Euro</option>
+                                <option value="GBP" {{ old('currency') === 'GBP' ? 'selected' : '' }}>GBP (£) - British Pound</option>
+                                <option value="CAD" {{ old('currency') === 'CAD' ? 'selected' : '' }}>CAD (C$) - Canadian Dollar</option>
+                                <option value="AUD" {{ old('currency') === 'AUD' ? 'selected' : '' }}>AUD (A$) - Australian Dollar</option>
+                                <option value="JPY" {{ old('currency') === 'JPY' ? 'selected' : '' }}>JPY (¥) - Japanese Yen</option>
+                                <option value="CHF" {{ old('currency') === 'CHF' ? 'selected' : '' }}>CHF (CHF) - Swiss Franc</option>
+                                <option value="RSD" {{ old('currency') === 'RSD' ? 'selected' : '' }}>RSD (RSD) - Serbian Dinar</option>
+                                <option value="BGN" {{ old('currency') === 'BGN' ? 'selected' : '' }}>BGN (лв) - Bulgarian Lev</option>
+                            </select>
+                            @error('currency')
+                                <p class="mt-1 text-sm text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div>
                             <label for="purchase_date" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Purchase Date *</label>
                             <input type="date" name="purchase_date" id="purchase_date" required
                                    value="{{ old('purchase_date', date('Y-m-d')) }}"
@@ -360,10 +380,19 @@
 
                         <div>
                             <label for="project_currency" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Project Currency</label>
-                            <input type="text" name="project_currency" id="project_currency" maxlength="3"
-                                   value="{{ old('project_currency') }}"
-                                   class="mt-1 uppercase tracking-wider block w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]"
-                                   placeholder="USD">
+                            <select name="project_currency" id="project_currency"
+                                    class="mt-1 block w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
+                                <option value="MKD" {{ old('project_currency', 'MKD') === 'MKD' ? 'selected' : '' }}>MKD - Macedonian Denar</option>
+                                <option value="USD" {{ old('project_currency') === 'USD' ? 'selected' : '' }}>USD ($) - US Dollar</option>
+                                <option value="EUR" {{ old('project_currency') === 'EUR' ? 'selected' : '' }}>EUR (€) - Euro</option>
+                                <option value="GBP" {{ old('project_currency') === 'GBP' ? 'selected' : '' }}>GBP (£) - British Pound</option>
+                                <option value="CAD" {{ old('project_currency') === 'CAD' ? 'selected' : '' }}>CAD (C$) - Canadian Dollar</option>
+                                <option value="AUD" {{ old('project_currency') === 'AUD' ? 'selected' : '' }}>AUD (A$) - Australian Dollar</option>
+                                <option value="JPY" {{ old('project_currency') === 'JPY' ? 'selected' : '' }}>JPY (¥) - Japanese Yen</option>
+                                <option value="CHF" {{ old('project_currency') === 'CHF' ? 'selected' : '' }}>CHF (CHF) - Swiss Franc</option>
+                                <option value="RSD" {{ old('project_currency') === 'RSD' ? 'selected' : '' }}>RSD (RSD) - Serbian Dinar</option>
+                                <option value="BGN" {{ old('project_currency') === 'BGN' ? 'selected' : '' }}>BGN (лв) - Bulgarian Lev</option>
+                            </select>
                             @error('project_currency')
                                 <p class="mt-1 text-sm text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]">{{ $message }}</p>
                             @enderror
@@ -421,4 +450,56 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const investmentTypeSelect = document.getElementById('investment_type');
+    const purchaseDetailsSection = document.querySelector('.border-t.border-\\[color\\:var\\(--color-primary-200\\)\\].dark\\:border-\\[color\\:var\\(--color-dark-300\\)\\].pt-6');
+    const projectDetailsSection = purchaseDetailsSection.nextElementSibling.nextElementSibling.nextElementSibling;
+
+    // Get individual stock-specific fields
+    const quantityField = document.getElementById('quantity').closest('div');
+    const purchasePriceField = document.getElementById('purchase_price').closest('div');
+    const currencyField = document.getElementById('currency').closest('div');
+    const purchaseDateField = document.getElementById('purchase_date').closest('div');
+    const riskToleranceField = document.getElementById('risk_tolerance').closest('div');
+
+    function toggleFields() {
+        const isProject = investmentTypeSelect.value === 'project';
+
+        if (isProject) {
+            // For projects, make stock fields optional and hide their required indicators
+            quantityField.querySelector('input').removeAttribute('required');
+            purchasePriceField.querySelector('input').removeAttribute('required');
+            purchaseDateField.querySelector('input').removeAttribute('required');
+            riskToleranceField.querySelector('select').removeAttribute('required');
+
+            // Update labels to remove asterisks
+            quantityField.querySelector('label').textContent = 'Quantity';
+            purchasePriceField.querySelector('label').textContent = 'Purchase Price (per unit)';
+            purchaseDateField.querySelector('label').textContent = 'Purchase Date';
+            riskToleranceField.querySelector('label').textContent = 'Risk Tolerance';
+        } else {
+            // For non-projects, make stock fields required
+            quantityField.querySelector('input').setAttribute('required', 'required');
+            purchasePriceField.querySelector('input').setAttribute('required', 'required');
+            purchaseDateField.querySelector('input').setAttribute('required', 'required');
+            riskToleranceField.querySelector('select').setAttribute('required', 'required');
+
+            // Update labels to add asterisks
+            quantityField.querySelector('label').textContent = 'Quantity *';
+            purchasePriceField.querySelector('label').textContent = 'Purchase Price (per unit) *';
+            purchaseDateField.querySelector('label').textContent = 'Purchase Date *';
+            riskToleranceField.querySelector('label').textContent = 'Risk Tolerance *';
+        }
+    }
+
+    // Run on page load
+    toggleFields();
+
+    // Run when investment type changes
+    investmentTypeSelect.addEventListener('change', toggleFields);
+});
+</script>
+
 @endsection

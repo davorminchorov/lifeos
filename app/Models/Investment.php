@@ -20,6 +20,7 @@ class Investment extends Model
         'quantity',
         'purchase_date',
         'purchase_price',
+        'currency',
         'current_value',
         'total_dividends_received',
         'total_fees_paid',
