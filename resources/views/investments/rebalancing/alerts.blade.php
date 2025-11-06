@@ -182,13 +182,13 @@
                         <div>
                             <label for="stocks_percentage" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Stocks (%)</label>
                             <input type="number" id="stocks_percentage" name="target_allocation[0][percentage]" min="0" max="100" step="0.1" value="60" class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white">
-                            <input type="hidden" name="target_allocation[0][type]" value="stocks">
+                            <input type="hidden" name="target_allocation[0][type]" value="stock">
                         </div>
 
                         <div>
                             <label for="bonds_percentage" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Bonds (%)</label>
                             <input type="number" id="bonds_percentage" name="target_allocation[1][percentage]" min="0" max="100" step="0.1" value="30" class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white">
-                            <input type="hidden" name="target_allocation[1][type]" value="bonds">
+                            <input type="hidden" name="target_allocation[1][type]" value="bond">
                         </div>
 
                         <div>

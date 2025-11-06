@@ -24,16 +24,16 @@ class StoreInvestmentRequest extends FormRequest
         $investmentType = $this->input('investment_type');
 
         // Define which types require traditional purchase details
-        $typesRequiringPurchaseDetails = ['stocks', 'bonds', 'etf', 'mutual_fund', 'crypto'];
+        $typesRequiringPurchaseDetails = ['stock', 'bond', 'etf', 'mutual_fund', 'crypto'];
         // Define which types require risk tolerance
-        $typesRequiringRiskTolerance = ['stocks', 'bonds', 'etf', 'mutual_fund'];
+        $typesRequiringRiskTolerance = ['stock', 'bond', 'etf', 'mutual_fund'];
 
         $requiresPurchaseDetails = in_array($investmentType, $typesRequiringPurchaseDetails);
         $requiresRiskTolerance = in_array($investmentType, $typesRequiringRiskTolerance);
 
         return [
-            // Accept only canonical plural types stored in DB, plus the new 'project' type
-            'investment_type' => 'required|string|in:stocks,bonds,etf,mutual_fund,crypto,real_estate,commodities,cash,project',
+            // Accept singular enum types as stored in DB, plus the 'project' type
+            'investment_type' => 'required|string|in:stock,bond,etf,mutual_fund,crypto,real_estate,commodities,cash,project',
             'symbol_identifier' => 'nullable|string|max:20',
             'name' => 'required|string|max:255',
 

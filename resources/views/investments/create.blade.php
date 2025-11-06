@@ -43,8 +43,8 @@
                         <select name="investment_type" id="investment_type" required
                                 class="mt-1 block w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                             <option value="">Select Investment Type</option>
-                            <option value="stocks" {{ old('investment_type') === 'stocks' ? 'selected' : '' }}>Stocks</option>
-                            <option value="bonds" {{ old('investment_type') === 'bonds' ? 'selected' : '' }}>Bonds</option>
+                            <option value="stock" {{ old('investment_type') === 'stock' ? 'selected' : '' }}>Stocks</option>
+                            <option value="bond" {{ old('investment_type') === 'bond' ? 'selected' : '' }}>Bonds</option>
                             <option value="crypto" {{ old('investment_type') === 'crypto' ? 'selected' : '' }}>Cryptocurrency</option>
                             <option value="real_estate" {{ old('investment_type') === 'real_estate' ? 'selected' : '' }}>Real Estate</option>
                             <option value="mutual_fund" {{ old('investment_type') === 'mutual_fund' ? 'selected' : '' }}>Mutual Fund</option>
@@ -462,9 +462,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const riskToleranceField = document.getElementById('risk_tolerance').closest('div');
 
     // Define which types require purchase details
-    const typesRequiringPurchaseDetails = ['stocks', 'bonds', 'etf', 'mutual_fund', 'crypto'];
+    const typesRequiringPurchaseDetails = ['stock', 'bond', 'etf', 'mutual_fund', 'crypto'];
     // Define which types require risk tolerance
-    const typesRequiringRiskTolerance = ['stocks', 'bonds', 'etf', 'mutual_fund'];
+    const typesRequiringRiskTolerance = ['stock', 'bond', 'etf', 'mutual_fund'];
 
     function toggleFields() {
         const selectedType = investmentTypeSelect.value;

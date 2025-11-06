@@ -46,8 +46,8 @@
                     required
                     placeholder="Select Investment Type"
                 >
-                    <option value="stocks" {{ old('investment_type', $investment->investment_type) === 'stocks' ? 'selected' : '' }}>Stocks</option>
-                    <option value="bonds" {{ old('investment_type', $investment->investment_type) === 'bonds' ? 'selected' : '' }}>Bonds</option>
+                    <option value="stock" {{ old('investment_type', $investment->investment_type) === 'stock' ? 'selected' : '' }}>Stocks</option>
+                    <option value="bond" {{ old('investment_type', $investment->investment_type) === 'bond' ? 'selected' : '' }}>Bonds</option>
                     <option value="crypto" {{ old('investment_type', $investment->investment_type) === 'crypto' ? 'selected' : '' }}>Cryptocurrency</option>
                     <option value="real_estate" {{ old('investment_type', $investment->investment_type) === 'real_estate' ? 'selected' : '' }}>Real Estate</option>
                     <option value="mutual_fund" {{ old('investment_type', $investment->investment_type) === 'mutual_fund' ? 'selected' : '' }}>Mutual Fund</option>
@@ -374,9 +374,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const riskToleranceSelect = document.querySelector('select[name="risk_tolerance"]');
 
     // Define which types require purchase details
-    const typesRequiringPurchaseDetails = ['stocks', 'bonds', 'etf', 'mutual_fund', 'crypto'];
+    const typesRequiringPurchaseDetails = ['stock', 'bond', 'etf', 'mutual_fund', 'crypto'];
     // Define which types require risk tolerance
-    const typesRequiringRiskTolerance = ['stocks', 'bonds', 'etf', 'mutual_fund'];
+    const typesRequiringRiskTolerance = ['stock', 'bond', 'etf', 'mutual_fund'];
 
     function toggleFields() {
         if (!investmentTypeSelect) return;

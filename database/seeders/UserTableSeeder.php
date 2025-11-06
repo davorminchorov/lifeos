@@ -13,7 +13,7 @@ class UserTableSeeder extends Seeder
     public function run(): void
     {
         User::firstOrCreate(
-            ['email' => 'davor@davorminchorov.com'],
+            ['email' => 'davor@lifeos.test'],
             [
                 'name' => 'Davor Minchorov',
                 'email_verified_at' => now(),

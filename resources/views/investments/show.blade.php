@@ -58,9 +58,11 @@
                         <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">Total Cost Basis</dt>
                         <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">
                             <div class="text-lg font-semibold">{{ app(\App\Services\CurrencyService::class)->format($investment->total_cost_basis, $investment->currency ?? 'MKD') }}</div>
-                            <div class="text-xs text-gray-500 dark:text-gray-400">
-                                {{ app(\App\Services\CurrencyService::class)->format($investment->purchase_price, $investment->currency ?? 'MKD') }} × {{ number_format($investment->quantity, 8) }} + {{ app(\App\Services\CurrencyService::class)->format($investment->total_fees_paid, $investment->currency ?? 'MKD') }} fees
-                            </div>
+                            @if($investment->purchase_price !== null && $investment->quantity !== null)
+                                <div class="text-xs text-gray-500 dark:text-gray-400">
+                                    {{ app(\App\Services\CurrencyService::class)->format($investment->purchase_price, $investment->currency ?? 'MKD') }} × {{ number_format($investment->quantity, 8) }} + {{ app(\App\Services\CurrencyService::class)->format($investment->total_fees_paid, $investment->currency ?? 'MKD') }} fees
+                                </div>
+                            @endif
                         </dd>
                     </div>
                     <div class="bg-gray-50 dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
@@ -116,11 +118,11 @@
                         <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">Investment Type</dt>
                         <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">
                             <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full
-                                {{ $investment->investment_type === 'stocks' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' : '' }}
+                                {{ $investment->investment_type === 'stock' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' : '' }}
                                 {{ $investment->investment_type === 'crypto' ? 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200' : '' }}
                                 {{ $investment->investment_type === 'bond' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : '' }}
                                 {{ $investment->investment_type === 'real_estate' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' : '' }}
-                                {{ !in_array($investment->investment_type, ['stocks', 'crypto', 'bond', 'real_estate']) ? 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200' : '' }}
+                                {{ !in_array($investment->investment_type, ['stock', 'crypto', 'bond', 'real_estate']) ? 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200' : '' }}
                             ">
                                 {{ ucfirst(str_replace('_', ' ', $investment->investment_type)) }}
                             </span>
@@ -146,7 +148,7 @@
                     </div>
                     <div class="bg-gray-50 dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                         <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">Quantity</dt>
-                        <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">{{ number_format($investment->quantity, 8) }}</dd>
+                        <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">{{ $investment->quantity !== null ? number_format($investment->quantity, 8) : 'N/A' }}</dd>
                     </div>
                     <div class="bg-white dark:bg-gray-800 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                         <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">Purchase Date</dt>

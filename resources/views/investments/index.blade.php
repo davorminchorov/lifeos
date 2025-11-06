@@ -68,7 +68,7 @@
                         label="Type"
                         placeholder="All Types"
                     >
-                        <option value="stocks" {{ request('investment_type') === 'stocks' ? 'selected' : '' }}>Stocks</option>
+                        <option value="stock" {{ request('investment_type') === 'stock' ? 'selected' : '' }}>Stocks</option>
                         <option value="bond" {{ request('investment_type') === 'bond' ? 'selected' : '' }}>Bond</option>
                         <option value="crypto" {{ request('investment_type') === 'crypto' ? 'selected' : '' }}>Cryptocurrency</option>
                         <option value="etf" {{ request('investment_type') === 'etf' ? 'selected' : '' }}>ETF</option>
@@ -156,7 +156,7 @@
                                         </span>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
-                                        {{ number_format($investment->quantity, 4) }}
+                                        {{ $investment->quantity !== null ? number_format($investment->quantity, 4) : 'N/A' }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                                         {{ $investment->formatted_purchase_price }}

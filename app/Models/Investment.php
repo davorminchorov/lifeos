@@ -106,13 +106,16 @@ class Investment extends Model
     // Calculate total investment cost basis
     public function getTotalCostBasisAttribute()
     {
-        return ($this->quantity * $this->purchase_price) + $this->total_fees_paid;
+        $quantity = $this->quantity ?? 0;
+        $purchasePrice = $this->purchase_price ?? 0;
+        return ($quantity * $purchasePrice) + $this->total_fees_paid;
     }
 
     // Calculate current market value
     public function getCurrentMarketValueAttribute()
     {
-        return $this->quantity * ($this->current_value ?? $this->purchase_price);
+        $quantity = $this->quantity ?? 0;
+        return $quantity * ($this->current_value ?? $this->purchase_price ?? 0);
     }
 
     // Calculate unrealized gain/loss
@@ -170,7 +173,7 @@ class Investment extends Model
     {
         $currencyService = app(\App\Services\CurrencyService::class);
 
-        return $currencyService->format($this->purchase_price);
+        return $this->purchase_price !== null ? $currencyService->format($this->purchase_price) : 'N/A';
     }
 
     // Get formatted current value with currency
@@ -178,7 +181,7 @@ class Investment extends Model
     {
         $currencyService = app(\App\Services\CurrencyService::class);
 
-        return $currencyService->format($this->current_value ?? $this->purchase_price);
+        return $currencyService->format($this->current_value ?? $this->purchase_price ?? 0);
     }
 
     // Get formatted current market value with currency
