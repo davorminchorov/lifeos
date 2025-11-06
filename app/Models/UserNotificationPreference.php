@@ -103,13 +103,13 @@ class UserNotificationPreference extends Model
                 'email_enabled' => true,
                 'database_enabled' => true,
                 'push_enabled' => false,
-                'settings' => ['days_before' => [30, 7, 1]],
+                'settings' => ['days_before' => [30, 7, 1, 0]],
             ],
             'warranty_expiration' => [
                 'email_enabled' => true,
                 'database_enabled' => true,
                 'push_enabled' => false,
-                'settings' => ['days_before' => [30, 7, 1]],
+                'settings' => ['days_before' => [30, 7, 1, 0]],
             ],
             'utility_bill_due' => [
                 'email_enabled' => true,
