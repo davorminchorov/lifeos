@@ -122,7 +122,8 @@
                                 {{ $investment->investment_type === 'crypto' ? 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200' : '' }}
                                 {{ $investment->investment_type === 'bond' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : '' }}
                                 {{ $investment->investment_type === 'real_estate' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' : '' }}
-                                {{ !in_array($investment->investment_type, ['stock', 'crypto', 'bond', 'real_estate']) ? 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200' : '' }}
+                                {{ $investment->investment_type === 'project' ? 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200' : '' }}
+                                {{ !in_array($investment->investment_type, ['stock', 'crypto', 'bond', 'real_estate', 'project']) ? 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200' : '' }}
                             ">
                                 {{ ucfirst(str_replace('_', ' ', $investment->investment_type)) }}
                             </span>
@@ -146,42 +147,114 @@
                             @endif
                         </dd>
                     </div>
-                    <div class="bg-gray-50 dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                        <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">Quantity</dt>
-                        <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">{{ $investment->quantity !== null ? number_format($investment->quantity, 8) : 'N/A' }}</dd>
-                    </div>
-                    <div class="bg-white dark:bg-gray-800 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                        <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">Purchase Date</dt>
-                        <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">
-                            {{ $investment->purchase_date->format('M j, Y') }}
-                            <span class="text-xs text-gray-500 dark:text-gray-400">
-                                ({{ $investment->holding_period_days }} days ago)
-                            </span>
-                        </dd>
-                    </div>
-                    <div class="bg-gray-50 dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                        <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">Risk Tolerance</dt>
-                        <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">
-                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full
-                                {{ $investment->risk_tolerance === 'low' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : '' }}
-                                {{ $investment->risk_tolerance === 'medium' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' : '' }}
-                                {{ $investment->risk_tolerance === 'high' ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' : '' }}
-                            ">
-                                {{ ucfirst($investment->risk_tolerance) }} Risk
-                            </span>
-                        </dd>
-                    </div>
-                    @if($investment->account_broker)
-                        <div class="bg-white dark:bg-gray-800 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">Broker/Platform</dt>
-                            <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">{{ $investment->account_broker }}</dd>
-                        </div>
-                    @endif
-                    @if($investment->target_allocation_percentage)
+                    @if($investment->investment_type !== 'project')
                         <div class="bg-gray-50 dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">Target Allocation</dt>
-                            <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">{{ $investment->target_allocation_percentage }}% of portfolio</dd>
+                            <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">Quantity</dt>
+                            <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">{{ $investment->quantity !== null ? number_format($investment->quantity, 8) : 'N/A' }}</dd>
                         </div>
+                        <div class="bg-white dark:bg-gray-800 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">Purchase Date</dt>
+                            <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">
+                                {{ $investment->purchase_date->format('M j, Y') }}
+                                <span class="text-xs text-gray-500 dark:text-gray-400">
+                                    ({{ $investment->holding_period_days }} days ago)
+                                </span>
+                            </dd>
+                        </div>
+                        <div class="bg-gray-50 dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">Risk Tolerance</dt>
+                            <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">
+                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full
+                                    {{ $investment->risk_tolerance === 'low' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : '' }}
+                                    {{ $investment->risk_tolerance === 'medium' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' : '' }}
+                                    {{ $investment->risk_tolerance === 'high' ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' : '' }}
+                                ">
+                                    {{ ucfirst($investment->risk_tolerance) }} Risk
+                                </span>
+                            </dd>
+                        </div>
+                        @if($investment->account_broker)
+                            <div class="bg-white dark:bg-gray-800 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">Broker/Platform</dt>
+                                <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">{{ $investment->account_broker }}</dd>
+                            </div>
+                        @endif
+                        @if($investment->target_allocation_percentage)
+                            <div class="bg-gray-50 dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">Target Allocation</dt>
+                                <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">{{ $investment->target_allocation_percentage }}% of portfolio</dd>
+                            </div>
+                        @endif
+                    @else
+                        {{-- Project-specific fields --}}
+                        @if($investment->project_type)
+                            <div class="bg-gray-50 dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">Project Type</dt>
+                                <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">{{ $investment->project_type }}</dd>
+                            </div>
+                        @endif
+                        @if($investment->project_stage)
+                            <div class="bg-white dark:bg-gray-800 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">Stage</dt>
+                                <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">
+                                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                                        {{ ucfirst($investment->project_stage) }}
+                                    </span>
+                                </dd>
+                            </div>
+                        @endif
+                        @if($investment->equity_percentage)
+                            <div class="bg-gray-50 dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">Equity Stake</dt>
+                                <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">{{ number_format($investment->equity_percentage, 2) }}%</dd>
+                            </div>
+                        @endif
+                        @if($investment->project_business_model)
+                            <div class="bg-white dark:bg-gray-800 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">Business Model</dt>
+                                <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">{{ $investment->project_business_model }}</dd>
+                            </div>
+                        @endif
+                        @if($investment->project_amount)
+                            <div class="bg-gray-50 dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">Investment Amount</dt>
+                                <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">
+                                    {{ app(\App\Services\CurrencyService::class)->format($investment->project_amount, $investment->project_currency ?? 'MKD') }}
+                                </dd>
+                            </div>
+                        @endif
+                        @if($investment->project_start_date)
+                            <div class="bg-white dark:bg-gray-800 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">Start Date</dt>
+                                <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">{{ $investment->project_start_date->format('M j, Y') }}</dd>
+                            </div>
+                        @endif
+                        @if($investment->project_end_date)
+                            <div class="bg-gray-50 dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">End Date</dt>
+                                <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">{{ $investment->project_end_date->format('M j, Y') }}</dd>
+                            </div>
+                        @endif
+                        @if($investment->project_website)
+                            <div class="bg-white dark:bg-gray-800 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">Website</dt>
+                                <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">
+                                    <a href="{{ $investment->project_website }}" target="_blank" class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
+                                        {{ $investment->project_website }}
+                                    </a>
+                                </dd>
+                            </div>
+                        @endif
+                        @if($investment->project_repository)
+                            <div class="bg-gray-50 dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">Repository</dt>
+                                <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">
+                                    <a href="{{ $investment->project_repository }}" target="_blank" class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
+                                        {{ $investment->project_repository }}
+                                    </a>
+                                </dd>
+                            </div>
+                        @endif
                     @endif
                 </dl>
             </div>
@@ -272,6 +345,23 @@
                 </div>
                 <div class="border-t border-gray-200 dark:border-gray-700 px-4 py-5 sm:px-6">
                     <p class="text-sm text-gray-900 dark:text-white whitespace-pre-wrap">{{ $investment->notes }}</p>
+                </div>
+            </div>
+        @endif
+
+        <!-- Project Notes -->
+        @if($investment->investment_type === 'project' && $investment->project_notes)
+            <div class="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg">
+                <div class="px-4 py-5 sm:px-6">
+                    <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">
+                        Project Notes
+                    </h3>
+                    <p class="mt-1 max-w-2xl text-sm text-gray-500 dark:text-gray-400">
+                        Key milestones, KPIs, roadmap, and team information.
+                    </p>
+                </div>
+                <div class="border-t border-gray-200 dark:border-gray-700 px-4 py-5 sm:px-6">
+                    <p class="text-sm text-gray-900 dark:text-white whitespace-pre-wrap">{{ $investment->project_notes }}</p>
                 </div>
             </div>
         @endif

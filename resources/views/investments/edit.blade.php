@@ -271,7 +271,16 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:col-span-2">
-                    <x-form.input name="project_stage" label="Stage" placeholder="idea, prototype, mvp, growth, mature" value="{{ old('project_stage', $investment->project_stage) }}" />
+                    <div>
+                        <x-form.select name="project_stage" label="Stage">
+                            <option value="">Select a stage</option>
+                            <option value="idea" {{ old('project_stage', $investment->project_stage) === 'idea' ? 'selected' : '' }}>Idea</option>
+                            <option value="prototype" {{ old('project_stage', $investment->project_stage) === 'prototype' ? 'selected' : '' }}>Prototype</option>
+                            <option value="mvp" {{ old('project_stage', $investment->project_stage) === 'mvp' ? 'selected' : '' }}>MVP</option>
+                            <option value="growth" {{ old('project_stage', $investment->project_stage) === 'growth' ? 'selected' : '' }}>Growth</option>
+                            <option value="mature" {{ old('project_stage', $investment->project_stage) === 'mature' ? 'selected' : '' }}>Mature</option>
+                        </x-form.select>
+                    </div>
                     <x-form.input name="equity_percentage" label="Equity %" type="number" step="0.01" min="0" max="100" value="{{ old('equity_percentage', $investment->equity_percentage) }}" />
                 </div>
 
@@ -302,7 +311,13 @@
                 </div>
 
                 <div class="md:col-span-2">
-                    <x-form.input name="project_business_model" label="Business Model" placeholder="subscription, ads, one-time, etc." value="{{ old('project_business_model', $investment->project_business_model) }}" />
+                    <x-form.select name="project_business_model" label="Business Model">
+                        <option value="">Select a business model</option>
+                        <option value="subscription" {{ old('project_business_model', $investment->project_business_model) === 'subscription' ? 'selected' : '' }}>Subscription</option>
+                        <option value="ads" {{ old('project_business_model', $investment->project_business_model) === 'ads' ? 'selected' : '' }}>Ads</option>
+                        <option value="one-time" {{ old('project_business_model', $investment->project_business_model) === 'one-time' ? 'selected' : '' }}>One-time</option>
+                        <option value="freemium" {{ old('project_business_model', $investment->project_business_model) === 'freemium' ? 'selected' : '' }}>Freemium</option>
+                    </x-form.select>
                 </div>
 
                 <div class="md:col-span-2">

@@ -342,10 +342,15 @@
 
                         <div>
                             <label for="project_stage" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Stage</label>
-                            <input type="text" name="project_stage" id="project_stage"
-                                   value="{{ old('project_stage') }}"
-                                   class="mt-1 block w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]"
-                                   placeholder="idea, prototype, mvp, growth, mature">
+                            <select name="project_stage" id="project_stage"
+                                    class="mt-1 block w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
+                                <option value="">Select a stage</option>
+                                <option value="idea" {{ old('project_stage') === 'idea' ? 'selected' : '' }}>Idea</option>
+                                <option value="prototype" {{ old('project_stage') === 'prototype' ? 'selected' : '' }}>Prototype</option>
+                                <option value="mvp" {{ old('project_stage') === 'mvp' ? 'selected' : '' }}>MVP</option>
+                                <option value="growth" {{ old('project_stage') === 'growth' ? 'selected' : '' }}>Growth</option>
+                                <option value="mature" {{ old('project_stage') === 'mature' ? 'selected' : '' }}>Mature</option>
+                            </select>
                             @error('project_stage')
                                 <p class="mt-1 text-sm text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]">{{ $message }}</p>
                             @enderror
@@ -353,10 +358,14 @@
 
                         <div>
                             <label for="project_business_model" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Business Model</label>
-                            <input type="text" name="project_business_model" id="project_business_model"
-                                   value="{{ old('project_business_model') }}"
-                                   class="mt-1 block w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]"
-                                   placeholder="subscription, ads, one-time, etc.">
+                            <select name="project_business_model" id="project_business_model"
+                                    class="mt-1 block w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
+                                <option value="">Select a business model</option>
+                                <option value="subscription" {{ old('project_business_model') === 'subscription' ? 'selected' : '' }}>Subscription</option>
+                                <option value="ads" {{ old('project_business_model') === 'ads' ? 'selected' : '' }}>Ads</option>
+                                <option value="one-time" {{ old('project_business_model') === 'one-time' ? 'selected' : '' }}>One-time</option>
+                                <option value="freemium" {{ old('project_business_model') === 'freemium' ? 'selected' : '' }}>Freemium</option>
+                            </select>
                             @error('project_business_model')
                                 <p class="mt-1 text-sm text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]">{{ $message }}</p>
                             @enderror

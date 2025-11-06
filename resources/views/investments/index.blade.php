@@ -74,6 +74,7 @@
                         <option value="etf" {{ request('investment_type') === 'etf' ? 'selected' : '' }}>ETF</option>
                         <option value="mutual_fund" {{ request('investment_type') === 'mutual_fund' ? 'selected' : '' }}>Mutual Fund</option>
                         <option value="real_estate" {{ request('investment_type') === 'real_estate' ? 'selected' : '' }}>Real Estate</option>
+                        <option value="project" {{ request('investment_type') === 'project' ? 'selected' : '' }}>Project</option>
                     </x-form.select>
                 </div>
 
@@ -121,8 +122,8 @@
                             <tr>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] uppercase tracking-wider">Investment</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] uppercase tracking-wider">Type</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] uppercase tracking-wider">Quantity</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] uppercase tracking-wider">Purchase Price</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] uppercase tracking-wider">Quantity / Equity</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] uppercase tracking-wider">Price / Amount</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] uppercase tracking-wider">Current Value</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] uppercase tracking-wider">Performance</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] uppercase tracking-wider">Actions</th>
@@ -142,10 +143,21 @@
                                         <div class="flex items-center">
                                             <div>
                                                 <div class="text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
-                                                    {{ $investment->symbol ?? $investment->name }}
+                                                    {{ $investment->symbol_identifier ?? $investment->name }}
                                                 </div>
                                                 <div class="text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)]">
-                                                    {{ $investment->name }}
+                                                    @if($investment->investment_type === 'project')
+                                                        @if($investment->project_type)
+                                                            {{ $investment->project_type }}
+                                                            @if($investment->project_stage)
+                                                                · {{ ucfirst($investment->project_stage) }}
+                                                            @endif
+                                                        @else
+                                                            {{ $investment->name }}
+                                                        @endif
+                                                    @else
+                                                        {{ $investment->name }}
+                                                    @endif
                                                 </div>
                                             </div>
                                         </div>
@@ -156,10 +168,22 @@
                                         </span>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
-                                        {{ $investment->quantity !== null ? number_format($investment->quantity, 4) : 'N/A' }}
+                                        @if($investment->investment_type === 'project')
+                                            @if($investment->equity_percentage)
+                                                {{ number_format($investment->equity_percentage, 2) }}% equity
+                                            @else
+                                                N/A
+                                            @endif
+                                        @else
+                                            {{ $investment->quantity !== null ? number_format($investment->quantity, 4) : 'N/A' }}
+                                        @endif
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
-                                        {{ $investment->formatted_purchase_price }}
+                                        @if($investment->investment_type === 'project' && $investment->project_amount)
+                                            {{ app(\App\Services\CurrencyService::class)->format($investment->project_amount, $investment->project_currency ?? 'MKD') }}
+                                        @else
+                                            {{ $investment->formatted_purchase_price }}
+                                        @endif
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                                         {{ $investment->formatted_current_market_value }}
