@@ -373,23 +373,34 @@ document.addEventListener('DOMContentLoaded', function() {
     const purchaseDateInput = document.querySelector('input[name="purchase_date"]');
     const riskToleranceSelect = document.querySelector('select[name="risk_tolerance"]');
 
+    // Define which types require purchase details
+    const typesRequiringPurchaseDetails = ['stocks', 'bonds', 'etf', 'mutual_fund', 'crypto'];
+    // Define which types require risk tolerance
+    const typesRequiringRiskTolerance = ['stocks', 'bonds', 'etf', 'mutual_fund'];
+
     function toggleFields() {
         if (!investmentTypeSelect) return;
 
-        const isProject = investmentTypeSelect.value === 'project';
+        const selectedType = investmentTypeSelect.value;
+        const requiresPurchaseDetails = typesRequiringPurchaseDetails.includes(selectedType);
+        const requiresRiskTolerance = typesRequiringRiskTolerance.includes(selectedType);
 
-        if (isProject) {
-            // For projects, make stock fields optional
-            if (quantityInput) quantityInput.removeAttribute('required');
-            if (purchasePriceInput) purchasePriceInput.removeAttribute('required');
-            if (purchaseDateInput) purchaseDateInput.removeAttribute('required');
-            if (riskToleranceSelect) riskToleranceSelect.removeAttribute('required');
-        } else {
-            // For non-projects, make stock fields required
+        // Handle purchase details fields
+        if (requiresPurchaseDetails) {
             if (quantityInput) quantityInput.setAttribute('required', 'required');
             if (purchasePriceInput) purchasePriceInput.setAttribute('required', 'required');
             if (purchaseDateInput) purchaseDateInput.setAttribute('required', 'required');
+        } else {
+            if (quantityInput) quantityInput.removeAttribute('required');
+            if (purchasePriceInput) purchasePriceInput.removeAttribute('required');
+            if (purchaseDateInput) purchaseDateInput.removeAttribute('required');
+        }
+
+        // Handle risk tolerance field
+        if (requiresRiskTolerance) {
             if (riskToleranceSelect) riskToleranceSelect.setAttribute('required', 'required');
+        } else {
+            if (riskToleranceSelect) riskToleranceSelect.removeAttribute('required');
         }
     }
 

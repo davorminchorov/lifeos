@@ -23,22 +23,30 @@ class UpdateInvestmentRequest extends FormRequest
     {
         $investmentType = $this->input('investment_type');
 
+        // Define which types require traditional purchase details
+        $typesRequiringPurchaseDetails = ['stocks', 'bonds', 'etf', 'mutual_fund', 'crypto'];
+        // Define which types require risk tolerance
+        $typesRequiringRiskTolerance = ['stocks', 'bonds', 'etf', 'mutual_fund'];
+
+        $requiresPurchaseDetails = in_array($investmentType, $typesRequiringPurchaseDetails);
+        $requiresRiskTolerance = in_array($investmentType, $typesRequiringRiskTolerance);
+
         return [
             'investment_type' => 'sometimes|required|string|in:stocks,bonds,etf,mutual_fund,crypto,real_estate,commodities,cash,project',
             'symbol_identifier' => 'nullable|string|max:20',
             'name' => 'sometimes|required|string|max:255',
 
-            // Stock/traditional investment fields - required unless investment_type is 'project'
-            'quantity' => ($investmentType === 'project' ? 'nullable' : 'sometimes|required') . '|numeric|min:0',
-            'purchase_date' => ($investmentType === 'project' ? 'nullable' : 'sometimes|required') . '|date|before_or_equal:today',
-            'purchase_price' => ($investmentType === 'project' ? 'nullable' : 'sometimes|required') . '|numeric|min:1|max:999999999',
+            // Stock/traditional investment fields - conditionally required based on investment type
+            'quantity' => ($requiresPurchaseDetails ? 'sometimes|required' : 'nullable') . '|numeric|min:0',
+            'purchase_date' => ($requiresPurchaseDetails ? 'sometimes|required' : 'nullable') . '|date|before_or_equal:today',
+            'purchase_price' => ($requiresPurchaseDetails ? 'sometimes|required' : 'nullable') . '|numeric|min:1|max:999999999',
             'currency' => 'nullable|string|in:MKD,USD,EUR,GBP,CAD,AUD,JPY,CHF,RSD,BGN',
 
             'current_value' => 'nullable|numeric|min:1|max:999999999',
             'total_dividends_received' => 'nullable|numeric|min:0|max:999999999',
             'total_fees_paid' => 'nullable|numeric|min:0|max:999999999',
             'investment_goals' => 'nullable|array',
-            'risk_tolerance' => ($investmentType === 'project' ? 'nullable' : 'sometimes|required') . '|string|in:conservative,moderate,aggressive',
+            'risk_tolerance' => ($requiresRiskTolerance ? 'sometimes|required' : 'nullable') . '|string|in:conservative,moderate,aggressive',
             'account_broker' => 'nullable|string|max:255',
             'account_number' => 'nullable|string|max:50',
             'transaction_history' => 'nullable|array',

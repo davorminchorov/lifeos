@@ -454,43 +454,49 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const investmentTypeSelect = document.getElementById('investment_type');
-    const purchaseDetailsSection = document.querySelector('.border-t.border-\\[color\\:var\\(--color-primary-200\\)\\].dark\\:border-\\[color\\:var\\(--color-dark-300\\)\\].pt-6');
-    const projectDetailsSection = purchaseDetailsSection.nextElementSibling.nextElementSibling.nextElementSibling;
 
-    // Get individual stock-specific fields
+    // Get individual investment-specific fields
     const quantityField = document.getElementById('quantity').closest('div');
     const purchasePriceField = document.getElementById('purchase_price').closest('div');
-    const currencyField = document.getElementById('currency').closest('div');
     const purchaseDateField = document.getElementById('purchase_date').closest('div');
     const riskToleranceField = document.getElementById('risk_tolerance').closest('div');
 
+    // Define which types require purchase details
+    const typesRequiringPurchaseDetails = ['stocks', 'bonds', 'etf', 'mutual_fund', 'crypto'];
+    // Define which types require risk tolerance
+    const typesRequiringRiskTolerance = ['stocks', 'bonds', 'etf', 'mutual_fund'];
+
     function toggleFields() {
-        const isProject = investmentTypeSelect.value === 'project';
+        const selectedType = investmentTypeSelect.value;
+        const requiresPurchaseDetails = typesRequiringPurchaseDetails.includes(selectedType);
+        const requiresRiskTolerance = typesRequiringRiskTolerance.includes(selectedType);
 
-        if (isProject) {
-            // For projects, make stock fields optional and hide their required indicators
-            quantityField.querySelector('input').removeAttribute('required');
-            purchasePriceField.querySelector('input').removeAttribute('required');
-            purchaseDateField.querySelector('input').removeAttribute('required');
-            riskToleranceField.querySelector('select').removeAttribute('required');
-
-            // Update labels to remove asterisks
-            quantityField.querySelector('label').textContent = 'Quantity';
-            purchasePriceField.querySelector('label').textContent = 'Purchase Price (per unit)';
-            purchaseDateField.querySelector('label').textContent = 'Purchase Date';
-            riskToleranceField.querySelector('label').textContent = 'Risk Tolerance';
-        } else {
-            // For non-projects, make stock fields required
+        // Handle purchase details fields (quantity, purchase_price, purchase_date)
+        if (requiresPurchaseDetails) {
             quantityField.querySelector('input').setAttribute('required', 'required');
             purchasePriceField.querySelector('input').setAttribute('required', 'required');
             purchaseDateField.querySelector('input').setAttribute('required', 'required');
-            riskToleranceField.querySelector('select').setAttribute('required', 'required');
 
-            // Update labels to add asterisks
             quantityField.querySelector('label').textContent = 'Quantity *';
             purchasePriceField.querySelector('label').textContent = 'Purchase Price (per unit) *';
             purchaseDateField.querySelector('label').textContent = 'Purchase Date *';
+        } else {
+            quantityField.querySelector('input').removeAttribute('required');
+            purchasePriceField.querySelector('input').removeAttribute('required');
+            purchaseDateField.querySelector('input').removeAttribute('required');
+
+            quantityField.querySelector('label').textContent = 'Quantity';
+            purchasePriceField.querySelector('label').textContent = 'Purchase Price (per unit)';
+            purchaseDateField.querySelector('label').textContent = 'Purchase Date';
+        }
+
+        // Handle risk tolerance field
+        if (requiresRiskTolerance) {
+            riskToleranceField.querySelector('select').setAttribute('required', 'required');
             riskToleranceField.querySelector('label').textContent = 'Risk Tolerance *';
+        } else {
+            riskToleranceField.querySelector('select').removeAttribute('required');
+            riskToleranceField.querySelector('label').textContent = 'Risk Tolerance';
         }
     }
 
