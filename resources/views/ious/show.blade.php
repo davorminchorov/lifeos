@@ -215,7 +215,7 @@
         </div>
 
         <!-- Payment History -->
-        @if($iou->payments->count() > 0)
+        @if($iou->payments?->count() > 0)
             <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] shadow-md rounded-lg border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] mb-6">
                 <div class="px-6 py-5">
                     <h2 class="text-lg font-semibold text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] mb-4">Payment History</h2>
@@ -323,7 +323,7 @@
 
                 <div class="mb-4">
                     <label for="payment_amount" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] mb-2">Amount</label>
-                    <input type="number" step="0.01" name="amount" id="payment_amount" required min="0.01" max="{{ $iou->remaining_amount }}"
+                    <input type="number" step="0.01" name="payment_amount" id="payment_amount" required min="0.01" max="{{ $iou->remaining_amount }}"
                            class="block w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)] bg-white dark:bg-[color:var(--color-dark-100)] text-[color:var(--color-primary-900)] dark:text-white"
                            placeholder="0.00">
                     <p class="mt-1 text-xs text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)]">Remaining: {{ $iou->formatted_remaining_amount }}</p>

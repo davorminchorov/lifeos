@@ -87,7 +87,13 @@ class Iou extends Model
     // Get remaining balance
     public function getRemainingBalanceAttribute()
     {
-        return $this->amount - $this->amount_paid;
+        return $this->amount - ($this->amount_paid ?? 0);
+    }
+
+    // Get remaining amount (alias for remaining_balance)
+    public function getRemainingAmountAttribute()
+    {
+        return $this->remaining_balance;
     }
 
     // Get formatted amount with currency
@@ -98,12 +104,26 @@ class Iou extends Model
         return $currencyService->format($this->amount, $this->currency);
     }
 
+    // Get formatted amount paid
+    public function getFormattedAmountPaidAttribute()
+    {
+        $currencyService = app(\App\Services\CurrencyService::class);
+
+        return $currencyService->format($this->amount_paid ?? 0, $this->currency);
+    }
+
     // Get formatted remaining balance
     public function getFormattedRemainingBalanceAttribute()
     {
         $currencyService = app(\App\Services\CurrencyService::class);
 
         return $currencyService->format($this->remaining_balance, $this->currency);
+    }
+
+    // Get formatted remaining amount (alias for formatted_remaining_balance)
+    public function getFormattedRemainingAmountAttribute()
+    {
+        return $this->formatted_remaining_balance;
     }
 
     // Get formatted amount in MKD
@@ -143,7 +163,13 @@ class Iou extends Model
             return 0;
         }
 
-        return min(100, round(($this->amount_paid / $this->amount) * 100, 2));
+        return min(100, round((($this->amount_paid ?? 0) / $this->amount) * 100, 2));
+    }
+
+    // Get payment percentage (alias for payment_progress)
+    public function getPaymentPercentageAttribute()
+    {
+        return $this->payment_progress;
     }
 
     // Get days until due
