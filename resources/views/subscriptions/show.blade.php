@@ -149,11 +149,11 @@
                         <dt class="text-sm font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">Auto Renewal</dt>
                         <dd class="mt-1 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] sm:mt-0 sm:col-span-2">
                             @if($subscription->auto_renewal)
-                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-[color:var(--color-success-50)] text-[color:var(--color-success-600)] dark:bg-[color:var(--color-success-900)] dark:text-[color:var(--color-success-200)]">
                                     Enabled
                                 </span>
                             @else
-                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
+                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-[color:var(--color-danger-50)] text-[color:var(--color-danger-600)] dark:bg-[color:var(--color-danger-900)] dark:text-[color:var(--color-danger-200)]">
                                     Disabled
                                 </span>
                             @endif
@@ -221,11 +221,11 @@
                             <dd class="mt-1 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] sm:mt-0 sm:col-span-2">
                                 <div class="flex items-center">
                                     @for($i = 1; $i <= 5; $i++)
-                                        <svg class="h-4 w-4 {{ $i <= $subscription->cancellation_difficulty ? 'text-yellow-400' : 'text-gray-300 dark:text-gray-600' }}" fill="currentColor" viewBox="0 0 20 20">
+                                        <svg class="h-4 w-4 {{ $i <= $subscription->cancellation_difficulty ? 'text-[color:var(--color-warning-400)]' : 'text-[color:var(--color-primary-300)] dark:text-[color:var(--color-dark-400)]' }}" fill="currentColor" viewBox="0 0 20 20">
                                             <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
                                         </svg>
                                     @endfor
-                                    <span class="ml-2 text-sm text-gray-600 dark:text-gray-400">
+                                    <span class="ml-2 text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)]">
                                         ({{ $subscription->cancellation_difficulty }}/5 -
                                         @switch($subscription->cancellation_difficulty)
                                             @case(1) Very Easy @break
@@ -247,7 +247,7 @@
                             <dd class="mt-1 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] sm:mt-0 sm:col-span-2">
                                 <div class="flex flex-wrap gap-2">
                                     @foreach($subscription->tags as $tag)
-                                        <span class="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200">
+                                        <span class="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-[color:var(--color-primary-200)] text-[color:var(--color-primary-700)] dark:bg-[color:var(--color-dark-300)] dark:text-[color:var(--color-dark-600)]">
                                             {{ $tag }}
                                         </span>
                                     @endforeach
@@ -340,7 +340,7 @@
         </div>
         <div class="border-t border-gray-200 dark:border-gray-700 px-4 py-5 sm:px-6">
             <div class="flex flex-wrap gap-3">
-                <a href="{{ route('subscriptions.edit', $subscription) }}" class="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-md text-sm font-medium">
+                <a href="{{ route('subscriptions.edit', $subscription) }}" class="bg-[color:var(--color-warning-500)] hover:bg-[color:var(--color-warning-600)] text-white px-4 py-2 rounded-md text-sm font-medium">
                     Edit Subscription
                 </a>
 

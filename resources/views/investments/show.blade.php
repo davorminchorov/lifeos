@@ -34,7 +34,7 @@
                 <h3 class="text-lg leading-6 font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                     Performance Overview
                 </h3>
-                <p class="mt-1 max-w-2xl text-sm text-gray-500 dark:text-gray-400">
+                <p class="mt-1 max-w-2xl text-sm text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">
                     Current performance metrics and returns.
                 </p>
             </div>
@@ -45,7 +45,7 @@
                         <dd class="mt-1 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] sm:mt-0 sm:col-span-2">
                             <div class="text-lg font-semibold">{{ app(\App\Services\CurrencyService::class)->format($investment->current_market_value, $investment->currency ?? 'MKD') }}</div>
                             @if($investment->current_value)
-                                <div class="text-xs text-gray-500 dark:text-gray-400">
+                                <div class="text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">
                                     {{ app(\App\Services\CurrencyService::class)->format($investment->current_value, $investment->currency ?? 'MKD') }} per unit
                                     @if($investment->last_price_update)
                                         (Updated: {{ $investment->last_price_update->format('M j, Y') }})
@@ -59,7 +59,7 @@
                         <dd class="mt-1 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] sm:mt-0 sm:col-span-2">
                             <div class="text-lg font-semibold">{{ app(\App\Services\CurrencyService::class)->format($investment->total_cost_basis, $investment->currency ?? 'MKD') }}</div>
                             @if($investment->purchase_price !== null && $investment->quantity !== null)
-                                <div class="text-xs text-gray-500 dark:text-gray-400">
+                                <div class="text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">
                                     {{ app(\App\Services\CurrencyService::class)->format($investment->purchase_price, $investment->currency ?? 'MKD') }} × {{ number_format($investment->quantity, 8) }} + {{ app(\App\Services\CurrencyService::class)->format($investment->total_fees_paid, $investment->currency ?? 'MKD') }} fees
                                 </div>
                             @endif
@@ -68,7 +68,7 @@
                     <div class="bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                         <dt class="text-sm font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">Unrealized Gain/Loss</dt>
                         <dd class="mt-1 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] sm:mt-0 sm:col-span-2">
-                            <div class="text-lg font-semibold {{ $investment->unrealized_gain_loss >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400' }}">
+                            <div class="text-lg font-semibold {{ $investment->unrealized_gain_loss >= 0 ? 'text-green-600 dark:text-green-400' : 'text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]' }}">
                                 {{ app(\App\Services\CurrencyService::class)->format($investment->unrealized_gain_loss, $investment->currency ?? 'MKD') }}
                                 ({{ number_format($investment->unrealized_gain_loss_percentage, 2) }}%)
                             </div>
@@ -77,12 +77,12 @@
                     <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                         <dt class="text-sm font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">Total Return</dt>
                         <dd class="mt-1 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] sm:mt-0 sm:col-span-2">
-                            <div class="text-lg font-semibold {{ $investment->total_return >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400' }}">
+                            <div class="text-lg font-semibold {{ $investment->total_return >= 0 ? 'text-green-600 dark:text-green-400' : 'text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]' }}">
                                 {{ app(\App\Services\CurrencyService::class)->format($investment->total_return, $investment->currency ?? 'MKD') }}
                                 ({{ number_format($investment->total_return_percentage, 2) }}%)
                             </div>
                             @if($investment->total_dividends_received > 0)
-                                <div class="text-xs text-gray-500 dark:text-gray-400">
+                                <div class="text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">
                                     Includes {{ app(\App\Services\CurrencyService::class)->format($investment->total_dividends_received, $investment->currency ?? 'MKD') }} in dividends
                                 </div>
                             @endif
@@ -92,7 +92,7 @@
                         <div class="bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">Annualized Return</dt>
                             <dd class="mt-1 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] sm:mt-0 sm:col-span-2">
-                                <div class="text-lg font-semibold {{ $investment->annualized_return >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400' }}">
+                                <div class="text-lg font-semibold {{ $investment->annualized_return >= 0 ? 'text-green-600 dark:text-green-400' : 'text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]' }}">
                                     {{ number_format($investment->annualized_return, 2) }}%
                                 </div>
                             </dd>
@@ -108,7 +108,7 @@
                 <h3 class="text-lg leading-6 font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                     Investment Details
                 </h3>
-                <p class="mt-1 max-w-2xl text-sm text-gray-500 dark:text-gray-400">
+                <p class="mt-1 max-w-2xl text-sm text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">
                     Basic information about this investment.
                 </p>
             </div>
@@ -118,12 +118,12 @@
                         <dt class="text-sm font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">Investment Type</dt>
                         <dd class="mt-1 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] sm:mt-0 sm:col-span-2">
                             <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full
-                                {{ $investment->investment_type === 'stock' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' : '' }}
+                                {{ $investment->investment_type === 'stock' ? 'bg-[color:var(--color-info-50)] text-[color:var(--color-info-600)] dark:bg-[color:var(--color-info-900)] dark:text-[color:var(--color-info-200)]' : '' }}
                                 {{ $investment->investment_type === 'crypto' ? 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200' : '' }}
-                                {{ $investment->investment_type === 'bond' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : '' }}
-                                {{ $investment->investment_type === 'real_estate' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' : '' }}
+                                {{ $investment->investment_type === 'bond' ? 'bg-[color:var(--color-success-50)] text-[color:var(--color-success-600)] dark:bg-[color:var(--color-success-900)] dark:text-[color:var(--color-success-200)]' : '' }}
+                                {{ $investment->investment_type === 'real_estate' ? 'bg-[color:var(--color-warning-50)] text-[color:var(--color-warning-600)] dark:bg-[color:var(--color-warning-900)] dark:text-[color:var(--color-warning-200)]' : '' }}
                                 {{ $investment->investment_type === 'project' ? 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200' : '' }}
-                                {{ !in_array($investment->investment_type, ['stock', 'crypto', 'bond', 'real_estate', 'project']) ? 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200' : '' }}
+                                {{ !in_array($investment->investment_type, ['stock', 'crypto', 'bond', 'real_estate', 'project']) ? 'bg-[color:var(--color-primary-200)] text-[color:var(--color-primary-700)] dark:bg-[color:var(--color-dark-300)] dark:text-[color:var(--color-dark-600)]' : '' }}
                             ">
                                 {{ ucfirst(str_replace('_', ' ', $investment->investment_type)) }}
                             </span>
@@ -133,15 +133,15 @@
                         <dt class="text-sm font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">Status</dt>
                         <dd class="mt-1 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] sm:mt-0 sm:col-span-2">
                             @if($investment->status === 'active')
-                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-[color:var(--color-success-50)] text-[color:var(--color-success-600)] dark:bg-[color:var(--color-success-900)] dark:text-[color:var(--color-success-200)]">
                                     Active
                                 </span>
                             @elseif($investment->status === 'sold')
-                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
+                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-[color:var(--color-danger-50)] text-[color:var(--color-danger-600)] dark:bg-[color:var(--color-danger-900)] dark:text-[color:var(--color-danger-200)]">
                                     Sold
                                 </span>
                             @else
-                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
+                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-[color:var(--color-warning-50)] text-[color:var(--color-warning-600)] dark:bg-[color:var(--color-warning-900)] dark:text-[color:var(--color-warning-200)]">
                                     Monitoring
                                 </span>
                             @endif
@@ -156,7 +156,7 @@
                             <dt class="text-sm font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">Purchase Date</dt>
                             <dd class="mt-1 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] sm:mt-0 sm:col-span-2">
                                 {{ $investment->purchase_date->format('M j, Y') }}
-                                <span class="text-xs text-gray-500 dark:text-gray-400">
+                                <span class="text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">
                                     ({{ $investment->holding_period_days }} days ago)
                                 </span>
                             </dd>
@@ -165,9 +165,9 @@
                             <dt class="text-sm font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">Risk Tolerance</dt>
                             <dd class="mt-1 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] sm:mt-0 sm:col-span-2">
                                 <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full
-                                    {{ $investment->risk_tolerance === 'low' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : '' }}
-                                    {{ $investment->risk_tolerance === 'medium' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' : '' }}
-                                    {{ $investment->risk_tolerance === 'high' ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' : '' }}
+                                    {{ $investment->risk_tolerance === 'low' ? 'bg-[color:var(--color-success-50)] text-[color:var(--color-success-600)] dark:bg-[color:var(--color-success-900)] dark:text-[color:var(--color-success-200)]' : '' }}
+                                    {{ $investment->risk_tolerance === 'medium' ? 'bg-[color:var(--color-warning-50)] text-[color:var(--color-warning-600)] dark:bg-[color:var(--color-warning-900)] dark:text-[color:var(--color-warning-200)]' : '' }}
+                                    {{ $investment->risk_tolerance === 'high' ? 'bg-[color:var(--color-danger-50)] text-[color:var(--color-danger-600)] dark:bg-[color:var(--color-danger-900)] dark:text-[color:var(--color-danger-200)]' : '' }}
                                 ">
                                     {{ ucfirst($investment->risk_tolerance) }} Risk
                                 </span>
@@ -197,7 +197,7 @@
                             <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                 <dt class="text-sm font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">Stage</dt>
                                 <dd class="mt-1 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] sm:mt-0 sm:col-span-2">
-                                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-[color:var(--color-info-50)] text-[color:var(--color-info-600)] dark:bg-[color:var(--color-info-900)] dark:text-[color:var(--color-info-200)]">
                                         {{ ucfirst($investment->project_stage) }}
                                     </span>
                                 </dd>
@@ -267,7 +267,7 @@
                     <h3 class="text-lg leading-6 font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                         Investment Goals
                     </h3>
-                    <p class="mt-1 max-w-2xl text-sm text-gray-500 dark:text-gray-400">
+                    <p class="mt-1 max-w-2xl text-sm text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">
                         Your objectives for this investment.
                     </p>
                 </div>
@@ -290,7 +290,7 @@
                     <h3 class="text-lg leading-6 font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                         Transaction History
                     </h3>
-                    <p class="mt-1 max-w-2xl text-sm text-gray-500 dark:text-gray-400">
+                    <p class="mt-1 max-w-2xl text-sm text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">
                         Buy/sell transactions for this investment.
                     </p>
                 </div>
@@ -356,7 +356,7 @@
                     <h3 class="text-lg leading-6 font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                         Project Notes
                     </h3>
-                    <p class="mt-1 max-w-2xl text-sm text-gray-500 dark:text-gray-400">
+                    <p class="mt-1 max-w-2xl text-sm text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">
                         Key milestones, KPIs, roadmap, and team information.
                     </p>
                 </div>
@@ -371,7 +371,7 @@
     <div class="mt-8 flex flex-wrap gap-4">
         <form method="POST" action="{{ route('investments.update-price', $investment) }}" class="inline">
             @csrf
-            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium">
+            <button type="submit" class="bg-[color:var(--color-info-600)] hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium">
                 Update Price
             </button>
         </form>
@@ -379,7 +379,7 @@
         <form method="POST" action="{{ route('investments.record-dividend', $investment) }}" class="inline">
             @csrf
             <input type="hidden" name="investment_id" value="{{ $investment->id }}">
-            <button type="button" onclick="openDividendModal()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium">
+            <button type="button" onclick="openDividendModal()" class="bg-[color:var(--color-success-600)] hover:bg-[color:var(--color-success-600)] text-white px-4 py-2 rounded-md text-sm font-medium">
                 Record Dividend
             </button>
         </form>
@@ -394,11 +394,11 @@
     </div>
 
     <!-- Record Dividend Modal -->
-    <div id="dividendModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden items-center justify-center z-50">
+    <div id="dividendModal" class="fixed inset-0 bg-[color:var(--color-primary-600)] bg-opacity-50 hidden items-center justify-center z-50">
         <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] rounded-lg p-6 w-full max-w-md mx-4">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-lg font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Record Dividend</h3>
-                <button type="button" onclick="closeDividendModal()" class="text-gray-400 hover:text-gray-600">
+                <button type="button" onclick="closeDividendModal()" class="text-[color:var(--color-primary-400)] dark:text-[color:var(--color-dark-400)] hover:text-gray-600">
                     <span class="sr-only">Close</span>
                     <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -410,33 +410,33 @@
                 <input type="hidden" name="investment_id" value="{{ $investment->id }}">
 
                 <div class="mb-4">
-                    <label for="dividend_amount" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Dividend Amount ($)</label>
-                    <input type="number" step="0.01" name="amount" id="dividend_amount" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
+                    <label for="dividend_amount" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Dividend Amount ($)</label>
+                    <input type="number" step="0.01" name="amount" id="dividend_amount" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)] sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
                 </div>
 
                 <div class="mb-4">
-                    <label for="dividend_per_share" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Dividend per Share ($)</label>
-                    <input type="number" step="0.00000001" name="dividend_per_share" id="dividend_per_share" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
+                    <label for="dividend_per_share" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Dividend per Share ($)</label>
+                    <input type="number" step="0.00000001" name="dividend_per_share" id="dividend_per_share" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)] sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
                 </div>
 
                 <div class="mb-4">
-                    <label for="shares_held" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Shares Held</label>
-                    <input type="number" step="0.00000001" name="shares_held" id="shares_held" value="{{ $investment->quantity }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
+                    <label for="shares_held" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Shares Held</label>
+                    <input type="number" step="0.00000001" name="shares_held" id="shares_held" value="{{ $investment->quantity }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)] sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
                 </div>
 
                 <div class="mb-4">
-                    <label for="record_date" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Record Date</label>
-                    <input type="date" name="record_date" id="record_date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
+                    <label for="record_date" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Record Date</label>
+                    <input type="date" name="record_date" id="record_date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)] sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
                 </div>
 
                 <div class="mb-4">
-                    <label for="payment_date" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Payment Date</label>
-                    <input type="date" name="payment_date" id="payment_date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
+                    <label for="payment_date" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Payment Date</label>
+                    <input type="date" name="payment_date" id="payment_date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)] sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
                 </div>
 
                 <div class="mb-4">
-                    <label for="dividend_type" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Dividend Type</label>
-                    <select name="dividend_type" id="dividend_type" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
+                    <label for="dividend_type" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Dividend Type</label>
+                    <select name="dividend_type" id="dividend_type" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)] sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
                         <option value="ordinary">Ordinary</option>
                         <option value="qualified">Qualified</option>
                         <option value="special">Special</option>
@@ -445,8 +445,8 @@
                 </div>
 
                 <div class="mb-4">
-                    <label for="frequency" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Frequency</label>
-                    <select name="frequency" id="frequency" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
+                    <label for="frequency" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Frequency</label>
+                    <select name="frequency" id="frequency" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)] sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
                         <option value="quarterly">Quarterly</option>
                         <option value="monthly">Monthly</option>
                         <option value="semi_annual">Semi-Annual</option>
@@ -458,10 +458,10 @@
                 <input type="hidden" name="currency" value="MKD">
 
                 <div class="flex justify-end gap-3">
-                    <button type="button" onclick="closeDividendModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600">
+                    <button type="button" onclick="closeDividendModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] dark:text-[color:var(--color-primary-300)] dark:text-[color:var(--color-dark-400)] dark:border-gray-600 dark:hover:bg-gray-600">
                         Cancel
                     </button>
-                    <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-green-600 border border-transparent rounded-md hover:bg-green-700">
+                    <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-[color:var(--color-success-600)] border border-transparent rounded-md hover:bg-[color:var(--color-success-600)]">
                         Record Dividend
                     </button>
                 </div>
@@ -470,11 +470,11 @@
     </div>
 
     <!-- Record Transaction Modal -->
-    <div id="transactionModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden items-center justify-center z-50">
+    <div id="transactionModal" class="fixed inset-0 bg-[color:var(--color-primary-600)] bg-opacity-50 hidden items-center justify-center z-50">
         <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] rounded-lg p-6 w-full max-w-md mx-4">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-lg font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Record Transaction</h3>
-                <button type="button" onclick="closeTransactionModal()" class="text-gray-400 hover:text-gray-600">
+                <button type="button" onclick="closeTransactionModal()" class="text-[color:var(--color-primary-400)] dark:text-[color:var(--color-dark-400)] hover:text-gray-600">
                     <span class="sr-only">Close</span>
                     <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -486,8 +486,8 @@
                 <input type="hidden" name="investment_id" value="{{ $investment->id }}">
 
                 <div class="mb-4">
-                    <label for="transaction_type" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Transaction Type</label>
-                    <select name="transaction_type" id="transaction_type" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
+                    <label for="transaction_type" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Transaction Type</label>
+                    <select name="transaction_type" id="transaction_type" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)] sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
                         <option value="buy">Buy</option>
                         <option value="sell">Sell</option>
                         <option value="dividend_reinvestment">Dividend Reinvestment</option>
@@ -495,35 +495,35 @@
                 </div>
 
                 <div class="mb-4">
-                    <label for="transaction_quantity" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Quantity</label>
-                    <input type="number" step="0.00000001" name="quantity" id="transaction_quantity" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
+                    <label for="transaction_quantity" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Quantity</label>
+                    <input type="number" step="0.00000001" name="quantity" id="transaction_quantity" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)] sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
                 </div>
 
                 <div class="mb-4">
-                    <label for="price_per_share" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Price per Share ($)</label>
-                    <input type="number" step="0.00000001" name="price_per_share" id="price_per_share" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
+                    <label for="price_per_share" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Price per Share ($)</label>
+                    <input type="number" step="0.00000001" name="price_per_share" id="price_per_share" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)] sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
                 </div>
 
                 <div class="mb-4">
-                    <label for="total_amount" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Total Amount ($)</label>
-                    <input type="number" step="0.00000001" name="total_amount" id="total_amount" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" required readonly>
+                    <label for="total_amount" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Total Amount ($)</label>
+                    <input type="number" step="0.00000001" name="total_amount" id="total_amount" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)] sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" required readonly>
                 </div>
 
                 <div class="mb-4">
-                    <label for="transaction_fees" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Fees ($)</label>
-                    <input type="number" step="0.01" name="fees" id="transaction_fees" value="0" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                    <label for="transaction_fees" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Fees ($)</label>
+                    <input type="number" step="0.01" name="fees" id="transaction_fees" value="0" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)] sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                 </div>
 
                 <div class="mb-4">
-                    <label for="transaction_date" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Transaction Date</label>
-                    <input type="date" name="transaction_date" id="transaction_date" value="{{ date('Y-m-d') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
+                    <label for="transaction_date" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Transaction Date</label>
+                    <input type="date" name="transaction_date" id="transaction_date" value="{{ date('Y-m-d') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)] sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
                 </div>
 
                 <input type="hidden" name="currency" value="MKD">
                 <input type="hidden" name="taxes" value="0">
 
                 <div class="flex justify-end gap-3">
-                    <button type="button" onclick="closeTransactionModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600">
+                    <button type="button" onclick="closeTransactionModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] dark:text-[color:var(--color-primary-300)] dark:text-[color:var(--color-dark-400)] dark:border-gray-600 dark:hover:bg-gray-600">
                         Cancel
                     </button>
                     <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-purple-600 border border-transparent rounded-md hover:bg-purple-700">

@@ -11,10 +11,10 @@
                 <div class="flex justify-between items-center mb-6">
                     <div>
                         <h2 class="text-2xl font-semibold">Portfolio Rebalancing Recommendations</h2>
-                        <p class="text-gray-600 dark:text-gray-400 mt-1">Actionable steps to achieve your target allocation</p>
+                        <p class="text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] mt-1">Actionable steps to achieve your target allocation</p>
                     </div>
                     <div class="flex space-x-3">
-                        <a href="{{ route('investments.rebalancing.alerts') }}" class="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                        <a href="{{ route('investments.rebalancing.alerts') }}" class="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] hover:bg-[color:var(--color-primary-100)] dark:hover:bg-[color:var(--color-dark-200)]">
                             ← Back to Alerts
                         </a>
                         <button onclick="window.print()" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)]">
@@ -118,7 +118,7 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <h4 class="text-sm font-medium text-gray-900 dark:text-gray-100 mb-3">Step-by-Step Approach</h4>
-                                <ol class="text-sm text-gray-600 dark:text-gray-400 space-y-2">
+                                <ol class="text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] space-y-2">
                                     @php $step = 1; @endphp
                                     @foreach($recommendations->sortByDesc(function($rec) { return abs($rec['current_percentage'] - $rec['target_percentage']); }) as $rec)
                                         <li class="flex items-start">
@@ -136,7 +136,7 @@
                             </div>
                             <div>
                                 <h4 class="text-sm font-medium text-gray-900 dark:text-gray-100 mb-3">Execution Tips</h4>
-                                <ul class="text-sm text-gray-600 dark:text-gray-400 space-y-2">
+                                <ul class="text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] space-y-2">
                                     <li class="flex items-start">
                                         <svg class="w-4 h-4 text-green-500 mt-0.5 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
@@ -203,7 +203,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
                         <h3 class="mt-4 text-lg font-medium text-gray-900 dark:text-gray-100">Portfolio is Well Balanced</h3>
-                        <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">Your current allocation is within acceptable ranges of your target. No rebalancing needed at this time.</p>
+                        <p class="mt-2 text-sm text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">Your current allocation is within acceptable ranges of your target. No rebalancing needed at this time.</p>
                         <div class="mt-6">
                             <a href="{{ route('investments.index') }}" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)]">
                                 Return to Investments
@@ -216,7 +216,7 @@
                 <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg p-6">
                     <div class="flex">
                         <div class="flex-shrink-0">
-                            <svg class="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+                            <svg class="h-5 w-5 text-[color:var(--color-danger-400)]" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
                             </svg>
                         </div>

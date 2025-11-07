@@ -33,7 +33,7 @@
                     </div>
                     <div class="ml-5 w-0 flex-1">
                         <dl>
-                            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Total Budgeted</dt>
+                            <dt class="text-sm font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] truncate">Total Budgeted</dt>
                             <dd class="text-lg font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">MKD {{ number_format($analytics['total_budgeted'], 2) }}</dd>
                         </dl>
                     </div>
@@ -53,7 +53,7 @@
                     </div>
                     <div class="ml-5 w-0 flex-1">
                         <dl>
-                            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Total Spent</dt>
+                            <dt class="text-sm font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] truncate">Total Spent</dt>
                             <dd class="text-lg font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">MKD {{ number_format($analytics['total_spent'], 2) }}</dd>
                         </dl>
                     </div>
@@ -65,7 +65,7 @@
             <div class="p-5">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
-                        <div class="w-8 h-8 bg-green-500 rounded-md flex items-center justify-center">
+                        <div class="w-8 h-8 bg-[color:var(--color-success-500)] rounded-md flex items-center justify-center">
                             <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
@@ -73,7 +73,7 @@
                     </div>
                     <div class="ml-5 w-0 flex-1">
                         <dl>
-                            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Budgets On Track</dt>
+                            <dt class="text-sm font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] truncate">Budgets On Track</dt>
                             <dd class="text-lg font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">{{ $analytics['budgets_on_track'] }} / {{ $analytics['budgets_on_track'] + $analytics['budgets_warning'] + $analytics['budgets_exceeded'] }}</dd>
                         </dl>
                     </div>
@@ -85,7 +85,7 @@
             <div class="p-5">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
-                        <div class="w-8 h-8 {{ $analytics['budgets_exceeded'] > 0 ? 'bg-red-500' : 'bg-yellow-500' }} rounded-md flex items-center justify-center">
+                        <div class="w-8 h-8 {{ $analytics['budgets_exceeded'] > 0 ? 'bg-[color:var(--color-danger-500)]' : 'bg-[color:var(--color-warning-500)]' }} rounded-md flex items-center justify-center">
                             <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 @if($analytics['budgets_exceeded'] > 0)
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
@@ -97,7 +97,7 @@
                     </div>
                     <div class="ml-5 w-0 flex-1">
                         <dl>
-                            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
+                            <dt class="text-sm font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] truncate">
                                 {{ $analytics['budgets_exceeded'] > 0 ? 'Over Budget' : 'Warnings' }}
                             </dt>
                             <dd class="text-lg font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
@@ -121,25 +121,25 @@
                         @foreach($analytics['category_analysis'] as $category)
                             <div>
                                 <div class="flex justify-between items-center mb-2">
-                                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ $category['category'] }}</span>
+                                    <span class="text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">{{ $category['category'] }}</span>
                                     <div class="text-right">
                                         <span class="text-sm font-semibold text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                                             {{ number_format($category['spent_amount'], 2) }} / {{ number_format($category['budget_amount'], 2) }}
                                         </span>
-                                        <span class="text-xs text-gray-500 dark:text-gray-400 ml-1">
+                                        <span class="text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] ml-1">
                                             ({{ $category['utilization_percentage'] }}%)
                                         </span>
                                     </div>
                                 </div>
 
-                                <div class="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">
+                                <div class="w-full bg-[color:var(--color-primary-200)] rounded-full h-2 dark:bg-[color:var(--color-dark-300)]">
                                     @php
                                         $percentage = min($category['utilization_percentage'], 100);
-                                        $colorClass = 'bg-green-600';
+                                        $colorClass = 'bg-[color:var(--color-success-600)]';
                                         if ($category['status'] === 'exceeded') {
-                                            $colorClass = 'bg-red-600';
+                                            $colorClass = 'bg-[color:var(--color-danger-600)]';
                                         } elseif ($category['status'] === 'warning') {
-                                            $colorClass = 'bg-yellow-600';
+                                            $colorClass = 'bg-[color:var(--color-warning-500)]';
                                         }
                                     @endphp
                                     <div class="{{ $colorClass }} h-2 rounded-full transition-all duration-300" style="width: {{ $percentage }}%"></div>
@@ -147,14 +147,14 @@
 
                                 <div class="flex justify-between items-center mt-1">
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                        @if($category['status'] === 'exceeded') bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200
-                                        @elseif($category['status'] === 'warning') bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200
-                                        @else bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 @endif">
+                                        @if($category['status'] === 'exceeded') bg-[color:var(--color-danger-50)] text-[color:var(--color-danger-600)] dark:bg-[color:var(--color-danger-900)] dark:text-[color:var(--color-danger-200)]
+                                        @elseif($category['status'] === 'warning') bg-[color:var(--color-warning-50)] text-[color:var(--color-warning-600)] dark:bg-[color:var(--color-warning-900)] dark:text-[color:var(--color-warning-200)]
+                                        @else bg-[color:var(--color-success-50)] text-[color:var(--color-success-600)] dark:bg-[color:var(--color-success-900)] dark:text-[color:var(--color-success-200)] @endif">
                                         @if($category['status'] === 'exceeded') Over Budget
                                         @elseif($category['status'] === 'warning') Warning
                                         @else On Track @endif
                                     </span>
-                                    <span class="text-xs text-gray-500 dark:text-gray-400">
+                                    <span class="text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">
                                         {{ number_format($category['remaining_amount'], 2) }} remaining
                                         @if($category['days_remaining'] > 0)
                                             • {{ $category['days_remaining'] }} days left
@@ -165,7 +165,7 @@
                         @endforeach
                     </div>
                 @else
-                    <p class="text-gray-500 dark:text-gray-400 text-center py-8">No active budgets found</p>
+                    <p class="text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] text-center py-8">No active budgets found</p>
                 @endif
             </div>
         </div>
@@ -182,14 +182,14 @@
                                 $utilizationRate = $trend['total_budgeted'] > 0 ? round(($trend['total_spent'] / $trend['total_budgeted']) * 100, 1) : 0;
                             @endphp
                             <div class="flex justify-between items-center">
-                                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                <span class="text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                                     {{ \Carbon\Carbon::createFromFormat('Y-m', $trend['month'])->format('M Y') }}
                                 </span>
                                 <div class="text-right">
                                     <div class="text-sm font-semibold text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                                         {{ number_format($trend['total_spent'], 2) }} / {{ number_format($trend['total_budgeted'], 2) }}
                                     </div>
-                                    <div class="text-xs text-gray-500 dark:text-gray-400">
+                                    <div class="text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">
                                         {{ $utilizationRate }}% utilized
                                         @if($trend['exceeded_count'] > 0)
                                             • {{ $trend['exceeded_count'] }} exceeded
@@ -197,17 +197,17 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="w-full bg-gray-200 rounded-full h-1 dark:bg-gray-700">
+                            <div class="w-full bg-[color:var(--color-primary-200)] rounded-full h-1 dark:bg-[color:var(--color-dark-300)]">
                                 <div class="h-1 rounded-full transition-all duration-300
-                                    @if($utilizationRate >= 100) bg-red-600
-                                    @elseif($utilizationRate >= 80) bg-yellow-600
-                                    @else bg-green-600 @endif"
+                                    @if($utilizationRate >= 100) bg-[color:var(--color-danger-600)]
+                                    @elseif($utilizationRate >= 80) bg-[color:var(--color-warning-500)]
+                                    @else bg-[color:var(--color-success-600)] @endif"
                                     style="width: {{ min($utilizationRate, 100) }}%"></div>
                             </div>
                         @endforeach
                     </div>
                 @else
-                    <p class="text-gray-500 dark:text-gray-400 text-center py-8">No trend data available</p>
+                    <p class="text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] text-center py-8">No trend data available</p>
                 @endif
             </div>
         </div>
@@ -224,16 +224,16 @@
                     <div class="text-2xl font-bold text-green-600 dark:text-green-400">
                         {{ $analytics['budgets_on_track'] }}
                     </div>
-                    <div class="text-sm text-gray-500 dark:text-gray-400">Budgets On Track</div>
+                    <div class="text-sm text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">Budgets On Track</div>
                     <div class="mt-2">
-                        <div class="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">
+                        <div class="w-full bg-[color:var(--color-primary-200)] rounded-full h-2 dark:bg-[color:var(--color-dark-300)]">
                             @php
                                 $totalBudgets = $analytics['budgets_on_track'] + $analytics['budgets_warning'] + $analytics['budgets_exceeded'];
                                 $onTrackPercentage = $totalBudgets > 0 ? ($analytics['budgets_on_track'] / $totalBudgets) * 100 : 0;
                             @endphp
-                            <div class="bg-green-600 h-2 rounded-full" style="width: {{ $onTrackPercentage }}%"></div>
+                            <div class="bg-[color:var(--color-success-600)] h-2 rounded-full" style="width: {{ $onTrackPercentage }}%"></div>
                         </div>
-                        <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ number_format($onTrackPercentage, 1) }}%</div>
+                        <div class="text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] mt-1">{{ number_format($onTrackPercentage, 1) }}%</div>
                     </div>
                 </div>
 
@@ -242,32 +242,32 @@
                     <div class="text-2xl font-bold text-yellow-600 dark:text-yellow-400">
                         {{ $analytics['budgets_warning'] }}
                     </div>
-                    <div class="text-sm text-gray-500 dark:text-gray-400">Budgets at Warning</div>
+                    <div class="text-sm text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">Budgets at Warning</div>
                     <div class="mt-2">
-                        <div class="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">
+                        <div class="w-full bg-[color:var(--color-primary-200)] rounded-full h-2 dark:bg-[color:var(--color-dark-300)]">
                             @php
                                 $warningPercentage = $totalBudgets > 0 ? ($analytics['budgets_warning'] / $totalBudgets) * 100 : 0;
                             @endphp
-                            <div class="bg-yellow-600 h-2 rounded-full" style="width: {{ $warningPercentage }}%"></div>
+                            <div class="bg-[color:var(--color-warning-500)] h-2 rounded-full" style="width: {{ $warningPercentage }}%"></div>
                         </div>
-                        <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ number_format($warningPercentage, 1) }}%</div>
+                        <div class="text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] mt-1">{{ number_format($warningPercentage, 1) }}%</div>
                     </div>
                 </div>
 
                 <!-- Exceeded Budgets -->
                 <div class="text-center">
-                    <div class="text-2xl font-bold text-red-600 dark:text-red-400">
+                    <div class="text-2xl font-bold text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]">
                         {{ $analytics['budgets_exceeded'] }}
                     </div>
-                    <div class="text-sm text-gray-500 dark:text-gray-400">Budgets Exceeded</div>
+                    <div class="text-sm text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">Budgets Exceeded</div>
                     <div class="mt-2">
-                        <div class="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">
+                        <div class="w-full bg-[color:var(--color-primary-200)] rounded-full h-2 dark:bg-[color:var(--color-dark-300)]">
                             @php
                                 $exceededPercentage = $totalBudgets > 0 ? ($analytics['budgets_exceeded'] / $totalBudgets) * 100 : 0;
                             @endphp
-                            <div class="bg-red-600 h-2 rounded-full" style="width: {{ $exceededPercentage }}%"></div>
+                            <div class="bg-[color:var(--color-danger-600)] h-2 rounded-full" style="width: {{ $exceededPercentage }}%"></div>
                         </div>
-                        <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ number_format($exceededPercentage, 1) }}%</div>
+                        <div class="text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] mt-1">{{ number_format($exceededPercentage, 1) }}%</div>
                     </div>
                 </div>
             </div>
@@ -278,7 +278,7 @@
                     <div class="flex justify-between items-center">
                         <div>
                             <h4 class="text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Overall Budget Performance</h4>
-                            <p class="text-sm text-gray-500 dark:text-gray-400">
+                            <p class="text-sm text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">
                                 You've spent {{ number_format(($analytics['total_spent'] / $analytics['total_budgeted']) * 100, 1) }}% of your total budget
                             </p>
                         </div>
@@ -286,7 +286,7 @@
                             <div class="text-lg font-bold text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                                 {{ number_format($analytics['total_spent'], 2) }} / {{ number_format($analytics['total_budgeted'], 2) }}
                             </div>
-                            <div class="text-sm text-gray-500 dark:text-gray-400">MKD</div>
+                            <div class="text-sm text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">MKD</div>
                         </div>
                     </div>
                 </div>

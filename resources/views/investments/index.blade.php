@@ -190,10 +190,10 @@
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm">
                                         <div class="flex items-center">
-                                            <span class="font-medium {{ $gainLoss >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400' }}">
+                                            <span class="font-medium {{ $gainLoss >= 0 ? 'text-green-600 dark:text-green-400' : 'text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]' }}">
                                                 {{ $gainLoss >= 0 ? '+' : '' }}{{ $investment->formatted_unrealized_gain_loss }}
                                             </span>
-                                            <span class="ml-2 text-xs {{ $gainLoss >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400' }}">
+                                            <span class="ml-2 text-xs {{ $gainLoss >= 0 ? 'text-green-600 dark:text-green-400' : 'text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]' }}">
                                                 ({{ $gainLoss >= 0 ? '+' : '' }}{{ number_format($gainLossPercent, 1) }}%)
                                             </span>
                                         </div>

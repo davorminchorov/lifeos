@@ -112,7 +112,7 @@
                                        placeholder="0.00">
                             </div>
                             @error('bill_amount')
-                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                <p class="mt-1 text-sm text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]">{{ $message }}</p>
                             @enderror
                         </div>
 
