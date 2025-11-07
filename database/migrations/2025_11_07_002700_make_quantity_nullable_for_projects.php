@@ -12,7 +12,7 @@ return new class extends Migration
     {
         // Make quantity nullable to support project investments
         // Assumes MySQL / MariaDB. If using a different driver, adjust accordingly.
-        DB::statement("ALTER TABLE investments MODIFY COLUMN quantity DECIMAL(20, 8) NULL");
+        DB::statement('ALTER TABLE investments MODIFY COLUMN quantity DECIMAL(20, 8) NULL');
     }
 
     /**
@@ -26,6 +26,6 @@ return new class extends Migration
             ->update(['quantity' => 0]);
 
         // Revert quantity to NOT NULL
-        DB::statement("ALTER TABLE investments MODIFY COLUMN quantity DECIMAL(20, 8) NOT NULL");
+        DB::statement('ALTER TABLE investments MODIFY COLUMN quantity DECIMAL(20, 8) NOT NULL');
     }
 };

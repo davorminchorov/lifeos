@@ -22,7 +22,7 @@ class CurrencyController extends Controller
     {
         $defaultCurrency = config('currency.default', 'MKD');
         $supportedCurrencies = array_keys(config('currency.supported', [
-            'MKD' => [], 'USD' => [], 'EUR' => [], 'GBP' => [], 'CAD' => [], 'AUD' => [], 'CHF' => [], 'RSD' => [], 'BGN' => []
+            'MKD' => [], 'USD' => [], 'EUR' => [], 'GBP' => [], 'CAD' => [], 'AUD' => [], 'CHF' => [], 'RSD' => [], 'BGN' => [],
         ]));
 
         $currencyRates = [];
@@ -59,14 +59,14 @@ class CurrencyController extends Controller
             $toCurrency = strtoupper($validated['to_currency']);
 
             // Check if currencies are supported
-            if (!$this->currencyService->isSupported($fromCurrency)) {
+            if (! $this->currencyService->isSupported($fromCurrency)) {
                 return response()->json([
                     'success' => false,
                     'message' => "Currency {$fromCurrency} is not supported.",
                 ], 400);
             }
 
-            if (!$this->currencyService->isSupported($toCurrency)) {
+            if (! $this->currencyService->isSupported($toCurrency)) {
                 return response()->json([
                     'success' => false,
                     'message' => "Currency {$toCurrency} is not supported.",
@@ -131,7 +131,7 @@ class CurrencyController extends Controller
             $toCurrency = strtoupper($validated['to_currency']);
 
             // Check if currencies are supported
-            if (!$this->currencyService->isSupported($fromCurrency) || !$this->currencyService->isSupported($toCurrency)) {
+            if (! $this->currencyService->isSupported($fromCurrency) || ! $this->currencyService->isSupported($toCurrency)) {
                 return response()->json([
                     'success' => false,
                     'message' => 'One or both currencies are not supported.',

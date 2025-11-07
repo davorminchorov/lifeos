@@ -28,10 +28,10 @@ class UpdateBudgetRequest extends FormRequest
                 // Ensure unique category per user per active period, excluding current budget
                 Rule::unique('budgets')->where(function ($query) {
                     return $query->where('user_id', auth()->id())
-                                ->where('is_active', true)
-                                ->where('id', '!=', $this->budget->id)
-                                ->where('start_date', '<=', $this->end_date ?? now())
-                                ->where('end_date', '>=', $this->start_date ?? now());
+                        ->where('is_active', true)
+                        ->where('id', '!=', $this->budget->id)
+                        ->where('start_date', '<=', $this->end_date ?? now())
+                        ->where('end_date', '>=', $this->start_date ?? now());
                 }),
             ],
             'budget_period' => [
@@ -56,7 +56,7 @@ class UpdateBudgetRequest extends FormRequest
                 'required_if:budget_period,custom',
                 'date',
                 // Allow past dates for existing budgets but not too far in the past
-                'after_or_equal:' . now()->subYear()->toDateString(),
+                'after_or_equal:'.now()->subYear()->toDateString(),
             ],
             'end_date' => [
                 'required_if:budget_period,custom',
@@ -154,7 +154,7 @@ class UpdateBudgetRequest extends FormRequest
                 $currencyService = app(\App\Services\CurrencyService::class);
                 $supportedCurrencies = array_keys($currencyService->getSupportedCurrencies());
 
-                if (!in_array($this->currency, $supportedCurrencies)) {
+                if (! in_array($this->currency, $supportedCurrencies)) {
                     $validator->errors()->add('currency', 'The selected currency is not supported.');
                 }
             }

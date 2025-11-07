@@ -37,16 +37,16 @@ class UpdateInvestmentRequest extends FormRequest
             'name' => 'sometimes|required|string|max:255',
 
             // Stock/traditional investment fields - conditionally required based on investment type
-            'quantity' => ($requiresPurchaseDetails ? 'sometimes|required' : 'nullable') . '|numeric|min:0',
-            'purchase_date' => ($requiresPurchaseDetails ? 'sometimes|required' : 'nullable') . '|date|before_or_equal:today',
-            'purchase_price' => ($requiresPurchaseDetails ? 'sometimes|required' : 'nullable') . '|numeric|min:1|max:999999999',
+            'quantity' => ($requiresPurchaseDetails ? 'sometimes|required' : 'nullable').'|numeric|min:0',
+            'purchase_date' => ($requiresPurchaseDetails ? 'sometimes|required' : 'nullable').'|date|before_or_equal:today',
+            'purchase_price' => ($requiresPurchaseDetails ? 'sometimes|required' : 'nullable').'|numeric|min:1|max:999999999',
             'currency' => 'nullable|string|in:MKD,USD,EUR,GBP,CAD,AUD,JPY,CHF,RSD,BGN',
 
             'current_value' => 'nullable|numeric|min:1|max:999999999',
             'total_dividends_received' => 'nullable|numeric|min:0|max:999999999',
             'total_fees_paid' => 'nullable|numeric|min:0|max:999999999',
             'investment_goals' => 'nullable|array',
-            'risk_tolerance' => ($requiresRiskTolerance ? 'sometimes|required' : 'nullable') . '|string|in:conservative,moderate,aggressive',
+            'risk_tolerance' => ($requiresRiskTolerance ? 'sometimes|required' : 'nullable').'|string|in:conservative,moderate,aggressive',
             'account_broker' => 'nullable|string|max:255',
             'account_number' => 'nullable|string|max:50',
             'transaction_history' => 'nullable|array',

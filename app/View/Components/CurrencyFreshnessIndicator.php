@@ -10,9 +10,13 @@ use Illuminate\View\Component;
 class CurrencyFreshnessIndicator extends Component
 {
     public string $fromCurrency;
+
     public string $toCurrency;
+
     public array $rateInfo;
+
     public bool $showRefreshButton;
+
     public bool $showAge;
 
     /**
@@ -38,7 +42,7 @@ class CurrencyFreshnessIndicator extends Component
      */
     public function render(): View|Closure|string
     {
-        if (!config('currency.freshness.show_indicators', true)) {
+        if (! config('currency.freshness.show_indicators', true)) {
             return '';
         }
 
@@ -52,7 +56,7 @@ class CurrencyFreshnessIndicator extends Component
     {
         $freshness = $this->rateInfo['freshness'];
 
-        return match($freshness) {
+        return match ($freshness) {
             'fresh' => 'bg-success-50 text-success-600 border-success-400',
             'stale' => 'bg-warning-50 text-warning-600 border-warning-400',
             'warning' => 'bg-danger-50 text-danger-600 border-danger-400',
@@ -67,7 +71,7 @@ class CurrencyFreshnessIndicator extends Component
     {
         $freshness = $this->rateInfo['freshness'];
 
-        return match($freshness) {
+        return match ($freshness) {
             'fresh' => '✓',
             'stale' => '⚠',
             'warning' => '⚠',
@@ -81,6 +85,7 @@ class CurrencyFreshnessIndicator extends Component
     public function getFormattedAge(): string
     {
         $currencyService = app(CurrencyService::class);
+
         return $currencyService->getFormattedAge($this->rateInfo['age_seconds']);
     }
 
@@ -90,6 +95,7 @@ class CurrencyFreshnessIndicator extends Component
     public function getFreshnessLabel(): string
     {
         $currencyService = app(CurrencyService::class);
+
         return $currencyService->getFreshnessLabel($this->rateInfo['freshness']);
     }
 

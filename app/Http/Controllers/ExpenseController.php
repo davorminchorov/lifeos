@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreExpenseRequest;
 use App\Http\Requests\UpdateExpenseRequest;
-use App\Models\Expense;
 use App\Models\Budget;
+use App\Models\Expense;
 use App\Services\CurrencyService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -606,7 +606,6 @@ class ExpenseController extends Controller
 
         return round($recentExpenses / 4, 1);
     }
-
 
     /**
      * Calculate projected monthly total based on current spending.

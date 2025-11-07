@@ -108,6 +108,7 @@ class Investment extends Model
     {
         $quantity = $this->quantity ?? 0;
         $purchasePrice = $this->purchase_price ?? 0;
+
         return ($quantity * $purchasePrice) + $this->total_fees_paid;
     }
 
@@ -115,6 +116,7 @@ class Investment extends Model
     public function getCurrentMarketValueAttribute()
     {
         $quantity = $this->quantity ?? 0;
+
         return $quantity * ($this->current_value ?? $this->purchase_price ?? 0);
     }
 

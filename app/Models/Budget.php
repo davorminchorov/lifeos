@@ -119,8 +119,9 @@ class Budget extends Model
     public function scopeCurrent($query)
     {
         $now = now();
+
         return $query->where('start_date', '<=', $now)
-                    ->where('end_date', '>=', $now);
+            ->where('end_date', '>=', $now);
     }
 
     /**

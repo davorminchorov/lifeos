@@ -28,9 +28,9 @@ class StoreBudgetRequest extends FormRequest
                 // Ensure unique category per user per active period
                 Rule::unique('budgets')->where(function ($query) {
                     return $query->where('user_id', auth()->id())
-                                ->where('is_active', true)
-                                ->where('start_date', '<=', $this->end_date ?? now())
-                                ->where('end_date', '>=', $this->start_date ?? now());
+                        ->where('is_active', true)
+                        ->where('start_date', '<=', $this->end_date ?? now())
+                        ->where('end_date', '>=', $this->start_date ?? now());
                 }),
             ],
             'budget_period' => [
@@ -152,7 +152,7 @@ class StoreBudgetRequest extends FormRequest
                 $currencyService = app(\App\Services\CurrencyService::class);
                 $supportedCurrencies = array_keys($currencyService->getSupportedCurrencies());
 
-                if (!in_array($this->currency, $supportedCurrencies)) {
+                if (! in_array($this->currency, $supportedCurrencies)) {
                     $validator->errors()->add('currency', 'The selected currency is not supported.');
                 }
             }

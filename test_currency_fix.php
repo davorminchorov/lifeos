@@ -24,7 +24,7 @@ $supportedCurrencies = array_keys([
 
 echo "Testing currency code extraction:\n";
 foreach ($supportedCurrencies as $currency) {
-    echo "Currency: " . $currency . " (Type: " . gettype($currency) . ")\n";
+    echo 'Currency: '.$currency.' (Type: '.gettype($currency).")\n";
 
     // Verify it's a string (this is what the CurrencyService expects)
     if (is_string($currency)) {

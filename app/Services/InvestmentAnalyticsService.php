@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Models\Investment;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 
 class InvestmentAnalyticsService
 {
@@ -165,7 +164,7 @@ class InvestmentAnalyticsService
             // Group by stage
             if ($investment->project_stage) {
                 $stage = $investment->project_stage;
-                if (!isset($byStage[$stage])) {
+                if (! isset($byStage[$stage])) {
                     $byStage[$stage] = [
                         'count' => 0,
                         'total_invested' => 0,
@@ -180,7 +179,7 @@ class InvestmentAnalyticsService
             // Group by project type
             if ($investment->project_type) {
                 $type = $investment->project_type;
-                if (!isset($byType[$type])) {
+                if (! isset($byType[$type])) {
                     $byType[$type] = [
                         'count' => 0,
                         'total_invested' => 0,
@@ -195,7 +194,7 @@ class InvestmentAnalyticsService
             // Group by business model
             if ($investment->project_business_model) {
                 $model = $investment->project_business_model;
-                if (!isset($byBusinessModel[$model])) {
+                if (! isset($byBusinessModel[$model])) {
                     $byBusinessModel[$model] = [
                         'count' => 0,
                         'total_invested' => 0,
@@ -289,12 +288,12 @@ class InvestmentAnalyticsService
                 $year = $dividend->payment_date->format('Y');
                 $amount = $this->currencyService->convertToDefault($dividend->amount, $currency);
 
-                if (!isset($dividendsByMonth[$month])) {
+                if (! isset($dividendsByMonth[$month])) {
                     $dividendsByMonth[$month] = 0;
                 }
                 $dividendsByMonth[$month] += $amount;
 
-                if (!isset($dividendsByYear[$year])) {
+                if (! isset($dividendsByYear[$year])) {
                     $dividendsByYear[$year] = 0;
                 }
                 $dividendsByYear[$year] += $amount;
@@ -334,7 +333,7 @@ class InvestmentAnalyticsService
             $totalValue += $value;
 
             $type = $investment->investment_type;
-            if (!isset($allocationByType[$type])) {
+            if (! isset($allocationByType[$type])) {
                 $allocationByType[$type] = 0;
             }
             $allocationByType[$type] += $value;

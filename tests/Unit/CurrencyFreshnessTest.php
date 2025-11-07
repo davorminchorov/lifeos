@@ -75,8 +75,8 @@ class CurrencyFreshnessTest extends TestCase
     {
         Http::fake([
             'api.exchangerate-api.io/*' => Http::response([
-                'rates' => ['EUR' => 1.2]
-            ], 200)
+                'rates' => ['EUR' => 1.2],
+            ], 200),
         ]);
 
         Cache::flush();
@@ -84,7 +84,7 @@ class CurrencyFreshnessTest extends TestCase
         $this->currencyService->getExchangeRate('USD', 'EUR');
 
         // Check that timestamp was stored
-        $timestampKey = "exchange_rate_timestamp_USD_EUR";
+        $timestampKey = 'exchange_rate_timestamp_USD_EUR';
         $timestamp = Cache::get($timestampKey);
 
         $this->assertNotNull($timestamp);
@@ -97,8 +97,8 @@ class CurrencyFreshnessTest extends TestCase
     {
         Http::fake([
             'api.exchangerate-api.io/*' => Http::response([
-                'rates' => ['EUR' => 1.2]
-            ], 200)
+                'rates' => ['EUR' => 1.2],
+            ], 200),
         ]);
 
         Cache::flush();
@@ -131,8 +131,8 @@ class CurrencyFreshnessTest extends TestCase
     {
         Http::fake([
             'api.exchangerate-api.io/*' => Http::response([
-                'rates' => ['EUR' => 1.2]
-            ], 200)
+                'rates' => ['EUR' => 1.2],
+            ], 200),
         ]);
 
         Cache::flush();
@@ -147,8 +147,8 @@ class CurrencyFreshnessTest extends TestCase
     public function test_is_rate_stale(): void
     {
         // Mock old timestamp
-        $timestampKey = "exchange_rate_timestamp_USD_EUR";
-        $cacheKey = "exchange_rate_USD_EUR";
+        $timestampKey = 'exchange_rate_timestamp_USD_EUR';
+        $cacheKey = 'exchange_rate_USD_EUR';
         $oldTimestamp = now()->timestamp - (3600 * 30); // 30 hours ago
 
         Cache::put($timestampKey, $oldTimestamp, 3600);
@@ -164,13 +164,13 @@ class CurrencyFreshnessTest extends TestCase
     {
         Http::fake([
             'api.exchangerate-api.io/*' => Http::response([
-                'rates' => ['EUR' => 1.5]
-            ], 200)
+                'rates' => ['EUR' => 1.5],
+            ], 200),
         ]);
 
         // Set up cached data
-        $timestampKey = "exchange_rate_timestamp_USD_EUR";
-        $cacheKey = "exchange_rate_USD_EUR";
+        $timestampKey = 'exchange_rate_timestamp_USD_EUR';
+        $cacheKey = 'exchange_rate_USD_EUR';
         Cache::put($timestampKey, now()->timestamp - 3600, 3600);
         Cache::put($cacheKey, 1.2, 3600);
 

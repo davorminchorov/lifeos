@@ -2,7 +2,6 @@
 
 require_once __DIR__.'/vendor/autoload.php';
 
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Http;
 
 // Bootstrap Laravel
@@ -14,9 +13,9 @@ echo "=============================\n\n";
 
 // Test the current configuration
 echo "Current Configuration:\n";
-echo "API Provider: " . config('currency.conversion.api_provider') . "\n";
-echo "API Key exists: " . (config('currency.conversion.api_key') ? 'Yes' : 'No') . "\n";
-echo "Conversion enabled: " . (config('currency.conversion.enabled') ? 'Yes' : 'No') . "\n\n";
+echo 'API Provider: '.config('currency.conversion.api_provider')."\n";
+echo 'API Key exists: '.(config('currency.conversion.api_key') ? 'Yes' : 'No')."\n";
+echo 'Conversion enabled: '.(config('currency.conversion.enabled') ? 'Yes' : 'No')."\n\n";
 
 // Test the problematic HTTP URL
 $apiKey = config('currency.conversion.api_key');
@@ -32,13 +31,13 @@ try {
         'symbols' => 'MKD',
     ]);
 
-    echo "HTTP Status: " . $response->status() . "\n";
-    echo "Response Body: " . $response->body() . "\n";
+    echo 'HTTP Status: '.$response->status()."\n";
+    echo 'Response Body: '.$response->body()."\n";
 } catch (\Exception $e) {
-    echo "HTTP Error: " . $e->getMessage() . "\n";
+    echo 'HTTP Error: '.$e->getMessage()."\n";
 }
 
-echo "\n" . str_repeat("-", 50) . "\n\n";
+echo "\n".str_repeat('-', 50)."\n\n";
 
 // Test the HTTPS URL
 $httpsUrl = 'https://data.fixer.io/api/latest';
@@ -53,21 +52,21 @@ try {
         'symbols' => 'MKD',
     ]);
 
-    echo "HTTPS Status: " . $response->status() . "\n";
+    echo 'HTTPS Status: '.$response->status()."\n";
     $data = $response->json();
 
     if (isset($data['success']) && $data['success']) {
         echo "Success: Yes\n";
-        echo "USD to MKD Rate: " . ($data['rates']['MKD'] ?? 'Not found') . "\n";
+        echo 'USD to MKD Rate: '.($data['rates']['MKD'] ?? 'Not found')."\n";
     } else {
         echo "Success: No\n";
-        echo "Error: " . ($data['error']['info'] ?? 'Unknown error') . "\n";
+        echo 'Error: '.($data['error']['info'] ?? 'Unknown error')."\n";
     }
 } catch (\Exception $e) {
-    echo "HTTPS Error: " . $e->getMessage() . "\n";
+    echo 'HTTPS Error: '.$e->getMessage()."\n";
 }
 
-echo "\n" . str_repeat("-", 50) . "\n\n";
+echo "\n".str_repeat('-', 50)."\n\n";
 
 // Test CurrencyService directly
 echo "Testing CurrencyService:\n";
@@ -84,7 +83,7 @@ try {
         echo "Failed to get USD to MKD rate\n";
     }
 } catch (\Exception $e) {
-    echo "CurrencyService Error: " . $e->getMessage() . "\n";
+    echo 'CurrencyService Error: '.$e->getMessage()."\n";
 }
 
 echo "\nTest completed.\n";

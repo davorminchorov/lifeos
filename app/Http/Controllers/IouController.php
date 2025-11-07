@@ -109,15 +109,15 @@ class IouController extends Controller
         $data['user_id'] = auth()->id();
 
         // Set default values if not provided
-        if (!isset($data['status'])) {
+        if (! isset($data['status'])) {
             $data['status'] = 'pending';
         }
 
-        if (!isset($data['amount_paid'])) {
+        if (! isset($data['amount_paid'])) {
             $data['amount_paid'] = 0;
         }
 
-        if (!isset($data['currency'])) {
+        if (! isset($data['currency'])) {
             $data['currency'] = 'MKD';
         }
 
@@ -191,7 +191,7 @@ class IouController extends Controller
         }
 
         $request->validate([
-            'payment_amount' => 'required|numeric|min:0.01|max:' . ($iou->amount - $iou->amount_paid),
+            'payment_amount' => 'required|numeric|min:0.01|max:'.($iou->amount - $iou->amount_paid),
             'payment_date' => 'required|date',
             'payment_method' => 'nullable|string|max:255',
         ]);

@@ -12,9 +12,9 @@ echo "Original timestamp: $timestamp\n";
 try {
     echo "Testing Carbon::parse() (old approach):\n";
     $parsed = \Carbon\Carbon::parse($timestamp);
-    echo "Success: " . $parsed->format('M j, Y g:i A') . "\n";
+    echo 'Success: '.$parsed->format('M j, Y g:i A')."\n";
 } catch (Exception $e) {
-    echo "Error: " . $e->getMessage() . "\n";
+    echo 'Error: '.$e->getMessage()."\n";
 }
 
 echo "\n";
@@ -23,9 +23,9 @@ echo "\n";
 try {
     echo "Testing Carbon::createFromTimestamp() (new approach):\n";
     $parsed = \Carbon\Carbon::createFromTimestamp($timestamp);
-    echo "Success: " . $parsed->format('M j, Y g:i A') . "\n";
+    echo 'Success: '.$parsed->format('M j, Y g:i A')."\n";
 } catch (Exception $e) {
-    echo "Error: " . $e->getMessage() . "\n";
+    echo 'Error: '.$e->getMessage()."\n";
 }
 
 echo "\nTest completed. The new approach should work correctly.\n";

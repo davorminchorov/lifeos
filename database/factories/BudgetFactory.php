@@ -4,8 +4,8 @@ namespace Database\Factories;
 
 use App\Models\Budget;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Factories\Factory;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Budget>
@@ -92,6 +92,7 @@ class BudgetFactory extends Factory
             default:
                 $startDate = $this->faker->dateTimeBetween('-2 months', '+1 month');
                 $endDate = Carbon::parse($startDate)->addDays($this->faker->numberBetween(30, 365));
+
                 return [
                     'start_date' => Carbon::parse($startDate)->toDateString(),
                     'end_date' => $endDate->toDateString(),
@@ -126,6 +127,7 @@ class BudgetFactory extends Factory
     {
         return $this->state(function (array $attributes) {
             $now = Carbon::now();
+
             return [
                 'budget_period' => 'monthly',
                 'start_date' => $now->copy()->startOfMonth()->toDateString(),
@@ -141,6 +143,7 @@ class BudgetFactory extends Factory
     {
         return $this->state(function (array $attributes) {
             $now = Carbon::now();
+
             return [
                 'budget_period' => 'quarterly',
                 'start_date' => $now->copy()->startOfQuarter()->toDateString(),
@@ -156,6 +159,7 @@ class BudgetFactory extends Factory
     {
         return $this->state(function (array $attributes) {
             $now = Carbon::now();
+
             return [
                 'budget_period' => 'yearly',
                 'start_date' => $now->copy()->startOfYear()->toDateString(),

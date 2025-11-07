@@ -184,7 +184,7 @@ class CurrencyService
      */
     public function calculateFreshness(?int $timestamp): string
     {
-        if (!$timestamp) {
+        if (! $timestamp) {
             return 'unknown';
         }
 
@@ -226,6 +226,7 @@ class CurrencyService
     public function isRateFresh(string $fromCurrency, string $toCurrency): bool
     {
         $rateInfo = $this->getExchangeRateWithFreshness($fromCurrency, $toCurrency);
+
         return $rateInfo['freshness'] === 'fresh';
     }
 
@@ -235,6 +236,7 @@ class CurrencyService
     public function isRateStale(string $fromCurrency, string $toCurrency): bool
     {
         $rateInfo = $this->getExchangeRateWithFreshness($fromCurrency, $toCurrency);
+
         return in_array($rateInfo['freshness'], ['warning', 'unknown']);
     }
 
@@ -243,7 +245,7 @@ class CurrencyService
      */
     public function getFormattedAge(?int $ageSeconds): string
     {
-        if (!$ageSeconds) {
+        if (! $ageSeconds) {
             return 'Unknown';
         }
 
@@ -251,13 +253,16 @@ class CurrencyService
             return 'Less than 1 minute ago';
         } elseif ($ageSeconds < 3600) {
             $minutes = floor($ageSeconds / 60);
-            return $minutes . ' minute' . ($minutes > 1 ? 's' : '') . ' ago';
+
+            return $minutes.' minute'.($minutes > 1 ? 's' : '').' ago';
         } elseif ($ageSeconds < 86400) {
             $hours = floor($ageSeconds / 3600);
-            return $hours . ' hour' . ($hours > 1 ? 's' : '') . ' ago';
+
+            return $hours.' hour'.($hours > 1 ? 's' : '').' ago';
         } else {
             $days = floor($ageSeconds / 86400);
-            return $days . ' day' . ($days > 1 ? 's' : '') . ' ago';
+
+            return $days.' day'.($days > 1 ? 's' : '').' ago';
         }
     }
 
@@ -318,7 +323,7 @@ class CurrencyService
     {
         $apiKey = config('currency.conversion.api_key');
 
-        if (!$apiKey) {
+        if (! $apiKey) {
             throw new InvalidArgumentException('The API key is required for exchangerate-api.io');
         }
 

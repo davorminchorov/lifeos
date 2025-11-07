@@ -12,7 +12,7 @@ return new class extends Migration
     {
         // Make purchase_price nullable to support project investments
         // Assumes MySQL / MariaDB. If using a different driver, adjust accordingly.
-        DB::statement("ALTER TABLE investments MODIFY COLUMN purchase_price DECIMAL(20, 8) NULL");
+        DB::statement('ALTER TABLE investments MODIFY COLUMN purchase_price DECIMAL(20, 8) NULL');
     }
 
     /**
@@ -26,6 +26,6 @@ return new class extends Migration
             ->update(['purchase_price' => 0]);
 
         // Revert purchase_price to NOT NULL
-        DB::statement("ALTER TABLE investments MODIFY COLUMN purchase_price DECIMAL(20, 8) NOT NULL");
+        DB::statement('ALTER TABLE investments MODIFY COLUMN purchase_price DECIMAL(20, 8) NOT NULL');
     }
 };

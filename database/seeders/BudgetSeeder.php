@@ -4,9 +4,8 @@ namespace Database\Seeders;
 
 use App\Models\Budget;
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
 use Carbon\Carbon;
+use Illuminate\Database\Seeder;
 
 class BudgetSeeder extends Seeder
 {
@@ -20,6 +19,7 @@ class BudgetSeeder extends Seeder
 
         if ($users->isEmpty()) {
             $this->command->warn('No users found. Please seed users first.');
+
             return;
         }
 
@@ -128,7 +128,7 @@ class BudgetSeeder extends Seeder
                 'amount' => $budgetData['amount'],
                 'currency' => 'MKD',
                 'alert_threshold' => 75,
-                'notes' => 'Annual budget for ' . strtolower($budgetData['category']),
+                'notes' => 'Annual budget for '.strtolower($budgetData['category']),
             ]);
         }
 
