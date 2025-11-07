@@ -75,15 +75,15 @@
                         </dd>
                     </div>
                     @if($subscription->merchant_info)
-                        <div class="bg-gray-50 dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">Merchant</dt>
-                            <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">{{ $subscription->merchant_info }}</dd>
+                        <div class="bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">Merchant</dt>
+                            <dd class="mt-1 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] sm:mt-0 sm:col-span-2">{{ $subscription->merchant_info }}</dd>
                         </div>
                     @endif
                     @if($subscription->payment_method)
-                        <div class="bg-white dark:bg-gray-800 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">Payment Method</dt>
-                            <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">{{ $subscription->payment_method }}</dd>
+                        <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">Payment Method</dt>
+                            <dd class="mt-1 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] sm:mt-0 sm:col-span-2">{{ $subscription->payment_method }}</dd>
                         </div>
                     @endif
                 </dl>
@@ -102,21 +102,21 @@
             </div>
             <div class="border-t border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)]">
                 <dl>
-                    <div class="bg-gray-50 dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                        <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">Cost</dt>
-                        <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">
+                    <div class="bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <dt class="text-sm font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">Cost</dt>
+                        <dd class="mt-1 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] sm:mt-0 sm:col-span-2">
                             @php
                                 $currencyService = app(\App\Services\CurrencyService::class);
                                 $currency = $subscription->currency ?? config('currency.default', 'MKD');
                                 $costInMKD = $currencyService->convertToDefault($subscription->cost, $currency);
                             @endphp
                             <div class="text-lg font-semibold">{{ $currencyService->format($costInMKD) }}</div>
-                            <div class="text-xs text-gray-500 dark:text-gray-400">per {{ $subscription->billing_cycle }}</div>
+                            <div class="text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)]">per {{ $subscription->billing_cycle }}</div>
                         </dd>
                     </div>
-                    <div class="bg-white dark:bg-gray-800 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                        <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">Monthly Cost</dt>
-                        <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">
+                    <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <dt class="text-sm font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">Monthly Cost</dt>
+                        <dd class="mt-1 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] sm:mt-0 sm:col-span-2">
                             @php
                                 $currencyService = app(\App\Services\CurrencyService::class);
                                 $currency = $subscription->currency ?? config('currency.default', 'MKD');
@@ -125,9 +125,9 @@
                             <span class="text-lg font-semibold">{{ $currencyService->format($monthlyCostInMKD) }}</span>
                         </dd>
                     </div>
-                    <div class="bg-gray-50 dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                        <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">Yearly Cost</dt>
-                        <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">
+                    <div class="bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <dt class="text-sm font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">Yearly Cost</dt>
+                        <dd class="mt-1 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] sm:mt-0 sm:col-span-2">
                             @php
                                 $currencyService = app(\App\Services\CurrencyService::class);
                                 $currency = $subscription->currency ?? config('currency.default', 'MKD');
@@ -136,18 +136,18 @@
                             <span class="text-lg font-semibold">{{ $currencyService->format($yearlyCostInMKD) }}</span>
                         </dd>
                     </div>
-                    <div class="bg-white dark:bg-gray-800 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                        <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">Billing Cycle</dt>
-                        <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">
+                    <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <dt class="text-sm font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">Billing Cycle</dt>
+                        <dd class="mt-1 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] sm:mt-0 sm:col-span-2">
                             {{ ucfirst($subscription->billing_cycle) }}
                             @if($subscription->billing_cycle === 'custom' && $subscription->billing_cycle_days)
                                 ({{ $subscription->billing_cycle_days }} days)
                             @endif
                         </dd>
                     </div>
-                    <div class="bg-gray-50 dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                        <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">Auto Renewal</dt>
-                        <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">
+                    <div class="bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <dt class="text-sm font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">Auto Renewal</dt>
+                        <dd class="mt-1 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] sm:mt-0 sm:col-span-2">
                             @if($subscription->auto_renewal)
                                 <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
                                     Enabled
@@ -165,24 +165,24 @@
     </div>
 
     <!-- Dates Section -->
-    <div class="mt-8 bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg">
+    <div class="mt-8 bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] shadow overflow-hidden sm:rounded-lg">
         <div class="px-4 py-5 sm:px-6">
-            <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">
+            <h3 class="text-lg leading-6 font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                 Important Dates
             </h3>
-            <p class="mt-1 max-w-2xl text-sm text-gray-500 dark:text-gray-400">
+            <p class="mt-1 max-w-2xl text-sm text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)]">
                 Key dates for this subscription.
             </p>
         </div>
         <div class="border-t border-gray-200 dark:border-gray-700">
             <dl class="grid grid-cols-1 md:grid-cols-3 gap-0">
-                <div class="bg-gray-50 dark:bg-gray-700 px-4 py-5">
-                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">Start Date</dt>
-                    <dd class="mt-1 text-sm text-gray-900 dark:text-white">{{ $subscription->start_date->format('M j, Y') }}</dd>
+                <div class="bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] px-4 py-5">
+                    <dt class="text-sm font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">Start Date</dt>
+                    <dd class="mt-1 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">{{ $subscription->start_date->format('M j, Y') }}</dd>
                 </div>
-                <div class="bg-white dark:bg-gray-800 px-4 py-5">
-                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">Next Billing Date</dt>
-                    <dd class="mt-1 text-sm text-gray-900 dark:text-white">
+                <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] px-4 py-5">
+                    <dt class="text-sm font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">Next Billing Date</dt>
+                    <dd class="mt-1 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                         {{ $subscription->next_billing_date->format('M j, Y') }}
                         @php
                             $daysUntil = now()->diffInDays($subscription->next_billing_date, false);
@@ -193,9 +193,9 @@
                     </dd>
                 </div>
                 @if($subscription->cancellation_date)
-                    <div class="bg-gray-50 dark:bg-gray-700 px-4 py-5">
-                        <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">Cancellation Date</dt>
-                        <dd class="mt-1 text-sm text-gray-900 dark:text-white">{{ $subscription->cancellation_date->format('M j, Y') }}</dd>
+                    <div class="bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] px-4 py-5">
+                        <dt class="text-sm font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">Cancellation Date</dt>
+                        <dd class="mt-1 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">{{ $subscription->cancellation_date->format('M j, Y') }}</dd>
                     </div>
                 @endif
             </dl>
@@ -204,21 +204,21 @@
 
     <!-- Management Section -->
     @if($subscription->cancellation_difficulty || $subscription->notes || $subscription->tags)
-        <div class="mt-8 bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg">
+        <div class="mt-8 bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] shadow overflow-hidden sm:rounded-lg">
             <div class="px-4 py-5 sm:px-6">
-                <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">
+                <h3 class="text-lg leading-6 font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                     Management Information
                 </h3>
-                <p class="mt-1 max-w-2xl text-sm text-gray-500 dark:text-gray-400">
+                <p class="mt-1 max-w-2xl text-sm text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)]">
                     Additional details for managing this subscription.
                 </p>
             </div>
             <div class="border-t border-gray-200 dark:border-gray-700">
                 <dl>
                     @if($subscription->cancellation_difficulty)
-                        <div class="bg-gray-50 dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">Cancellation Difficulty</dt>
-                            <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">
+                        <div class="bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">Cancellation Difficulty</dt>
+                            <dd class="mt-1 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] sm:mt-0 sm:col-span-2">
                                 <div class="flex items-center">
                                     @for($i = 1; $i <= 5; $i++)
                                         <svg class="h-4 w-4 {{ $i <= $subscription->cancellation_difficulty ? 'text-yellow-400' : 'text-gray-300 dark:text-gray-600' }}" fill="currentColor" viewBox="0 0 20 20">
@@ -242,9 +242,9 @@
                     @endif
 
                     @if($subscription->tags && count($subscription->tags) > 0)
-                        <div class="bg-white dark:bg-gray-800 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">Tags</dt>
-                            <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">
+                        <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">Tags</dt>
+                            <dd class="mt-1 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] sm:mt-0 sm:col-span-2">
                                 <div class="flex flex-wrap gap-2">
                                     @foreach($subscription->tags as $tag)
                                         <span class="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200">
@@ -257,9 +257,9 @@
                     @endif
 
                     @if($subscription->notes)
-                        <div class="bg-gray-50 dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">Notes</dt>
-                            <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">{{ $subscription->notes }}</dd>
+                        <div class="bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">Notes</dt>
+                            <dd class="mt-1 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] sm:mt-0 sm:col-span-2">{{ $subscription->notes }}</dd>
                         </div>
                     @endif
                 </dl>
@@ -269,12 +269,12 @@
 
     <!-- Price History -->
     @if($subscription->price_history && count($subscription->price_history) > 0)
-        <div class="mt-8 bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg">
+        <div class="mt-8 bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] shadow overflow-hidden sm:rounded-lg">
             <div class="px-4 py-5 sm:px-6">
-                <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">
+                <h3 class="text-lg leading-6 font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                     Price History
                 </h3>
-                <p class="mt-1 max-w-2xl text-sm text-gray-500 dark:text-gray-400">
+                <p class="mt-1 max-w-2xl text-sm text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)]">
                     Track how the subscription price has changed over time.
                 </p>
             </div>
@@ -329,12 +329,12 @@
     @endif
 
     <!-- Actions -->
-    <div class="mt-8 bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg">
+    <div class="mt-8 bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] shadow overflow-hidden sm:rounded-lg">
         <div class="px-4 py-5 sm:px-6">
-            <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">
+            <h3 class="text-lg leading-6 font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                 Actions
             </h3>
-            <p class="mt-1 max-w-2xl text-sm text-gray-500 dark:text-gray-400">
+            <p class="mt-1 max-w-2xl text-sm text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)]">
                 Manage your subscription status.
             </p>
         </div>

@@ -5,7 +5,7 @@
 @section('content')
 <div class="py-12">
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-        <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg">
+        <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] overflow-hidden shadow-xl sm:rounded-lg">
             <div class="p-6 text-gray-900 dark:text-gray-100">
                 <!-- Header -->
                 <div class="flex justify-between items-center mb-6">
@@ -17,7 +17,7 @@
                         <a href="{{ route('investments.rebalancing.alerts') }}" class="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                             ← Back to Alerts
                         </a>
-                        <button onclick="window.print()" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
+                        <button onclick="window.print()" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)]">
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
                             </svg>
@@ -47,7 +47,7 @@
                     </div>
 
                     <!-- Recommendations Table -->
-                    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg mb-8">
+                    <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] overflow-hidden shadow rounded-lg mb-8">
                         <div class="px-4 py-5 sm:p-6">
                             <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">Recommended Actions</h3>
                             <div class="overflow-x-auto">
@@ -113,7 +113,7 @@
                     </div>
 
                     <!-- Implementation Strategy -->
-                    <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-6 mb-8">
+                    <div class="bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] rounded-lg p-6 mb-8">
                         <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">Implementation Strategy</h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
@@ -205,7 +205,7 @@
                         <h3 class="mt-4 text-lg font-medium text-gray-900 dark:text-gray-100">Portfolio is Well Balanced</h3>
                         <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">Your current allocation is within acceptable ranges of your target. No rebalancing needed at this time.</p>
                         <div class="mt-6">
-                            <a href="{{ route('investments.index') }}" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
+                            <a href="{{ route('investments.index') }}" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)]">
                                 Return to Investments
                             </a>
                         </div>

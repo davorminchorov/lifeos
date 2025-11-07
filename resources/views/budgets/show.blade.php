@@ -5,7 +5,7 @@
 @section('header')
     <div class="flex justify-between items-center">
         <div>
-            <h1 class="text-3xl font-bold text-gray-900 dark:text-white">
+            <h1 class="text-3xl font-bold text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                 {{ $budget->category }} Budget
             </h1>
             <p class="mt-2 text-gray-600 dark:text-gray-400">
@@ -27,7 +27,7 @@
     <!-- Budget Overview Cards -->
     <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         <!-- Budget Amount -->
-        <div class="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
+        <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] overflow-hidden shadow rounded-lg">
             <div class="p-5">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
@@ -40,7 +40,7 @@
                     <div class="ml-5 w-0 flex-1">
                         <dl>
                             <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Budget Amount</dt>
-                            <dd class="text-lg font-medium text-gray-900 dark:text-white">{{ number_format($budget->amount, 2) }} {{ $budget->currency }}</dd>
+                            <dd class="text-lg font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">{{ number_format($budget->amount, 2) }} {{ $budget->currency }}</dd>
                         </dl>
                     </div>
                 </div>
@@ -48,7 +48,7 @@
         </div>
 
         <!-- Amount Spent -->
-        <div class="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
+        <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] overflow-hidden shadow rounded-lg">
             <div class="p-5">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
@@ -61,7 +61,7 @@
                     <div class="ml-5 w-0 flex-1">
                         <dl>
                             <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Amount Spent</dt>
-                            <dd class="text-lg font-medium text-gray-900 dark:text-white">
+                            <dd class="text-lg font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                                 {{ number_format($budget->getCurrentSpending(), 2) }} {{ $budget->currency }}
                             </dd>
                         </dl>
@@ -71,7 +71,7 @@
         </div>
 
         <!-- Remaining Amount -->
-        <div class="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
+        <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] overflow-hidden shadow rounded-lg">
             <div class="p-5">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
@@ -84,7 +84,7 @@
                     <div class="ml-5 w-0 flex-1">
                         <dl>
                             <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Remaining</dt>
-                            <dd class="text-lg font-medium text-gray-900 dark:text-white">
+                            <dd class="text-lg font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                                 {{ number_format($budget->getRemainingAmount(), 2) }} {{ $budget->currency }}
                             </dd>
                         </dl>
@@ -94,7 +94,7 @@
         </div>
 
         <!-- Budget Status -->
-        <div class="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
+        <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] overflow-hidden shadow rounded-lg">
             <div class="p-5">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
@@ -118,7 +118,7 @@
                     <div class="ml-5 w-0 flex-1">
                         <dl>
                             <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Status</dt>
-                            <dd class="text-lg font-medium text-gray-900 dark:text-white">
+                            <dd class="text-lg font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                                 {{ $budget->getUtilizationPercentage() }}%
                                 @if($status === 'exceeded')
                                     <span class="text-sm text-red-600 dark:text-red-400">Over Budget</span>
@@ -138,9 +138,9 @@
     <!-- Progress Bar and Details -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
         <!-- Budget Progress -->
-        <div class="lg:col-span-2 bg-white dark:bg-gray-800 shadow rounded-lg">
+        <div class="lg:col-span-2 bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] shadow rounded-lg">
             <div class="px-4 py-5 sm:p-6">
-                <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white mb-6">Budget Progress</h3>
+                <h3 class="text-lg leading-6 font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] mb-6">Budget Progress</h3>
 
                 @php $utilization = $budget->getUtilizationPercentage() @endphp
                 <div class="mb-4">
@@ -161,19 +161,19 @@
 
                 <div class="grid grid-cols-3 gap-4 text-center">
                     <div>
-                        <div class="text-2xl font-bold text-gray-900 dark:text-white">
+                        <div class="text-2xl font-bold text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                             {{ number_format($budget->getCurrentSpending(), 2) }}
                         </div>
                         <div class="text-sm text-gray-500 dark:text-gray-400">Spent</div>
                     </div>
                     <div>
-                        <div class="text-2xl font-bold text-gray-900 dark:text-white">
+                        <div class="text-2xl font-bold text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                             {{ number_format($budget->getRemainingAmount(), 2) }}
                         </div>
                         <div class="text-sm text-gray-500 dark:text-gray-400">Remaining</div>
                     </div>
                     <div>
-                        <div class="text-2xl font-bold text-gray-900 dark:text-white">
+                        <div class="text-2xl font-bold text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                             {{ number_format($projectedSpending, 2) }}
                         </div>
                         <div class="text-sm text-gray-500 dark:text-gray-400">Projected Total</div>
@@ -201,14 +201,14 @@
         </div>
 
         <!-- Budget Details -->
-        <div class="bg-white dark:bg-gray-800 shadow rounded-lg">
+        <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] shadow rounded-lg">
             <div class="px-4 py-5 sm:p-6">
-                <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white mb-6">Budget Details</h3>
+                <h3 class="text-lg leading-6 font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] mb-6">Budget Details</h3>
 
                 <dl class="space-y-4">
                     <div>
                         <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Period</dt>
-                        <dd class="mt-1 text-sm text-gray-900 dark:text-white">
+                        <dd class="mt-1 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                             {{ ucfirst($budget->budget_period) }}
                             @if($budget->budget_period === 'custom')
                                 <br>{{ $budget->start_date->format('M j, Y') }} - {{ $budget->end_date->format('M j, Y') }}
@@ -218,7 +218,7 @@
 
                     <div>
                         <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Alert Threshold</dt>
-                        <dd class="mt-1 text-sm text-gray-900 dark:text-white">{{ $budget->alert_threshold }}%</dd>
+                        <dd class="mt-1 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">{{ $budget->alert_threshold }}%</dd>
                     </div>
 
                     <div>
@@ -234,7 +234,7 @@
 
                     <div>
                         <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Rollover</dt>
-                        <dd class="mt-1 text-sm text-gray-900 dark:text-white">
+                        <dd class="mt-1 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                             {{ $budget->rollover_unused ? 'Enabled' : 'Disabled' }}
                         </dd>
                     </div>
@@ -242,13 +242,13 @@
                     @if($budget->notes)
                         <div>
                             <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Notes</dt>
-                            <dd class="mt-1 text-sm text-gray-900 dark:text-white">{{ $budget->notes }}</dd>
+                            <dd class="mt-1 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">{{ $budget->notes }}</dd>
                         </div>
                     @endif
 
                     <div>
                         <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Created</dt>
-                        <dd class="mt-1 text-sm text-gray-900 dark:text-white">{{ $budget->created_at->format('M j, Y g:i A') }}</dd>
+                        <dd class="mt-1 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">{{ $budget->created_at->format('M j, Y g:i A') }}</dd>
                     </div>
                 </dl>
             </div>
@@ -257,10 +257,10 @@
 
     <!-- Spending Breakdown -->
     @if($expenses->count() > 0)
-        <div class="bg-white dark:bg-gray-800 shadow rounded-lg mb-8">
+        <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] shadow rounded-lg mb-8">
             <div class="px-4 py-5 sm:p-6">
                 <div class="flex justify-between items-center mb-6">
-                    <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">
+                    <h3 class="text-lg leading-6 font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                         Related Expenses ({{ $expenses->count() }})
                     </h3>
                     <a href="{{ route('expenses.index', ['category' => $budget->category, 'start_date' => $budget->start_date->format('Y-m-d'), 'end_date' => $budget->end_date->format('Y-m-d')]) }}"
@@ -271,22 +271,22 @@
 
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                        <thead class="bg-gray-50 dark:bg-gray-700">
+                        <thead class="bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)]">
                             <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Date</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Description</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Merchant</th>
-                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Amount</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] uppercase tracking-wider">Date</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] uppercase tracking-wider">Description</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] uppercase tracking-wider">Merchant</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] uppercase tracking-wider">Amount</th>
                             </tr>
                         </thead>
-                        <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                        <tbody class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] divide-y divide-gray-200 dark:divide-gray-700">
                             @foreach($expenses->take(10) as $expense)
                                 <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                                         {{ $expense->expense_date->format('M j, Y') }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm font-medium text-gray-900 dark:text-white">{{ $expense->description }}</div>
+                                        <div class="text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">{{ $expense->description }}</div>
                                         @if($expense->tags)
                                             <div class="text-sm text-gray-500 dark:text-gray-400">{{ $expense->tags }}</div>
                                         @endif
@@ -294,7 +294,7 @@
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                                         {{ $expense->merchant ?? '-' }}
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium text-gray-900 dark:text-white">
+                                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                                         {{ number_format($expense->amount, 2) }} {{ $expense->currency }}
                                     </td>
                                 </tr>
@@ -306,7 +306,7 @@
                 @if($expenses->count() > 10)
                     <div class="mt-4 text-center">
                         <a href="{{ route('expenses.index', ['category' => $budget->category]) }}"
-                           class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700">
+                           class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] hover:bg-gray-50 dark:hover:bg-gray-700">
                             View All {{ $expenses->count() }} Expenses
                         </a>
                     </div>
@@ -314,16 +314,16 @@
             </div>
         </div>
     @else
-        <div class="bg-white dark:bg-gray-800 shadow rounded-lg">
+        <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] shadow rounded-lg">
             <div class="px-4 py-5 sm:p-6">
                 <div class="text-center py-12">
                     <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 48 48">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
                     </svg>
-                    <h3 class="mt-2 text-sm font-medium text-gray-900 dark:text-white">No expenses yet</h3>
+                    <h3 class="mt-2 text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">No expenses yet</h3>
                     <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">No expenses have been recorded for this budget period.</p>
                     <div class="mt-6">
-                        <a href="{{ route('expenses.create') }}" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
+                        <a href="{{ route('expenses.create') }}" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)]">
                             <svg class="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                             </svg>

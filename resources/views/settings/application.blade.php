@@ -25,7 +25,7 @@
         <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] shadow overflow-hidden sm:rounded-lg border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)]">
             <div class="px-4 py-5 sm:p-6">
                 <div class="flex items-center mb-4">
-                    <div class="w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center mr-4">
+                    <div class="w-10 h-10 bg-[color:var(--color-accent-500)] dark:bg-[color:var(--color-accent-600)] rounded-full flex items-center justify-center mr-4">
                         <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v12a4 4 0 004 4h4a2 2 0 002-2V5z"/>
                         </svg>
@@ -49,43 +49,43 @@
                             <!-- Light Theme -->
                             <div class="border-2 border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-lg p-4 cursor-pointer hover:border-[color:var(--color-accent-500)] transition-colors duration-200" onclick="setTheme('light')">
                                 <div class="flex items-center mb-2">
-                                    <div class="w-4 h-4 bg-white border border-gray-300 rounded-full mr-2"></div>
+                                    <div class="w-4 h-4 bg-[color:var(--color-primary-50)] border border-[color:var(--color-primary-300)] rounded-full mr-2"></div>
                                     <span class="text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Light Mode</span>
                                 </div>
-                                <div class="h-16 bg-gradient-to-r from-blue-100 to-blue-200 rounded border border-gray-200"></div>
+                                <div class="h-16 bg-gradient-to-r from-[color:var(--color-primary-100)] to-[color:var(--color-primary-200)] rounded border border-[color:var(--color-primary-300)]"></div>
                                 <p class="text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] mt-2">Clean and bright interface</p>
                             </div>
 
                             <!-- Dark Theme -->
                             <div class="border-2 border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-lg p-4 cursor-pointer hover:border-[color:var(--color-accent-500)] transition-colors duration-200" onclick="setTheme('dark')">
                                 <div class="flex items-center mb-2">
-                                    <div class="w-4 h-4 bg-gray-800 border border-gray-600 rounded-full mr-2"></div>
+                                    <div class="w-4 h-4 bg-[color:var(--color-dark-100)] border border-[color:var(--color-dark-400)] rounded-full mr-2"></div>
                                     <span class="text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Dark Mode</span>
                                 </div>
-                                <div class="h-16 bg-gradient-to-r from-gray-800 to-gray-900 rounded border border-gray-700"></div>
+                                <div class="h-16 bg-gradient-to-r from-[color:var(--color-dark-100)] to-[color:var(--color-dark-50)] rounded border border-[color:var(--color-dark-300)]"></div>
                                 <p class="text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] mt-2">Easy on the eyes</p>
                             </div>
 
                             <!-- System Theme -->
                             <div class="border-2 border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-lg p-4 cursor-pointer hover:border-[color:var(--color-accent-500)] transition-colors duration-200" onclick="setTheme('system')">
                                 <div class="flex items-center mb-2">
-                                    <div class="w-4 h-4 bg-gradient-to-r from-white to-gray-800 border border-gray-400 rounded-full mr-2"></div>
+                                    <div class="w-4 h-4 bg-gradient-to-r from-[color:var(--color-primary-50)] to-[color:var(--color-dark-100)] border border-[color:var(--color-primary-400)] rounded-full mr-2"></div>
                                     <span class="text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">System</span>
                                 </div>
-                                <div class="h-16 bg-gradient-to-r from-blue-100 via-gray-400 to-gray-800 rounded border border-gray-400"></div>
+                                <div class="h-16 bg-gradient-to-r from-[color:var(--color-primary-100)] via-[color:var(--color-primary-400)] to-[color:var(--color-dark-100)] rounded border border-[color:var(--color-primary-400)]"></div>
                                 <p class="text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] mt-2">Match system preferences</p>
                             </div>
                         </div>
                     </div>
 
-                    <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-md p-4">
+                    <div class="bg-[color:var(--color-info-50)] dark:bg-[color:var(--color-info-500)]/20 border border-[color:var(--color-info-500)]/30 dark:border-[color:var(--color-info-600)] rounded-md p-4">
                         <div class="flex">
-                            <svg class="w-5 h-5 text-blue-400 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                            <svg class="w-5 h-5 text-[color:var(--color-info-500)] dark:text-[color:var(--color-info-600)] mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
                             </svg>
                             <div class="text-sm">
-                                <p class="text-blue-700 dark:text-blue-300 font-medium">Theme Changes</p>
-                                <p class="mt-1 text-blue-600 dark:text-blue-400">Theme changes are applied immediately and saved automatically. Your preference will be remembered across sessions.</p>
+                                <p class="text-[color:var(--color-info-600)] dark:text-[color:var(--color-info-500)] font-medium">Theme Changes</p>
+                                <p class="mt-1 text-[color:var(--color-info-600)] dark:text-[color:var(--color-info-500)]">Theme changes are applied immediately and saved automatically. Your preference will be remembered across sessions.</p>
                             </div>
                         </div>
                     </div>
@@ -97,7 +97,7 @@
         <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] shadow overflow-hidden sm:rounded-lg border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)]">
             <div class="px-4 py-5 sm:p-6">
                 <div class="flex items-center mb-4">
-                    <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center mr-4">
+                    <div class="w-10 h-10 bg-[color:var(--color-success-500)] dark:bg-[color:var(--color-success-600)] rounded-full flex items-center justify-center mr-4">
                         <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                         </svg>
@@ -184,7 +184,7 @@
         <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] shadow overflow-hidden sm:rounded-lg border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)]">
             <div class="px-4 py-5 sm:p-6">
                 <div class="flex items-center mb-4">
-                    <div class="w-10 h-10 bg-yellow-500 rounded-full flex items-center justify-center mr-4">
+                    <div class="w-10 h-10 bg-[color:var(--color-warning-500)] dark:bg-[color:var(--color-warning-600)] rounded-full flex items-center justify-center mr-4">
                         <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"/>
                         </svg>
@@ -238,7 +238,7 @@
         <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] shadow overflow-hidden sm:rounded-lg border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)]">
             <div class="px-4 py-5 sm:p-6">
                 <div class="flex items-center mb-4">
-                    <div class="w-10 h-10 bg-indigo-500 rounded-full flex items-center justify-center mr-4">
+                    <div class="w-10 h-10 bg-[color:var(--color-info-500)] dark:bg-[color:var(--color-info-600)] rounded-full flex items-center justify-center mr-4">
                         <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
@@ -354,7 +354,7 @@
 
     function showNotification(message) {
         const notification = document.createElement('div');
-        notification.className = 'fixed top-4 right-4 bg-green-500 text-white p-4 rounded-md shadow-lg z-50';
+        notification.className = 'fixed top-4 right-4 bg-[color:var(--color-success-500)] text-white p-4 rounded-md shadow-lg z-50';
         notification.textContent = message;
         document.body.appendChild(notification);
 

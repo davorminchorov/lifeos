@@ -5,7 +5,7 @@
 @section('content')
 <div class="py-12">
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-        <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg">
+        <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] overflow-hidden shadow-xl sm:rounded-lg">
             <div class="p-6 text-gray-900 dark:text-gray-100">
                 <!-- Header -->
                 <div class="flex justify-between items-center mb-6">
@@ -17,7 +17,7 @@
                         <a href="{{ route('investments.index') }}" class="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                             ← Back to Investments
                         </a>
-                        <button onclick="generateRebalancingRecommendations()" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
+                        <button onclick="generateRebalancingRecommendations()" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)]">
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                             </svg>
@@ -116,7 +116,7 @@
                                         <p class="text-sm {{ $alert['severity'] === 'high' ? 'text-red-700 dark:text-red-300' : ($alert['severity'] === 'medium' ? 'text-yellow-700 dark:text-yellow-300' : 'text-blue-700 dark:text-blue-300') }} mb-3">
                                             {{ $alert['message'] }}
                                         </p>
-                                        <div class="bg-white dark:bg-gray-800 rounded-lg p-4 border {{ $alert['severity'] === 'high' ? 'border-red-200 dark:border-red-700' : ($alert['severity'] === 'medium' ? 'border-yellow-200 dark:border-yellow-700' : 'border-blue-200 dark:border-blue-700') }}">
+                                        <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] rounded-lg p-4 border {{ $alert['severity'] === 'high' ? 'border-red-200 dark:border-red-700' : ($alert['severity'] === 'medium' ? 'border-yellow-200 dark:border-yellow-700' : 'border-blue-200 dark:border-blue-700') }}">
                                             <h4 class="text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">Recommendation:</h4>
                                             <p class="text-sm text-gray-600 dark:text-gray-400">{{ $alert['recommendation'] }}</p>
                                         </div>
@@ -134,7 +134,7 @@
                         <h3 class="mt-4 text-lg font-medium text-gray-900 dark:text-gray-100">All Clear!</h3>
                         <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">Your portfolio looks well-balanced. No rebalancing alerts at this time.</p>
                         <div class="mt-6">
-                            <button onclick="generateRebalancingRecommendations()" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
+                            <button onclick="generateRebalancingRecommendations()" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)]">
                                 Generate Custom Recommendations
                             </button>
                         </div>
@@ -142,7 +142,7 @@
                 @endif
 
                 <!-- Rebalancing Tips -->
-                <div class="mt-12 bg-gray-50 dark:bg-gray-700 rounded-lg p-6">
+                <div class="mt-12 bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] rounded-lg p-6">
                     <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">Portfolio Rebalancing Guidelines</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
@@ -172,7 +172,7 @@
 
 <!-- Rebalancing Recommendations Modal -->
 <div id="recommendationsModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-    <div class="relative top-20 mx-auto p-5 border w-11/12 max-w-4xl shadow-lg rounded-md bg-white dark:bg-gray-800">
+    <div class="relative top-20 mx-auto p-5 border w-11/12 max-w-4xl shadow-lg rounded-md bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)]">
         <div class="mt-3">
             <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">Target Allocation for Recommendations</h3>
             <form id="recommendationsForm" method="POST" action="{{ route('investments.rebalancing.recommendations') }}">

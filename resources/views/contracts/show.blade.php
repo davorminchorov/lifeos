@@ -71,24 +71,24 @@
         <!-- Main Information -->
         <div class="lg:col-span-2 space-y-6">
             <!-- Contract Details -->
-            <div class="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg">
+            <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] shadow overflow-hidden sm:rounded-lg">
                 <div class="px-4 py-5 sm:px-6">
-                    <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">Contract Information</h3>
+                    <h3 class="text-lg leading-6 font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Contract Information</h3>
                 </div>
                 <div class="border-t border-gray-200 dark:border-gray-700">
                     <dl>
-                        <div class="bg-gray-50 dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Counterparty</dt>
-                            <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">{{ $contract->counterparty }}</dd>
+                        <div class="bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)]">Counterparty</dt>
+                            <dd class="mt-1 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] sm:mt-0 sm:col-span-2">{{ $contract->counterparty }}</dd>
                         </div>
-                        <div class="bg-white dark:bg-gray-800 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Start Date</dt>
-                            <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">{{ $contract->start_date->format('F j, Y') }}</dd>
+                        <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)]">Start Date</dt>
+                            <dd class="mt-1 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] sm:mt-0 sm:col-span-2">{{ $contract->start_date->format('F j, Y') }}</dd>
                         </div>
                         @if($contract->end_date)
-                            <div class="bg-gray-50 dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                                <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">End Date</dt>
-                                <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">
+                            <div class="bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                <dt class="text-sm font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)]">End Date</dt>
+                                <dd class="mt-1 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] sm:mt-0 sm:col-span-2">
                                     {{ $contract->end_date->format('F j, Y') }}
                                     @if($contract->days_until_expiration !== null)
                                         @if($contract->days_until_expiration < 0)
@@ -105,33 +105,33 @@
                             </div>
                         @endif
                         @if($contract->contract_value)
-                            <div class="bg-white dark:bg-gray-800 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                                <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Contract Value</dt>
-                                <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">{{ $contract->formatted_contract_value }}</dd>
+                            <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                <dt class="text-sm font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)]">Contract Value</dt>
+                                <dd class="mt-1 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] sm:mt-0 sm:col-span-2">{{ $contract->formatted_contract_value }}</dd>
                             </div>
                         @endif
                         @if($contract->payment_terms)
-                            <div class="bg-gray-50 dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                                <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Payment Terms</dt>
-                                <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">{{ $contract->payment_terms }}</dd>
+                            <div class="bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                <dt class="text-sm font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)]">Payment Terms</dt>
+                                <dd class="mt-1 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] sm:mt-0 sm:col-span-2">{{ $contract->payment_terms }}</dd>
                             </div>
                         @endif
                         @if($contract->notice_period_days)
-                            <div class="bg-white dark:bg-gray-800 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                                <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Notice Period</dt>
-                                <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">
+                            <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                <dt class="text-sm font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)]">Notice Period</dt>
+                                <dd class="mt-1 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] sm:mt-0 sm:col-span-2">
                                     {{ $contract->notice_period_days }} days
                                     @if($contract->notice_deadline)
-                                        <span class="ml-2 text-gray-500 dark:text-gray-400">
+                                        <span class="ml-2 text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)]">
                                             (Notice by {{ $contract->notice_deadline->format('M j, Y') }})
                                         </span>
                                     @endif
                                 </dd>
                             </div>
                         @endif
-                        <div class="bg-gray-50 dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Auto Renewal</dt>
-                            <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">
+                        <div class="bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)]">Auto Renewal</dt>
+                            <dd class="mt-1 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] sm:mt-0 sm:col-span-2">
                                 @if($contract->auto_renewal)
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100">
                                         Enabled
@@ -149,28 +149,28 @@
 
             <!-- Contract Terms -->
             @if($contract->key_obligations || $contract->penalties || $contract->termination_clauses)
-                <div class="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg">
+                <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] shadow overflow-hidden sm:rounded-lg">
                     <div class="px-4 py-5 sm:px-6">
-                        <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">Contract Terms</h3>
+                        <h3 class="text-lg leading-6 font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Contract Terms</h3>
                     </div>
                     <div class="border-t border-gray-200 dark:border-gray-700">
                         <dl>
                             @if($contract->key_obligations)
-                                <div class="bg-gray-50 dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Key Obligations</dt>
-                                    <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2 whitespace-pre-line">{{ $contract->key_obligations }}</dd>
+                                <div class="bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                    <dt class="text-sm font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)]">Key Obligations</dt>
+                                    <dd class="mt-1 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] sm:mt-0 sm:col-span-2 whitespace-pre-line">{{ $contract->key_obligations }}</dd>
                                 </div>
                             @endif
                             @if($contract->penalties)
-                                <div class="bg-white dark:bg-gray-800 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Penalties</dt>
-                                    <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2 whitespace-pre-line">{{ $contract->penalties }}</dd>
+                                <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                    <dt class="text-sm font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)]">Penalties</dt>
+                                    <dd class="mt-1 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] sm:mt-0 sm:col-span-2 whitespace-pre-line">{{ $contract->penalties }}</dd>
                                 </div>
                             @endif
                             @if($contract->termination_clauses)
-                                <div class="bg-gray-50 dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Termination Clauses</dt>
-                                    <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2 whitespace-pre-line">{{ $contract->termination_clauses }}</dd>
+                                <div class="bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                    <dt class="text-sm font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)]">Termination Clauses</dt>
+                                    <dd class="mt-1 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] sm:mt-0 sm:col-span-2 whitespace-pre-line">{{ $contract->termination_clauses }}</dd>
                                 </div>
                             @endif
                         </dl>
@@ -180,10 +180,10 @@
 
             <!-- Notes -->
             @if($contract->notes)
-                <div class="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg">
+                <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] shadow overflow-hidden sm:rounded-lg">
                     <div class="px-4 py-5 sm:px-6">
-                        <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">Notes</h3>
-                        <p class="mt-1 text-sm text-gray-900 dark:text-white whitespace-pre-line">{{ $contract->notes }}</p>
+                        <h3 class="text-lg leading-6 font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Notes</h3>
+                        <p class="mt-1 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] whitespace-pre-line">{{ $contract->notes }}</p>
                     </div>
                 </div>
             @endif
@@ -193,9 +193,9 @@
         <div class="space-y-6">
             <!-- Performance Rating -->
             @if($contract->performance_rating)
-                <div class="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg">
+                <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] shadow overflow-hidden sm:rounded-lg">
                     <div class="px-4 py-5 sm:px-6">
-                        <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">Performance</h3>
+                        <h3 class="text-lg leading-6 font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Performance</h3>
                         <div class="mt-4">
                             <div class="flex items-center">
                                 @for($i = 1; $i <= 5; $i++)
@@ -212,16 +212,16 @@
 
             <!-- Documents -->
             @if($contract->document_attachments && count($contract->document_attachments) > 0)
-                <div class="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg">
+                <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] shadow overflow-hidden sm:rounded-lg">
                     <div class="px-4 py-5 sm:px-6">
-                        <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">Documents</h3>
+                        <h3 class="text-lg leading-6 font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Documents</h3>
                         <div class="mt-4 space-y-2">
                             @foreach($contract->document_attachments as $document)
                                 <div class="flex items-center">
                                     <svg class="h-5 w-5 text-gray-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
                                     </svg>
-                                    <span class="text-sm text-gray-900 dark:text-white">{{ basename($document) }}</span>
+                                    <span class="text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">{{ basename($document) }}</span>
                                 </div>
                             @endforeach
                         </div>
@@ -231,17 +231,17 @@
 
             <!-- Renewal History -->
             @if($contract->renewal_history && count($contract->renewal_history) > 0)
-                <div class="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg">
+                <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] shadow overflow-hidden sm:rounded-lg">
                     <div class="px-4 py-5 sm:px-6">
-                        <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">Renewal History</h3>
+                        <h3 class="text-lg leading-6 font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Renewal History</h3>
                         <div class="mt-4 space-y-3">
                             @foreach($contract->renewal_history as $renewal)
                                 <div class="border-l-2 border-indigo-200 pl-4">
                                     <div class="flex items-center justify-between">
-                                        <span class="text-sm font-medium text-gray-900 dark:text-white">
+                                        <span class="text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                                             {{ ucfirst($renewal['action'] ?? 'Renewed') }}
                                         </span>
-                                        <span class="text-sm text-gray-500 dark:text-gray-400">
+                                        <span class="text-sm text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)]">
                                             {{ \Carbon\Carbon::parse($renewal['date'])->format('M j, Y') }}
                                         </span>
                                     </div>
@@ -260,18 +260,18 @@
 
             <!-- Amendments -->
             @if($contract->amendments && count($contract->amendments) > 0)
-                <div class="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg">
+                <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] shadow overflow-hidden sm:rounded-lg">
                     <div class="px-4 py-5 sm:px-6">
-                        <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">Amendments</h3>
+                        <h3 class="text-lg leading-6 font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Amendments</h3>
                         <div class="mt-4 space-y-3">
                             @foreach($contract->amendments as $amendment)
                                 <div class="border-l-2 border-yellow-200 pl-4">
                                     <div class="flex items-center justify-between">
-                                        <span class="text-sm text-gray-500 dark:text-gray-400">
+                                        <span class="text-sm text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)]">
                                             {{ \Carbon\Carbon::parse($amendment['date'])->format('M j, Y') }}
                                         </span>
                                     </div>
-                                    <p class="text-sm text-gray-900 dark:text-white mt-1">
+                                    <p class="text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] mt-1">
                                         {{ $amendment['description'] ?? $amendment['change'] ?? 'Amendment made' }}
                                     </p>
                                 </div>
@@ -282,9 +282,9 @@
             @endif
 
             <!-- Quick Actions -->
-            <div class="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg">
+            <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] shadow overflow-hidden sm:rounded-lg">
                 <div class="px-4 py-5 sm:px-6">
-                    <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">Quick Actions</h3>
+                    <h3 class="text-lg leading-6 font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Quick Actions</h3>
                     <div class="mt-4 space-y-2">
                         <button type="button" onclick="document.getElementById('amendment-modal').classList.remove('hidden')"
                                 class="w-full text-left px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md">
@@ -304,10 +304,10 @@
 
     <!-- Terminate Modal -->
     <div id="terminate-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white dark:bg-gray-800">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)]">
             <div class="mt-3">
-                <h3 class="text-lg font-medium text-gray-900 dark:text-white">Terminate Contract</h3>
-                <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">Are you sure you want to terminate this contract? This action cannot be undone.</p>
+                <h3 class="text-lg font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Terminate Contract</h3>
+                <p class="text-sm text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)] mt-2">Are you sure you want to terminate this contract? This action cannot be undone.</p>
                 <form method="POST" action="{{ route('contracts.terminate', $contract) }}" class="mt-4">
                     @csrf
                     <div class="flex justify-end space-x-3">
@@ -315,7 +315,7 @@
                                 class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-md">
                             Cancel
                         </button>
-                        <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md">
+                        <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-[color:var(--color-danger-500)] hover:bg-[color:var(--color-danger-600)] rounded-md">
                             Terminate Contract
                         </button>
                     </div>
@@ -326,15 +326,15 @@
 
     <!-- Renew Modal -->
     <div id="renew-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white dark:bg-gray-800">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)]">
             <div class="mt-3">
-                <h3 class="text-lg font-medium text-gray-900 dark:text-white">Renew Contract</h3>
+                <h3 class="text-lg font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Renew Contract</h3>
                 <form method="POST" action="{{ route('contracts.renew', $contract) }}" class="mt-4">
                     @csrf
                     <div class="mb-4">
                         <label for="new_end_date" class="block text-sm font-medium text-gray-700 dark:text-gray-300">New End Date</label>
                         <input type="date" name="new_end_date" id="new_end_date" required
-                               class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                               class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                     </div>
                     <div class="flex justify-end space-x-3">
                         <button type="button" onclick="document.getElementById('renew-modal').classList.add('hidden')"
@@ -352,15 +352,15 @@
 
     <!-- Amendment Modal -->
     <div id="amendment-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white dark:bg-gray-800">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)]">
             <div class="mt-3">
-                <h3 class="text-lg font-medium text-gray-900 dark:text-white">Add Amendment</h3>
+                <h3 class="text-lg font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Add Amendment</h3>
                 <form method="POST" action="{{ route('contracts.add-amendment', $contract) }}" class="mt-4">
                     @csrf
                     <div class="mb-4">
                         <label for="amendment_description" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Amendment Description</label>
                         <textarea name="amendment_description" id="amendment_description" rows="3" required
-                                  class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                  class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                                   placeholder="Describe the changes made to the contract..."></textarea>
                     </div>
                     <div class="flex justify-end space-x-3">
@@ -368,7 +368,7 @@
                                 class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-md">
                             Cancel
                         </button>
-                        <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md">
+                        <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] rounded-md">
                             Add Amendment
                         </button>
                     </div>

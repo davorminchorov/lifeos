@@ -5,7 +5,7 @@
 @section('content')
 <div class="py-12">
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-        <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg">
+        <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] overflow-hidden shadow-xl sm:rounded-lg">
             <div class="p-6 text-gray-900 dark:text-gray-100">
                 <!-- Header -->
                 <div class="flex justify-between items-center mb-6">
@@ -13,7 +13,7 @@
                         <h2 class="text-2xl font-semibold">Investment Goals</h2>
                         <p class="text-gray-600 dark:text-gray-400 mt-1">Track and manage your investment objectives</p>
                     </div>
-                    <button onclick="openGoalModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium">
+                    <button onclick="openGoalModal()" class="bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] text-white px-4 py-2 rounded-lg font-medium">
                         Add Goal
                     </button>
                 </div>
@@ -22,7 +22,7 @@
                 @if($goals->count() > 0)
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         @foreach($goals as $goal)
-                            <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-6">
+                            <div class="bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] rounded-lg p-6">
                                 <div class="flex justify-between items-start mb-4">
                                     <h3 class="text-lg font-semibold">{{ $goal['title'] ?? 'Untitled Goal' }}</h3>
                                     <div class="flex space-x-2">
@@ -90,7 +90,7 @@
                         <h3 class="mt-2 text-sm font-medium text-gray-900 dark:text-gray-100">No investment goals</h3>
                         <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Get started by creating your first investment goal.</p>
                         <div class="mt-6">
-                            <button onclick="openGoalModal()" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
+                            <button onclick="openGoalModal()" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)]">
                                 Add Goal
                             </button>
                         </div>
@@ -103,7 +103,7 @@
 
 <!-- Goal Modal -->
 <div id="goalModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white dark:bg-gray-800">
+    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)]">
         <div class="mt-3">
             <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4" id="modalTitle">Add Investment Goal</h3>
             <form id="goalForm" method="POST" action="{{ route('investments.goals.store') }}">

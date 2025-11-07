@@ -47,7 +47,7 @@
                         <!-- Export Dropdown -->
                         <div class="ml-4 relative" x-data="{ open: false }" @click.away="open = false">
                             <button @click="open = !open" :disabled="isExporting"
-                                    class="bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] disabled:bg-gray-400 text-white text-sm px-4 py-2 rounded-md transition-colors flex items-center">
+                                    class="bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] disabled:bg-[color:var(--color-primary-400)] text-white text-sm px-4 py-2 rounded-md transition-colors flex items-center">
                                 <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" x-show="!isExporting">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                 </svg>
@@ -63,18 +63,18 @@
 
                             <!-- Dropdown Menu -->
                             <div x-show="open" x-transition
-                                 class="absolute right-0 mt-2 w-48 bg-white dark:bg-[color:var(--color-dark-100)] rounded-md shadow-lg border border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)] z-50">
+                                 class="absolute right-0 mt-2 w-48 bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] rounded-md shadow-lg border border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)] z-50">
                                 <div class="py-1">
                                     <button @click="exportData('pdf'); open = false"
                                             class="w-full text-left px-4 py-2 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] hover:bg-[color:var(--color-primary-100)] dark:hover:bg-[color:var(--color-dark-200)] flex items-center">
-                                        <svg class="h-4 w-4 mr-2 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg class="h-4 w-4 mr-2 text-[color:var(--color-danger-500)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
                                         </svg>
                                         Export as PDF
                                     </button>
                                     <button @click="exportData('excel'); open = false"
                                             class="w-full text-left px-4 py-2 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] hover:bg-[color:var(--color-primary-100)] dark:hover:bg-[color:var(--color-dark-200)] flex items-center">
-                                        <svg class="h-4 w-4 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg class="h-4 w-4 mr-2 text-[color:var(--color-success-500)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                         </svg>
                                         Export as Excel (CSV)

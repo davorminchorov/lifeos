@@ -5,7 +5,7 @@
 @section('header')
     <div class="flex justify-between items-center">
         <div>
-            <h1 class="text-3xl font-bold text-gray-900 dark:text-white">
+            <h1 class="text-3xl font-bold text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                 Edit Warranty
             </h1>
             <p class="mt-2 text-gray-600 dark:text-gray-400">
@@ -30,9 +30,9 @@
             @method('PUT')
 
             <!-- Product Information -->
-            <div class="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg">
+            <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] shadow overflow-hidden sm:rounded-lg">
                 <div class="px-4 py-5 sm:px-6">
-                    <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">
+                    <h3 class="text-lg leading-6 font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                         Product Information
                     </h3>
                     <p class="mt-1 max-w-2xl text-sm text-gray-500 dark:text-gray-400">
@@ -45,7 +45,7 @@
                         <div>
                             <label for="product_name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Product Name *</label>
                             <input type="text" name="product_name" id="product_name" value="{{ old('product_name', $warranty->product_name) }}" required
-                                   class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                   class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                             @error('product_name')
                                 <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
@@ -55,7 +55,7 @@
                         <div>
                             <label for="brand" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Brand *</label>
                             <input type="text" name="brand" id="brand" value="{{ old('brand', $warranty->brand) }}" required
-                                   class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                   class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                             @error('brand')
                                 <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
@@ -65,7 +65,7 @@
                         <div>
                             <label for="model" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Model</label>
                             <input type="text" name="model" id="model" value="{{ old('model', $warranty->model) }}"
-                                   class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                   class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                             @error('model')
                                 <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
@@ -75,7 +75,7 @@
                         <div>
                             <label for="serial_number" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Serial Number</label>
                             <input type="text" name="serial_number" id="serial_number" value="{{ old('serial_number', $warranty->serial_number) }}"
-                                   class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                   class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                             @error('serial_number')
                                 <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
@@ -85,9 +85,9 @@
             </div>
 
             <!-- Purchase Information -->
-            <div class="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg">
+            <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] shadow overflow-hidden sm:rounded-lg">
                 <div class="px-4 py-5 sm:px-6">
-                    <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">
+                    <h3 class="text-lg leading-6 font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                         Purchase Information
                     </h3>
                     <p class="mt-1 max-w-2xl text-sm text-gray-500 dark:text-gray-400">
@@ -100,7 +100,7 @@
                         <div>
                             <label for="purchase_date" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Purchase Date *</label>
                             <input type="date" name="purchase_date" id="purchase_date" value="{{ old('purchase_date', $warranty->purchase_date->format('Y-m-d')) }}" required
-                                   class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                   class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                             @error('purchase_date')
                                 <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
@@ -114,7 +114,7 @@
                                     <span class="text-gray-500 dark:text-gray-400 sm:text-sm">$</span>
                                 </div>
                                 <input type="number" name="purchase_price" id="purchase_price" step="0.01" min="0" value="{{ old('purchase_price', $warranty->purchase_price) }}" required
-                                       class="pl-7 mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                       class="pl-7 mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                             </div>
                             @error('purchase_price')
                                 <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
@@ -125,7 +125,7 @@
                         <div>
                             <label for="currency" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Currency *</label>
                             <select name="currency" id="currency" required
-                                    class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 <option value="MKD" {{ old('currency', $warranty->currency) === 'MKD' ? 'selected' : '' }}>MKD - Macedonian Denar</option>
                                 <option value="USD" {{ old('currency', $warranty->currency) === 'USD' ? 'selected' : '' }}>USD ($) - US Dollar</option>
                                 <option value="EUR" {{ old('currency', $warranty->currency) === 'EUR' ? 'selected' : '' }}>EUR (€) - Euro</option>
@@ -147,7 +147,7 @@
                             <label for="retailer" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Retailer</label>
                             <input type="text" name="retailer" id="retailer" value="{{ old('retailer', $warranty->retailer) }}"
                                    placeholder="e.g., Amazon, Best Buy, Apple Store"
-                                   class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                   class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                             @error('retailer')
                                 <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
@@ -157,9 +157,9 @@
             </div>
 
             <!-- Warranty Information -->
-            <div class="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg">
+            <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] shadow overflow-hidden sm:rounded-lg">
                 <div class="px-4 py-5 sm:px-6">
-                    <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">
+                    <h3 class="text-lg leading-6 font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                         Warranty Information
                     </h3>
                     <p class="mt-1 max-w-2xl text-sm text-gray-500 dark:text-gray-400">
@@ -172,7 +172,7 @@
                         <div>
                             <label for="warranty_duration_months" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Warranty Duration (Months) *</label>
                             <input type="number" name="warranty_duration_months" id="warranty_duration_months" min="1" value="{{ old('warranty_duration_months', $warranty->warranty_duration_months) }}" required
-                                   class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                   class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                             @error('warranty_duration_months')
                                 <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
@@ -182,7 +182,7 @@
                         <div>
                             <label for="warranty_type" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Warranty Type *</label>
                             <select name="warranty_type" id="warranty_type" required
-                                    class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 <option value="">Select Type</option>
                                 <option value="manufacturer" {{ old('warranty_type', $warranty->warranty_type) === 'manufacturer' ? 'selected' : '' }}>Manufacturer</option>
                                 <option value="extended" {{ old('warranty_type', $warranty->warranty_type) === 'extended' ? 'selected' : '' }}>Extended</option>
@@ -197,7 +197,7 @@
                         <div>
                             <label for="warranty_expiration_date" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Warranty Expiration Date</label>
                             <input type="date" name="warranty_expiration_date" id="warranty_expiration_date" value="{{ old('warranty_expiration_date', $warranty->warranty_expiration_date->format('Y-m-d')) }}"
-                                   class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                   class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                             <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Will be auto-calculated from purchase date and duration if changed</p>
                             @error('warranty_expiration_date')
                                 <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
@@ -208,7 +208,7 @@
                         <div>
                             <label for="current_status" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Current Status</label>
                             <select name="current_status" id="current_status"
-                                    class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 <option value="active" {{ old('current_status', $warranty->current_status) === 'active' ? 'selected' : '' }}>Active</option>
                                 <option value="expired" {{ old('current_status', $warranty->current_status) === 'expired' ? 'selected' : '' }}>Expired</option>
                                 <option value="claimed" {{ old('current_status', $warranty->current_status) === 'claimed' ? 'selected' : '' }}>Claimed</option>
@@ -224,7 +224,7 @@
                             <label for="warranty_terms" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Warranty Terms</label>
                             <textarea name="warranty_terms" id="warranty_terms" rows="3"
                                       placeholder="Key terms and conditions of the warranty..."
-                                      class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('warranty_terms', $warranty->warranty_terms) }}</textarea>
+                                      class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('warranty_terms', $warranty->warranty_terms) }}</textarea>
                             @error('warranty_terms')
                                 <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
@@ -235,9 +235,9 @@
 
             <!-- Existing Attachments -->
             @if($warranty->receipt_attachments || $warranty->proof_of_purchase_attachments)
-            <div class="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg">
+            <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] shadow overflow-hidden sm:rounded-lg">
                 <div class="px-4 py-5 sm:px-6">
-                    <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">
+                    <h3 class="text-lg leading-6 font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                         Current Attachments
                     </h3>
                     <p class="mt-1 max-w-2xl text-sm text-gray-500 dark:text-gray-400">
@@ -251,7 +251,7 @@
                             <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Receipt/Invoice Files</h4>
                             <div class="space-y-2">
                                 @foreach($warranty->receipt_attachments as $file)
-                                    <div class="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-700 rounded">
+                                    <div class="flex items-center justify-between p-2 bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] rounded">
                                         <span class="text-sm text-gray-600 dark:text-gray-300">{{ basename($file) }}</span>
                                         <a href="{{ Storage::url($file) }}" target="_blank" class="text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300 text-sm">View</a>
                                     </div>
@@ -265,7 +265,7 @@
                             <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Proof of Purchase Files</h4>
                             <div class="space-y-2">
                                 @foreach($warranty->proof_of_purchase_attachments as $file)
-                                    <div class="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-700 rounded">
+                                    <div class="flex items-center justify-between p-2 bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] rounded">
                                         <span class="text-sm text-gray-600 dark:text-gray-300">{{ basename($file) }}</span>
                                         <a href="{{ Storage::url($file) }}" target="_blank" class="text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300 text-sm">View</a>
                                     </div>
@@ -279,9 +279,9 @@
             @endif
 
             <!-- New Attachments -->
-            <div class="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg">
+            <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] shadow overflow-hidden sm:rounded-lg">
                 <div class="px-4 py-5 sm:px-6">
-                    <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">
+                    <h3 class="text-lg leading-6 font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                         Add New Attachments
                     </h3>
                     <p class="mt-1 max-w-2xl text-sm text-gray-500 dark:text-gray-400">
@@ -316,9 +316,9 @@
             </div>
 
             <!-- Additional Information -->
-            <div class="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg">
+            <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] shadow overflow-hidden sm:rounded-lg">
                 <div class="px-4 py-5 sm:px-6">
-                    <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">
+                    <h3 class="text-lg leading-6 font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                         Additional Information
                     </h3>
                     <p class="mt-1 max-w-2xl text-sm text-gray-500 dark:text-gray-400">
@@ -331,7 +331,7 @@
                         <label for="notes" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Notes</label>
                         <textarea name="notes" id="notes" rows="4"
                                   placeholder="Any additional notes about this warranty..."
-                                  class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('notes', $warranty->notes) }}</textarea>
+                                  class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('notes', $warranty->notes) }}</textarea>
                         @error('notes')
                             <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                         @enderror
@@ -344,7 +344,7 @@
                 <a href="{{ route('warranties.show', $warranty) }}" class="bg-gray-300 hover:bg-gray-400 text-gray-700 px-6 py-2 rounded-md text-sm font-medium">
                     Cancel
                 </a>
-                <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-md text-sm font-medium">
+                <button type="submit" class="bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] text-white px-6 py-2 rounded-md text-sm font-medium">
                     Update Warranty
                 </button>
             </div>

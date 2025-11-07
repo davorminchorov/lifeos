@@ -110,8 +110,8 @@
         <!-- Sidebar -->
         <div class="space-y-6">
             <!-- Status Card -->
-            <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
-                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Status</h3>
+            <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] shadow rounded-lg p-6">
+                <h3 class="text-lg font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] mb-4">Status</h3>
 
                 <div class="space-y-4">
                     <div>
@@ -163,11 +163,11 @@
             </div>
 
             <!-- Actions Card -->
-            <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
-                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Actions</h3>
+            <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] shadow rounded-lg p-6">
+                <h3 class="text-lg font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] mb-4">Actions</h3>
 
                 <div class="space-y-3">
-                    <a href="{{ route('expenses.edit', $expense) }}" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium text-center block">
+                    <a href="{{ route('expenses.edit', $expense) }}" class="w-full bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] text-white px-4 py-2 rounded-md text-sm font-medium text-center block">
                         Edit Expense
                     </a>
 
@@ -180,24 +180,24 @@
             </div>
 
             <!-- Quick Stats -->
-            <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
-                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Quick Stats</h3>
+            <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] shadow rounded-lg p-6">
+                <h3 class="text-lg font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] mb-4">Quick Stats</h3>
 
                 <div class="space-y-3 text-sm">
                     <div class="flex justify-between">
                         <span class="text-gray-500 dark:text-gray-400">Age:</span>
-                        <span class="text-gray-900 dark:text-white">{{ $expense->age_days }} days</span>
+                        <span class="text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">{{ $expense->age_days }} days</span>
                     </div>
 
                     <div class="flex justify-between">
                         <span class="text-gray-500 dark:text-gray-400">Created:</span>
-                        <span class="text-gray-900 dark:text-white">{{ $expense->created_at->format('M j, Y') }}</span>
+                        <span class="text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">{{ $expense->created_at->format('M j, Y') }}</span>
                     </div>
 
                     @if($expense->updated_at->ne($expense->created_at))
                     <div class="flex justify-between">
                         <span class="text-gray-500 dark:text-gray-400">Updated:</span>
-                        <span class="text-gray-900 dark:text-white">{{ $expense->updated_at->format('M j, Y') }}</span>
+                        <span class="text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">{{ $expense->updated_at->format('M j, Y') }}</span>
                     </div>
                     @endif
                 </div>

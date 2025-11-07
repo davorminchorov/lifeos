@@ -5,7 +5,7 @@
 @section('header')
     <div class="flex justify-between items-center">
         <div>
-            <h1 class="text-3xl font-bold text-gray-900 dark:text-white">
+            <h1 class="text-3xl font-bold text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                 Edit Expense
             </h1>
             <p class="mt-2 text-gray-600 dark:text-gray-400">
@@ -24,7 +24,7 @@
 @endsection
 
 @section('content')
-    <div class="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg">
+    <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] shadow overflow-hidden sm:rounded-lg">
         <div class="px-4 py-5 sm:p-6">
             <form method="POST" action="{{ route('expenses.update', $expense) }}" class="space-y-6">
                 @csrf
@@ -35,7 +35,7 @@
                     <div>
                         <label for="amount" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Amount *</label>
                         <input type="number" name="amount" id="amount" step="0.01" min="0" value="{{ old('amount', $expense->amount) }}" required
-                               class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                               class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                         @error('amount')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
@@ -44,7 +44,7 @@
                     <!-- Currency -->
                     <div>
                         <label for="currency" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Currency *</label>
-                        <select name="currency" id="currency" required class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        <select name="currency" id="currency" required class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                             <option value="MKD" {{ old('currency', $expense->currency) === 'MKD' ? 'selected' : '' }}>MKD - Macedonian Denar</option>
                             <option value="USD" {{ old('currency', $expense->currency) === 'USD' ? 'selected' : '' }}>USD ($) - US Dollar</option>
                             <option value="EUR" {{ old('currency', $expense->currency) === 'EUR' ? 'selected' : '' }}>EUR (€) - Euro</option>
@@ -65,7 +65,7 @@
                     <div>
                         <label for="expense_date" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Date *</label>
                         <input type="date" name="expense_date" id="expense_date" value="{{ old('expense_date', $expense->expense_date->format('Y-m-d')) }}" required
-                               class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                               class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                         @error('expense_date')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
@@ -74,7 +74,7 @@
                     <!-- Category -->
                     <div>
                         <label for="category" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Category *</label>
-                        <select name="category" id="category" required class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        <select name="category" id="category" required class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                             <option value="">Select Category</option>
                             <option value="Food & Dining" {{ old('category', $expense->category) === 'Food & Dining' ? 'selected' : '' }}>Food & Dining</option>
                             <option value="Transportation" {{ old('category', $expense->category) === 'Transportation' ? 'selected' : '' }}>Transportation</option>
@@ -94,7 +94,7 @@
                     <div>
                         <label for="subcategory" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Subcategory</label>
                         <input type="text" name="subcategory" id="subcategory" value="{{ old('subcategory', $expense->subcategory) }}"
-                               class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                               class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                         @error('subcategory')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
@@ -103,7 +103,7 @@
                     <!-- Payment Method -->
                     <div>
                         <label for="payment_method" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Payment Method</label>
-                        <select name="payment_method" id="payment_method" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        <select name="payment_method" id="payment_method" class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                             <option value="cash" {{ old('payment_method', $expense->payment_method) === 'cash' ? 'selected' : '' }}>Cash</option>
                             <option value="credit_card" {{ old('payment_method', $expense->payment_method) === 'credit_card' ? 'selected' : '' }}>Credit Card</option>
                             <option value="debit_card" {{ old('payment_method', $expense->payment_method) === 'debit_card' ? 'selected' : '' }}>Debit Card</option>
@@ -118,7 +118,7 @@
                     <!-- Expense Type -->
                     <div>
                         <label for="expense_type" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Type</label>
-                        <select name="expense_type" id="expense_type" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        <select name="expense_type" id="expense_type" class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                             <option value="personal" {{ old('expense_type', $expense->expense_type) === 'personal' ? 'selected' : '' }}>Personal</option>
                             <option value="business" {{ old('expense_type', $expense->expense_type) === 'business' ? 'selected' : '' }}>Business</option>
                         </select>
@@ -132,7 +132,7 @@
                 <div>
                     <label for="description" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Description *</label>
                     <input type="text" name="description" id="description" value="{{ old('description', $expense->description) }}" required
-                           class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                           class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                     @error('description')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -142,7 +142,7 @@
                 <div>
                     <label for="merchant" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Merchant</label>
                     <input type="text" name="merchant" id="merchant" value="{{ old('merchant', $expense->merchant) }}"
-                           class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                           class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                     @error('merchant')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -152,7 +152,7 @@
                 <div>
                     <label for="location" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Location</label>
                     <input type="text" name="location" id="location" value="{{ old('location', $expense->location) }}"
-                           class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                           class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                     @error('location')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -162,7 +162,7 @@
                 <div>
                     <label for="tags" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Tags</label>
                     <input type="text" name="tags" id="tags" value="{{ old('tags', is_array($expense->tags) ? implode(', ', $expense->tags) : $expense->tags) }}" placeholder="Comma-separated tags"
-                           class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                           class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                     <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Separate multiple tags with commas</p>
                     @error('tags')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -173,7 +173,7 @@
                 <div>
                     <label for="notes" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Notes</label>
                     <textarea name="notes" id="notes" rows="3"
-                              class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('notes', $expense->notes) }}</textarea>
+                              class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('notes', $expense->notes) }}</textarea>
                     @error('notes')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -183,7 +183,7 @@
                 <div>
                     <label for="budget_allocated" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Budget Allocated</label>
                     <input type="number" name="budget_allocated" id="budget_allocated" step="0.01" min="0" value="{{ old('budget_allocated', $expense->budget_allocated) }}"
-                           class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                           class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                     <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Optional budget amount for this expense</p>
                     @error('budget_allocated')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -193,7 +193,7 @@
                 <!-- Status -->
                 <div>
                     <label for="status" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Status</label>
-                    <select name="status" id="status" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                    <select name="status" id="status" class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                         <option value="pending" {{ old('status', $expense->status) === 'pending' ? 'selected' : '' }}>Pending</option>
                         <option value="reimbursed" {{ old('status', $expense->status) === 'reimbursed' ? 'selected' : '' }}>Reimbursed</option>
                         <option value="approved" {{ old('status', $expense->status) === 'approved' ? 'selected' : '' }}>Approved</option>
@@ -209,7 +209,7 @@
                     <div class="flex items-center">
                         <input type="checkbox" name="is_tax_deductible" id="is_tax_deductible" value="1" {{ old('is_tax_deductible', $expense->is_tax_deductible) ? 'checked' : '' }}
                                class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
-                        <label for="is_tax_deductible" class="ml-2 block text-sm text-gray-900 dark:text-white">
+                        <label for="is_tax_deductible" class="ml-2 block text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                             Tax Deductible
                         </label>
                     </div>
@@ -217,7 +217,7 @@
                     <div class="flex items-center">
                         <input type="checkbox" name="is_recurring" id="is_recurring" value="1" {{ old('is_recurring', $expense->is_recurring) ? 'checked' : '' }}
                                class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
-                        <label for="is_recurring" class="ml-2 block text-sm text-gray-900 dark:text-white">
+                        <label for="is_recurring" class="ml-2 block text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                             Recurring Expense
                         </label>
                     </div>
@@ -226,7 +226,7 @@
                 <!-- Recurring Schedule (conditionally shown) -->
                 <div id="recurring-schedule" class="{{ $expense->is_recurring ? '' : 'hidden' }}">
                     <label for="recurring_schedule" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Recurring Schedule</label>
-                    <select name="recurring_schedule" id="recurring_schedule" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                    <select name="recurring_schedule" id="recurring_schedule" class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                         <option value="weekly" {{ old('recurring_schedule', $expense->recurring_schedule) === 'weekly' ? 'selected' : '' }}>Weekly</option>
                         <option value="monthly" {{ old('recurring_schedule', $expense->recurring_schedule) === 'monthly' ? 'selected' : '' }}>Monthly</option>
                         <option value="quarterly" {{ old('recurring_schedule', $expense->recurring_schedule) === 'quarterly' ? 'selected' : '' }}>Quarterly</option>
@@ -242,7 +242,7 @@
                     <a href="{{ route('expenses.show', $expense) }}" class="bg-gray-300 hover:bg-gray-400 text-gray-700 px-4 py-2 rounded-md text-sm font-medium">
                         Cancel
                     </a>
-                    <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium">
+                    <button type="submit" class="bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] text-white px-4 py-2 rounded-md text-sm font-medium">
                         Update Expense
                     </button>
                 </div>

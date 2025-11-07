@@ -56,16 +56,16 @@
         @method('PUT')
 
         <!-- Basic Information -->
-        <div class="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg">
+        <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] shadow overflow-hidden sm:rounded-lg">
             <div class="px-4 py-5 sm:p-6">
-                <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white mb-4">Basic Information</h3>
+                <h3 class="text-lg leading-6 font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] mb-4">Basic Information</h3>
 
                 <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
                     <!-- Title -->
                     <div class="sm:col-span-2">
                         <label for="title" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Contract Title *</label>
                         <input type="text" name="title" id="title" required value="{{ old('title', $contract->title) }}"
-                               class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 @error('title') border-red-500 @enderror"
+                               class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 @error('title') border-red-500 @enderror"
                                placeholder="e.g., Apartment Lease Agreement">
                         @error('title')
                             <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
@@ -76,7 +76,7 @@
                     <div>
                         <label for="contract_type" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Contract Type *</label>
                         <select name="contract_type" id="contract_type" required
-                                class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 @error('contract_type') border-red-500 @enderror">
+                                class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 @error('contract_type') border-red-500 @enderror">
                             <option value="">Select contract type</option>
                             <option value="lease" {{ old('contract_type', $contract->contract_type) === 'lease' ? 'selected' : '' }}>Lease</option>
                             <option value="employment" {{ old('contract_type', $contract->contract_type) === 'employment' ? 'selected' : '' }}>Employment</option>
@@ -96,7 +96,7 @@
                     <div>
                         <label for="counterparty" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Counterparty *</label>
                         <input type="text" name="counterparty" id="counterparty" required value="{{ old('counterparty', $contract->counterparty) }}"
-                               class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 @error('counterparty') border-red-500 @enderror"
+                               class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 @error('counterparty') border-red-500 @enderror"
                                placeholder="Company or individual name">
                         @error('counterparty')
                             <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
@@ -107,7 +107,7 @@
                     <div>
                         <label for="start_date" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Start Date *</label>
                         <input type="date" name="start_date" id="start_date" required value="{{ old('start_date', $contract->start_date?->format('Y-m-d')) }}"
-                               class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 @error('start_date') border-red-500 @enderror">
+                               class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 @error('start_date') border-red-500 @enderror">
                         @error('start_date')
                             <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                         @enderror
@@ -117,8 +117,8 @@
                     <div>
                         <label for="end_date" class="block text-sm font-medium text-gray-700 dark:text-gray-300">End Date</label>
                         <input type="date" name="end_date" id="end_date" value="{{ old('end_date', $contract->end_date?->format('Y-m-d')) }}"
-                               class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 @error('end_date') border-red-500 @enderror">
-                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Leave blank for open-ended contracts</p>
+                               class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 @error('end_date') border-red-500 @enderror">
+                        <p class="mt-1 text-sm text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)]">Leave blank for open-ended contracts</p>
                         @error('end_date')
                             <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                         @enderror
@@ -128,16 +128,16 @@
         </div>
 
         <!-- Terms and Conditions -->
-        <div class="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg">
+        <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] shadow overflow-hidden sm:rounded-lg">
             <div class="px-4 py-5 sm:p-6">
-                <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white mb-4">Terms & Conditions</h3>
+                <h3 class="text-lg leading-6 font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] mb-4">Terms & Conditions</h3>
 
                 <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
                     <!-- Notice Period -->
                     <div>
                         <label for="notice_period_days" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Notice Period (days)</label>
                         <input type="number" name="notice_period_days" id="notice_period_days" min="1" max="365" value="{{ old('notice_period_days', $contract->notice_period_days) }}"
-                               class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 @error('notice_period_days') border-red-500 @enderror"
+                               class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 @error('notice_period_days') border-red-500 @enderror"
                                placeholder="e.g., 30">
                         @error('notice_period_days')
                             <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
@@ -148,8 +148,8 @@
                     <div class="flex items-center h-full">
                         <div class="flex items-center">
                             <input type="checkbox" name="auto_renewal" id="auto_renewal" value="1" {{ old('auto_renewal', $contract->auto_renewal) ? 'checked' : '' }}
-                                   class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 dark:border-gray-700 rounded @error('auto_renewal') border-red-500 @enderror">
-                            <label for="auto_renewal" class="ml-2 block text-sm text-gray-900 dark:text-white">
+                                   class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded @error('auto_renewal') border-red-500 @enderror">
+                            <label for="auto_renewal" class="ml-2 block text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                                 Auto-renewal enabled
                             </label>
                         </div>
@@ -159,7 +159,7 @@
                     <div>
                         <label for="contract_value" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Contract Value</label>
                         <input type="number" name="contract_value" id="contract_value" min="0" step="0.01" value="{{ old('contract_value', $contract->contract_value) }}"
-                               class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 @error('contract_value') border-red-500 @enderror"
+                               class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 @error('contract_value') border-red-500 @enderror"
                                placeholder="0.00">
                         @error('contract_value')
                             <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
@@ -170,7 +170,7 @@
                     <div>
                         <label for="currency" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Currency *</label>
                         <select name="currency" id="currency" required
-                                class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 @error('currency') border-red-500 @enderror">
+                                class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 @error('currency') border-red-500 @enderror">
                             <option value="MKD" {{ old('currency', $contract->currency) === 'MKD' ? 'selected' : '' }}>MKD - Macedonian Denar</option>
                             <option value="USD" {{ old('currency', $contract->currency) === 'USD' ? 'selected' : '' }}>USD ($) - US Dollar</option>
                             <option value="EUR" {{ old('currency', $contract->currency) === 'EUR' ? 'selected' : '' }}>EUR (€) - Euro</option>
@@ -191,7 +191,7 @@
                     <div>
                         <label for="payment_terms" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Payment Terms</label>
                         <select name="payment_terms" id="payment_terms"
-                                class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 @error('payment_terms') border-red-500 @enderror">
+                                class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 @error('payment_terms') border-red-500 @enderror">
                             <option value="">Select payment terms</option>
                             <option value="Monthly" {{ old('payment_terms', $contract->payment_terms) === 'Monthly' ? 'selected' : '' }}>Monthly</option>
                             <option value="Quarterly" {{ old('payment_terms', $contract->payment_terms) === 'Quarterly' ? 'selected' : '' }}>Quarterly</option>
@@ -212,7 +212,7 @@
                     <div>
                         <label for="key_obligations" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Key Obligations</label>
                         <textarea name="key_obligations" id="key_obligations" rows="4"
-                                  class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 @error('key_obligations') border-red-500 @enderror"
+                                  class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 @error('key_obligations') border-red-500 @enderror"
                                   placeholder="List the main obligations and responsibilities for each party...">{{ old('key_obligations', $contract->key_obligations) }}</textarea>
                         @error('key_obligations')
                             <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
@@ -223,7 +223,7 @@
                     <div>
                         <label for="penalties" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Penalties</label>
                         <textarea name="penalties" id="penalties" rows="3"
-                                  class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 @error('penalties') border-red-500 @enderror"
+                                  class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 @error('penalties') border-red-500 @enderror"
                                   placeholder="Describe any penalties for breach of contract...">{{ old('penalties', $contract->penalties) }}</textarea>
                         @error('penalties')
                             <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
@@ -234,7 +234,7 @@
                     <div>
                         <label for="termination_clauses" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Termination Clauses</label>
                         <textarea name="termination_clauses" id="termination_clauses" rows="3"
-                                  class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 @error('termination_clauses') border-red-500 @enderror"
+                                  class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 @error('termination_clauses') border-red-500 @enderror"
                                   placeholder="Specify conditions and procedures for contract termination...">{{ old('termination_clauses', $contract->termination_clauses) }}</textarea>
                         @error('termination_clauses')
                             <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
@@ -245,16 +245,16 @@
         </div>
 
         <!-- Additional Information -->
-        <div class="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg">
+        <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] shadow overflow-hidden sm:rounded-lg">
             <div class="px-4 py-5 sm:p-6">
-                <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white mb-4">Additional Information</h3>
+                <h3 class="text-lg leading-6 font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] mb-4">Additional Information</h3>
 
                 <div class="space-y-6">
                     <!-- Performance Rating -->
                     <div>
                         <label for="performance_rating" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Performance Rating</label>
                         <select name="performance_rating" id="performance_rating"
-                                class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:max-w-xs @error('performance_rating') border-red-500 @enderror">
+                                class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:max-w-xs @error('performance_rating') border-red-500 @enderror">
                             <option value="">Not rated</option>
                             <option value="1" {{ old('performance_rating', $contract->performance_rating) == '1' ? 'selected' : '' }}>1 - Very Poor</option>
                             <option value="2" {{ old('performance_rating', $contract->performance_rating) == '2' ? 'selected' : '' }}>2 - Poor</option>
@@ -262,7 +262,7 @@
                             <option value="4" {{ old('performance_rating', $contract->performance_rating) == '4' ? 'selected' : '' }}>4 - Good</option>
                             <option value="5" {{ old('performance_rating', $contract->performance_rating) == '5' ? 'selected' : '' }}>5 - Excellent</option>
                         </select>
-                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Rate the performance of the counterparty (optional)</p>
+                        <p class="mt-1 text-sm text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)]">Rate the performance of the counterparty (optional)</p>
                         @error('performance_rating')
                             <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                         @enderror
@@ -272,7 +272,7 @@
                     <div>
                         <label for="notes" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Notes</label>
                         <textarea name="notes" id="notes" rows="4"
-                                  class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 @error('notes') border-red-500 @enderror"
+                                  class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 @error('notes') border-red-500 @enderror"
                                   placeholder="Add any additional notes or comments about this contract...">{{ old('notes', $contract->notes) }}</textarea>
                         @error('notes')
                             <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
@@ -283,7 +283,7 @@
                     <div>
                         <label for="status" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Status</label>
                         <select name="status" id="status"
-                                class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:max-w-xs @error('status') border-red-500 @enderror">
+                                class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:max-w-xs @error('status') border-red-500 @enderror">
                             <option value="active" {{ old('status', $contract->status) === 'active' ? 'selected' : '' }}>Active</option>
                             <option value="pending" {{ old('status', $contract->status) === 'pending' ? 'selected' : '' }}>Pending</option>
                             <option value="expired" {{ old('status', $contract->status) === 'expired' ? 'selected' : '' }}>Expired</option>
@@ -304,7 +304,7 @@
                 Cancel
             </a>
             <button type="submit"
-                    class="bg-indigo-600 hover:bg-indigo-700 border border-transparent rounded-md shadow-sm py-2 px-4 inline-flex justify-center text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    class="bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] border border-transparent rounded-md shadow-sm py-2 px-4 inline-flex justify-center text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                 Update Contract
             </button>
         </div>
@@ -328,7 +328,7 @@
                         <form method="POST" action="{{ route('contracts.destroy', $contract) }}" onsubmit="return confirm('Are you sure you want to delete this contract? This action cannot be undone.');">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium">
+                            <button type="submit" class="bg-[color:var(--color-danger-500)] hover:bg-[color:var(--color-danger-600)] text-white px-4 py-2 rounded-md text-sm font-medium">
                                 Delete Contract
                             </button>
                         </form>

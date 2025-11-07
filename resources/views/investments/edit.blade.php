@@ -5,7 +5,7 @@
 @section('header')
     <div class="flex justify-between items-center">
         <div>
-            <h1 class="text-3xl font-bold text-gray-900 dark:text-white">
+            <h1 class="text-3xl font-bold text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                 Edit Investment: {{ $investment->name }}
             </h1>
             <p class="mt-2 text-gray-600 dark:text-gray-400">
@@ -224,7 +224,7 @@
             <!-- Investment Goals -->
             <x-form.section title="Investment Goals" description="Select your investment objectives for this position.">
                 <div class="md:col-span-2">
-                    <label class="text-base font-medium text-gray-900 dark:text-white">Investment Goals</label>
+                    <label class="text-base font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Investment Goals</label>
                     <p class="text-sm text-gray-500 dark:text-gray-400">Select all that apply to this investment.</p>
                     <fieldset class="mt-4">
                         <div class="space-y-4 sm:flex sm:items-center sm:space-y-0 sm:space-x-10">
@@ -341,25 +341,25 @@
 
             <!-- Performance Summary (Read-only) -->
             <x-form.section title="Current Performance" description="Current performance metrics (read-only).">
-                <div class="md:col-span-2 bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                <div class="md:col-span-2 bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] p-4 rounded-lg">
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                         <div>
-                            <div class="font-medium text-gray-900 dark:text-white">Current Value</div>
+                            <div class="font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Current Value</div>
                             <div class="text-gray-600 dark:text-gray-300">${{ number_format($investment->current_market_value, 2) }}</div>
                         </div>
                         <div>
-                            <div class="font-medium text-gray-900 dark:text-white">Total Cost Basis</div>
+                            <div class="font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Total Cost Basis</div>
                             <div class="text-gray-600 dark:text-gray-300">${{ number_format($investment->total_cost_basis, 2) }}</div>
                         </div>
                         <div>
-                            <div class="font-medium text-gray-900 dark:text-white">Unrealized Gain/Loss</div>
+                            <div class="font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Unrealized Gain/Loss</div>
                             <div class="{{ $investment->unrealized_gain_loss >= 0 ? 'text-green-600' : 'text-red-600' }}">
                                 ${{ number_format($investment->unrealized_gain_loss, 2) }}
                                 ({{ number_format($investment->unrealized_gain_loss_percentage, 2) }}%)
                             </div>
                         </div>
                         <div>
-                            <div class="font-medium text-gray-900 dark:text-white">Holding Period</div>
+                            <div class="font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Holding Period</div>
                             <div class="text-gray-600 dark:text-gray-300">{{ $investment->holding_period_days }} days</div>
                         </div>
                     </div>
@@ -371,7 +371,7 @@
                 <a href="{{ route('investments.show', $investment) }}" class="bg-white hover:bg-gray-50 text-gray-700 px-4 py-2 border border-gray-300 rounded-md text-sm font-medium dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700">
                     Cancel
                 </a>
-                <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium">
+                <button type="submit" class="bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] text-white px-4 py-2 rounded-md text-sm font-medium">
                     Update Investment
                 </button>
             </div>

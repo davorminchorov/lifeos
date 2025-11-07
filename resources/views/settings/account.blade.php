@@ -25,7 +25,7 @@
         <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] shadow overflow-hidden sm:rounded-lg border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)]">
             <div class="px-4 py-5 sm:p-6">
                 <div class="flex items-center mb-4">
-                    <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center mr-4">
+                    <div class="w-10 h-10 bg-[color:var(--color-info-500)] dark:bg-[color:var(--color-info-600)] rounded-full flex items-center justify-center mr-4">
                         <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                         </svg>
@@ -53,7 +53,7 @@
                                    class="mt-1 block w-full border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)] bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]"
                                    required>
                             @error('name')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                <p class="mt-1 text-sm text-[color:var(--color-danger-600)]">{{ $message }}</p>
                             @enderror
                         </div>
 
@@ -65,7 +65,7 @@
                                    class="mt-1 block w-full border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)] bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]"
                                    required>
                             @error('email')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                <p class="mt-1 text-sm text-[color:var(--color-danger-600)]">{{ $message }}</p>
                             @enderror
                         </div>
                     </div>
@@ -83,7 +83,7 @@
         <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] shadow overflow-hidden sm:rounded-lg border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)]">
             <div class="px-4 py-5 sm:p-6">
                 <div class="flex items-center mb-4">
-                    <div class="w-10 h-10 bg-red-500 rounded-full flex items-center justify-center mr-4">
+                    <div class="w-10 h-10 bg-[color:var(--color-accent-500)] dark:bg-[color:var(--color-accent-600)] rounded-full flex items-center justify-center mr-4">
                         <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
                         </svg>
@@ -110,7 +110,7 @@
                                class="mt-1 block w-full md:w-1/2 border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)] bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]"
                                required>
                         @error('current_password')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            <p class="mt-1 text-sm text-[color:var(--color-danger-600)]">{{ $message }}</p>
                         @enderror
                     </div>
 
@@ -123,7 +123,7 @@
                                    class="mt-1 block w-full border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)] bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]"
                                    required>
                             @error('password')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                <p class="mt-1 text-sm text-[color:var(--color-danger-600)]">{{ $message }}</p>
                             @enderror
                         </div>
 
@@ -137,14 +137,14 @@
                         </div>
                     </div>
 
-                    <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded-md p-4">
+                    <div class="bg-[color:var(--color-warning-50)] dark:bg-[color:var(--color-warning-500)]/20 border border-[color:var(--color-warning-500)]/30 dark:border-[color:var(--color-warning-600)] rounded-md p-4">
                         <div class="flex">
-                            <svg class="w-5 h-5 text-yellow-400 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                            <svg class="w-5 h-5 text-[color:var(--color-warning-500)] dark:text-[color:var(--color-warning-600)] mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
                             </svg>
                             <div class="text-sm">
-                                <p class="text-yellow-700 dark:text-yellow-300 font-medium">Password Requirements:</p>
-                                <ul class="mt-1 text-yellow-600 dark:text-yellow-400 list-disc list-inside">
+                                <p class="text-[color:var(--color-warning-600)] dark:text-[color:var(--color-warning-500)] font-medium">Password Requirements:</p>
+                                <ul class="mt-1 text-[color:var(--color-warning-600)] dark:text-[color:var(--color-warning-500)] list-disc list-inside">
                                     <li>At least 8 characters long</li>
                                     <li>Include uppercase and lowercase letters</li>
                                     <li>Include at least one number</li>
@@ -155,7 +155,7 @@
                     </div>
 
                     <div class="flex justify-end">
-                        <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 shadow-sm">
+                        <button type="submit" class="bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 shadow-sm">
                             Update Password
                         </button>
                     </div>
@@ -167,7 +167,7 @@
         <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] shadow overflow-hidden sm:rounded-lg border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)]">
             <div class="px-4 py-5 sm:p-6">
                 <div class="flex items-center mb-4">
-                    <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center mr-4">
+                    <div class="w-10 h-10 bg-[color:var(--color-success-500)] dark:bg-[color:var(--color-success-600)] rounded-full flex items-center justify-center mr-4">
                         <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
                         </svg>
