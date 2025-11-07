@@ -3,18 +3,20 @@
 @section('title', 'IOUs - LifeOS')
 
 @section('header')
-    <div class="flex justify-between items-center">
+    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>
-            <h1 class="text-3xl font-bold text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
+            <h1 class="text-2xl sm:text-3xl font-bold text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                 IOUs
             </h1>
             <p class="mt-2 text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)]">
                 Track money you owe and money owed to you
             </p>
         </div>
-        <a href="{{ route('ious.create') }}" class="bg-[color:var(--color-accent-600)] hover:bg-[color:var(--color-accent-700)] text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 shadow-sm">
-            Add IOU
-        </a>
+        <div class="flex-shrink-0">
+            <a href="{{ route('ious.create') }}" class="w-full sm:w-auto inline-flex justify-center items-center bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] text-white px-6 py-3 sm:px-4 sm:py-2 rounded-lg sm:rounded-md text-base sm:text-sm font-medium transition-colors duration-200 shadow-sm touch-manipulation">
+                Add IOU
+            </a>
+        </div>
     </div>
 @endsection
 
@@ -251,7 +253,7 @@
                     <h3 class="mt-2 text-sm font-medium text-[color:var(--color-primary-900)] dark:text-[color:var(--color-dark-700)]">No IOUs</h3>
                     <p class="mt-1 text-sm text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">Get started by creating a new IOU.</p>
                     <div class="mt-6">
-                        <a href="{{ route('ious.create') }}" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-[color:var(--color-accent-600)] hover:bg-[color:var(--color-accent-700)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[color:var(--color-accent-500)]">
+                        <a href="{{ route('ious.create') }}" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[color:var(--color-accent-500)]">
                             Add IOU
                         </a>
                     </div>
