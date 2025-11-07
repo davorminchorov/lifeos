@@ -795,8 +795,10 @@ class InvestmentController extends Controller
         $investments = Investment::where('user_id', $userId)
             ->where('status', 'active')
             ->with(['dividends', 'transactions'])
-            ->orderBy('current_market_value', 'desc')
-            ->get();
+            ->get()
+            ->sortByDesc(function ($investment) {
+                return $investment->current_market_value;
+            });
 
         return view('investments.analytics', compact('analytics', 'investments'));
     }
