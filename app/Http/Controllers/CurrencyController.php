@@ -16,6 +16,14 @@ class CurrencyController extends Controller
     ) {}
 
     /**
+     * Show the freelance rate calculator page.
+     */
+    public function freelanceRateCalculator(): View
+    {
+        return view('currency.freelance-rate-calculator');
+    }
+
+    /**
      * Show the currency freshness overview page.
      */
     public function index(): View

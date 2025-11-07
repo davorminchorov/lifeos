@@ -129,6 +129,7 @@ Route::middleware('auth')->group(function () {
     // Currency Routes
     Route::prefix('currency')->name('currency.')->group(function () {
         Route::get('/', [CurrencyController::class, 'index'])->name('index');
+        Route::get('/freelance-rate-calculator', [CurrencyController::class, 'freelanceRateCalculator'])->name('freelance-rate-calculator');
         Route::post('/refresh-rate', [CurrencyController::class, 'refreshRate'])->name('refresh-rate');
         Route::get('/freshness-info', [CurrencyController::class, 'getFreshnessInfo'])->name('freshness-info');
     });
