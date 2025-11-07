@@ -6,7 +6,7 @@
 <div class="py-12">
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
         <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] overflow-hidden shadow-xl sm:rounded-lg">
-            <div class="p-6 text-gray-900 dark:text-gray-100">
+            <div class="p-6 text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] dark:text-[color:var(--color-primary-100)] dark:text-[color:var(--color-dark-200)]">
                 <!-- Header -->
                 <div class="flex justify-between items-center mb-6">
                     <div>
@@ -16,7 +16,7 @@
                     <div class="flex space-x-3">
                         <form method="GET" action="{{ route('investments.tax-reports.index') }}" class="flex items-center space-x-2">
                             <label for="tax_year" class="text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Tax Year:</label>
-                            <select name="tax_year" id="tax_year" onchange="this.form.submit()" class="rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-gray-700 dark:text-white shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">
+                            <select name="tax_year" id="tax_year" onchange="this.form.submit()" class="rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-[color:var(--color-dark-300)] dark:text-white shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">
                                 @for($year = date('Y'); $year >= date('Y') - 5; $year--)
                                     <option value="{{ $year }}" {{ $taxSummary['tax_year'] == $year ? 'selected' : '' }}>
                                         {{ $year }}
@@ -29,17 +29,17 @@
 
                 <!-- Tax Summary Cards -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                    <div class="bg-green-50 dark:bg-green-900/20 rounded-lg p-6">
+                    <div class="bg-[color:var(--color-success-50)] dark:bg-[color:var(--color-success-900)]/20 rounded-lg p-6">
                         <div class="flex items-center">
                             <div class="flex-shrink-0">
-                                <svg class="h-8 w-8 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="h-8 w-8 text-[color:var(--color-success-600)] dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
                                 </svg>
                             </div>
                             <div class="ml-5 w-0 flex-1">
                                 <dl>
                                     <dt class="text-sm font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] truncate">Realized Gains</dt>
-                                    <dd class="text-lg font-medium text-gray-900 dark:text-gray-100">${{ number_format($taxSummary['total_realized_gains'], 2) }}</dd>
+                                    <dd class="text-lg font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] dark:text-[color:var(--color-primary-100)] dark:text-[color:var(--color-dark-200)]">${{ number_format($taxSummary['total_realized_gains'], 2) }}</dd>
                                 </dl>
                             </div>
                         </div>
@@ -55,23 +55,23 @@
                             <div class="ml-5 w-0 flex-1">
                                 <dl>
                                     <dt class="text-sm font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] truncate">Realized Losses</dt>
-                                    <dd class="text-lg font-medium text-gray-900 dark:text-gray-100">${{ number_format($taxSummary['total_realized_losses'], 2) }}</dd>
+                                    <dd class="text-lg font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] dark:text-[color:var(--color-primary-100)] dark:text-[color:var(--color-dark-200)]">${{ number_format($taxSummary['total_realized_losses'], 2) }}</dd>
                                 </dl>
                             </div>
                         </div>
                     </div>
 
-                    <div class="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-6">
+                    <div class="bg-[color:var(--color-info-50)] dark:bg-[color:var(--color-info-900)]/20 rounded-lg p-6">
                         <div class="flex items-center">
                             <div class="flex-shrink-0">
-                                <svg class="h-8 w-8 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="h-8 w-8 text-[color:var(--color-info-600)] dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
                                 </svg>
                             </div>
                             <div class="ml-5 w-0 flex-1">
                                 <dl>
                                     <dt class="text-sm font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] truncate">Dividend Income</dt>
-                                    <dd class="text-lg font-medium text-gray-900 dark:text-gray-100">${{ number_format($taxSummary['total_dividend_income'], 2) }}</dd>
+                                    <dd class="text-lg font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] dark:text-[color:var(--color-primary-100)] dark:text-[color:var(--color-dark-200)]">${{ number_format($taxSummary['total_dividend_income'], 2) }}</dd>
                                 </dl>
                             </div>
                         </div>
@@ -87,7 +87,7 @@
                             <div class="ml-5 w-0 flex-1">
                                 <dl>
                                     <dt class="text-sm font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] truncate">Net Gains/Losses</dt>
-                                    <dd class="text-lg font-medium {{ ($taxSummary['total_realized_gains'] - $taxSummary['total_realized_losses']) >= 0 ? 'text-green-600 dark:text-green-400' : 'text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]' }}">
+                                    <dd class="text-lg font-medium {{ ($taxSummary['total_realized_gains'] - $taxSummary['total_realized_losses']) >= 0 ? 'text-[color:var(--color-success-600)] dark:text-green-400' : 'text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]' }}">
                                         ${{ number_format($taxSummary['total_realized_gains'] - $taxSummary['total_realized_losses'], 2) }}
                                     </dd>
                                 </dl>
@@ -98,7 +98,7 @@
 
                 <!-- Report Actions -->
                 <div class="bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] rounded-lg p-6 mb-8">
-                    <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">Generate Tax Reports</h3>
+                    <h3 class="text-lg font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] dark:text-[color:var(--color-primary-100)] dark:text-[color:var(--color-dark-200)] mb-4">Generate Tax Reports</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <a href="{{ route('investments.tax-reports.capital-gains', ['tax_year' => $taxSummary['tax_year']]) }}" class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[color:var(--color-accent-500)]">
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -116,7 +116,7 @@
                 </div>
 
                 <!-- Important Tax Information -->
-                <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded-lg p-6">
+                <div class="bg-[color:var(--color-warning-50)] dark:bg-[color:var(--color-warning-900)]/20 border border-yellow-200 dark:border-yellow-700 rounded-lg p-6">
                     <div class="flex">
                         <div class="flex-shrink-0">
                             <svg class="h-5 w-5 text-[color:var(--color-warning-400)]" fill="currentColor" viewBox="0 0 20 20">
@@ -124,10 +124,10 @@
                             </svg>
                         </div>
                         <div class="ml-3">
-                            <h3 class="text-sm font-medium text-yellow-800 dark:text-yellow-200">
+                            <h3 class="text-sm font-medium text-[color:var(--color-warning-600)] dark:text-[color:var(--color-warning-200)]">
                                 Important Tax Information
                             </h3>
-                            <div class="mt-2 text-sm text-yellow-700 dark:text-yellow-300">
+                            <div class="mt-2 text-sm text-[color:var(--color-warning-700)] dark:text-[color:var(--color-warning-300)]">
                                 <ul class="list-disc list-inside space-y-1">
                                     <li>These reports are for informational purposes only and should not be considered professional tax advice.</li>
                                     <li>Consult with a qualified tax professional for specific tax planning and filing guidance.</li>

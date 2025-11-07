@@ -162,7 +162,7 @@
                                         @endif
 
                                         <button onclick="deleteNotification('{{ $notification->id }}')"
-                                                class="text-red-500 hover:text-red-600 text-xs">
+                                                class="text-[color:var(--color-danger-500)] hover:text-[color:var(--color-danger-600)] text-xs">
                                             Delete
                                         </button>
                                     </div>

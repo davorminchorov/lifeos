@@ -148,7 +148,7 @@
                     <div class="flex items-center h-full">
                         <div class="flex items-center">
                             <input type="checkbox" name="auto_renewal" id="auto_renewal" value="1" {{ old('auto_renewal', $contract->auto_renewal) ? 'checked' : '' }}
-                                   class="h-4 w-4 text-indigo-600 focus:ring-[color:var(--color-accent-500)] border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded @error('auto_renewal') border-[color:var(--color-danger-500)] @enderror">
+                                   class="h-4 w-4 text-[color:var(--color-accent-600)] focus:ring-[color:var(--color-accent-500)] border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded @error('auto_renewal') border-[color:var(--color-danger-500)] @enderror">
                             <label for="auto_renewal" class="ml-2 block text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                                 Auto-renewal enabled
                             </label>
@@ -311,7 +311,7 @@
     </form>
 
     <!-- Delete Contract -->
-    <div class="mt-10 pt-8 border-t border-gray-200 dark:border-gray-700">
+    <div class="mt-10 pt-8 border-t border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)]">
         <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg p-6">
             <div class="flex">
                 <div class="flex-shrink-0">

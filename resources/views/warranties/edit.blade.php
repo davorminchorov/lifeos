@@ -13,7 +13,7 @@
             </p>
         </div>
         <div class="flex space-x-3">
-            <a href="{{ route('warranties.show', $warranty) }}" class="bg-[color:var(--color-info-600)] hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium">
+            <a href="{{ route('warranties.show', $warranty) }}" class="bg-[color:var(--color-info-600)] hover:bg-[color:var(--color-info-700)] text-white px-4 py-2 rounded-md text-sm font-medium">
                 View Warranty
             </a>
             <a href="{{ route('warranties.index') }}" class="bg-[color:var(--color-primary-500)] hover:bg-[color:var(--color-primary-600)] dark:bg-[color:var(--color-dark-400)] dark:hover:bg-[color:var(--color-dark-500)] text-white px-4 py-2 rounded-md text-sm font-medium">
@@ -39,7 +39,7 @@
                         Update the basic details about the product.
                     </p>
                 </div>
-                <div class="border-t border-gray-200 dark:border-gray-700 px-4 py-5 sm:px-6">
+                <div class="border-t border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)] px-4 py-5 sm:px-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Product Name -->
                         <div>
@@ -94,7 +94,7 @@
                         Update details about when and where you purchased this product.
                     </p>
                 </div>
-                <div class="border-t border-gray-200 dark:border-gray-700 px-4 py-5 sm:px-6">
+                <div class="border-t border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)] px-4 py-5 sm:px-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Purchase Date -->
                         <div>
@@ -166,7 +166,7 @@
                         Update the warranty coverage details.
                     </p>
                 </div>
-                <div class="border-t border-gray-200 dark:border-gray-700 px-4 py-5 sm:px-6">
+                <div class="border-t border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)] px-4 py-5 sm:px-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Warranty Duration -->
                         <div>
@@ -244,7 +244,7 @@
                         Currently uploaded files for this warranty.
                     </p>
                 </div>
-                <div class="border-t border-gray-200 dark:border-gray-700 px-4 py-5 sm:px-6">
+                <div class="border-t border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)] px-4 py-5 sm:px-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         @if($warranty->receipt_attachments)
                         <div>
@@ -252,8 +252,8 @@
                             <div class="space-y-2">
                                 @foreach($warranty->receipt_attachments as $file)
                                     <div class="flex items-center justify-between p-2 bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] rounded">
-                                        <span class="text-sm text-gray-600 dark:text-[color:var(--color-primary-300)] dark:text-[color:var(--color-dark-400)]">{{ basename($file) }}</span>
-                                        <a href="{{ Storage::url($file) }}" target="_blank" class="text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300 text-sm">View</a>
+                                        <span class="text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] dark:text-[color:var(--color-primary-300)] dark:text-[color:var(--color-dark-400)]">{{ basename($file) }}</span>
+                                        <a href="{{ Storage::url($file) }}" target="_blank" class="text-[color:var(--color-accent-600)] hover:text-[color:var(--color-accent-800)] dark:text-[color:var(--color-accent-400)] dark:hover:text-[color:var(--color-accent-300)] text-sm">View</a>
                                     </div>
                                 @endforeach
                             </div>
@@ -266,8 +266,8 @@
                             <div class="space-y-2">
                                 @foreach($warranty->proof_of_purchase_attachments as $file)
                                     <div class="flex items-center justify-between p-2 bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] rounded">
-                                        <span class="text-sm text-gray-600 dark:text-[color:var(--color-primary-300)] dark:text-[color:var(--color-dark-400)]">{{ basename($file) }}</span>
-                                        <a href="{{ Storage::url($file) }}" target="_blank" class="text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300 text-sm">View</a>
+                                        <span class="text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] dark:text-[color:var(--color-primary-300)] dark:text-[color:var(--color-dark-400)]">{{ basename($file) }}</span>
+                                        <a href="{{ Storage::url($file) }}" target="_blank" class="text-[color:var(--color-accent-600)] hover:text-[color:var(--color-accent-800)] dark:text-[color:var(--color-accent-400)] dark:hover:text-[color:var(--color-accent-300)] text-sm">View</a>
                                     </div>
                                 @endforeach
                             </div>
@@ -288,13 +288,13 @@
                         Upload additional receipts and proof of purchase documents.
                     </p>
                 </div>
-                <div class="border-t border-gray-200 dark:border-gray-700 px-4 py-5 sm:px-6">
+                <div class="border-t border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)] px-4 py-5 sm:px-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Receipt Attachments -->
                         <div>
                             <label for="receipt_attachments" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Receipt/Invoice</label>
                             <input type="file" name="receipt_attachments[]" id="receipt_attachments" multiple accept="image/*,application/pdf"
-                                   class="mt-1 block w-full text-sm text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-gray-700 dark:file:text-[color:var(--color-primary-300)] dark:text-[color:var(--color-dark-400)]">
+                                   class="mt-1 block w-full text-sm text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-[color:var(--color-accent-50)] file:text-[color:var(--color-accent-700)] hover:file:bg-[color:var(--color-accent-100)] dark:file:bg-[color:var(--color-primary-700)] dark:file:text-[color:var(--color-primary-300)] dark:text-[color:var(--color-dark-400)]">
                             <p class="mt-1 text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">Upload images or PDF files (will be added to existing files)</p>
                             @error('receipt_attachments')
                                 <p class="mt-1 text-sm text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]">{{ $message }}</p>
@@ -305,7 +305,7 @@
                         <div>
                             <label for="proof_of_purchase_attachments" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Proof of Purchase</label>
                             <input type="file" name="proof_of_purchase_attachments[]" id="proof_of_purchase_attachments" multiple accept="image/*,application/pdf"
-                                   class="mt-1 block w-full text-sm text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-gray-700 dark:file:text-[color:var(--color-primary-300)] dark:text-[color:var(--color-dark-400)]">
+                                   class="mt-1 block w-full text-sm text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-[color:var(--color-accent-50)] file:text-[color:var(--color-accent-700)] hover:file:bg-[color:var(--color-accent-100)] dark:file:bg-[color:var(--color-primary-700)] dark:file:text-[color:var(--color-primary-300)] dark:text-[color:var(--color-dark-400)]">
                             <p class="mt-1 text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">Additional purchase documentation (will be added to existing files)</p>
                             @error('proof_of_purchase_attachments')
                                 <p class="mt-1 text-sm text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]">{{ $message }}</p>
@@ -325,7 +325,7 @@
                         Optional notes and reminders.
                     </p>
                 </div>
-                <div class="border-t border-gray-200 dark:border-gray-700 px-4 py-5 sm:px-6">
+                <div class="border-t border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)] px-4 py-5 sm:px-6">
                     <!-- Notes -->
                     <div>
                         <label for="notes" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Notes</label>

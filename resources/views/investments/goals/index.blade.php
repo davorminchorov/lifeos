@@ -6,7 +6,7 @@
 <div class="py-12">
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
         <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] overflow-hidden shadow-xl sm:rounded-lg">
-            <div class="p-6 text-gray-900 dark:text-gray-100">
+            <div class="p-6 text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] dark:text-[color:var(--color-primary-100)] dark:text-[color:var(--color-dark-200)]">
                 <!-- Header -->
                 <div class="flex justify-between items-center mb-6">
                     <div>
@@ -26,7 +26,7 @@
                                 <div class="flex justify-between items-start mb-4">
                                     <h3 class="text-lg font-semibold">{{ $goal['title'] ?? 'Untitled Goal' }}</h3>
                                     <div class="flex space-x-2">
-                                        <button onclick="editGoal({{ json_encode($goal) }})" class="text-indigo-600 hover:text-indigo-800">
+                                        <button onclick="editGoal({{ json_encode($goal) }})" class="text-[color:var(--color-accent-600)] hover:text-[color:var(--color-accent-800)]">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                                             </svg>
@@ -34,7 +34,7 @@
                                         <form method="POST" action="{{ route('investments.goals.destroy', $goal['id'] ?? 0) }}" class="inline" onsubmit="return confirm('Are you sure you want to delete this goal?')">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="text-red-600 hover:text-red-800">
+                                            <button type="submit" class="text-[color:var(--color-danger-600)] hover:text-[color:var(--color-danger-600)]">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                                                 </svg>
@@ -74,8 +74,8 @@
                                             <span>Progress</span>
                                             <span>{{ number_format($progressPercentage, 1) }}%</span>
                                         </div>
-                                        <div class="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2">
-                                            <div class="bg-indigo-600 h-2 rounded-full" style="width: {{ $progressPercentage }}%"></div>
+                                        <div class="w-full bg-[color:var(--color-primary-200)] dark:bg-[color:var(--color-dark-300)] dark:bg-[color:var(--color-primary-600)] rounded-full h-2">
+                                            <div class="bg-[color:var(--color-accent-600)] h-2 rounded-full" style="width: {{ $progressPercentage }}%"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -87,7 +87,7 @@
                         <svg class="mx-auto h-12 w-12 text-[color:var(--color-primary-400)] dark:text-[color:var(--color-dark-400)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                         </svg>
-                        <h3 class="mt-2 text-sm font-medium text-gray-900 dark:text-gray-100">No investment goals</h3>
+                        <h3 class="mt-2 text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] dark:text-[color:var(--color-primary-100)] dark:text-[color:var(--color-dark-200)]">No investment goals</h3>
                         <p class="mt-1 text-sm text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">Get started by creating your first investment goal.</p>
                         <div class="mt-6">
                             <button onclick="openGoalModal()" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)]">
@@ -105,7 +105,7 @@
 <div id="goalModal" class="hidden fixed inset-0 bg-[color:var(--color-primary-600)] bg-opacity-50 overflow-y-auto h-full w-full z-50">
     <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)]">
         <div class="mt-3">
-            <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4" id="modalTitle">Add Investment Goal</h3>
+            <h3 class="text-lg font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] dark:text-[color:var(--color-primary-100)] dark:text-[color:var(--color-dark-200)] mb-4" id="modalTitle">Add Investment Goal</h3>
             <form id="goalForm" method="POST" action="{{ route('investments.goals.store') }}">
                 @csrf
                 <input type="hidden" id="goalId" name="goal_id">
@@ -114,30 +114,30 @@
                 <div class="space-y-4">
                     <div>
                         <label for="title" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Goal Title</label>
-                        <input type="text" id="title" name="title" required class="mt-1 block w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-indigo-500 dark:bg-gray-700 dark:text-white">
+                        <input type="text" id="title" name="title" required class="mt-1 block w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)] dark:bg-[color:var(--color-dark-300)] dark:text-white">
                     </div>
 
                     <div>
                         <label for="target_amount" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Target Amount ($)</label>
-                        <input type="number" id="target_amount" name="target_amount" step="0.01" min="0" required class="mt-1 block w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-indigo-500 dark:bg-gray-700 dark:text-white">
+                        <input type="number" id="target_amount" name="target_amount" step="0.01" min="0" required class="mt-1 block w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)] dark:bg-[color:var(--color-dark-300)] dark:text-white">
                     </div>
 
                     <div>
                         <label for="target_date" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Target Date (Optional)</label>
-                        <input type="date" id="target_date" name="target_date" class="mt-1 block w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-indigo-500 dark:bg-gray-700 dark:text-white">
+                        <input type="date" id="target_date" name="target_date" class="mt-1 block w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)] dark:bg-[color:var(--color-dark-300)] dark:text-white">
                     </div>
 
                     <div>
                         <label for="description" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Description (Optional)</label>
-                        <textarea id="description" name="description" rows="3" class="mt-1 block w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-indigo-500 dark:bg-gray-700 dark:text-white"></textarea>
+                        <textarea id="description" name="description" rows="3" class="mt-1 block w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)] dark:bg-[color:var(--color-dark-300)] dark:text-white"></textarea>
                     </div>
                 </div>
 
                 <div class="flex justify-end space-x-3 mt-6">
-                    <button type="button" onclick="closeGoalModal()" class="px-4 py-2 bg-gray-300 dark:bg-gray-600 text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] rounded-md hover:bg-gray-400 dark:hover:bg-gray-700">
+                    <button type="button" onclick="closeGoalModal()" class="px-4 py-2 bg-[color:var(--color-primary-300)] dark:bg-[color:var(--color-primary-600)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] rounded-md hover:bg-[color:var(--color-primary-400)] dark:hover:bg-[color:var(--color-primary-700)]">
                         Cancel
                     </button>
-                    <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
+                    <button type="submit" class="px-4 py-2 bg-[color:var(--color-accent-600)] text-white rounded-md hover:bg-[color:var(--color-accent-700)]">
                         Save Goal
                     </button>
                 </div>

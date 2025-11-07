@@ -13,7 +13,7 @@
             </p>
         </div>
         <div class="flex space-x-3">
-            <a href="{{ route('investments.show', $investment) }}" class="bg-[color:var(--color-info-600)] hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium">
+            <a href="{{ route('investments.show', $investment) }}" class="bg-[color:var(--color-info-600)] hover:bg-[color:var(--color-info-700)] text-white px-4 py-2 rounded-md text-sm font-medium">
                 View Details
             </a>
             <a href="{{ route('investments.index') }}" class="bg-[color:var(--color-primary-500)] hover:bg-[color:var(--color-primary-600)] dark:bg-[color:var(--color-dark-400)] dark:hover:bg-[color:var(--color-dark-500)] text-white px-4 py-2 rounded-md text-sm font-medium">
@@ -229,25 +229,25 @@
                     <fieldset class="mt-4">
                         <div class="space-y-4 sm:flex sm:items-center sm:space-y-0 sm:space-x-10">
                             <div class="flex items-center">
-                                <input id="goal_retirement" name="investment_goals[]" type="checkbox" value="retirement" class="focus:ring-[color:var(--color-accent-500)] h-4 w-4 text-indigo-600 border-gray-300 rounded" {{ in_array('retirement', old('investment_goals', $investment->investment_goals ?? [])) ? 'checked' : '' }}>
+                                <input id="goal_retirement" name="investment_goals[]" type="checkbox" value="retirement" class="focus:ring-[color:var(--color-accent-500)] h-4 w-4 text-[color:var(--color-accent-600)] border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded" {{ in_array('retirement', old('investment_goals', $investment->investment_goals ?? [])) ? 'checked' : '' }}>
                                 <label for="goal_retirement" class="ml-3 block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                                     Retirement
                                 </label>
                             </div>
                             <div class="flex items-center">
-                                <input id="goal_growth" name="investment_goals[]" type="checkbox" value="growth" class="focus:ring-[color:var(--color-accent-500)] h-4 w-4 text-indigo-600 border-gray-300 rounded" {{ in_array('growth', old('investment_goals', $investment->investment_goals ?? [])) ? 'checked' : '' }}>
+                                <input id="goal_growth" name="investment_goals[]" type="checkbox" value="growth" class="focus:ring-[color:var(--color-accent-500)] h-4 w-4 text-[color:var(--color-accent-600)] border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded" {{ in_array('growth', old('investment_goals', $investment->investment_goals ?? [])) ? 'checked' : '' }}>
                                 <label for="goal_growth" class="ml-3 block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                                     Growth
                                 </label>
                             </div>
                             <div class="flex items-center">
-                                <input id="goal_income" name="investment_goals[]" type="checkbox" value="income" class="focus:ring-[color:var(--color-accent-500)] h-4 w-4 text-indigo-600 border-gray-300 rounded" {{ in_array('income', old('investment_goals', $investment->investment_goals ?? [])) ? 'checked' : '' }}>
+                                <input id="goal_income" name="investment_goals[]" type="checkbox" value="income" class="focus:ring-[color:var(--color-accent-500)] h-4 w-4 text-[color:var(--color-accent-600)] border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded" {{ in_array('income', old('investment_goals', $investment->investment_goals ?? [])) ? 'checked' : '' }}>
                                 <label for="goal_income" class="ml-3 block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                                     Income
                                 </label>
                             </div>
                             <div class="flex items-center">
-                                <input id="goal_speculation" name="investment_goals[]" type="checkbox" value="speculation" class="focus:ring-[color:var(--color-accent-500)] h-4 w-4 text-indigo-600 border-gray-300 rounded" {{ in_array('speculation', old('investment_goals', $investment->investment_goals ?? [])) ? 'checked' : '' }}>
+                                <input id="goal_speculation" name="investment_goals[]" type="checkbox" value="speculation" class="focus:ring-[color:var(--color-accent-500)] h-4 w-4 text-[color:var(--color-accent-600)] border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded" {{ in_array('speculation', old('investment_goals', $investment->investment_goals ?? [])) ? 'checked' : '' }}>
                                 <label for="goal_speculation" class="ml-3 block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                                     Speculation
                                 </label>
@@ -345,30 +345,30 @@
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                         <div>
                             <div class="font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Current Value</div>
-                            <div class="text-gray-600 dark:text-[color:var(--color-primary-300)] dark:text-[color:var(--color-dark-400)]">${{ number_format($investment->current_market_value, 2) }}</div>
+                            <div class="text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] dark:text-[color:var(--color-primary-300)] dark:text-[color:var(--color-dark-400)]">${{ number_format($investment->current_market_value, 2) }}</div>
                         </div>
                         <div>
                             <div class="font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Total Cost Basis</div>
-                            <div class="text-gray-600 dark:text-[color:var(--color-primary-300)] dark:text-[color:var(--color-dark-400)]">${{ number_format($investment->total_cost_basis, 2) }}</div>
+                            <div class="text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] dark:text-[color:var(--color-primary-300)] dark:text-[color:var(--color-dark-400)]">${{ number_format($investment->total_cost_basis, 2) }}</div>
                         </div>
                         <div>
                             <div class="font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Unrealized Gain/Loss</div>
-                            <div class="{{ $investment->unrealized_gain_loss >= 0 ? 'text-green-600' : 'text-red-600' }}">
+                            <div class="{{ $investment->unrealized_gain_loss >= 0 ? 'text-[color:var(--color-success-600)]' : 'text-[color:var(--color-danger-600)]' }}">
                                 ${{ number_format($investment->unrealized_gain_loss, 2) }}
                                 ({{ number_format($investment->unrealized_gain_loss_percentage, 2) }}%)
                             </div>
                         </div>
                         <div>
                             <div class="font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Holding Period</div>
-                            <div class="text-gray-600 dark:text-[color:var(--color-primary-300)] dark:text-[color:var(--color-dark-400)]">{{ $investment->holding_period_days }} days</div>
+                            <div class="text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] dark:text-[color:var(--color-primary-300)] dark:text-[color:var(--color-dark-400)]">{{ $investment->holding_period_days }} days</div>
                         </div>
                     </div>
                 </div>
             </x-form.section>
 
             <!-- Form Actions -->
-            <div class="flex items-center justify-end space-x-4 pt-6 border-t border-gray-200 dark:border-gray-700">
-                <a href="{{ route('investments.show', $investment) }}" class="bg-white hover:bg-gray-50 text-gray-700 px-4 py-2 border border-gray-300 rounded-md text-sm font-medium dark:bg-gray-800 dark:text-[color:var(--color-primary-300)] dark:text-[color:var(--color-dark-400)] dark:border-gray-600 dark:hover:bg-gray-700">
+            <div class="flex items-center justify-end space-x-4 pt-6 border-t border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)]">
+                <a href="{{ route('investments.show', $investment) }}" class="bg-white hover:bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] px-4 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md text-sm font-medium dark:bg-[color:var(--color-dark-200)] dark:text-[color:var(--color-primary-300)] dark:text-[color:var(--color-dark-400)] dark:border-[color:var(--color-dark-300)] dark:hover:bg-[color:var(--color-primary-700)]">
                     Cancel
                 </a>
                 <button type="submit" class="bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] text-white px-4 py-2 rounded-md text-sm font-medium">

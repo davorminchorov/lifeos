@@ -43,13 +43,13 @@
                                 </div>
                                 <div class="flex justify-between items-center">
                                     <span class="text-sm text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">Monthly Cost</span>
-                                    <span class="text-sm font-medium text-green-600 dark:text-green-400">
+                                    <span class="text-sm font-medium text-[color:var(--color-success-600)] dark:text-green-400">
                                         ${{ number_format($categoryData['monthly_cost'], 2) }}
                                     </span>
                                 </div>
                                 <div class="flex justify-between items-center">
                                     <span class="text-sm text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">Yearly Cost</span>
-                                    <span class="text-sm font-medium text-blue-600 dark:text-blue-400">
+                                    <span class="text-sm font-medium text-[color:var(--color-info-600)] dark:text-blue-400">
                                         ${{ number_format($categoryData['yearly_cost'], 2) }}
                                     </span>
                                 </div>
@@ -75,7 +75,7 @@
                         Comprehensive breakdown of spending by category
                     </p>
                 </div>
-                <div class="border-t border-gray-200 dark:border-gray-700">
+                <div class="border-t border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)]">
                     <div class="overflow-x-auto">
                         <table class="min-w-full divide-y divide-[color:var(--color-primary-300)] dark:divide-[color:var(--color-dark-300)]">
                             <thead class="bg-[color:var(--color-primary-200)] dark:bg-[color:var(--color-dark-300)]">
@@ -151,7 +151,7 @@
                         Overall category statistics
                     </p>
                 </div>
-                <div class="border-t border-gray-200 dark:border-gray-700">
+                <div class="border-t border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)]">
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 p-6">
                         <div class="text-center">
                             <div class="text-2xl font-bold text-purple-600 dark:text-purple-400">
@@ -162,7 +162,7 @@
                             </p>
                         </div>
                         <div class="text-center">
-                            <div class="text-2xl font-bold text-green-600 dark:text-green-400">
+                            <div class="text-2xl font-bold text-[color:var(--color-success-600)] dark:text-green-400">
                                 ${{ number_format($categories->sum('monthly_cost'), 2) }}
                             </div>
                             <p class="text-sm text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] mt-1">
@@ -170,7 +170,7 @@
                             </p>
                         </div>
                         <div class="text-center">
-                            <div class="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                            <div class="text-2xl font-bold text-[color:var(--color-info-600)] dark:text-blue-400">
                                 ${{ number_format($categories->sum('yearly_cost'), 2) }}
                             </div>
                             <p class="text-sm text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] mt-1">
@@ -194,7 +194,7 @@
                         Get started by adding your first subscription.
                     </p>
                     <div class="mt-6">
-                        <a href="{{ route('subscriptions.create') }}" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[color:var(--color-accent-500)]">
+                        <a href="{{ route('subscriptions.create') }}" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[color:var(--color-accent-500)]">
                             Add Subscription
                         </a>
                     </div>

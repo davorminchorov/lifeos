@@ -29,7 +29,7 @@
                     Total Subscriptions
                 </h3>
                 <div class="mt-4">
-                    <div class="text-3xl font-bold text-blue-600 dark:text-blue-400">
+                    <div class="text-3xl font-bold text-[color:var(--color-info-600)] dark:text-blue-400">
                         {{ $summary['total_subscriptions'] }}
                     </div>
                     <p class="text-sm text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] mt-1">
@@ -46,7 +46,7 @@
                     Active Subscriptions
                 </h3>
                 <div class="mt-4">
-                    <div class="text-3xl font-bold text-green-600 dark:text-green-400">
+                    <div class="text-3xl font-bold text-[color:var(--color-success-600)] dark:text-green-400">
                         {{ $summary['active_subscriptions'] }}
                     </div>
                     <p class="text-sm text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] mt-1">
@@ -80,7 +80,7 @@
                     Paused Subscriptions
                 </h3>
                 <div class="mt-4">
-                    <div class="text-3xl font-bold text-yellow-600 dark:text-[color:var(--color-warning-400)]">
+                    <div class="text-3xl font-bold text-[color:var(--color-warning-600)] dark:text-[color:var(--color-warning-400)]">
                         {{ $summary['paused_subscriptions'] }}
                     </div>
                     <p class="text-sm text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] mt-1">
@@ -97,7 +97,7 @@
                     Due Soon
                 </h3>
                 <div class="mt-4">
-                    <div class="text-3xl font-bold text-orange-600 dark:text-orange-400">
+                    <div class="text-3xl font-bold text-[color:var(--color-warning-600)] dark:text-orange-400">
                         {{ $summary['due_soon'] }}
                     </div>
                     <p class="text-sm text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] mt-1">
@@ -136,9 +136,9 @@
                     Based on current active subscriptions
                 </p>
             </div>
-            <div class="border-t border-gray-200 dark:border-gray-700">
+            <div class="border-t border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)]">
                 <div class="px-4 py-5 sm:px-6">
-                    <div class="text-4xl font-bold text-indigo-600 dark:text-indigo-400 text-center">
+                    <div class="text-4xl font-bold text-[color:var(--color-accent-600)] dark:text-[color:var(--color-accent-400)] text-center">
                         ${{ number_format($summary['yearly_spending'], 2) }}
                     </div>
                     <p class="text-center text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] mt-2">

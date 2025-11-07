@@ -39,7 +39,7 @@
                         Update the basic details about this subscription.
                     </p>
                 </div>
-                <div class="border-t border-gray-200 dark:border-gray-700 px-4 py-5 sm:px-6">
+                <div class="border-t border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)] px-4 py-5 sm:px-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Service Name -->
                         <div>
@@ -108,7 +108,7 @@
                         Update the cost and billing schedule.
                     </p>
                 </div>
-                <div class="border-t border-gray-200 dark:border-gray-700 px-4 py-5 sm:px-6">
+                <div class="border-t border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)] px-4 py-5 sm:px-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Cost -->
                         <div>
@@ -185,7 +185,7 @@
                         Update the start and billing dates.
                     </p>
                 </div>
-                <div class="border-t border-gray-200 dark:border-gray-700 px-4 py-5 sm:px-6">
+                <div class="border-t border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)] px-4 py-5 sm:px-6">
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <!-- Start Date -->
                         <div>
@@ -231,7 +231,7 @@
                         Update payment and merchant details.
                     </p>
                 </div>
-                <div class="border-t border-gray-200 dark:border-gray-700 px-4 py-5 sm:px-6">
+                <div class="border-t border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)] px-4 py-5 sm:px-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Payment Method -->
                         <div>
@@ -265,7 +265,7 @@
                         <div class="flex items-center">
                             <input type="hidden" name="auto_renewal" value="0">
                             <input type="checkbox" name="auto_renewal" id="auto_renewal" value="1" {{ old('auto_renewal', $subscription->auto_renewal) ? 'checked' : '' }}
-                                   class="rounded border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-[color:var(--color-dark-100)] text-indigo-600 shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">
+                                   class="rounded border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-[color:var(--color-dark-100)] text-[color:var(--color-accent-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">
                             <label for="auto_renewal" class="ml-2 block text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                                 Auto-renewal enabled
                             </label>
@@ -301,7 +301,7 @@
                         Update notes and tags for organization.
                     </p>
                 </div>
-                <div class="border-t border-gray-200 dark:border-gray-700 px-4 py-5 sm:px-6">
+                <div class="border-t border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)] px-4 py-5 sm:px-6">
                     <div class="space-y-6">
                         <!-- Tags -->
                         <div>

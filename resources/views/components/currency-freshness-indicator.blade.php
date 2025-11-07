@@ -7,14 +7,14 @@
 
     {{-- Age Display --}}
     @if($showAge && $rateInfo['age_seconds'])
-        <span class="text-xs text-gray-500">
+        <span class="text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">
             {{ $getFormattedAge() }}
         </span>
     @endif
 
     {{-- Warning Message for Stale Rates --}}
     @if($needsAttention())
-        <span class="text-xs text-red-600 font-medium">
+        <span class="text-xs text-[color:var(--color-danger-600)] font-medium">
             Exchange rate may be outdated
         </span>
     @endif
@@ -23,7 +23,7 @@
     @if($showRefreshButton)
         <button
             type="button"
-            class="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium text-gray-600 bg-gray-100 border border-gray-200 rounded hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-colors"
+            class="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] border border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)] rounded hover:bg-[color:var(--color-primary-200)] dark:bg-[color:var(--color-dark-300)] focus:outline-none focus:ring-2 focus:ring-gray-300 transition-colors"
             onclick="refreshExchangeRate('{{ $fromCurrency }}', '{{ $toCurrency }}')"
             title="Refresh exchange rate"
         >

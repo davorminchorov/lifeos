@@ -6,7 +6,7 @@
 <div class="py-12">
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
         <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] overflow-hidden shadow-xl sm:rounded-lg">
-            <div class="p-6 text-gray-900 dark:text-gray-100">
+            <div class="p-6 text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] dark:text-[color:var(--color-primary-100)] dark:text-[color:var(--color-dark-200)]">
                 <!-- Header -->
                 <div class="flex justify-between items-center mb-6">
                     <div>
@@ -14,7 +14,7 @@
                         <p class="text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] mt-1">Actionable steps to achieve your target allocation</p>
                     </div>
                     <div class="flex space-x-3">
-                        <a href="{{ route('investments.rebalancing.alerts') }}" class="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] hover:bg-[color:var(--color-primary-100)] dark:hover:bg-[color:var(--color-dark-200)]">
+                        <a href="{{ route('investments.rebalancing.alerts') }}" class="inline-flex items-center px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] shadow-sm text-sm leading-4 font-medium rounded-md text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] hover:bg-[color:var(--color-primary-100)] dark:hover:bg-[color:var(--color-dark-200)]">
                             ← Back to Alerts
                         </a>
                         <button onclick="window.print()" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)]">
@@ -28,18 +28,18 @@
 
                 <!-- Recommendations Summary -->
                 @if(count($recommendations) > 0)
-                    <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg p-6 mb-8">
+                    <div class="bg-[color:var(--color-info-50)] dark:bg-[color:var(--color-info-900)]/20 border border-blue-200 dark:border-blue-700 rounded-lg p-6 mb-8">
                         <div class="flex">
                             <div class="flex-shrink-0">
-                                <svg class="h-6 w-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="h-6 w-6 text-[color:var(--color-info-600)] dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                 </svg>
                             </div>
                             <div class="ml-3">
-                                <h3 class="text-sm font-medium text-blue-800 dark:text-blue-200">
+                                <h3 class="text-sm font-medium text-[color:var(--color-info-600)] dark:text-[color:var(--color-info-200)]">
                                     Rebalancing Required
                                 </h3>
-                                <div class="mt-2 text-sm text-blue-700 dark:text-blue-300">
+                                <div class="mt-2 text-sm text-[color:var(--color-info-700)] dark:text-[color:var(--color-info-300)]">
                                     <p>Your portfolio allocation has drifted from your target. Here are {{ count($recommendations) }} recommended adjustments to rebalance your holdings.</p>
                                 </div>
                             </div>
@@ -49,7 +49,7 @@
                     <!-- Recommendations Table -->
                     <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] overflow-hidden shadow rounded-lg mb-8">
                         <div class="px-4 py-5 sm:p-6">
-                            <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">Recommended Actions</h3>
+                            <h3 class="text-lg font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] dark:text-[color:var(--color-primary-100)] dark:text-[color:var(--color-dark-200)] mb-4">Recommended Actions</h3>
                             <div class="overflow-x-auto">
                                 <table class="min-w-full divide-y divide-[color:var(--color-primary-300)] dark:divide-[color:var(--color-dark-300)]">
                                     <thead class="bg-[color:var(--color-primary-200)] dark:bg-[color:var(--color-dark-300)]">
@@ -114,15 +114,15 @@
 
                     <!-- Implementation Strategy -->
                     <div class="bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] rounded-lg p-6 mb-8">
-                        <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">Implementation Strategy</h3>
+                        <h3 class="text-lg font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] dark:text-[color:var(--color-primary-100)] dark:text-[color:var(--color-dark-200)] mb-4">Implementation Strategy</h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <h4 class="text-sm font-medium text-gray-900 dark:text-gray-100 mb-3">Step-by-Step Approach</h4>
+                                <h4 class="text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] dark:text-[color:var(--color-primary-100)] dark:text-[color:var(--color-dark-200)] mb-3">Step-by-Step Approach</h4>
                                 <ol class="text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] space-y-2">
                                     @php $step = 1; @endphp
                                     @foreach($recommendations->sortByDesc(function($rec) { return abs($rec['current_percentage'] - $rec['target_percentage']); }) as $rec)
                                         <li class="flex items-start">
-                                            <span class="inline-flex items-center justify-center w-5 h-5 bg-indigo-600 text-white text-xs font-medium rounded-full mr-3 mt-0.5 flex-shrink-0">
+                                            <span class="inline-flex items-center justify-center w-5 h-5 bg-[color:var(--color-accent-600)] text-white text-xs font-medium rounded-full mr-3 mt-0.5 flex-shrink-0">
                                                 {{ $step }}
                                             </span>
                                             <span>
@@ -135,7 +135,7 @@
                                 </ol>
                             </div>
                             <div>
-                                <h4 class="text-sm font-medium text-gray-900 dark:text-gray-100 mb-3">Execution Tips</h4>
+                                <h4 class="text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] dark:text-[color:var(--color-primary-100)] dark:text-[color:var(--color-dark-200)] mb-3">Execution Tips</h4>
                                 <ul class="text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] space-y-2">
                                     <li class="flex items-start">
                                         <svg class="w-4 h-4 text-green-500 mt-0.5 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
@@ -173,26 +173,26 @@
                         $estimatedFees = (count($recommendations) * 10); // Estimate $10 per trade
                     @endphp
 
-                    <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded-lg p-6 mb-8">
-                        <h3 class="text-lg font-medium text-yellow-800 dark:text-yellow-200 mb-4">Cost Analysis</h3>
+                    <div class="bg-[color:var(--color-warning-50)] dark:bg-[color:var(--color-warning-900)]/20 border border-yellow-200 dark:border-yellow-700 rounded-lg p-6 mb-8">
+                        <h3 class="text-lg font-medium text-[color:var(--color-warning-600)] dark:text-[color:var(--color-warning-200)] mb-4">Cost Analysis</h3>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div class="text-center">
-                                <div class="text-2xl font-bold text-yellow-800 dark:text-yellow-200">
+                                <div class="text-2xl font-bold text-[color:var(--color-warning-600)] dark:text-[color:var(--color-warning-200)]">
                                     ${{ number_format($totalBuyAmount, 2) }}
                                 </div>
-                                <div class="text-sm text-yellow-600 dark:text-yellow-300">Total Purchases</div>
+                                <div class="text-sm text-[color:var(--color-warning-600)] dark:text-[color:var(--color-warning-300)]">Total Purchases</div>
                             </div>
                             <div class="text-center">
-                                <div class="text-2xl font-bold text-yellow-800 dark:text-yellow-200">
+                                <div class="text-2xl font-bold text-[color:var(--color-warning-600)] dark:text-[color:var(--color-warning-200)]">
                                     ${{ number_format($totalSellAmount, 2) }}
                                 </div>
-                                <div class="text-sm text-yellow-600 dark:text-yellow-300">Total Sales</div>
+                                <div class="text-sm text-[color:var(--color-warning-600)] dark:text-[color:var(--color-warning-300)]">Total Sales</div>
                             </div>
                             <div class="text-center">
-                                <div class="text-2xl font-bold text-yellow-800 dark:text-yellow-200">
+                                <div class="text-2xl font-bold text-[color:var(--color-warning-600)] dark:text-[color:var(--color-warning-200)]">
                                     ${{ number_format($estimatedFees, 2) }}
                                 </div>
-                                <div class="text-sm text-yellow-600 dark:text-yellow-300">Est. Trading Fees</div>
+                                <div class="text-sm text-[color:var(--color-warning-600)] dark:text-[color:var(--color-warning-300)]">Est. Trading Fees</div>
                             </div>
                         </div>
                     </div>
@@ -202,7 +202,7 @@
                         <svg class="mx-auto h-16 w-16 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
-                        <h3 class="mt-4 text-lg font-medium text-gray-900 dark:text-gray-100">Portfolio is Well Balanced</h3>
+                        <h3 class="mt-4 text-lg font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] dark:text-[color:var(--color-primary-100)] dark:text-[color:var(--color-dark-200)]">Portfolio is Well Balanced</h3>
                         <p class="mt-2 text-sm text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">Your current allocation is within acceptable ranges of your target. No rebalancing needed at this time.</p>
                         <div class="mt-6">
                             <a href="{{ route('investments.index') }}" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)]">
@@ -221,10 +221,10 @@
                             </svg>
                         </div>
                         <div class="ml-3">
-                            <h3 class="text-sm font-medium text-red-800 dark:text-red-200">
+                            <h3 class="text-sm font-medium text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-200)]">
                                 Important Disclaimers
                             </h3>
-                            <div class="mt-2 text-sm text-red-700 dark:text-red-300">
+                            <div class="mt-2 text-sm text-[color:var(--color-danger-700)] dark:text-[color:var(--color-danger-300)]">
                                 <ul class="list-disc list-inside space-y-1">
                                     <li>These recommendations are for informational purposes only and do not constitute financial advice</li>
                                     <li>Consider your tax situation, risk tolerance, and investment timeline before making changes</li>

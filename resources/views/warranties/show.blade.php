@@ -110,12 +110,12 @@
                     Warranty terms and coverage details.
                 </p>
             </div>
-            <div class="border-t border-gray-200 dark:border-gray-700">
+            <div class="border-t border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)]">
                 <dl>
                     <div class="bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                         <dt class="text-sm font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">Warranty Type</dt>
                         <dd class="mt-1 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] sm:mt-0 sm:col-span-2">
-                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200">
+                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-[color:var(--color-accent-100)] text-[color:var(--color-accent-800)] dark:bg-[color:var(--color-accent-900)] dark:text-[color:var(--color-accent-200)]">
                                 {{ ucfirst($warranty->warranty_type) }}
                             </span>
                         </dd>
@@ -145,9 +145,9 @@
                                     $daysUntil = $warranty->days_until_expiration;
                                 @endphp
                                 @if($daysUntil > 0)
-                                    <span class="text-green-600 dark:text-green-400">{{ $daysUntil }} days remaining</span>
+                                    <span class="text-[color:var(--color-success-600)] dark:text-green-400">{{ $daysUntil }} days remaining</span>
                                 @elseif($daysUntil === 0)
-                                    <span class="text-orange-600 dark:text-orange-400">Expires today</span>
+                                    <span class="text-[color:var(--color-warning-600)] dark:text-orange-400">Expires today</span>
                                 @else
                                     <span class="text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]">Expired {{ abs($daysUntil) }} days ago</span>
                                 @endif
@@ -176,7 +176,7 @@
                     Details about the original purchase.
                 </p>
             </div>
-            <div class="border-t border-gray-200 dark:border-gray-700">
+            <div class="border-t border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)]">
                 <dl>
                     <div class="bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                         <dt class="text-sm font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">Purchase Date</dt>
@@ -213,7 +213,7 @@
                     Previous warranty claims and their status.
                 </p>
             </div>
-            <div class="border-t border-gray-200 dark:border-gray-700">
+            <div class="border-t border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)]">
                 @if($warranty->has_claims)
                     <div class="px-4 py-5 sm:px-6">
                         <div class="space-y-4">
@@ -226,7 +226,7 @@
                                                 <p class="text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] mt-1">{{ $claim['description'] }}</p>
                                             @endif
                                             @if(isset($claim['date']))
-                                                <p class="text-xs text-gray-500 dark:text-gray-500 mt-2">Filed on {{ \Carbon\Carbon::parse($claim['date'])->format('M j, Y') }}</p>
+                                                <p class="text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] dark:text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] mt-2">Filed on {{ \Carbon\Carbon::parse($claim['date'])->format('M j, Y') }}</p>
                                             @endif
                                         </div>
                                         @if(isset($claim['status']))
@@ -265,7 +265,7 @@
                     Receipts and proof of purchase documents.
                 </p>
             </div>
-            <div class="border-t border-gray-200 dark:border-gray-700">
+            <div class="border-t border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)]">
                 <div class="px-4 py-5 sm:px-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         @if($warranty->receipt_attachments)
@@ -278,9 +278,9 @@
                                             <svg class="h-5 w-5 text-[color:var(--color-primary-400)] dark:text-[color:var(--color-dark-400)] mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                             </svg>
-                                            <span class="text-sm text-gray-600 dark:text-[color:var(--color-primary-300)] dark:text-[color:var(--color-dark-400)]">{{ basename($file) }}</span>
+                                            <span class="text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] dark:text-[color:var(--color-primary-300)] dark:text-[color:var(--color-dark-400)]">{{ basename($file) }}</span>
                                         </div>
-                                        <a href="{{ Storage::url($file) }}" target="_blank" class="text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300 text-sm">View</a>
+                                        <a href="{{ Storage::url($file) }}" target="_blank" class="text-[color:var(--color-accent-600)] hover:text-[color:var(--color-accent-800)] dark:text-[color:var(--color-accent-400)] dark:hover:text-[color:var(--color-accent-300)] text-sm">View</a>
                                     </div>
                                 @endforeach
                             </div>
@@ -297,9 +297,9 @@
                                             <svg class="h-5 w-5 text-[color:var(--color-primary-400)] dark:text-[color:var(--color-dark-400)] mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                             </svg>
-                                            <span class="text-sm text-gray-600 dark:text-[color:var(--color-primary-300)] dark:text-[color:var(--color-dark-400)]">{{ basename($file) }}</span>
+                                            <span class="text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] dark:text-[color:var(--color-primary-300)] dark:text-[color:var(--color-dark-400)]">{{ basename($file) }}</span>
                                         </div>
-                                        <a href="{{ Storage::url($file) }}" target="_blank" class="text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300 text-sm">View</a>
+                                        <a href="{{ Storage::url($file) }}" target="_blank" class="text-[color:var(--color-accent-600)] hover:text-[color:var(--color-accent-800)] dark:text-[color:var(--color-accent-400)] dark:hover:text-[color:var(--color-accent-300)] text-sm">View</a>
                                     </div>
                                 @endforeach
                             </div>
@@ -322,7 +322,7 @@
                     Additional information and reminders.
                 </p>
             </div>
-            <div class="border-t border-gray-200 dark:border-gray-700">
+            <div class="border-t border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)]">
                 <div class="px-4 py-5 sm:px-6">
                     <div class="prose dark:prose-invert max-w-none">
                         <p class="text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] whitespace-pre-wrap">{{ $warranty->notes }}</p>

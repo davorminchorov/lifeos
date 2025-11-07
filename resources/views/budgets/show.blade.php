@@ -123,9 +123,9 @@
                                 @if($status === 'exceeded')
                                     <span class="text-sm text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]">Over Budget</span>
                                 @elseif($status === 'warning')
-                                    <span class="text-sm text-yellow-600 dark:text-[color:var(--color-warning-400)]">Warning</span>
+                                    <span class="text-sm text-[color:var(--color-warning-600)] dark:text-[color:var(--color-warning-400)]">Warning</span>
                                 @else
-                                    <span class="text-sm text-green-600 dark:text-green-400">On Track</span>
+                                    <span class="text-sm text-[color:var(--color-success-600)] dark:text-green-400">On Track</span>
                                 @endif
                             </dd>
                         </dl>
@@ -150,7 +150,7 @@
                             {{ now()->diffInDays($budget->end_date, false) }} days remaining
                         </span>
                     </div>
-                    <div class="w-full bg-gray-200 rounded-full h-4 dark:bg-gray-700">
+                    <div class="w-full bg-[color:var(--color-primary-200)] dark:bg-[color:var(--color-dark-300)] rounded-full h-4 dark:bg-[color:var(--color-dark-300)]">
                         <div class="h-4 rounded-full transition-all duration-300
                             @if($utilization >= 100) bg-[color:var(--color-danger-600)]
                             @elseif($utilization >= $budget->alert_threshold) bg-[color:var(--color-warning-500)]
@@ -189,8 +189,8 @@
                                 </svg>
                             </div>
                             <div class="ml-3">
-                                <h3 class="text-sm font-medium text-red-800 dark:text-red-200">Budget Alert</h3>
-                                <div class="mt-2 text-sm text-red-700 dark:text-red-300">
+                                <h3 class="text-sm font-medium text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-200)]">Budget Alert</h3>
+                                <div class="mt-2 text-sm text-[color:var(--color-danger-700)] dark:text-[color:var(--color-danger-300)]">
                                     <p>Your projected spending ({{ number_format($projectedSpending, 2) }} {{ $budget->currency }}) exceeds your budget by {{ number_format($projectedSpending - $budget->amount, 2) }} {{ $budget->currency }}.</p>
                                 </div>
                             </div>
@@ -270,7 +270,7 @@
                 </div>
 
                 <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                    <table class="min-w-full divide-y divide-[color:var(--color-primary-200)] dark:divide-[color:var(--color-dark-300)]">
                         <thead class="bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)]">
                             <tr>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] uppercase tracking-wider">Date</th>
@@ -279,7 +279,7 @@
                                 <th class="px-6 py-3 text-right text-xs font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] uppercase tracking-wider">Amount</th>
                             </tr>
                         </thead>
-                        <tbody class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] divide-y divide-gray-200 dark:divide-gray-700">
+                        <tbody class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] divide-y divide-[color:var(--color-primary-200)] dark:divide-[color:var(--color-dark-300)]">
                             @foreach($expenses->take(10) as $expense)
                                 <tr class="hover:bg-[color:var(--color-primary-50)] dark:hover:bg-[color:var(--color-dark-100)]">
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
