@@ -115,21 +115,21 @@
 
                 <div class="space-y-4">
                     <div>
-                        <span class="text-sm text-gray-500 dark:text-gray-400">Reimbursement Status</span>
+                        <span class="text-sm text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">Reimbursement Status</span>
                         <div class="mt-1">
                             @if($expense->is_reimbursed)
-                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-[color:var(--color-success-50)] text-[color:var(--color-success-600)] dark:bg-[color:var(--color-success-900)] dark:text-[color:var(--color-success-200)]">
                                     Reimbursed
                                 </span>
                             @else
-                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300">
+                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-[color:var(--color-primary-200)] text-[color:var(--color-primary-700)] dark:bg-[color:var(--color-dark-300)] dark:text-[color:var(--color-dark-600)]">
                                     Pending
                                 </span>
                                 <div class="mt-2">
                                     <form method="POST" action="{{ route('expenses.mark-reimbursed', $expense) }}" class="inline">
                                         @csrf
                                         @method('PATCH')
-                                        <button type="submit" class="text-sm text-green-600 hover:text-green-900 dark:text-green-400 dark:hover:text-green-300">
+                                        <button type="submit" class="text-sm text-[color:var(--color-success-600)] hover:text-[color:var(--color-success-700)] dark:text-[color:var(--color-success-400)] dark:hover:text-[color:var(--color-success-300)]">
                                             Mark as Reimbursed
                                         </button>
                                     </form>
@@ -140,9 +140,9 @@
 
                     @if($expense->is_tax_deductible)
                     <div>
-                        <span class="text-sm text-gray-500 dark:text-gray-400">Tax Status</span>
+                        <span class="text-sm text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">Tax Status</span>
                         <div class="mt-1">
-                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
+                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-[color:var(--color-warning-50)] text-[color:var(--color-warning-600)] dark:bg-[color:var(--color-warning-900)] dark:text-[color:var(--color-warning-200)]">
                                 Tax Deductible
                             </span>
                         </div>
@@ -151,7 +151,7 @@
 
                     @if($expense->is_recurring)
                     <div>
-                        <span class="text-sm text-gray-500 dark:text-gray-400">Recurring</span>
+                        <span class="text-sm text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">Recurring</span>
                         <div class="mt-1">
                             <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200">
                                 Recurring Expense
@@ -185,18 +185,18 @@
 
                 <div class="space-y-3 text-sm">
                     <div class="flex justify-between">
-                        <span class="text-gray-500 dark:text-gray-400">Age:</span>
+                        <span class="text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">Age:</span>
                         <span class="text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">{{ $expense->age_days }} days</span>
                     </div>
 
                     <div class="flex justify-between">
-                        <span class="text-gray-500 dark:text-gray-400">Created:</span>
+                        <span class="text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">Created:</span>
                         <span class="text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">{{ $expense->created_at->format('M j, Y') }}</span>
                     </div>
 
                     @if($expense->updated_at->ne($expense->created_at))
                     <div class="flex justify-between">
-                        <span class="text-gray-500 dark:text-gray-400">Updated:</span>
+                        <span class="text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">Updated:</span>
                         <span class="text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">{{ $expense->updated_at->format('M j, Y') }}</span>
                     </div>
                     @endif
