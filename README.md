@@ -59,13 +59,49 @@ LifeOS provides a comprehensive suite of tools to manage various aspects of your
 - Provider comparison and rate tracking
 - Budget alerts for unusual usage spikes
 
+### 💳 IOU / Debt Tracking
+- Track money owed to and from others
+- Record payment history and partial payments
+- Multiple currency support with automatic conversion
+- Status management (pending, paid, cancelled)
+- Due date tracking and reminders
+- Detailed transaction history
+- Mark IOUs as paid or cancel them
+
+### 📊 Budget Management
+- Create and manage budgets with customizable periods
+- Category-based budget allocation
+- Real-time budget tracking and spending analysis
+- Budget vs. actual expense comparison
+- Period selection (monthly, quarterly, yearly, custom)
+- Multi-currency support
+- Budget analytics and insights
+- Automatic rollover tracking
+
 ### 📊 Cross-Module Features
 - **Unified Dashboard**: Comprehensive overview of all financial commitments
 - **Advanced Analytics**: Spending insights and trend analysis across all modules
 - **Global Search**: Search functionality across all data types
 - **Custom Reporting**: Generate reports combining data from multiple modules
-- **Notification Center**: Centralized alert management
-- **Mobile Responsive**: Full mobile functionality with modern UI
+- **Notification System**: 
+  - Centralized notification center with read/unread management
+  - Customizable notification preferences (email, database, push)
+  - Mark notifications as read or delete them
+  - Notification statistics and filtering
+  - Configurable reminder timings
+- **Mobile Responsive Design**: 
+  - Fully optimized mobile experience across all 50+ templates
+  - Touch-optimized interfaces with larger touch targets (44px minimum)
+  - Responsive table solutions with card-based mobile layouts
+  - Collapsible mobile navigation with hamburger menu
+  - Mobile-first form optimization
+  - Progressive enhancement approach
+- **Currency Management**: 
+  - Multi-currency support across all financial modules
+  - Automatic currency conversion with live exchange rates
+  - Real-time currency refresh capabilities
+  - Support for 150+ currencies
+  - Fallback mechanisms for offline functionality
 - **Dark Mode Support**: Complete theme customization
 - **Data Export**: Backup and export capabilities
 
