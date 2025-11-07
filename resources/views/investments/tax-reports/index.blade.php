@@ -2,30 +2,32 @@
 
 @section('title', 'Tax Reports - LifeOS')
 
+@section('header')
+    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+        <div>
+            <h1 class="text-2xl sm:text-3xl font-bold text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
+                Investment Tax Reports
+            </h1>
+            <p class="mt-2 text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)]">
+                Review your investment tax information for {{ $taxSummary['tax_year'] }}
+            </p>
+        </div>
+        <div class="flex-shrink-0">
+            <form method="GET" action="{{ route('investments.tax-reports.index') }}" class="flex items-center gap-2">
+                <label for="tax_year" class="text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Tax Year:</label>
+                <select name="tax_year" id="tax_year" onchange="this.form.submit()" class="rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-300)] text-[color:var(--color-primary-700)] dark:text-white shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">
+                    @for($year = date('Y'); $year >= date('Y') - 5; $year--)
+                        <option value="{{ $year }}" {{ $taxSummary['tax_year'] == $year ? 'selected' : '' }}>
+                            {{ $year }}
+                        </option>
+                    @endfor
+                </select>
+            </form>
+        </div>
+    </div>
+@endsection
+
 @section('content')
-<div class="py-12">
-    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-        <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] overflow-hidden shadow-xl sm:rounded-lg">
-            <div class="p-6 text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] dark:text-[color:var(--color-primary-100)] dark:text-[color:var(--color-dark-200)]">
-                <!-- Header -->
-                <div class="flex justify-between items-center mb-6">
-                    <div>
-                        <h2 class="text-2xl font-semibold">Investment Tax Reports</h2>
-                        <p class="text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] mt-1">Review your investment tax information for {{ $taxSummary['tax_year'] }}</p>
-                    </div>
-                    <div class="flex space-x-3">
-                        <form method="GET" action="{{ route('investments.tax-reports.index') }}" class="flex items-center space-x-2">
-                            <label for="tax_year" class="text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Tax Year:</label>
-                            <select name="tax_year" id="tax_year" onchange="this.form.submit()" class="rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-[color:var(--color-dark-300)] dark:text-white shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">
-                                @for($year = date('Y'); $year >= date('Y') - 5; $year--)
-                                    <option value="{{ $year }}" {{ $taxSummary['tax_year'] == $year ? 'selected' : '' }}>
-                                        {{ $year }}
-                                    </option>
-                                @endfor
-                            </select>
-                        </form>
-                    </div>
-                </div>
 
                 <!-- Tax Summary Cards -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -138,8 +140,4 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-</div>
 @endsection

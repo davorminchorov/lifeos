@@ -2,15 +2,20 @@
 
 @section('title', 'Currency Exchange Rates & Freshness')
 
-@section('content')
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <div class="mb-8">
-        <h1 class="text-3xl font-bold text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Currency Exchange Rates</h1>
-        <p class="mt-2 text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)]">
-            Monitor exchange rate freshness and update rates as needed. All rates are converted to {{ $defaultCurrency }}.
-        </p>
+@section('header')
+    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+        <div>
+            <h1 class="text-2xl sm:text-3xl font-bold text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
+                Currency Exchange Rates
+            </h1>
+            <p class="mt-2 text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)]">
+                Monitor exchange rate freshness and update rates as needed. All rates are converted to {{ $defaultCurrency }}.
+            </p>
+        </div>
     </div>
+@endsection
 
+@section('content')
     @if(empty($currencyRates))
         <div class="bg-[color:var(--color-info-50)] dark:bg-[color:var(--color-info-900)] border border-[color:var(--color-info-200)] dark:border-[color:var(--color-info-800)] rounded-lg p-6">
             <div class="flex">
@@ -119,7 +124,6 @@
             </div>
         </div>
     @endif
-</div>
 
 {{-- JavaScript for refresh functionality --}}
 @push('scripts')

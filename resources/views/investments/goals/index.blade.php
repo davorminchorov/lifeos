@@ -2,21 +2,25 @@
 
 @section('title', 'Investment Goals - LifeOS')
 
+@section('header')
+    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+        <div>
+            <h1 class="text-2xl sm:text-3xl font-bold text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
+                Investment Goals
+            </h1>
+            <p class="mt-2 text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)]">
+                Track and manage your investment objectives
+            </p>
+        </div>
+        <div class="flex-shrink-0">
+            <button onclick="openGoalModal()" class="w-full sm:w-auto inline-flex justify-center items-center bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] text-white px-6 py-3 sm:px-4 sm:py-2 rounded-lg sm:rounded-md text-base sm:text-sm font-medium transition-colors duration-200 shadow-sm touch-manipulation">
+                Add Goal
+            </button>
+        </div>
+    </div>
+@endsection
+
 @section('content')
-<div class="py-12">
-    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-        <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] overflow-hidden shadow-xl sm:rounded-lg">
-            <div class="p-6 text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] dark:text-[color:var(--color-primary-100)] dark:text-[color:var(--color-dark-200)]">
-                <!-- Header -->
-                <div class="flex justify-between items-center mb-6">
-                    <div>
-                        <h2 class="text-2xl font-semibold">Investment Goals</h2>
-                        <p class="text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] mt-1">Track and manage your investment objectives</p>
-                    </div>
-                    <button onclick="openGoalModal()" class="bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] text-white px-4 py-2 rounded-lg font-medium">
-                        Add Goal
-                    </button>
-                </div>
 
                 <!-- Goals List -->
                 @if($goals->count() > 0)
@@ -96,10 +100,6 @@
                         </div>
                     </div>
                 @endif
-            </div>
-        </div>
-    </div>
-</div>
 
 <!-- Goal Modal -->
 <div id="goalModal" class="hidden fixed inset-0 bg-[color:var(--color-primary-600)] bg-opacity-50 overflow-y-auto h-full w-full z-50">
