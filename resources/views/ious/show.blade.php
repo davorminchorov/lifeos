@@ -104,13 +104,13 @@
                     <!-- Person -->
                     <div>
                         <dt class="text-sm font-medium text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)]">Person</dt>
-                        <dd class="mt-1 text-sm text-[color:var(--color-primary-900)] dark:text-[color:var(--color-dark-700)] font-semibold">{{ $iou->person_name }}</dd>
+                        <dd class="mt-1 text-sm text-[color:var(--color-primary-900)] dark:text-white font-semibold">{{ $iou->person_name }}</dd>
                     </div>
 
                     <!-- Amount -->
                     <div>
                         <dt class="text-sm font-medium text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)]">Total Amount</dt>
-                        <dd class="mt-1 text-2xl font-bold text-[color:var(--color-primary-900)] dark:text-[color:var(--color-dark-700)]">
+                        <dd class="mt-1 text-2xl font-bold text-[color:var(--color-primary-900)] dark:text-white">
                             {{ $iou->formatted_amount }}
                         </dd>
                         @if($iou->currency !== 'MKD')
@@ -165,14 +165,14 @@
                     <!-- Transaction Date -->
                     <div>
                         <dt class="text-sm font-medium text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)]">Transaction Date</dt>
-                        <dd class="mt-1 text-sm text-[color:var(--color-primary-900)] dark:text-[color:var(--color-dark-700)]">{{ $iou->transaction_date->format('M d, Y') }}</dd>
+                        <dd class="mt-1 text-sm text-[color:var(--color-primary-900)] dark:text-white">{{ $iou->transaction_date->format('M d, Y') }}</dd>
                     </div>
 
                     <!-- Due Date -->
                     @if($iou->due_date)
                         <div>
                             <dt class="text-sm font-medium text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)]">Due Date</dt>
-                            <dd class="mt-1 text-sm text-[color:var(--color-primary-900)] dark:text-[color:var(--color-dark-700)]">
+                            <dd class="mt-1 text-sm text-[color:var(--color-primary-900)] dark:text-white">
                                 {{ $iou->due_date->format('M d, Y') }}
                                 @if($iou->is_overdue && $iou->status !== 'paid')
                                     <span class="ml-2 text-red-600 dark:text-red-400 font-medium">(Overdue)</span>
@@ -185,7 +185,7 @@
                     @if($iou->category)
                         <div>
                             <dt class="text-sm font-medium text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)]">Category</dt>
-                            <dd class="mt-1 text-sm text-[color:var(--color-primary-900)] dark:text-[color:var(--color-dark-700)]">{{ $iou->category }}</dd>
+                            <dd class="mt-1 text-sm text-[color:var(--color-primary-900)] dark:text-white">{{ $iou->category }}</dd>
                         </div>
                     @endif
 
@@ -193,7 +193,7 @@
                     @if($iou->payment_method)
                         <div>
                             <dt class="text-sm font-medium text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)]">Payment Method</dt>
-                            <dd class="mt-1 text-sm text-[color:var(--color-primary-900)] dark:text-[color:var(--color-dark-700)]">{{ $iou->payment_method }}</dd>
+                            <dd class="mt-1 text-sm text-[color:var(--color-primary-900)] dark:text-white">{{ $iou->payment_method }}</dd>
                         </div>
                     @endif
                 </div>
@@ -201,14 +201,14 @@
                 <!-- Description -->
                 <div class="mt-6 pt-6 border-t border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)]">
                     <dt class="text-sm font-medium text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] mb-2">Description</dt>
-                    <dd class="text-sm text-[color:var(--color-primary-900)] dark:text-[color:var(--color-dark-700)] whitespace-pre-wrap">{{ $iou->description }}</dd>
+                    <dd class="text-sm text-[color:var(--color-primary-900)] dark:text-white whitespace-pre-wrap">{{ $iou->description }}</dd>
                 </div>
 
                 <!-- Notes -->
                 @if($iou->notes)
                     <div class="mt-6 pt-6 border-t border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)]">
                         <dt class="text-sm font-medium text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] mb-2">Notes</dt>
-                        <dd class="text-sm text-[color:var(--color-primary-900)] dark:text-[color:var(--color-dark-700)] whitespace-pre-wrap">{{ $iou->notes }}</dd>
+                        <dd class="text-sm text-[color:var(--color-primary-900)] dark:text-white whitespace-pre-wrap">{{ $iou->notes }}</dd>
                     </div>
                 @endif
             </div>
@@ -224,7 +224,7 @@
                         @foreach($iou->payments as $payment)
                             <div class="flex items-center justify-between p-4 bg-white dark:bg-[color:var(--color-dark-100)] rounded-lg border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)]">
                                 <div>
-                                    <p class="text-sm font-medium text-[color:var(--color-primary-900)] dark:text-[color:var(--color-dark-700)]">
+                                    <p class="text-sm font-medium text-[color:var(--color-primary-900)] dark:text-white">
                                         Payment of {{ number_format($payment->amount, 2) }} {{ $iou->currency }}
                                     </p>
                                     <p class="text-xs text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] mt-1">
@@ -316,7 +316,7 @@
 <div id="paymentModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
     <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)]">
         <div class="mt-3">
-            <h3 class="text-lg font-medium text-[color:var(--color-primary-900)] dark:text-[color:var(--color-dark-700)] mb-4">Record Payment</h3>
+            <h3 class="text-lg font-medium text-[color:var(--color-primary-900)] dark:text-white mb-4">Record Payment</h3>
 
             <form method="POST" action="{{ route('ious.record-payment', $iou) }}">
                 @csrf
@@ -324,7 +324,7 @@
                 <div class="mb-4">
                     <label for="payment_amount" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] mb-2">Amount</label>
                     <input type="number" step="0.01" name="amount" id="payment_amount" required min="0.01" max="{{ $iou->remaining_amount }}"
-                           class="block w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)] bg-white dark:bg-[color:var(--color-dark-100)] text-[color:var(--color-primary-900)] dark:text-[color:var(--color-dark-700)]"
+                           class="block w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)] bg-white dark:bg-[color:var(--color-dark-100)] text-[color:var(--color-primary-900)] dark:text-white"
                            placeholder="0.00">
                     <p class="mt-1 text-xs text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)]">Remaining: {{ $iou->formatted_remaining_amount }}</p>
                 </div>
@@ -332,13 +332,13 @@
                 <div class="mb-4">
                     <label for="payment_date" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] mb-2">Payment Date</label>
                     <input type="date" name="payment_date" id="payment_date" required value="{{ date('Y-m-d') }}"
-                           class="block w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)] bg-white dark:bg-[color:var(--color-dark-100)] text-[color:var(--color-primary-900)] dark:text-[color:var(--color-dark-700)]">
+                           class="block w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)] bg-white dark:bg-[color:var(--color-dark-100)] text-[color:var(--color-primary-900)] dark:text-white">
                 </div>
 
                 <div class="mb-4">
                     <label for="payment_method_modal" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] mb-2">Payment Method</label>
                     <select name="payment_method" id="payment_method_modal"
-                            class="block w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)] bg-white dark:bg-[color:var(--color-dark-100)] text-[color:var(--color-primary-900)] dark:text-[color:var(--color-dark-700)]">
+                            class="block w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)] bg-white dark:bg-[color:var(--color-dark-100)] text-[color:var(--color-primary-900)] dark:text-white">
                         <option value="">Select Payment Method</option>
                         <option value="Cash">Cash</option>
                         <option value="Bank Transfer">Bank Transfer</option>
@@ -352,7 +352,7 @@
                 <div class="mb-4">
                     <label for="payment_notes" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] mb-2">Notes (Optional)</label>
                     <textarea name="notes" id="payment_notes" rows="2"
-                              class="block w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)] bg-white dark:bg-[color:var(--color-dark-100)] text-[color:var(--color-primary-900)] dark:text-[color:var(--color-dark-700)]"
+                              class="block w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)] bg-white dark:bg-[color:var(--color-dark-100)] text-[color:var(--color-primary-900)] dark:text-white"
                               placeholder="Payment details..."></textarea>
                 </div>
 
