@@ -132,6 +132,7 @@ class InvestmentAnalyticsService
         $byBusinessModel = [];
         $activeProjects = 0;
         $completedProjects = 0;
+        $projects = [];
 
         foreach ($projectInvestments as $investment) {
             $currency = $investment->project_currency ?? $investment->currency ?? $defaultCurrency;
@@ -140,6 +141,26 @@ class InvestmentAnalyticsService
 
             $totalInvested += $this->currencyService->convertToDefault($amount, $currency);
             $totalValue += $this->currencyService->convertToDefault($value, $currency);
+
+            // Collect individual project details
+            $projects[] = [
+                'id' => $investment->id,
+                'name' => $investment->name,
+                'project_type' => $investment->project_type,
+                'project_stage' => $investment->project_stage,
+                'project_business_model' => $investment->project_business_model,
+                'invested_amount' => $amount,
+                'current_value' => $value,
+                'gain_loss' => $value - $amount,
+                'gain_loss_percentage' => $amount > 0 ? (($value - $amount) / $amount) * 100 : 0,
+                'currency' => $currency,
+                'project_website' => $investment->project_website,
+                'project_repository' => $investment->project_repository,
+                'equity_percentage' => $investment->equity_percentage,
+                'project_start_date' => $investment->project_start_date,
+                'project_end_date' => $investment->project_end_date,
+                'status' => $investment->status,
+            ];
 
             // Group by stage
             if ($investment->project_stage) {
@@ -204,6 +225,7 @@ class InvestmentAnalyticsService
             'total_value' => $totalValue,
             'gain_loss' => $totalValue - $totalInvested,
             'gain_loss_percentage' => $totalInvested > 0 ? (($totalValue - $totalInvested) / $totalInvested) * 100 : 0,
+            'projects' => $projects,
             'by_stage' => $byStage,
             'by_type' => $byType,
             'by_business_model' => $byBusinessModel,

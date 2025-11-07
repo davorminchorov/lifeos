@@ -295,6 +295,96 @@
                         </p>
                     </div>
                 </div>
+
+                <!-- Individual Projects -->
+                @if(count($analytics['project_investments']['projects']) > 0)
+                    <div class="mt-6">
+                        <h3 class="text-lg font-semibold text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] mb-4">Individual Projects</h3>
+                        <div class="space-y-4">
+                            @foreach($analytics['project_investments']['projects'] as $project)
+                                <div class="bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] p-4 rounded-lg border border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)]">
+                                    <div class="flex justify-between items-start mb-3">
+                                        <div class="flex-1">
+                                            <h4 class="text-base font-semibold text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
+                                                {{ $project['name'] }}
+                                            </h4>
+                                            <div class="flex gap-2 mt-1 flex-wrap">
+                                                @if($project['project_type'])
+                                                    <span class="text-xs px-2 py-1 bg-[color:var(--color-primary-200)] dark:bg-[color:var(--color-dark-300)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] rounded">
+                                                        {{ ucfirst($project['project_type']) }}
+                                                    </span>
+                                                @endif
+                                                @if($project['project_stage'])
+                                                    <span class="text-xs px-2 py-1 bg-[color:var(--color-accent-200)] dark:bg-[color:var(--color-dark-300)] text-[color:var(--color-accent-700)] dark:text-[color:var(--color-dark-600)] rounded">
+                                                        {{ ucfirst($project['project_stage']) }}
+                                                    </span>
+                                                @endif
+                                                @if($project['project_business_model'])
+                                                    <span class="text-xs px-2 py-1 bg-[color:var(--color-secondary-200)] dark:bg-[color:var(--color-dark-300)] text-[color:var(--color-secondary-700)] dark:text-[color:var(--color-dark-600)] rounded">
+                                                        {{ ucfirst($project['project_business_model']) }}
+                                                    </span>
+                                                @endif
+                                            </div>
+                                        </div>
+                                        <div class="text-right ml-4">
+                                            <a href="{{ route('investments.show', $project['id']) }}" class="text-sm text-[color:var(--color-accent-600)] hover:text-[color:var(--color-accent-700)] dark:text-[color:var(--color-accent-400)] dark:hover:text-[color:var(--color-accent-500)]">
+                                                View Details →
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                        <div>
+                                            <p class="text-xs text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)]">Invested Amount</p>
+                                            <p class="text-sm font-semibold text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
+                                                {{ number_format($project['invested_amount'], 2) }} {{ $project['currency'] }}
+                                            </p>
+                                        </div>
+                                        <div>
+                                            <p class="text-xs text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)]">Current Value</p>
+                                            <p class="text-sm font-semibold text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
+                                                {{ number_format($project['current_value'], 2) }} {{ $project['currency'] }}
+                                            </p>
+                                        </div>
+                                        <div>
+                                            <p class="text-xs text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)]">Gain/Loss</p>
+                                            <p class="text-sm font-semibold {{ $project['gain_loss'] >= 0 ? 'text-[color:var(--color-success-600)]' : 'text-[color:var(--color-danger-600)]' }}">
+                                                {{ $project['gain_loss'] >= 0 ? '+' : '' }}{{ number_format($project['gain_loss'], 2) }} {{ $project['currency'] }}
+                                            </p>
+                                        </div>
+                                        <div>
+                                            <p class="text-xs text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)]">Return</p>
+                                            <p class="text-sm font-semibold {{ $project['gain_loss_percentage'] >= 0 ? 'text-[color:var(--color-success-600)]' : 'text-[color:var(--color-danger-600)]' }}">
+                                                {{ $project['gain_loss_percentage'] >= 0 ? '+' : '' }}{{ number_format($project['gain_loss_percentage'], 2) }}%
+                                            </p>
+                                        </div>
+                                    </div>
+                                    @if($project['equity_percentage'])
+                                        <div class="mt-3 pt-3 border-t border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)]">
+                                            <p class="text-xs text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)]">
+                                                Equity: <span class="font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">{{ number_format($project['equity_percentage'], 2) }}%</span>
+                                            </p>
+                                        </div>
+                                    @endif
+                                    @if($project['project_website'] || $project['project_repository'])
+                                        <div class="mt-3 flex gap-3">
+                                            @if($project['project_website'])
+                                                <a href="{{ $project['project_website'] }}" target="_blank" rel="noopener noreferrer" class="text-xs text-[color:var(--color-accent-600)] hover:text-[color:var(--color-accent-700)] dark:text-[color:var(--color-accent-400)] dark:hover:text-[color:var(--color-accent-500)]">
+                                                    🌐 Website
+                                                </a>
+                                            @endif
+                                            @if($project['project_repository'])
+                                                <a href="{{ $project['project_repository'] }}" target="_blank" rel="noopener noreferrer" class="text-xs text-[color:var(--color-accent-600)] hover:text-[color:var(--color-accent-700)] dark:text-[color:var(--color-accent-400)] dark:hover:text-[color:var(--color-accent-500)]">
+                                                    📦 Repository
+                                                </a>
+                                            @endif
+                                        </div>
+                                    @endif
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
+
                 @if(count($analytics['project_investments']['by_stage']) > 0)
                     <div class="mt-6">
                         <h3 class="text-sm font-semibold text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] mb-3">By Stage</h3>
