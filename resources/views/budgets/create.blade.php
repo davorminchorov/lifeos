@@ -25,13 +25,13 @@
 
             <div class="bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] shadow-sm rounded-lg">
                 <div class="px-4 py-5 sm:p-6">
-                    <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white mb-6">Budget Information</h3>
+                    <h3 class="text-lg leading-6 font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] mb-6">Budget Information</h3>
 
                     <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
                         <!-- Category -->
                         <div class="sm:col-span-2">
-                            <label for="category" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                                Category <span class="text-red-500">*</span>
+                            <label for="category" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
+                                Category <span class="text-[color:var(--color-danger-500)]">*</span>
                             </label>
                             <div class="mt-1 flex">
                                 <select name="category" id="category"
@@ -48,14 +48,14 @@
                                    class="mt-2 hidden flex-1 rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-[color:var(--color-dark-100)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]"
                                    placeholder="Enter custom category name" value="{{ old('custom_category') }}">
                             @error('category')
-                                <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                <p class="mt-2 text-sm text-[color:var(--color-danger-500)]">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <!-- Budget Period -->
                         <div>
-                            <label for="budget_period" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                                Budget Period <span class="text-red-500">*</span>
+                            <label for="budget_period" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
+                                Budget Period <span class="text-[color:var(--color-danger-500)]">*</span>
                             </label>
                             <select name="budget_period" id="budget_period"
                                     class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-[color:var(--color-dark-100)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)] @error('budget_period') border-danger-400 @enderror"
@@ -67,14 +67,14 @@
                                 <option value="custom" {{ old('budget_period') === 'custom' ? 'selected' : '' }}>Custom Period</option>
                             </select>
                             @error('budget_period')
-                                <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                <p class="mt-2 text-sm text-[color:var(--color-danger-500)]">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <!-- Amount -->
                         <div>
-                            <label for="amount" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                                Budget Amount <span class="text-red-500">*</span>
+                            <label for="amount" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
+                                Budget Amount <span class="text-[color:var(--color-danger-500)]">*</span>
                             </label>
                             <div class="mt-1 relative rounded-md shadow-sm">
                                 <input type="number" name="amount" id="amount" step="0.01" min="0.01" max="999999.99"
@@ -92,50 +92,50 @@
                                 </div>
                             </div>
                             @error('amount')
-                                <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                <p class="mt-2 text-sm text-[color:var(--color-danger-500)]">{{ $message }}</p>
                             @enderror
                             @error('currency')
-                                <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                <p class="mt-2 text-sm text-[color:var(--color-danger-500)]">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <!-- Custom Date Range (hidden by default) -->
                         <div id="custom_dates" class="sm:col-span-2 grid grid-cols-2 gap-4 {{ old('budget_period') === 'custom' ? '' : 'hidden' }}">
                             <div>
-                                <label for="start_date" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                                    Start Date <span class="text-red-500">*</span>
+                                <label for="start_date" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
+                                    Start Date <span class="text-[color:var(--color-danger-500)]">*</span>
                                 </label>
                                 <input type="date" name="start_date" id="start_date"
                                        class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-[color:var(--color-dark-100)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)] @error('start_date') border-danger-400 @enderror"
                                        value="{{ old('start_date') }}">
                                 @error('start_date')
-                                    <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                    <p class="mt-2 text-sm text-[color:var(--color-danger-500)]">{{ $message }}</p>
                                 @enderror
                             </div>
                             <div>
-                                <label for="end_date" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                                    End Date <span class="text-red-500">*</span>
+                                <label for="end_date" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
+                                    End Date <span class="text-[color:var(--color-danger-500)]">*</span>
                                 </label>
                                 <input type="date" name="end_date" id="end_date"
                                        class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-[color:var(--color-dark-100)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)] @error('end_date') border-danger-400 @enderror"
                                        value="{{ old('end_date') }}">
                                 @error('end_date')
-                                    <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                    <p class="mt-2 text-sm text-[color:var(--color-danger-500)]">{{ $message }}</p>
                                 @enderror
                             </div>
                         </div>
 
                         <!-- Alert Threshold -->
                         <div>
-                            <label for="alert_threshold" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                            <label for="alert_threshold" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                                 Alert Threshold (%)
                             </label>
                             <input type="number" name="alert_threshold" id="alert_threshold" min="1" max="100"
                                    class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-[color:var(--color-dark-100)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)] @error('alert_threshold') border-danger-400 @enderror"
                                    placeholder="80" value="{{ old('alert_threshold', 80) }}">
-                            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Get notified when spending reaches this percentage</p>
+                            <p class="mt-1 text-sm text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">Get notified when spending reaches this percentage</p>
                             @error('alert_threshold')
-                                <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                <p class="mt-2 text-sm text-[color:var(--color-danger-500)]">{{ $message }}</p>
                             @enderror
                         </div>
 
@@ -148,8 +148,8 @@
                                            {{ old('is_active', true) ? 'checked' : '' }}>
                                 </div>
                                 <div class="ml-3 text-sm">
-                                    <label for="is_active" class="font-medium text-gray-700 dark:text-gray-300">Active</label>
-                                    <p class="text-gray-500 dark:text-gray-400">Budget is currently active and being tracked</p>
+                                    <label for="is_active" class="font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Active</label>
+                                    <p class="text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">Budget is currently active and being tracked</p>
                                 </div>
                             </div>
                         </div>
@@ -163,22 +163,22 @@
                                            {{ old('rollover_unused') ? 'checked' : '' }}>
                                 </div>
                                 <div class="ml-3 text-sm">
-                                    <label for="rollover_unused" class="font-medium text-gray-700 dark:text-gray-300">Rollover Unused Amount</label>
-                                    <p class="text-gray-500 dark:text-gray-400">Add unspent budget to next period</p>
+                                    <label for="rollover_unused" class="font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Rollover Unused Amount</label>
+                                    <p class="text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">Add unspent budget to next period</p>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Notes -->
                         <div class="sm:col-span-2">
-                            <label for="notes" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                            <label for="notes" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                                 Notes
                             </label>
                             <textarea name="notes" id="notes" rows="3"
                                       class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-[color:var(--color-dark-100)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)] @error('notes') border-danger-400 @enderror"
                                       placeholder="Optional notes about this budget...">{{ old('notes') }}</textarea>
                             @error('notes')
-                                <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                <p class="mt-2 text-sm text-[color:var(--color-danger-500)]">{{ $message }}</p>
                             @enderror
                         </div>
                     </div>
