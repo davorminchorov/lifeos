@@ -5,10 +5,10 @@
 @section('header')
     <div class="flex justify-between items-center">
         <div>
-            <h1 class="text-3xl font-bold text-gray-900 dark:text-white">
+            <h1 class="text-3xl font-bold text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                 Expense Analytics
             </h1>
-            <p class="mt-2 text-gray-600 dark:text-gray-400">
+            <p class="mt-2 text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)]">
                 Insights and reports on your spending patterns
             </p>
         </div>
@@ -33,8 +33,8 @@
                     </div>
                     <div class="ml-5 w-0 flex-1">
                         <dl>
-                            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Total Expenses</dt>
-                            <dd class="text-lg font-medium text-gray-900 dark:text-white">{{ number_format($analytics['total_expenses']) }}</dd>
+                            <dt class="text-sm font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] truncate">Total Expenses</dt>
+                            <dd class="text-lg font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">{{ number_format($analytics['total_expenses']) }}</dd>
                         </dl>
                     </div>
                 </div>
@@ -53,8 +53,8 @@
                     </div>
                     <div class="ml-5 w-0 flex-1">
                         <dl>
-                            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Total Amount</dt>
-                            <dd class="text-lg font-medium text-gray-900 dark:text-white">MKD {{ number_format($analytics['total_amount'], 2) }}</dd>
+                            <dt class="text-sm font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] truncate">Total Amount</dt>
+                            <dd class="text-lg font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">MKD {{ number_format($analytics['total_amount'], 2) }}</dd>
                         </dl>
                     </div>
                 </div>
@@ -73,8 +73,8 @@
                     </div>
                     <div class="ml-5 w-0 flex-1">
                         <dl>
-                            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Average Expense</dt>
-                            <dd class="text-lg font-medium text-gray-900 dark:text-white">MKD {{ number_format($analytics['average_expense'], 2) }}</dd>
+                            <dt class="text-sm font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] truncate">Average Expense</dt>
+                            <dd class="text-lg font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">MKD {{ number_format($analytics['average_expense'], 2) }}</dd>
                         </dl>
                     </div>
                 </div>
@@ -93,8 +93,8 @@
                     </div>
                     <div class="ml-5 w-0 flex-1">
                         <dl>
-                            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Tax Deductible</dt>
-                            <dd class="text-lg font-medium text-gray-900 dark:text-white">MKD {{ number_format($analytics['tax_deductible_total'], 2) }}</dd>
+                            <dt class="text-sm font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] truncate">Tax Deductible</dt>
+                            <dd class="text-lg font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">MKD {{ number_format($analytics['tax_deductible_total'], 2) }}</dd>
                         </dl>
                     </div>
                 </div>
@@ -106,7 +106,7 @@
         <!-- Category Breakdown -->
         <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] shadow rounded-lg">
             <div class="px-4 py-5 sm:p-6">
-                <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white mb-4">Spending by Category</h3>
+                <h3 class="text-lg leading-6 font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] mb-4">Spending by Category</h3>
 
                 @if($analytics['category_breakdown']->count() > 0)
                     <div class="space-y-4">
@@ -116,20 +116,20 @@
                             @endphp
                             <div>
                                 <div class="flex justify-between items-center mb-1">
-                                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ $category->category }}</span>
-                                    <span class="text-sm text-gray-500 dark:text-gray-400">MKD {{ number_format($category->total_amount, 2) }} ({{ number_format($percentage, 1) }}%)</span>
+                                    <span class="text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">{{ $category->category }}</span>
+                                    <span class="text-sm text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">MKD {{ number_format($category->total_amount, 2) }} ({{ number_format($percentage, 1) }}%)</span>
                                 </div>
-                                <div class="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">
-                                    <div class="bg-indigo-600 h-2 rounded-full" style="width: {{ $percentage }}%"></div>
+                                <div class="w-full bg-[color:var(--color-primary-200)] dark:bg-[color:var(--color-dark-300)] rounded-full h-2">
+                                    <div class="bg-[color:var(--color-accent-500)] h-2 rounded-full" style="width: {{ $percentage }}%"></div>
                                 </div>
-                                <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                <div class="text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] mt-1">
                                     {{ $category->count }} expenses
                                 </div>
                             </div>
                         @endforeach
                     </div>
                 @else
-                    <p class="text-gray-500 dark:text-gray-400 text-center py-8">No data available</p>
+                    <p class="text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] text-center py-8">No data available</p>
                 @endif
             </div>
         </div>
@@ -137,31 +137,31 @@
         <!-- Expense Type Breakdown -->
         <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] shadow rounded-lg">
             <div class="px-4 py-5 sm:p-6">
-                <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white mb-4">Business vs Personal</h3>
+                <h3 class="text-lg leading-6 font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] mb-4">Business vs Personal</h3>
 
                 @if($analytics['type_breakdown']->count() > 0)
                     <div class="space-y-4">
                         @foreach($analytics['type_breakdown'] as $type)
                             @php
                                 $percentage = $analytics['total_amount'] > 0 ? ($type->total_amount / $analytics['total_amount']) * 100 : 0;
-                                $color = $type->expense_type === 'business' ? 'bg-blue-600' : 'bg-green-600';
+                                $color = $type->expense_type === 'business' ? 'bg-[color:var(--color-info-500)]' : 'bg-[color:var(--color-success-500)]';
                             @endphp
                             <div>
                                 <div class="flex justify-between items-center mb-1">
-                                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ ucfirst($type->expense_type) }}</span>
-                                    <span class="text-sm text-gray-500 dark:text-gray-400">MKD {{ number_format($type->total_amount, 2) }} ({{ number_format($percentage, 1) }}%)</span>
+                                    <span class="text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">{{ ucfirst($type->expense_type) }}</span>
+                                    <span class="text-sm text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">MKD {{ number_format($type->total_amount, 2) }} ({{ number_format($percentage, 1) }}%)</span>
                                 </div>
-                                <div class="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">
+                                <div class="w-full bg-[color:var(--color-primary-200)] dark:bg-[color:var(--color-dark-300)] rounded-full h-2">
                                     <div class="{{ $color }} h-2 rounded-full" style="width: {{ $percentage }}%"></div>
                                 </div>
-                                <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                <div class="text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] mt-1">
                                     {{ $type->count }} expenses
                                 </div>
                             </div>
                         @endforeach
                     </div>
                 @else
-                    <p class="text-gray-500 dark:text-gray-400 text-center py-8">No data available</p>
+                    <p class="text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] text-center py-8">No data available</p>
                 @endif
             </div>
         </div>
@@ -169,20 +169,20 @@
         <!-- Monthly Spending Trends -->
         <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] shadow rounded-lg">
             <div class="px-4 py-5 sm:p-6">
-                <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white mb-4">Monthly Spending Trends</h3>
+                <h3 class="text-lg leading-6 font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] mb-4">Monthly Spending Trends</h3>
 
                 @if($analytics['monthly_spending']->count() > 0)
                     <div class="space-y-3">
                         @foreach($analytics['monthly_spending']->take(6) as $month)
                             <div class="flex justify-between items-center">
-                                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                <span class="text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                                     {{ \Carbon\Carbon::create($month->year, $month->month)->format('M Y') }}
                                 </span>
                                 <div class="text-right">
-                                    <div class="text-sm font-semibold text-gray-900 dark:text-white">
+                                    <div class="text-sm font-semibold text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                                         ${{ number_format($month->total_amount, 2) }}
                                     </div>
-                                    <div class="text-xs text-gray-500 dark:text-gray-400">
+                                    <div class="text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">
                                         {{ $month->count }} expenses
                                     </div>
                                 </div>
@@ -190,7 +190,7 @@
                         @endforeach
                     </div>
                 @else
-                    <p class="text-gray-500 dark:text-gray-400 text-center py-8">No data available</p>
+                    <p class="text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] text-center py-8">No data available</p>
                 @endif
             </div>
         </div>
@@ -198,29 +198,29 @@
         <!-- Top Merchants -->
         <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] shadow rounded-lg">
             <div class="px-4 py-5 sm:p-6">
-                <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white mb-4">Top Merchants</h3>
+                <h3 class="text-lg leading-6 font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] mb-4">Top Merchants</h3>
 
                 @if($analytics['top_merchants']->count() > 0)
                     <div class="space-y-3">
                         @foreach($analytics['top_merchants'] as $index => $merchant)
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center">
-                                    <div class="flex-shrink-0 w-8 h-8 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center">
-                                        <span class="text-xs font-medium text-gray-600 dark:text-gray-300">{{ $index + 1 }}</span>
+                                    <div class="flex-shrink-0 w-8 h-8 bg-[color:var(--color-primary-200)] dark:bg-[color:var(--color-dark-300)] rounded-full flex items-center justify-center">
+                                        <span class="text-xs font-medium text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-600)]">{{ $index + 1 }}</span>
                                     </div>
                                     <div class="ml-3">
-                                        <p class="text-sm font-medium text-gray-900 dark:text-white">{{ $merchant->merchant }}</p>
-                                        <p class="text-xs text-gray-500 dark:text-gray-400">{{ $merchant->count }} transactions</p>
+                                        <p class="text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">{{ $merchant->merchant }}</p>
+                                        <p class="text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">{{ $merchant->count }} transactions</p>
                                     </div>
                                 </div>
-                                <div class="text-sm font-semibold text-gray-900 dark:text-white">
+                                <div class="text-sm font-semibold text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                                     ${{ number_format($merchant->total_amount, 2) }}
                                 </div>
                             </div>
                         @endforeach
                     </div>
                 @else
-                    <p class="text-gray-500 dark:text-gray-400 text-center py-8">No merchant data available</p>
+                    <p class="text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] text-center py-8">No merchant data available</p>
                 @endif
             </div>
         </div>
@@ -229,23 +229,23 @@
     <!-- Filter Form -->
     <div class="mt-8 bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] shadow rounded-lg">
         <div class="px-4 py-5 sm:p-6">
-            <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white mb-4">Filter Analytics</h3>
+            <h3 class="text-lg leading-6 font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] mb-4">Filter Analytics</h3>
 
             <form method="GET" action="{{ route('expenses.analytics') }}" class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                    <label for="start_date" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Start Date</label>
+                    <label for="start_date" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Start Date</label>
                     <input type="date" name="start_date" id="start_date" value="{{ request('start_date') }}"
-                           class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                           class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-[color:var(--color-dark-100)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">
                 </div>
 
                 <div>
-                    <label for="end_date" class="block text-sm font-medium text-gray-700 dark:text-gray-300">End Date</label>
+                    <label for="end_date" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">End Date</label>
                     <input type="date" name="end_date" id="end_date" value="{{ request('end_date') }}"
-                           class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                           class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-[color:var(--color-dark-100)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">
                 </div>
 
                 <div class="flex items-end">
-                    <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium">
+                    <button type="submit" class="w-full bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] text-white px-4 py-2 rounded-md text-sm font-medium">
                         Update Analytics
                     </button>
                 </div>
