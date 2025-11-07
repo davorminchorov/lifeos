@@ -174,7 +174,7 @@
                 Key dates for this subscription.
             </p>
         </div>
-        <div class="border-t border-gray-200 dark:border-gray-700">
+        <div class="border-t border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)]">
             <dl class="grid grid-cols-1 md:grid-cols-3 gap-0">
                 <div class="bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] px-4 py-5">
                     <dt class="text-sm font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">Start Date</dt>
@@ -213,7 +213,7 @@
                     Additional details for managing this subscription.
                 </p>
             </div>
-            <div class="border-t border-gray-200 dark:border-gray-700">
+            <div class="border-t border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)]">
                 <dl>
                     @if($subscription->cancellation_difficulty)
                         <div class="bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
@@ -278,7 +278,7 @@
                     Track how the subscription price has changed over time.
                 </p>
             </div>
-            <div class="border-t border-gray-200 dark:border-gray-700">
+            <div class="border-t border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)]">
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-[color:var(--color-primary-300)] dark:divide-[color:var(--color-dark-300)]">
                         <thead class="bg-[color:var(--color-primary-200)] dark:bg-[color:var(--color-dark-300)]">
@@ -338,7 +338,7 @@
                 Manage your subscription status.
             </p>
         </div>
-        <div class="border-t border-gray-200 dark:border-gray-700 px-4 py-5 sm:px-6">
+        <div class="border-t border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)] px-4 py-5 sm:px-6">
             <div class="flex flex-wrap gap-3">
                 <a href="{{ route('subscriptions.edit', $subscription) }}" class="bg-[color:var(--color-warning-500)] hover:bg-[color:var(--color-warning-600)] text-white px-4 py-2 rounded-md text-sm font-medium">
                     Edit Subscription

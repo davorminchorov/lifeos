@@ -32,7 +32,7 @@
                     Current and projected subscription costs
                 </p>
             </div>
-            <div class="border-t border-gray-200 dark:border-gray-700">
+            <div class="border-t border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)]">
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 p-6">
                     <div class="text-center">
                         <div class="text-3xl font-bold text-green-600 dark:text-green-400">
@@ -64,7 +64,7 @@
                     How your subscriptions are distributed by billing frequency
                 </p>
             </div>
-            <div class="border-t border-gray-200 dark:border-gray-700">
+            <div class="border-t border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)]">
                 @if($analytics['monthly_breakdown']->count() > 0)
                     <div class="overflow-x-auto">
                         <table class="min-w-full divide-y divide-[color:var(--color-primary-300)] dark:divide-[color:var(--color-dark-300)]">
@@ -130,7 +130,7 @@
                     Your most expensive subscriptions by monthly cost
                 </p>
             </div>
-            <div class="border-t border-gray-200 dark:border-gray-700">
+            <div class="border-t border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)]">
                 @if($analytics['top_expenses']->count() > 0)
                     <ul class="divide-y divide-gray-200 dark:divide-gray-700">
                         @foreach($analytics['top_expenses'] as $subscription)
