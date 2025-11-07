@@ -12,15 +12,21 @@ use App\Models\InvestmentDividend;
 use App\Models\InvestmentGoal;
 use App\Models\InvestmentTransaction;
 use App\Services\CurrencyService;
+use App\Services\InvestmentAnalyticsService;
 use Illuminate\Http\Request;
 
 class InvestmentController extends Controller
 {
     protected CurrencyService $currencyService;
 
-    public function __construct(CurrencyService $currencyService)
-    {
+    protected InvestmentAnalyticsService $analyticsService;
+
+    public function __construct(
+        CurrencyService $currencyService,
+        InvestmentAnalyticsService $analyticsService
+    ) {
         $this->currencyService = $currencyService;
+        $this->analyticsService = $analyticsService;
     }
 
     /**
@@ -775,6 +781,24 @@ class InvestmentController extends Controller
         }
 
         return view('investments.rebalancing.recommendations', compact('recommendations'));
+    }
+
+    /**
+     * Display comprehensive investment analytics dashboard
+     */
+    public function analyticsDashboard()
+    {
+        $userId = auth()->id();
+        $analytics = $this->analyticsService->getComprehensiveAnalytics($userId);
+
+        // Get all investments for detailed listings
+        $investments = Investment::where('user_id', $userId)
+            ->where('status', 'active')
+            ->with(['dividends', 'transactions'])
+            ->orderBy('current_market_value', 'desc')
+            ->get();
+
+        return view('investments.analytics', compact('analytics', 'investments'));
     }
 
     /**

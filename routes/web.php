@@ -65,6 +65,10 @@ Route::middleware('auth')->group(function () {
     Route::patch('warranties/{warranty}/update-claim', [WarrantyController::class, 'updateClaim'])->name('warranties.update-claim');
     Route::post('warranties/{warranty}/transfer', [WarrantyController::class, 'transfer'])->name('warranties.transfer');
     Route::post('warranties/{warranty}/add-maintenance-reminder', [WarrantyController::class, 'addMaintenanceReminder'])->name('warranties.add-maintenance-reminder');
+
+    // Investment Analytics routes must come before resource routes to prevent conflicts
+    Route::get('investments/analytics', [InvestmentController::class, 'analyticsDashboard'])->name('investments.analytics');
+
     Route::resource('investments', InvestmentController::class);
     Route::post('investments/import', [InvestmentController::class, 'importCsv'])->name('investments.import');
     Route::post('investments/{investment}/record-transaction', [InvestmentController::class, 'recordTransaction'])->name('investments.record-transaction');
