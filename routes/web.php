@@ -8,6 +8,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\FileUploadController;
 use App\Http\Controllers\InvestmentController;
+use App\Http\Controllers\IouController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SettingsController;
@@ -96,6 +97,12 @@ Route::middleware('auth')->group(function () {
     Route::get('budgets/analytics', [BudgetController::class, 'analytics'])->name('budgets.analytics');
 
     Route::resource('budgets', BudgetController::class);
+
+    // IOU Routes
+    Route::resource('ious', IouController::class);
+    Route::post('ious/{iou}/record-payment', [IouController::class, 'recordPayment'])->name('ious.record-payment');
+    Route::patch('ious/{iou}/mark-paid', [IouController::class, 'markPaid'])->name('ious.mark-paid');
+    Route::patch('ious/{iou}/cancel', [IouController::class, 'cancel'])->name('ious.cancel');
 
     // Utility Bills Analytics routes must come before resource routes to prevent conflicts
     Route::get('utility-bills/analytics/summary', [UtilityBillController::class, 'analyticsSummary'])->name('utility-bills.analytics-summary');
