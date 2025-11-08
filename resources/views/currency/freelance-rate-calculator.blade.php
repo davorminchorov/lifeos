@@ -41,10 +41,29 @@
             </div>
 
             <form id="rate-calculator-form" class="space-y-4">
+                <!-- Currency Selection -->
+                <div>
+                    <label for="currency" class="block text-sm font-medium text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] mb-1">
+                        Currency
+                    </label>
+                    <select id="currency" class="w-full px-4 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-lg bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] focus:ring-2 focus:ring-[color:var(--color-accent-500)] focus:border-transparent" onchange="calculateRates()">
+                        <option value="MKD" data-symbol="MKD">MKD - Macedonian Denar</option>
+                        <option value="USD" data-symbol="$" selected>USD - US Dollar</option>
+                        <option value="EUR" data-symbol="€">EUR - Euro</option>
+                        <option value="GBP" data-symbol="£">GBP - British Pound</option>
+                        <option value="CAD" data-symbol="C$">CAD - Canadian Dollar</option>
+                        <option value="AUD" data-symbol="A$">AUD - Australian Dollar</option>
+                        <option value="JPY" data-symbol="¥">JPY - Japanese Yen</option>
+                        <option value="CHF" data-symbol="CHF">CHF - Swiss Franc</option>
+                        <option value="RSD" data-symbol="RSD">RSD - Serbian Dinar</option>
+                        <option value="BGN" data-symbol="лв">BGN - Bulgarian Lev</option>
+                    </select>
+                </div>
+
                 <!-- Desired Annual Income -->
                 <div>
                     <label for="annual-income" class="block text-sm font-medium text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] mb-1">
-                        Desired Annual Income ($)
+                        Desired Annual Income
                     </label>
                     <input type="number" id="annual-income" value="60000" min="0" step="1000" class="w-full px-4 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-lg bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] focus:ring-2 focus:ring-[color:var(--color-accent-500)] focus:border-transparent" oninput="calculateRates()">
                 </div>
@@ -152,6 +171,36 @@
                 </div>
             </div>
 
+            <!-- MKD Conversion Card -->
+            <div id="mkd-conversion-card" class="bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] border border-[color:var(--color-success-200)] dark:border-[color:var(--color-success-500)] shadow-sm rounded-lg p-6" style="display: none;">
+                <div class="flex items-center justify-between">
+                    <div class="flex-1">
+                        <h3 class="text-sm font-medium text-[color:var(--color-success-700)] dark:text-[color:var(--color-success-400)] mb-1">MKD Conversion</h3>
+                        <div class="text-xl font-bold text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]" id="mkd-hourly-rate">MKD 0.00</div>
+                        <p class="text-xs text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] mt-1">Hourly rate in Macedonian Denar</p>
+                        <div class="mt-3 space-y-1 text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)]">
+                            <div class="flex justify-between">
+                                <span class="text-xs">Weekly:</span>
+                                <span class="font-medium" id="mkd-weekly-income">MKD 0.00</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-xs">Monthly:</span>
+                                <span class="font-medium" id="mkd-monthly-income">MKD 0.00</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-xs">Yearly:</span>
+                                <span class="font-medium" id="mkd-yearly-income">MKD 0.00</span>
+                            </div>
+                        </div>
+                        <p class="text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)] mt-2 italic" id="mkd-rate-info">Exchange rate: 1 USD = 0.00 MKD</p>
+                    </div>
+                    <svg class="w-12 h-12 text-[color:var(--color-success-500)] opacity-20 flex-shrink-0 ml-3" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z"/>
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clip-rule="evenodd"/>
+                    </svg>
+                </div>
+            </div>
+
             <!-- Rate Breakdown -->
             <div class="bg-[color:var(--color-info-50)] dark:bg-[color:var(--color-info-900)] border border-[color:var(--color-info-200)] dark:border-[color:var(--color-info-800)] rounded-lg p-6">
                 <h3 class="text-sm font-medium text-[color:var(--color-info-800)] dark:text-[color:var(--color-info-200)] mb-3">Rate Breakdown</h3>
@@ -208,6 +257,20 @@
 <script>
     let currentWorkType = 'full-time';
 
+    // Hardcoded exchange rates to MKD (approximate values)
+    const exchangeRatesToMKD = {
+        'USD': 56.50,
+        'EUR': 61.50,
+        'GBP': 72.00,
+        'CAD': 41.50,
+        'AUD': 37.00,
+        'JPY': 0.38,
+        'CHF': 64.00,
+        'RSD': 0.52,
+        'BGN': 31.50,
+        'MKD': 1.00
+    };
+
     function setWorkType(type) {
         currentWorkType = type;
 
@@ -240,6 +303,39 @@
         calculateRates();
     }
 
+    function getCurrencySymbol() {
+        const currencySelect = document.getElementById('currency');
+        const selectedOption = currencySelect.options[currencySelect.selectedIndex];
+        return selectedOption.getAttribute('data-symbol');
+    }
+
+    function getCurrencyCode() {
+        return document.getElementById('currency').value;
+    }
+
+    function formatCurrency(amount, symbol, decimals = 2) {
+        return symbol + ' ' + amount.toFixed(decimals);
+    }
+
+    function getExchangeRate(fromCurrency, toCurrency) {
+        // Return 1 if same currency
+        if (fromCurrency === toCurrency) {
+            return 1.0;
+        }
+
+        // Return hardcoded exchange rate to MKD
+        if (toCurrency === 'MKD' && exchangeRatesToMKD[fromCurrency]) {
+            return exchangeRatesToMKD[fromCurrency];
+        }
+
+        // If converting from MKD to another currency
+        if (fromCurrency === 'MKD' && exchangeRatesToMKD[toCurrency]) {
+            return 1.0 / exchangeRatesToMKD[toCurrency];
+        }
+
+        return null;
+    }
+
     function calculateRates() {
         // Get input values
         const annualIncome = parseFloat(document.getElementById('annual-income').value) || 0;
@@ -249,11 +345,15 @@
         const profitMargin = parseFloat(document.getElementById('profit-margin').value) || 0;
         const taxRate = parseFloat(document.getElementById('tax-rate').value) || 0;
 
+        // Get currency info
+        const currencySymbol = getCurrencySymbol();
+        const currencyCode = getCurrencyCode();
+
         // Calculate total billable hours per year
         const totalHoursPerYear = hoursPerWeek * weeksPerYear;
 
         if (totalHoursPerYear === 0) {
-            resetDisplay();
+            resetDisplay(currencySymbol);
             return;
         }
 
@@ -278,33 +378,66 @@
         const monthlyIncome = (finalHourlyRate * hoursPerWeek * weeksPerYear) / 12;
         const yearlyIncome = finalHourlyRate * totalHoursPerYear;
 
-        // Update display
-        document.getElementById('hourly-rate').textContent = '$' + finalHourlyRate.toFixed(2);
-        document.getElementById('weekly-income').textContent = '$' + weeklyIncome.toFixed(2);
-        document.getElementById('monthly-income').textContent = '$' + monthlyIncome.toFixed(2);
-        document.getElementById('yearly-income').textContent = '$' + yearlyIncome.toFixed(2);
+        // Update display with selected currency
+        document.getElementById('hourly-rate').textContent = formatCurrency(finalHourlyRate, currencySymbol);
+        document.getElementById('weekly-income').textContent = formatCurrency(weeklyIncome, currencySymbol);
+        document.getElementById('monthly-income').textContent = formatCurrency(monthlyIncome, currencySymbol);
+        document.getElementById('yearly-income').textContent = formatCurrency(yearlyIncome, currencySymbol);
 
         // Update breakdown
-        document.getElementById('base-rate').textContent = '$' + baseHourlyRate.toFixed(2);
+        document.getElementById('base-rate').textContent = formatCurrency(baseHourlyRate, currencySymbol);
         document.getElementById('expenses-display').textContent = expensesPercentage.toFixed(0);
-        document.getElementById('expenses-amount').textContent = '$' + expensesPerHour.toFixed(2);
+        document.getElementById('expenses-amount').textContent = formatCurrency(expensesPerHour, currencySymbol);
         document.getElementById('profit-display').textContent = profitMargin.toFixed(0);
-        document.getElementById('profit-amount').textContent = '$' + profitPerHour.toFixed(2);
+        document.getElementById('profit-amount').textContent = formatCurrency(profitPerHour, currencySymbol);
         document.getElementById('tax-display').textContent = taxRate.toFixed(0);
-        document.getElementById('tax-amount').textContent = '$' + taxPerHour.toFixed(2);
-        document.getElementById('total-rate').textContent = '$' + finalHourlyRate.toFixed(2);
+        document.getElementById('tax-amount').textContent = formatCurrency(taxPerHour, currencySymbol);
+        document.getElementById('total-rate').textContent = formatCurrency(finalHourlyRate, currencySymbol);
+
+        // Handle MKD conversion
+        const mkdCard = document.getElementById('mkd-conversion-card');
+        if (currencyCode !== 'MKD') {
+            // Get exchange rate to MKD
+            const rate = getExchangeRate(currencyCode, 'MKD');
+
+            if (rate) {
+                // Convert all amounts to MKD
+                const mkdHourlyRate = finalHourlyRate * rate;
+                const mkdWeeklyIncome = weeklyIncome * rate;
+                const mkdMonthlyIncome = monthlyIncome * rate;
+                const mkdYearlyIncome = yearlyIncome * rate;
+
+                // Update MKD display
+                document.getElementById('mkd-hourly-rate').textContent = formatCurrency(mkdHourlyRate, 'MKD');
+                document.getElementById('mkd-weekly-income').textContent = formatCurrency(mkdWeeklyIncome, 'MKD');
+                document.getElementById('mkd-monthly-income').textContent = formatCurrency(mkdMonthlyIncome, 'MKD');
+                document.getElementById('mkd-yearly-income').textContent = formatCurrency(mkdYearlyIncome, 'MKD');
+                document.getElementById('mkd-rate-info').textContent = `Exchange rate: 1 ${currencyCode} = ${rate.toFixed(2)} MKD`;
+
+                // Show MKD card
+                mkdCard.style.display = 'block';
+            } else {
+                mkdCard.style.display = 'none';
+            }
+        } else {
+            // Hide MKD card when MKD is selected
+            mkdCard.style.display = 'none';
+        }
     }
 
-    function resetDisplay() {
-        document.getElementById('hourly-rate').textContent = '$0.00';
-        document.getElementById('weekly-income').textContent = '$0.00';
-        document.getElementById('monthly-income').textContent = '$0.00';
-        document.getElementById('yearly-income').textContent = '$0.00';
-        document.getElementById('base-rate').textContent = '$0.00';
-        document.getElementById('expenses-amount').textContent = '$0.00';
-        document.getElementById('profit-amount').textContent = '$0.00';
-        document.getElementById('tax-amount').textContent = '$0.00';
-        document.getElementById('total-rate').textContent = '$0.00';
+    function resetDisplay(symbol = '$') {
+        document.getElementById('hourly-rate').textContent = symbol + ' 0.00';
+        document.getElementById('weekly-income').textContent = symbol + ' 0.00';
+        document.getElementById('monthly-income').textContent = symbol + ' 0.00';
+        document.getElementById('yearly-income').textContent = symbol + ' 0.00';
+        document.getElementById('base-rate').textContent = symbol + ' 0.00';
+        document.getElementById('expenses-amount').textContent = symbol + ' 0.00';
+        document.getElementById('profit-amount').textContent = symbol + ' 0.00';
+        document.getElementById('tax-amount').textContent = symbol + ' 0.00';
+        document.getElementById('total-rate').textContent = symbol + ' 0.00';
+
+        // Hide MKD card
+        document.getElementById('mkd-conversion-card').style.display = 'none';
     }
 
     // Calculate on page load

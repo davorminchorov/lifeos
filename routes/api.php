@@ -1,11 +1,7 @@
 <?php
 
-use App\Http\Controllers\Api\DashboardController;
+use App\Http\Controllers\Api\CurrencyController;
 use Illuminate\Support\Facades\Route;
 
-// API Routes that require authentication
-Route::middleware(['auth:sanctum'])->group(function () {
-    // Dashboard API endpoints
-    Route::get('/dashboard/chart-data', [DashboardController::class, 'chartData'])->name('api.dashboard.chart-data');
-
-});
+// Public API Routes
+Route::get('/currency/exchange-rate', [CurrencyController::class, 'getExchangeRate'])->name('api.currency.exchange-rate');

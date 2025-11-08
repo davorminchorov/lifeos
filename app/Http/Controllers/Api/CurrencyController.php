@@ -16,9 +16,9 @@ class CurrencyController extends Controller
     ) {}
 
     /**
-     * Refresh exchange rate for a currency pair.
+     * Get exchange rate for a currency pair.
      */
-    public function refreshRate(Request $request): JsonResponse
+    public function getExchangeRate(Request $request): JsonResponse
     {
         try {
             $validated = $request->validate([
@@ -44,27 +44,21 @@ class CurrencyController extends Controller
                 ], 400);
             }
 
-            // Refresh the exchange rate
-            $newRate = $this->currencyService->refreshExchangeRate($fromCurrency, $toCurrency);
+            $rate = $this->currencyService->getExchangeRate($fromCurrency, $toCurrency);
 
-            if ($newRate === null) {
+            if ($rate === null) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Failed to fetch fresh exchange rate. Please try again later.',
+                    'message' => 'Failed to fetch exchange rate. Please try again later.',
                 ], 500);
             }
 
-            // Get updated freshness information
-            $rateInfo = $this->currencyService->getExchangeRateWithFreshness($fromCurrency, $toCurrency);
-
             return response()->json([
                 'success' => true,
-                'message' => 'Exchange rate refreshed successfully.',
                 'data' => [
-                    'rate' => $newRate,
-                    'freshness' => $rateInfo['freshness'],
-                    'last_updated' => $rateInfo['last_updated'],
-                    'age_seconds' => $rateInfo['age_seconds'],
+                    'rate' => $rate,
+                    'from_currency' => $fromCurrency,
+                    'to_currency' => $toCurrency,
                 ],
             ]);
 
@@ -75,72 +69,14 @@ class CurrencyController extends Controller
                 'errors' => $e->errors(),
             ], 422);
         } catch (\Exception $e) {
-            Log::error('Currency refresh failed', [
+            Log::error('Get exchange rate failed', [
                 'error' => $e->getMessage(),
                 'request' => $request->all(),
             ]);
 
             return response()->json([
                 'success' => false,
-                'message' => 'An error occurred while refreshing the exchange rate.',
-            ], 500);
-        }
-    }
-
-    /**
-     * Get freshness information for a currency pair.
-     */
-    public function getFreshnessInfo(Request $request): JsonResponse
-    {
-        try {
-            $validated = $request->validate([
-                'from_currency' => 'required|string|size:3',
-                'to_currency' => 'required|string|size:3',
-            ]);
-
-            $fromCurrency = strtoupper($validated['from_currency']);
-            $toCurrency = strtoupper($validated['to_currency']);
-
-            // Check if currencies are supported
-            if (! $this->currencyService->isSupported($fromCurrency) || ! $this->currencyService->isSupported($toCurrency)) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'One or both currencies are not supported.',
-                ], 400);
-            }
-
-            $rateInfo = $this->currencyService->getExchangeRateWithFreshness($fromCurrency, $toCurrency);
-            $formattedAge = $this->currencyService->getFormattedAge($rateInfo['age_seconds']);
-
-            return response()->json([
-                'success' => true,
-                'data' => [
-                    'rate' => $rateInfo['rate'],
-                    'freshness' => $rateInfo['freshness'],
-                    'freshness_label' => $this->currencyService->getFreshnessLabel($rateInfo['freshness']),
-                    'last_updated' => $rateInfo['last_updated'],
-                    'age_seconds' => $rateInfo['age_seconds'],
-                    'formatted_age' => $formattedAge,
-                    'is_fresh' => $this->currencyService->isRateFresh($fromCurrency, $toCurrency),
-                    'is_stale' => $this->currencyService->isRateStale($fromCurrency, $toCurrency),
-                ],
-            ]);
-
-        } catch (ValidationException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Invalid request data.',
-                'errors' => $e->errors(),
-            ], 422);
-        } catch (\Exception $e) {
-            Log::error('Currency freshness info failed', [
-                'error' => $e->getMessage(),
-                'request' => $request->all(),
-            ]);
-
-            return response()->json([
-                'success' => false,
-                'message' => 'An error occurred while retrieving freshness information.',
+                'message' => 'An error occurred while retrieving the exchange rate.',
             ], 500);
         }
     }
