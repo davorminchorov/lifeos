@@ -13,21 +13,22 @@ class JobApplicationOfferController extends Controller
     /**
      * Show the form for creating a new offer.
      */
-    public function create(JobApplication $application)
+    public function create(JobApplication $job_application)
     {
         // Ensure user owns the application
-        if ($application->user_id !== auth()->id()) {
+        if ($job_application->user_id !== auth()->id()) {
             abort(403);
         }
 
         // Check if offer already exists
-        if ($application->offer) {
-            return redirect()->route('job-applications.offers.edit', [$application, $application->offer])
+        if ($job_application->offer) {
+            return redirect()->route('job-applications.offers.edit', [$job_application, $job_application->offer])
                 ->with('info', 'An offer already exists for this application. You can edit it below.');
         }
 
         $statuses = OfferStatus::cases();
         $currencies = ['MKD', 'USD', 'EUR', 'GBP', 'CAD', 'AUD', 'JPY', 'CHF', 'RSD', 'BGN'];
+        $application = $job_application;
 
         return view('job-applications.offers.create', compact('application', 'statuses', 'currencies'));
     }
@@ -35,37 +36,39 @@ class JobApplicationOfferController extends Controller
     /**
      * Store a newly created offer.
      */
-    public function store(StoreOfferRequest $request, JobApplication $application)
+    public function store(StoreOfferRequest $request, JobApplication $job_application)
     {
         // Ensure user owns the application
-        if ($application->user_id !== auth()->id()) {
+        if ($job_application->user_id !== auth()->id()) {
             abort(403);
         }
 
         // Check if offer already exists
-        if ($application->offer) {
-            return redirect()->route('job-applications.show', $application)
+        if ($job_application->offer) {
+            return redirect()->route('job-applications.show', $job_application)
                 ->with('error', 'An offer already exists for this application.');
         }
 
-        $offer = $application->offer()->create([
+        $offer = $job_application->offer()->create([
             'user_id' => auth()->id(),
             ...$request->validated(),
         ]);
 
-        return redirect()->route('job-applications.show', $application)
+        return redirect()->route('job-applications.show', $job_application)
             ->with('success', 'Job offer recorded successfully!');
     }
 
     /**
      * Display the specified offer.
      */
-    public function show(JobApplication $application, JobApplicationOffer $offer)
+    public function show(JobApplication $job_application, JobApplicationOffer $offer)
     {
         // Ensure user owns the offer
-        if ($offer->user_id !== auth()->id() || $offer->job_application_id !== $application->id) {
+        if ($offer->user_id !== auth()->id() || $offer->job_application_id !== $job_application->id) {
             abort(403);
         }
+
+        $application = $job_application;
 
         return view('job-applications.offers.show', compact('application', 'offer'));
     }
@@ -73,15 +76,16 @@ class JobApplicationOfferController extends Controller
     /**
      * Show the form for editing the offer.
      */
-    public function edit(JobApplication $application, JobApplicationOffer $offer)
+    public function edit(JobApplication $job_application, JobApplicationOffer $offer)
     {
         // Ensure user owns the offer
-        if ($offer->user_id !== auth()->id() || $offer->job_application_id !== $application->id) {
+        if ($offer->user_id !== auth()->id() || $offer->job_application_id !== $job_application->id) {
             abort(403);
         }
 
         $statuses = OfferStatus::cases();
         $currencies = ['MKD', 'USD', 'EUR', 'GBP', 'CAD', 'AUD', 'JPY', 'CHF', 'RSD', 'BGN'];
+        $application = $job_application;
 
         return view('job-applications.offers.edit', compact('application', 'offer', 'statuses', 'currencies'));
     }
@@ -89,47 +93,47 @@ class JobApplicationOfferController extends Controller
     /**
      * Update the specified offer.
      */
-    public function update(Request $request, JobApplication $application, JobApplicationOffer $offer)
+    public function update(Request $request, JobApplication $job_application, JobApplicationOffer $offer)
     {
         // Ensure user owns the offer
-        if ($offer->user_id !== auth()->id() || $offer->job_application_id !== $application->id) {
+        if ($offer->user_id !== auth()->id() || $offer->job_application_id !== $job_application->id) {
             abort(403);
         }
 
         $offer->update($request->all());
 
-        return redirect()->route('job-applications.show', $application)
+        return redirect()->route('job-applications.show', $job_application)
             ->with('success', 'Job offer updated successfully!');
     }
 
     /**
      * Remove the specified offer.
      */
-    public function destroy(JobApplication $application, JobApplicationOffer $offer)
+    public function destroy(JobApplication $job_application, JobApplicationOffer $offer)
     {
         // Ensure user owns the offer
-        if ($offer->user_id !== auth()->id() || $offer->job_application_id !== $application->id) {
+        if ($offer->user_id !== auth()->id() || $offer->job_application_id !== $job_application->id) {
             abort(403);
         }
 
         $offer->delete();
 
-        return redirect()->route('job-applications.show', $application)
+        return redirect()->route('job-applications.show', $job_application)
             ->with('success', 'Job offer deleted successfully!');
     }
 
     /**
      * Accept the offer.
      */
-    public function accept(JobApplication $application, JobApplicationOffer $offer)
+    public function accept(JobApplication $job_application, JobApplicationOffer $offer)
     {
         // Ensure user owns the offer
-        if ($offer->user_id !== auth()->id() || $offer->job_application_id !== $application->id) {
+        if ($offer->user_id !== auth()->id() || $offer->job_application_id !== $job_application->id) {
             abort(403);
         }
 
         $offer->update(['status' => OfferStatus::ACCEPTED]);
-        $application->update(['status' => \App\Enums\ApplicationStatus::ACCEPTED]);
+        $job_application->update(['status' => \App\Enums\ApplicationStatus::ACCEPTED]);
 
         return back()->with('success', 'Offer accepted! Congratulations! 🎉');
     }
@@ -137,10 +141,10 @@ class JobApplicationOfferController extends Controller
     /**
      * Decline the offer.
      */
-    public function decline(JobApplication $application, JobApplicationOffer $offer)
+    public function decline(JobApplication $job_application, JobApplicationOffer $offer)
     {
         // Ensure user owns the offer
-        if ($offer->user_id !== auth()->id() || $offer->job_application_id !== $application->id) {
+        if ($offer->user_id !== auth()->id() || $offer->job_application_id !== $job_application->id) {
             abort(403);
         }
 

@@ -77,7 +77,7 @@ class JobApplicationFactory extends Factory
                 'cover_letter.pdf',
                 'portfolio.pdf',
             ], $this->faker->numberBetween(1, 2)),
-            'archived_at' => $this->faker->optional(0.1)->dateTime(),
+            'archived_at' => null,
         ];
     }
 

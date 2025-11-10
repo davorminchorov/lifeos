@@ -39,6 +39,8 @@ class JobApplicationOfferFactory extends Factory
 
         $currency = $this->faker->randomElement($currencies);
         $baseSalary = $this->faker->numberBetween(80000, 180000);
+        $selectedBenefits = $this->faker->randomElements($benefits, $this->faker->numberBetween(3, 6));
+        $benefitsString = $selectedBenefits ? '• '.implode("\n• ", $selectedBenefits) : null;
 
         return [
             'user_id' => \App\Models\User::factory(),
@@ -47,7 +49,7 @@ class JobApplicationOfferFactory extends Factory
             'bonus' => $this->faker->optional()->numberBetween(5000, 30000),
             'equity' => $this->faker->optional()->randomElement($equityOptions),
             'currency' => $currency,
-            'benefits' => $this->faker->optional()->randomElements($benefits, $this->faker->numberBetween(3, 6)),
+            'benefits' => $this->faker->optional()->passthrough($benefitsString),
             'start_date' => $this->faker->optional()->dateTimeBetween('now', '+60 days'),
             'decision_deadline' => $this->faker->optional()->dateTimeBetween('now', '+30 days'),
             'status' => $this->faker->randomElement(OfferStatus::cases()),

@@ -39,7 +39,7 @@ class UpdateJobApplicationRequest extends FormRequest
             // Salary information
             'salary_min' => ['nullable', 'numeric', 'min:0', 'max:99999999.99', 'lte:salary_max'],
             'salary_max' => ['nullable', 'numeric', 'min:0', 'max:99999999.99', 'gte:salary_min'],
-            'currency' => ['required', 'string', 'size:3', 'in:MKD,USD,EUR,GBP,CAD,AUD,JPY,CHF,RSD,BGN'],
+            'currency' => ['nullable', 'string', 'size:3', 'in:MKD,USD,EUR,GBP,CAD,AUD,JPY,CHF,RSD,BGN'],
 
             // Application details
             'status' => ['required', Rule::enum(ApplicationStatus::class)],

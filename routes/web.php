@@ -131,13 +131,13 @@ Route::middleware('auth')->group(function () {
     Route::patch('job-applications/{application}/unarchive', [JobApplicationController::class, 'unarchive'])->name('job-applications.unarchive');
 
     // Nested Interview Routes
-    Route::resource('job-applications.interviews', JobApplicationInterviewController::class)->except(['index', 'show']);
-    Route::patch('job-applications/{application}/interviews/{interview}/complete', [JobApplicationInterviewController::class, 'complete'])->name('job-applications.interviews.complete');
+    Route::resource('job-applications.interviews', JobApplicationInterviewController::class);
+    Route::patch('job-applications/{job_application}/interviews/{interview}/complete', [JobApplicationInterviewController::class, 'complete'])->name('job-applications.interviews.complete');
 
     // Nested Offer Routes
-    Route::resource('job-applications.offers', JobApplicationOfferController::class)->except(['index', 'show'])->parameters(['offers' => 'offer']);
-    Route::patch('job-applications/{application}/offers/{offer}/accept', [JobApplicationOfferController::class, 'accept'])->name('job-applications.offers.accept');
-    Route::patch('job-applications/{application}/offers/{offer}/decline', [JobApplicationOfferController::class, 'decline'])->name('job-applications.offers.decline');
+    Route::resource('job-applications.offers', JobApplicationOfferController::class)->parameters(['offers' => 'offer']);
+    Route::patch('job-applications/{job_application}/offers/{offer}/accept', [JobApplicationOfferController::class, 'accept'])->name('job-applications.offers.accept');
+    Route::patch('job-applications/{job_application}/offers/{offer}/decline', [JobApplicationOfferController::class, 'decline'])->name('job-applications.offers.decline');
 
     // Notification Routes
     Route::prefix('notifications')->name('notifications.')->group(function () {

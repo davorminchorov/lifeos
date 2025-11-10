@@ -14,16 +14,18 @@ class JobApplicationInterviewController extends Controller
     /**
      * Display a listing of the interviews for an application.
      */
-    public function index(JobApplication $application)
+    public function index(JobApplication $job_application)
     {
         // Ensure user owns the application
-        if ($application->user_id !== auth()->id()) {
+        if ($job_application->user_id !== auth()->id()) {
             abort(403);
         }
 
-        $interviews = $application->interviews()
+        $interviews = $job_application->interviews()
             ->orderBy('scheduled_at', 'desc')
             ->get();
+
+        $application = $job_application;
 
         return view('job-applications.interviews.index', compact('application', 'interviews'));
     }
@@ -31,15 +33,16 @@ class JobApplicationInterviewController extends Controller
     /**
      * Show the form for creating a new interview.
      */
-    public function create(JobApplication $application)
+    public function create(JobApplication $job_application)
     {
         // Ensure user owns the application
-        if ($application->user_id !== auth()->id()) {
+        if ($job_application->user_id !== auth()->id()) {
             abort(403);
         }
 
         $types = InterviewType::cases();
         $outcomes = InterviewOutcome::cases();
+        $application = $job_application;
 
         return view('job-applications.interviews.create', compact('application', 'types', 'outcomes'));
     }
@@ -47,31 +50,33 @@ class JobApplicationInterviewController extends Controller
     /**
      * Store a newly created interview.
      */
-    public function store(StoreInterviewRequest $request, JobApplication $application)
+    public function store(StoreInterviewRequest $request, JobApplication $job_application)
     {
         // Ensure user owns the application
-        if ($application->user_id !== auth()->id()) {
+        if ($job_application->user_id !== auth()->id()) {
             abort(403);
         }
 
-        $interview = $application->interviews()->create([
+        $interview = $job_application->interviews()->create([
             'user_id' => auth()->id(),
             ...$request->validated(),
         ]);
 
-        return redirect()->route('job-applications.show', $application)
+        return redirect()->route('job-applications.show', $job_application)
             ->with('success', 'Interview scheduled successfully!');
     }
 
     /**
      * Display the specified interview.
      */
-    public function show(JobApplication $application, JobApplicationInterview $interview)
+    public function show(JobApplication $job_application, JobApplicationInterview $interview)
     {
         // Ensure user owns the interview
-        if ($interview->user_id !== auth()->id() || $interview->job_application_id !== $application->id) {
+        if ($interview->user_id !== auth()->id() || $interview->job_application_id !== $job_application->id) {
             abort(403);
         }
+
+        $application = $job_application;
 
         return view('job-applications.interviews.show', compact('application', 'interview'));
     }
@@ -79,15 +84,16 @@ class JobApplicationInterviewController extends Controller
     /**
      * Show the form for editing the interview.
      */
-    public function edit(JobApplication $application, JobApplicationInterview $interview)
+    public function edit(JobApplication $job_application, JobApplicationInterview $interview)
     {
         // Ensure user owns the interview
-        if ($interview->user_id !== auth()->id() || $interview->job_application_id !== $application->id) {
+        if ($interview->user_id !== auth()->id() || $interview->job_application_id !== $job_application->id) {
             abort(403);
         }
 
         $types = InterviewType::cases();
         $outcomes = InterviewOutcome::cases();
+        $application = $job_application;
 
         return view('job-applications.interviews.edit', compact('application', 'interview', 'types', 'outcomes'));
     }
@@ -95,42 +101,42 @@ class JobApplicationInterviewController extends Controller
     /**
      * Update the specified interview.
      */
-    public function update(Request $request, JobApplication $application, JobApplicationInterview $interview)
+    public function update(Request $request, JobApplication $job_application, JobApplicationInterview $interview)
     {
         // Ensure user owns the interview
-        if ($interview->user_id !== auth()->id() || $interview->job_application_id !== $application->id) {
+        if ($interview->user_id !== auth()->id() || $interview->job_application_id !== $job_application->id) {
             abort(403);
         }
 
         $interview->update($request->all());
 
-        return redirect()->route('job-applications.show', $application)
+        return redirect()->route('job-applications.show', $job_application)
             ->with('success', 'Interview updated successfully!');
     }
 
     /**
      * Remove the specified interview.
      */
-    public function destroy(JobApplication $application, JobApplicationInterview $interview)
+    public function destroy(JobApplication $job_application, JobApplicationInterview $interview)
     {
         // Ensure user owns the interview
-        if ($interview->user_id !== auth()->id() || $interview->job_application_id !== $application->id) {
+        if ($interview->user_id !== auth()->id() || $interview->job_application_id !== $job_application->id) {
             abort(403);
         }
 
         $interview->delete();
 
-        return redirect()->route('job-applications.show', $application)
+        return redirect()->route('job-applications.show', $job_application)
             ->with('success', 'Interview deleted successfully!');
     }
 
     /**
      * Mark interview as completed.
      */
-    public function complete(JobApplication $application, JobApplicationInterview $interview)
+    public function complete(JobApplication $job_application, JobApplicationInterview $interview)
     {
         // Ensure user owns the interview
-        if ($interview->user_id !== auth()->id() || $interview->job_application_id !== $application->id) {
+        if ($interview->user_id !== auth()->id() || $interview->job_application_id !== $job_application->id) {
             abort(403);
         }
 

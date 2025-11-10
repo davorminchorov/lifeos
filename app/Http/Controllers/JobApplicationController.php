@@ -105,18 +105,20 @@ class JobApplicationController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(JobApplication $application)
+    public function show(JobApplication $job_application)
     {
         // Ensure user owns the application
-        if ($application->user_id !== auth()->id()) {
+        if ($job_application->user_id !== auth()->id()) {
             abort(403);
         }
 
-        $application->load([
+        $job_application->load([
             'statusHistories' => fn ($query) => $query->orderBy('changed_at', 'desc'),
             'interviews' => fn ($query) => $query->orderBy('scheduled_at', 'desc'),
             'offer',
         ]);
+
+        $application = $job_application;
 
         return view('job-applications.show', compact('application'));
     }
@@ -124,16 +126,17 @@ class JobApplicationController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(JobApplication $application)
+    public function edit(JobApplication $job_application)
     {
         // Ensure user owns the application
-        if ($application->user_id !== auth()->id()) {
+        if ($job_application->user_id !== auth()->id()) {
             abort(403);
         }
 
         $statuses = ApplicationStatus::cases();
         $sources = ApplicationSource::cases();
         $currencies = ['MKD', 'USD', 'EUR', 'GBP', 'CAD', 'AUD', 'JPY', 'CHF', 'RSD', 'BGN'];
+        $application = $job_application;
 
         return view('job-applications.edit', compact('application', 'statuses', 'sources', 'currencies'));
     }
@@ -141,30 +144,30 @@ class JobApplicationController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateJobApplicationRequest $request, JobApplication $application)
+    public function update(UpdateJobApplicationRequest $request, JobApplication $job_application)
     {
         // Ensure user owns the application
-        if ($application->user_id !== auth()->id()) {
+        if ($job_application->user_id !== auth()->id()) {
             abort(403);
         }
 
-        $application->update($request->validated());
+        $job_application->update($request->validated());
 
-        return redirect()->route('job-applications.show', $application)
+        return redirect()->route('job-applications.show', $job_application)
             ->with('success', 'Job application updated successfully!');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(JobApplication $application)
+    public function destroy(JobApplication $job_application)
     {
         // Ensure user owns the application
-        if ($application->user_id !== auth()->id()) {
+        if ($job_application->user_id !== auth()->id()) {
             abort(403);
         }
 
-        $application->delete();
+        $job_application->delete();
 
         return redirect()->route('job-applications.index')
             ->with('success', 'Job application deleted successfully!');

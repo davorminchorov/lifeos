@@ -24,7 +24,6 @@ class StoreOfferRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'job_application_id' => ['required', 'exists:job_applications,id'],
             'base_salary' => ['required', 'numeric', 'min:0', 'max:99999999.99'],
             'bonus' => ['nullable', 'numeric', 'min:0', 'max:99999999.99'],
             'equity' => ['nullable', 'string', 'max:1000'],

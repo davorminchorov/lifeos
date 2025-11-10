@@ -25,7 +25,6 @@ class StoreInterviewRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'job_application_id' => ['required', 'exists:job_applications,id'],
             'type' => ['required', Rule::enum(InterviewType::class)],
             'scheduled_at' => ['required', 'date', 'after:now'],
             'duration_minutes' => ['nullable', 'integer', 'min:1', 'max:480'],
@@ -35,7 +34,7 @@ class StoreInterviewRequest extends FormRequest
             'notes' => ['nullable', 'string', 'max:10000'],
             'feedback' => ['nullable', 'string', 'max:10000'],
             'outcome' => ['nullable', Rule::enum(InterviewOutcome::class)],
-            'completed' => ['boolean'],
+            'completed' => ['nullable', 'boolean'],
         ];
     }
 
