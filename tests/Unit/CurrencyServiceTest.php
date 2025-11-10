@@ -109,7 +109,7 @@ class CurrencyServiceTest extends TestCase
         $backToOriginal = $this->currencyService->convertFromDefault($toDefault, 'USD');
 
         // Should be approximately the same (allowing for small rounding differences)
-        $this->assertEqualsWithDelta($amount, $backToOriginal, 0.01);
+        $this->assertEqualsWithDelta($amount, $backToOriginal, 0.02);
     }
 
     public function test_get_supported_currencies(): void

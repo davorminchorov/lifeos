@@ -46,13 +46,6 @@ class ImportInvestmentsCsv implements ShouldQueue
     ];
 
     /**
-     * The queue the job should run on.
-     *
-     * Keeping both property and explicit ->onQueue('imports') in dispatch for clarity.
-     */
-    public string $queue = 'imports';
-
-    /**
      * Path in storage where the uploaded CSV is stored.
      */
     public string $storedPath;
@@ -84,34 +77,33 @@ class ImportInvestmentsCsv implements ShouldQueue
      */
     public function handle(): void
     {
-        $absolutePath = Storage::path($this->storedPath);
-
-        if (! is_readable($absolutePath)) {
-            Log::error('ImportInvestmentsCsv: CSV file is not readable', [
+        if (! Storage::exists($this->storedPath)) {
+            Log::error('ImportInvestmentsCsv: CSV file does not exist', [
                 'user_id' => $this->userId,
-                'path' => $absolutePath,
+                'path' => $this->storedPath,
             ]);
 
             return;
         }
 
-        $handle = fopen($absolutePath, 'r');
-        if (! $handle) {
-            Log::error('ImportInvestmentsCsv: Unable to open CSV', [
+        $content = Storage::get($this->storedPath);
+        $lines = array_values(array_filter(explode("\n", $content), fn($line) => trim($line) !== ''));
+
+        if (empty($lines)) {
+            Log::warning('ImportInvestmentsCsv: Empty CSV file', [
                 'user_id' => $this->userId,
-                'path' => $absolutePath,
+                'path' => $this->storedPath,
             ]);
 
             return;
         }
 
         // Read header row
-        $header = fgetcsv($handle);
+        $header = str_getcsv(array_shift($lines));
         if (! $header) {
-            fclose($handle);
-            Log::warning('ImportInvestmentsCsv: Empty CSV file', [
+            Log::warning('ImportInvestmentsCsv: Empty CSV header', [
                 'user_id' => $this->userId,
-                'path' => $absolutePath,
+                'path' => $this->storedPath,
             ]);
 
             return;
@@ -122,7 +114,8 @@ class ImportInvestmentsCsv implements ShouldQueue
         $created = 0;
         $skipped = 0;
 
-        while (($row = fgetcsv($handle)) !== false) {
+        foreach ($lines as $line) {
+            $row = str_getcsv($line);
             // Skip empty lines
             if (count(array_filter($row, fn ($v) => $v !== null && $v !== '')) === 0) {
                 continue;
@@ -160,7 +153,7 @@ class ImportInvestmentsCsv implements ShouldQueue
                     ],
                     [
                         'name' => $name ?: ($ticker ?: 'Unknown'),
-                        'investment_type' => 'stock',
+                        'investment_type' => 'stocks',
                         'quantity' => 0,
                         'purchase_date' => now()->toDateString(),
                         'purchase_price' => $pricePerShare ?: 0,
@@ -210,8 +203,6 @@ class ImportInvestmentsCsv implements ShouldQueue
                 ]);
             }
         }
-
-        fclose($handle);
 
         // Optionally, cleanup the stored file
         try {

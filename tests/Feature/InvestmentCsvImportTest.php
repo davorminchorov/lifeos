@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Queue;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class InvestmentCsvImportTest extends TestCase
@@ -17,6 +18,8 @@ class InvestmentCsvImportTest extends TestCase
 
     public function test_it_imports_investment_transactions_from_csv()
     {
+        Storage::fake('local');
+
         $user = User::factory()->create();
         $this->actingAs($user);
 
@@ -40,11 +43,15 @@ class InvestmentCsvImportTest extends TestCase
         Queue::assertPushed(ImportInvestmentsCsv::class, function ($job) use ($user, &$capturedJob) {
             $capturedJob = $job;
 
-            return $job->userId === $user->id && $job->queue === 'imports';
+            return $job->userId === $user->id;
         });
 
         // Run the job synchronously to verify DB side-effects
         $this->assertNotNull($capturedJob, 'Job was not captured for execution');
+
+        // Store the CSV in fake storage at the path the job expects
+        Storage::put($capturedJob->storedPath, $csv);
+
         $capturedJob->handle();
 
         $this->assertDatabaseHas('investments', [

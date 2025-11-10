@@ -64,6 +64,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Get the user's expenses.
+     */
+    public function expenses(): HasMany
+    {
+        return $this->hasMany(Expense::class);
+    }
+
+    /**
      * Get the user's notification preferences.
      */
     public function notificationPreferences(): HasMany

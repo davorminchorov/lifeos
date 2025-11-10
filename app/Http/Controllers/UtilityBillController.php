@@ -315,10 +315,10 @@ class UtilityBillController extends Controller
         $newBill->bill_period_end = $end;
         $newBill->due_date = $end->copy()->addWeeks(2);
 
-        // Reset payment-related and variable fields
+        // Reset payment-related fields
         $newBill->payment_status = 'pending';
         $newBill->payment_date = null;
-        $newBill->bill_amount = null; // Will need to be updated
+        // Keep bill_amount from original as starting point
         $newBill->usage_amount = null; // Will need to be updated
 
         $newBill->save();

@@ -329,7 +329,7 @@ class UtilityBillControllerTest extends TestCase
         $newBill = UtilityBill::latest('id')->first();
         $this->assertNotEquals($bill->id, $newBill->id);
         $this->assertEquals($this->user->id, $newBill->user_id);
-        $this->assertNull($newBill->bill_amount);
+        $this->assertEquals(123.45, $newBill->bill_amount); // Keeps original amount as starting point
         $this->assertNull($newBill->usage_amount);
         $this->assertEquals('pending', $newBill->payment_status);
         $this->assertNull($newBill->payment_date);

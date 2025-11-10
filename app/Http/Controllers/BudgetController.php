@@ -7,10 +7,13 @@ use App\Http\Requests\UpdateBudgetRequest;
 use App\Models\Budget;
 use App\Models\Expense;
 use App\Services\CurrencyService;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 
 class BudgetController extends Controller
 {
+    use AuthorizesRequests;
+
     protected $currencyService;
 
     public function __construct(CurrencyService $currencyService)

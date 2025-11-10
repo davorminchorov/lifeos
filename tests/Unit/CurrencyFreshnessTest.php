@@ -74,8 +74,8 @@ class CurrencyFreshnessTest extends TestCase
     public function test_stores_timestamp_when_fetching_rate(): void
     {
         Http::fake([
-            'api.exchangerate-api.io/*' => Http::response([
-                'rates' => ['EUR' => 1.2],
+            'v6.exchangerate-api.com/*' => Http::response([
+                'conversion_rates' => ['EUR' => 1.2],
             ], 200),
         ]);
 
@@ -96,8 +96,8 @@ class CurrencyFreshnessTest extends TestCase
     public function test_get_exchange_rate_with_freshness(): void
     {
         Http::fake([
-            'api.exchangerate-api.io/*' => Http::response([
-                'rates' => ['EUR' => 1.2],
+            'v6.exchangerate-api.com/*' => Http::response([
+                'conversion_rates' => ['EUR' => 1.2],
             ], 200),
         ]);
 
@@ -130,8 +130,8 @@ class CurrencyFreshnessTest extends TestCase
     public function test_is_rate_fresh(): void
     {
         Http::fake([
-            'api.exchangerate-api.io/*' => Http::response([
-                'rates' => ['EUR' => 1.2],
+            'v6.exchangerate-api.com/*' => Http::response([
+                'conversion_rates' => ['EUR' => 1.2],
             ], 200),
         ]);
 
@@ -163,8 +163,8 @@ class CurrencyFreshnessTest extends TestCase
     public function test_refresh_exchange_rate_clears_cache(): void
     {
         Http::fake([
-            'api.exchangerate-api.io/*' => Http::response([
-                'rates' => ['EUR' => 1.5],
+            'v6.exchangerate-api.com/*' => Http::response([
+                'conversion_rates' => ['EUR' => 1.5],
             ], 200),
         ]);
 
