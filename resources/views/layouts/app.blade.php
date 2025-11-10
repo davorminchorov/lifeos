@@ -35,25 +35,29 @@
                                 Dashboard
                             </a>
 
-                            <!-- Financial Tracking Dropdown -->
+                            <!-- Finance Dropdown -->
                             <div class="relative inline-flex items-center nav-dropdown">
-                                <button type="button" class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs(['subscriptions.*', 'expenses.*', 'utility-bills.*']) ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]' : 'border-transparent text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] hover:text-[color:var(--color-primary-600)] dark:hover:text-[color:var(--color-dark-400)] hover:border-[color:var(--color-primary-400)]' }} text-sm font-medium transition-colors duration-200">
-                                    Financial Tracking
+                                <button type="button" class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs(['budgets.*', 'expenses.*', 'subscriptions.*', 'utility-bills.*']) ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]' : 'border-transparent text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] hover:text-[color:var(--color-primary-600)] dark:hover:text-[color:var(--color-dark-400)] hover:border-[color:var(--color-primary-400)]' }} text-sm font-medium transition-colors duration-200" aria-haspopup="true" aria-expanded="false" aria-controls="menu-finance">
+                                    Finance
                                     <svg class="ml-1 h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
                                     </svg>
                                 </button>
-                                <div class="dropdown-menu hidden absolute top-full left-0 mt-2 w-56 rounded-lg shadow-lg bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] ring-1 ring-black ring-opacity-5 z-50">
+                                <div id="menu-finance" class="dropdown-menu hidden absolute top-full left-0 mt-2 w-56 rounded-lg shadow-lg bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] ring-1 ring-black/50 z-50" role="menu">
                                     <div class="py-1">
-                                        <a href="{{ route('subscriptions.index') }}" class="block px-4 py-2 text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] hover:bg-[color:var(--color-primary-100)] dark:hover:bg-[color:var(--color-dark-200)] transition-colors duration-200 {{ request()->routeIs('subscriptions.*') ? 'bg-[color:var(--color-accent-50)] text-[color:var(--color-accent-600)]' : '' }}">
-                                            <div class="font-medium">Subscriptions</div>
-                                            <div class="text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)]">Recurring payments</div>
+                                        <a href="{{ route('budgets.index') }}" role="menuitem" class="block px-4 py-2 text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] hover:bg-[color:var(--color-primary-100)] dark:hover:bg-[color:var(--color-dark-200)] transition-colors duration-200 {{ request()->routeIs('budgets.*') ? 'bg-[color:var(--color-accent-50)] text-[color:var(--color-accent-600)]' : '' }}">
+                                            <div class="font-medium">Budgets</div>
+                                            <div class="text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)]">Financial planning</div>
                                         </a>
-                                        <a href="{{ route('expenses.index') }}" class="block px-4 py-2 text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] hover:bg-[color:var(--color-primary-100)] dark:hover:bg-[color:var(--color-dark-200)] transition-colors duration-200 {{ request()->routeIs('expenses.*') ? 'bg-[color:var(--color-accent-50)] text-[color:var(--color-accent-600)]' : '' }}">
+                                        <a href="{{ route('expenses.index') }}" role="menuitem" class="block px-4 py-2 text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] hover:bg-[color:var(--color-primary-100)] dark:hover:bg-[color:var(--color-dark-200)] transition-colors duration-200 {{ request()->routeIs('expenses.*') ? 'bg-[color:var(--color-accent-50)] text-[color:var(--color-accent-600)]' : '' }}">
                                             <div class="font-medium">Expenses</div>
                                             <div class="text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)]">Track spending</div>
                                         </a>
-                                        <a href="{{ route('utility-bills.index') }}" class="block px-4 py-2 text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] hover:bg-[color:var(--color-primary-100)] dark:hover:bg-[color:var(--color-dark-200)] transition-colors duration-200 {{ request()->routeIs('utility-bills.*') ? 'bg-[color:var(--color-accent-50)] text-[color:var(--color-accent-600)]' : '' }}">
+                                        <a href="{{ route('subscriptions.index') }}" role="menuitem" class="block px-4 py-2 text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] hover:bg-[color:var(--color-primary-100)] dark:hover:bg-[color:var(--color-dark-200)] transition-colors duration-200 {{ request()->routeIs('subscriptions.*') ? 'bg-[color:var(--color-accent-50)] text-[color:var(--color-accent-600)]' : '' }}">
+                                            <div class="font-medium">Subscriptions</div>
+                                            <div class="text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)]">Recurring payments</div>
+                                        </a>
+                                        <a href="{{ route('utility-bills.index') }}" role="menuitem" class="block px-4 py-2 text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] hover:bg-[color:var(--color-primary-100)] dark:hover:bg-[color:var(--color-dark-200)] transition-colors duration-200 {{ request()->routeIs('utility-bills.*') ? 'bg-[color:var(--color-accent-50)] text-[color:var(--color-accent-600)]' : '' }}">
                                             <div class="font-medium">Utility Bills</div>
                                             <div class="text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)]">Manage utilities</div>
                                         </a>
@@ -61,40 +65,35 @@
                                 </div>
                             </div>
 
-                            <!-- Assets & Obligations Dropdown -->
+                            <!-- Assets & Liabilities Dropdown -->
                             <div class="relative inline-flex items-center nav-dropdown">
-                                <button type="button" class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs(['investments.*', 'contracts.*', 'warranties.*', 'ious.*']) ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]' : 'border-transparent text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] hover:text-[color:var(--color-primary-600)] dark:hover:text-[color:var(--color-dark-400)] hover:border-[color:var(--color-primary-400)]' }} text-sm font-medium transition-colors duration-200">
-                                    Assets & Obligations
+                                <button type="button" class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs(['investments.*', 'contracts.*', 'warranties.*', 'ious.*']) ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]' : 'border-transparent text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] hover:text-[color:var(--color-primary-600)] dark:hover:text-[color:var(--color-dark-400)] hover:border-[color:var(--color-primary-400)]' }} text-sm font-medium transition-colors duration-200" aria-haspopup="true" aria-expanded="false" aria-controls="menu-assets">
+                                    Assets & Liabilities
                                     <svg class="ml-1 h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
                                     </svg>
                                 </button>
-                                <div class="dropdown-menu hidden absolute top-full left-0 mt-2 w-56 rounded-lg shadow-lg bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] ring-1 ring-black ring-opacity-5 z-50">
+                                <div id="menu-assets" class="dropdown-menu hidden absolute top-full left-0 mt-2 w-56 rounded-lg shadow-lg bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] ring-1 ring-black/50 z-50" role="menu">
                                     <div class="py-1">
-                                        <a href="{{ route('investments.index') }}" class="block px-4 py-2 text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] hover:bg-[color:var(--color-primary-100)] dark:hover:bg-[color:var(--color-dark-200)] transition-colors duration-200 {{ request()->routeIs('investments.*') ? 'bg-[color:var(--color-accent-50)] text-[color:var(--color-accent-600)]' : '' }}">
+                                        <a href="{{ route('investments.index') }}" role="menuitem" class="block px-4 py-2 text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] hover:bg-[color:var(--color-primary-100)] dark:hover:bg-[color:var(--color-dark-200)] transition-colors duration-200 {{ request()->routeIs('investments.*') ? 'bg-[color:var(--color-accent-50)] text-[color:var(--color-accent-600)]' : '' }}">
                                             <div class="font-medium">Investments</div>
                                             <div class="text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)]">Portfolio tracking</div>
                                         </a>
-                                        <a href="{{ route('contracts.index') }}" class="block px-4 py-2 text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] hover:bg-[color:var(--color-primary-100)] dark:hover:bg-[color:var(--color-dark-200)] transition-colors duration-200 {{ request()->routeIs('contracts.*') ? 'bg-[color:var(--color-accent-50)] text-[color:var(--color-accent-600)]' : '' }}">
+                                        <a href="{{ route('contracts.index') }}" role="menuitem" class="block px-4 py-2 text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] hover:bg-[color:var(--color-primary-100)] dark:hover:bg-[color:var(--color-dark-200)] transition-colors duration-200 {{ request()->routeIs('contracts.*') ? 'bg-[color:var(--color-accent-50)] text-[color:var(--color-accent-600)]' : '' }}">
                                             <div class="font-medium">Contracts</div>
                                             <div class="text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)]">Manage agreements</div>
                                         </a>
-                                        <a href="{{ route('warranties.index') }}" class="block px-4 py-2 text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] hover:bg-[color:var(--color-primary-100)] dark:hover:bg-[color:var(--color-dark-200)] transition-colors duration-200 {{ request()->routeIs('warranties.*') ? 'bg-[color:var(--color-accent-50)] text-[color:var(--color-accent-600)]' : '' }}">
+                                        <a href="{{ route('warranties.index') }}" role="menuitem" class="block px-4 py-2 text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] hover:bg-[color:var(--color-primary-100)] dark:hover:bg-[color:var(--color-dark-200)] transition-colors duration-200 {{ request()->routeIs('warranties.*') ? 'bg-[color:var(--color-accent-50)] text-[color:var(--color-accent-600)]' : '' }}">
                                             <div class="font-medium">Warranties</div>
                                             <div class="text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)]">Product coverage</div>
                                         </a>
-                                        <a href="{{ route('ious.index') }}" class="block px-4 py-2 text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] hover:bg-[color:var(--color-primary-100)] dark:hover:bg-[color:var(--color-dark-200)] transition-colors duration-200 {{ request()->routeIs('ious.*') ? 'bg-[color:var(--color-accent-50)] text-[color:var(--color-accent-600)]' : '' }}">
+                                        <a href="{{ route('ious.index') }}" role="menuitem" class="block px-4 py-2 text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] hover:bg-[color:var(--color-primary-100)] dark:hover:bg-[color:var(--color-dark-200)] transition-colors duration-200 {{ request()->routeIs('ious.*') ? 'bg-[color:var(--color-accent-50)] text-[color:var(--color-accent-600)]' : '' }}">
                                             <div class="font-medium">IOUs</div>
                                             <div class="text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)]">Debts & loans</div>
                                         </a>
                                     </div>
                                 </div>
                             </div>
-
-                            <!-- Planning & Analysis -->
-                            <a href="{{ route('budgets.index') }}" class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('budgets.*') ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]' : 'border-transparent text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] hover:text-[color:var(--color-primary-600)] dark:hover:text-[color:var(--color-dark-400)] hover:border-[color:var(--color-primary-400)]' }} text-sm font-medium transition-colors duration-200">
-                                Budgets
-                            </a>
 
                             <!-- Job Applications -->
                             <a href="{{ route('job-applications.index') }}" class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('job-applications.*') ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]' : 'border-transparent text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] hover:text-[color:var(--color-primary-600)] dark:hover:text-[color:var(--color-dark-400)] hover:border-[color:var(--color-primary-400)]' }} text-sm font-medium transition-colors duration-200">
@@ -138,7 +137,7 @@
                                 </button>
 
                                 <!-- Dropdown Menu -->
-                                <div id="user-menu" class="hidden origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] ring-1 ring-black ring-opacity-5 divide-y divide-[color:var(--color-primary-200)] dark:divide-[color:var(--color-dark-300)] focus:outline-none z-50">
+                                <div id="user-menu" class="hidden origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] ring-1 ring-black/50 divide-y divide-[color:var(--color-primary-200)] dark:divide-[color:var(--color-dark-300)] focus:outline-none z-50">
                                     <div class="py-1">
                                         <a href="{{ route('profile.show') }}" class="block px-4 py-2 text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] hover:bg-[color:var(--color-primary-100)] dark:hover:bg-[color:var(--color-dark-200)] transition-colors duration-200">Profile</a>
                                         <a href="{{ route('settings.index') }}" class="block px-4 py-2 text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] hover:bg-[color:var(--color-primary-100)] dark:hover:bg-[color:var(--color-dark-200)] transition-colors duration-200">Settings</a>
@@ -173,42 +172,45 @@
 
             <!-- Mobile menu -->
             @auth
+            @php
+                $financeOpen = request()->routeIs(['budgets.*', 'expenses.*', 'subscriptions.*', 'utility-bills.*']);
+                $assetsOpen = request()->routeIs(['investments.*', 'contracts.*', 'warranties.*', 'ious.*']);
+            @endphp
             <div id="mobile-menu" class="sm:hidden hidden">
                 <div class="pt-2 pb-3 space-y-1">
                     <a href="{{ route('dashboard') }}" class="block pl-3 pr-4 py-2 border-l-4 {{ request()->routeIs('dashboard') ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-accent-600)] bg-[color:var(--color-accent-50)]' : 'border-transparent text-[color:var(--color-primary-600)] hover:text-[color:var(--color-primary-700)] hover:bg-[color:var(--color-primary-200)] hover:border-[color:var(--color-primary-400)]' }} text-base font-medium transition-colors duration-200">Dashboard</a>
 
-                    <!-- Financial Tracking Group -->
+                    <!-- Finance Group -->
                     <div class="mobile-nav-group">
                         <button type="button" class="mobile-group-toggle w-full flex justify-between items-center pl-3 pr-4 py-2 border-l-4 border-transparent text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-base font-semibold">
-                            Financial Tracking
-                            <svg class="h-5 w-5 transform transition-transform duration-200" fill="currentColor" viewBox="0 0 20 20">
+                            Finance
+                            <svg class="h-5 w-5 transform transition-transform duration-200 {{ $financeOpen ? 'rotate-180' : '' }}" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
                             </svg>
                         </button>
-                        <div class="mobile-group-items hidden">
-                            <a href="{{ route('subscriptions.index') }}" class="block pl-8 pr-4 py-2 border-l-4 {{ request()->routeIs('subscriptions.*') ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-accent-600)] bg-[color:var(--color-accent-50)]' : 'border-transparent text-[color:var(--color-primary-600)] hover:text-[color:var(--color-primary-700)] hover:bg-[color:var(--color-primary-200)] hover:border-[color:var(--color-primary-400)]' }} text-sm font-medium transition-colors duration-200">Subscriptions</a>
+                        <div class="mobile-group-items {{ $financeOpen ? '' : 'hidden' }}">
+                            <a href="{{ route('budgets.index') }}" class="block pl-8 pr-4 py-2 border-l-4 {{ request()->routeIs('budgets.*') ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-accent-600)] bg-[color:var(--color-accent-50)]' : 'border-transparent text-[color:var(--color-primary-600)] hover:text-[color:var(--color-primary-700)] hover:bg-[color:var(--color-primary-200)] hover:border-[color:var(--color-primary-400)]' }} text-sm font-medium transition-colors duration-200">Budgets</a>
                             <a href="{{ route('expenses.index') }}" class="block pl-8 pr-4 py-2 border-l-4 {{ request()->routeIs('expenses.*') ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-accent-600)] bg-[color:var(--color-accent-50)]' : 'border-transparent text-[color:var(--color-primary-600)] hover:text-[color:var(--color-primary-700)] hover:bg-[color:var(--color-primary-200)] hover:border-[color:var(--color-primary-400)]' }} text-sm font-medium transition-colors duration-200">Expenses</a>
+                            <a href="{{ route('subscriptions.index') }}" class="block pl-8 pr-4 py-2 border-l-4 {{ request()->routeIs('subscriptions.*') ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-accent-600)] bg-[color:var(--color-accent-50)]' : 'border-transparent text-[color:var(--color-primary-600)] hover:text-[color:var(--color-primary-700)] hover:bg-[color:var(--color-primary-200)] hover:border-[color:var(--color-primary-400)]' }} text-sm font-medium transition-colors duration-200">Subscriptions</a>
                             <a href="{{ route('utility-bills.index') }}" class="block pl-8 pr-4 py-2 border-l-4 {{ request()->routeIs('utility-bills.*') ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-accent-600)] bg-[color:var(--color-accent-50)]' : 'border-transparent text-[color:var(--color-primary-600)] hover:text-[color:var(--color-primary-700)] hover:bg-[color:var(--color-primary-200)] hover:border-[color:var(--color-primary-400)]' }} text-sm font-medium transition-colors duration-200">Utility Bills</a>
                         </div>
                     </div>
 
-                    <!-- Assets & Obligations Group -->
+                    <!-- Assets & Liabilities Group -->
                     <div class="mobile-nav-group">
                         <button type="button" class="mobile-group-toggle w-full flex justify-between items-center pl-3 pr-4 py-2 border-l-4 border-transparent text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-base font-semibold">
-                            Assets & Obligations
-                            <svg class="h-5 w-5 transform transition-transform duration-200" fill="currentColor" viewBox="0 0 20 20">
+                            Assets & Liabilities
+                            <svg class="h-5 w-5 transform transition-transform duration-200 {{ $assetsOpen ? 'rotate-180' : '' }}" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
                             </svg>
                         </button>
-                        <div class="mobile-group-items hidden">
+                        <div class="mobile-group-items {{ $assetsOpen ? '' : 'hidden' }}">
                             <a href="{{ route('investments.index') }}" class="block pl-8 pr-4 py-2 border-l-4 {{ request()->routeIs('investments.*') ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-accent-600)] bg-[color:var(--color-accent-50)]' : 'border-transparent text-[color:var(--color-primary-600)] hover:text-[color:var(--color-primary-700)] hover:bg-[color:var(--color-primary-200)] hover:border-[color:var(--color-primary-400)]' }} text-sm font-medium transition-colors duration-200">Investments</a>
                             <a href="{{ route('contracts.index') }}" class="block pl-8 pr-4 py-2 border-l-4 {{ request()->routeIs('contracts.*') ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-accent-600)] bg-[color:var(--color-accent-50)]' : 'border-transparent text-[color:var(--color-primary-600)] hover:text-[color:var(--color-primary-700)] hover:bg-[color:var(--color-primary-200)] hover:border-[color:var(--color-primary-400)]' }} text-sm font-medium transition-colors duration-200">Contracts</a>
                             <a href="{{ route('warranties.index') }}" class="block pl-8 pr-4 py-2 border-l-4 {{ request()->routeIs('warranties.*') ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-accent-600)] bg-[color:var(--color-accent-50)]' : 'border-transparent text-[color:var(--color-primary-600)] hover:text-[color:var(--color-primary-700)] hover:bg-[color:var(--color-primary-200)] hover:border-[color:var(--color-primary-400)]' }} text-sm font-medium transition-colors duration-200">Warranties</a>
                             <a href="{{ route('ious.index') }}" class="block pl-8 pr-4 py-2 border-l-4 {{ request()->routeIs('ious.*') ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-accent-600)] bg-[color:var(--color-accent-50)]' : 'border-transparent text-[color:var(--color-primary-600)] hover:text-[color:var(--color-primary-700)] hover:bg-[color:var(--color-primary-200)] hover:border-[color:var(--color-primary-400)]' }} text-sm font-medium transition-colors duration-200">IOUs</a>
                         </div>
                     </div>
-
-                    <a href="{{ route('budgets.index') }}" class="block pl-3 pr-4 py-2 border-l-4 {{ request()->routeIs('budgets.*') ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-accent-600)] bg-[color:var(--color-accent-50)]' : 'border-transparent text-[color:var(--color-primary-600)] hover:text-[color:var(--color-primary-700)] hover:bg-[color:var(--color-primary-200)] hover:border-[color:var(--color-primary-400)]' }} text-base font-medium transition-colors duration-200">Budgets</a>
 
                     <a href="{{ route('job-applications.index') }}" class="block pl-3 pr-4 py-2 border-l-4 {{ request()->routeIs('job-applications.*') ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-accent-600)] bg-[color:var(--color-accent-50)]' : 'border-transparent text-[color:var(--color-primary-600)] hover:text-[color:var(--color-primary-700)] hover:bg-[color:var(--color-primary-200)] hover:border-[color:var(--color-primary-400)]' }} text-base font-medium transition-colors duration-200">Job Applications</a>
                 </div>
@@ -352,42 +354,93 @@
             });
         }
 
-        // Desktop dropdown navigation functionality
-        document.querySelectorAll('.nav-dropdown').forEach(dropdown => {
-            const button = dropdown.querySelector('button');
-            const menu = dropdown.querySelector('.dropdown-menu');
+        // Accessible desktop dropdowns (single controller)
+        (() => {
+            const dropdowns = Array.from(document.querySelectorAll('.nav-dropdown'));
+            let open = null; // {button, menu}
 
-            if (button && menu) {
-                // Toggle dropdown on click
-                button.addEventListener('click', function(e) {
-                    e.stopPropagation();
-
-                    // Close other dropdowns
-                    document.querySelectorAll('.nav-dropdown .dropdown-menu').forEach(otherMenu => {
-                        if (otherMenu !== menu) {
-                            otherMenu.classList.add('hidden');
-                        }
-                    });
-
-                    // Toggle current dropdown
-                    menu.classList.toggle('hidden');
-                });
-
-                // Close dropdown when clicking outside
-                document.addEventListener('click', function(event) {
-                    if (!dropdown.contains(event.target)) {
-                        menu.classList.add('hidden');
-                    }
-                });
-
-                // Close dropdown on escape key
-                document.addEventListener('keydown', function(event) {
-                    if (event.key === 'Escape') {
-                        menu.classList.add('hidden');
-                    }
-                });
+            function closeOpen() {
+                if (!open) return;
+                open.menu.classList.add('hidden');
+                open.button.setAttribute('aria-expanded', 'false');
+                open = null;
             }
-        });
+
+            function openMenu(button, menu) {
+                // Close others
+                closeOpen();
+                menu.classList.remove('hidden');
+                button.setAttribute('aria-expanded', 'true');
+                open = { button, menu };
+                // Focus first item
+                const firstItem = menu.querySelector('[role="menuitem"], a, button');
+                if (firstItem) firstItem.focus({ preventScroll: true });
+            }
+
+            // Wire buttons
+            dropdowns.forEach(dd => {
+                const button = dd.querySelector('button[aria-controls]');
+                const menuId = button?.getAttribute('aria-controls');
+                const menu = menuId ? document.getElementById(menuId) : null;
+                if (!button || !menu) return;
+
+                button.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (open && open.menu === menu) {
+                        closeOpen();
+                    } else {
+                        openMenu(button, menu);
+                    }
+                });
+
+                // Keyboard on button
+                button.addEventListener('keydown', (e) => {
+                    if (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        if (open && open.menu === menu) return;
+                        openMenu(button, menu);
+                    }
+                });
+
+                // Keyboard within menu
+                menu.addEventListener('keydown', (e) => {
+                    const items = Array.from(menu.querySelectorAll('[role="menuitem"], a, button')).filter(i => !i.disabled);
+                    const idx = items.indexOf(document.activeElement);
+                    if (e.key === 'Escape') {
+                        e.preventDefault();
+                        closeOpen();
+                        button.focus();
+                    } else if (e.key === 'ArrowDown') {
+                        e.preventDefault();
+                        items[(idx + 1) % items.length]?.focus();
+                    } else if (e.key === 'ArrowUp') {
+                        e.preventDefault();
+                        items[(idx - 1 + items.length) % items.length]?.focus();
+                    } else if (e.key === 'Home') {
+                        e.preventDefault();
+                        items[0]?.focus();
+                    } else if (e.key === 'End') {
+                        e.preventDefault();
+                        items[items.length - 1]?.focus();
+                    }
+                });
+            });
+
+            // Outside click and Esc
+            document.addEventListener('click', (e) => {
+                if (!open) return;
+                const { button, menu } = open;
+                if (!button.contains(e.target) && !menu.contains(e.target)) {
+                    closeOpen();
+                }
+            });
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') closeOpen();
+            });
+
+            // Close on resize to desktop/mobile transitions
+            window.addEventListener('resize', closeOpen);
+        })();
 
         // Mobile navigation group toggle functionality
         document.querySelectorAll('.mobile-group-toggle').forEach(toggle => {
