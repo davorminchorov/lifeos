@@ -4,7 +4,6 @@ namespace Tests\Unit;
 
 use App\Models\Investment;
 use App\Models\InvestmentDividend;
-use App\Models\InvestmentTransaction;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -273,7 +272,6 @@ class InvestmentModelTest extends TestCase
         // For 1 year: should be approximately 20.76%
         $this->assertEqualsWithDelta(20.76, $investment->annualized_return, 0.5);
     }
-
 
     public function test_formatted_purchase_price_returns_formatted_string(): void
     {

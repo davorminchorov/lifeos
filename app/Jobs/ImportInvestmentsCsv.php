@@ -87,7 +87,7 @@ class ImportInvestmentsCsv implements ShouldQueue
         }
 
         $content = Storage::get($this->storedPath);
-        $lines = array_values(array_filter(explode("\n", $content), fn($line) => trim($line) !== ''));
+        $lines = array_values(array_filter(explode("\n", $content), fn ($line) => trim($line) !== ''));
 
         if (empty($lines)) {
             Log::warning('ImportInvestmentsCsv: Empty CSV file', [

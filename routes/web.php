@@ -9,6 +9,11 @@ use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\FileUploadController;
 use App\Http\Controllers\InvestmentController;
 use App\Http\Controllers\IouController;
+use App\Http\Controllers\JobApplicationAnalyticsController;
+use App\Http\Controllers\JobApplicationController;
+use App\Http\Controllers\JobApplicationInterviewController;
+use App\Http\Controllers\JobApplicationKanbanController;
+use App\Http\Controllers\JobApplicationOfferController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SettingsController;
@@ -113,6 +118,26 @@ Route::middleware('auth')->group(function () {
     Route::patch('utility-bills/{utility_bill}/mark-paid', [UtilityBillController::class, 'markPaid'])->name('utility-bills.mark-paid');
     Route::patch('utility-bills/{utility_bill}/set-auto-pay', [UtilityBillController::class, 'setAutoPay'])->name('utility-bills.set-auto-pay');
     Route::post('utility-bills/{utility_bill}/duplicate', [UtilityBillController::class, 'duplicate'])->name('utility-bills.duplicate');
+
+    // Job Application Routes
+    // Analytics and Kanban routes must come before resource routes to prevent conflicts
+    Route::get('job-applications/analytics', [JobApplicationAnalyticsController::class, 'index'])->name('job-applications.analytics');
+    Route::get('job-applications/analytics/export', [JobApplicationAnalyticsController::class, 'export'])->name('job-applications.analytics.export');
+    Route::get('job-applications/kanban', [JobApplicationKanbanController::class, 'index'])->name('job-applications.kanban');
+    Route::patch('job-applications/{application}/kanban-status', [JobApplicationKanbanController::class, 'updateStatus'])->name('job-applications.kanban.update-status');
+
+    Route::resource('job-applications', JobApplicationController::class);
+    Route::patch('job-applications/{application}/archive', [JobApplicationController::class, 'archive'])->name('job-applications.archive');
+    Route::patch('job-applications/{application}/unarchive', [JobApplicationController::class, 'unarchive'])->name('job-applications.unarchive');
+
+    // Nested Interview Routes
+    Route::resource('job-applications.interviews', JobApplicationInterviewController::class)->except(['index', 'show']);
+    Route::patch('job-applications/{application}/interviews/{interview}/complete', [JobApplicationInterviewController::class, 'complete'])->name('job-applications.interviews.complete');
+
+    // Nested Offer Routes
+    Route::resource('job-applications.offers', JobApplicationOfferController::class)->except(['index', 'show'])->parameters(['offers' => 'offer']);
+    Route::patch('job-applications/{application}/offers/{offer}/accept', [JobApplicationOfferController::class, 'accept'])->name('job-applications.offers.accept');
+    Route::patch('job-applications/{application}/offers/{offer}/decline', [JobApplicationOfferController::class, 'decline'])->name('job-applications.offers.decline');
 
     // Notification Routes
     Route::prefix('notifications')->name('notifications.')->group(function () {

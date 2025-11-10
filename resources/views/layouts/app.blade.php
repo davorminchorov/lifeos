@@ -95,6 +95,11 @@
                             <a href="{{ route('budgets.index') }}" class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('budgets.*') ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]' : 'border-transparent text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] hover:text-[color:var(--color-primary-600)] dark:hover:text-[color:var(--color-dark-400)] hover:border-[color:var(--color-primary-400)]' }} text-sm font-medium transition-colors duration-200">
                                 Budgets
                             </a>
+
+                            <!-- Job Applications -->
+                            <a href="{{ route('job-applications.index') }}" class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('job-applications.*') ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]' : 'border-transparent text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] hover:text-[color:var(--color-primary-600)] dark:hover:text-[color:var(--color-dark-400)] hover:border-[color:var(--color-primary-400)]' }} text-sm font-medium transition-colors duration-200">
+                                Job Applications
+                            </a>
                         </div>
                         @endauth
                     </div>
@@ -204,6 +209,8 @@
                     </div>
 
                     <a href="{{ route('budgets.index') }}" class="block pl-3 pr-4 py-2 border-l-4 {{ request()->routeIs('budgets.*') ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-accent-600)] bg-[color:var(--color-accent-50)]' : 'border-transparent text-[color:var(--color-primary-600)] hover:text-[color:var(--color-primary-700)] hover:bg-[color:var(--color-primary-200)] hover:border-[color:var(--color-primary-400)]' }} text-base font-medium transition-colors duration-200">Budgets</a>
+
+                    <a href="{{ route('job-applications.index') }}" class="block pl-3 pr-4 py-2 border-l-4 {{ request()->routeIs('job-applications.*') ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-accent-600)] bg-[color:var(--color-accent-50)]' : 'border-transparent text-[color:var(--color-primary-600)] hover:text-[color:var(--color-primary-700)] hover:bg-[color:var(--color-primary-200)] hover:border-[color:var(--color-primary-400)]' }} text-base font-medium transition-colors duration-200">Job Applications</a>
                 </div>
             </div>
             @endauth

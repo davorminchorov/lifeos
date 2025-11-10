@@ -78,6 +78,22 @@ LifeOS provides a comprehensive suite of tools to manage various aspects of your
 - Budget analytics and insights
 - Automatic rollover tracking
 
+### 💼 Job Application Tracking
+- Comprehensive job application pipeline management
+- Track applications from wishlist through offer/decision
+- Kanban board view with drag-and-drop status updates
+- Interview scheduling and outcome tracking
+- Job offer recording with salary and benefits details
+- Automatic status history and timeline visualization
+- Priority flagging for urgent applications
+- Contact information and follow-up reminders
+- Multi-currency salary expectations and offers
+- Application source tracking (LinkedIn, referrals, job boards, etc.)
+- Notes, tags, and file attachments (resume, cover letter)
+- Automated reminders for upcoming interviews, offer deadlines, and stale applications
+- Analytics dashboard with funnel metrics, source effectiveness, and time-in-stage analysis
+- Export capabilities for application data
+
 ### 📊 Cross-Module Features
 - **Unified Dashboard**: Comprehensive overview of all financial commitments
 - **Advanced Analytics**: Spending insights and trend analysis across all modules

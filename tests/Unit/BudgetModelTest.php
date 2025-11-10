@@ -14,6 +14,7 @@ class BudgetModelTest extends TestCase
     use RefreshDatabase;
 
     private User $user;
+
     private Budget $budget;
 
     protected function setUp(): void

@@ -8,6 +8,12 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
 
+// Schedule job application reminders to run daily at 8:00 AM
+Schedule::command('job-applications:check-reminders')
+    ->dailyAt('08:00')
+    ->name('job-application-reminders')
+    ->description('Check and send job application reminders (interviews, offers, actions, stale)');
+
 // Schedule subscription renewal notifications to run daily at 9 AM
 Schedule::command('subscriptions:check-renewals --dispatch-job')
     ->dailyAt('09:00')

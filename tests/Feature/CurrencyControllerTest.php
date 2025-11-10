@@ -297,5 +297,4 @@ class CurrencyControllerTest extends TestCase
         $cacheKey = 'exchange_rate_USD_EUR';
         $this->assertTrue(Cache::has($cacheKey));
     }
-
 }
