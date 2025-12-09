@@ -75,8 +75,11 @@ Route::middleware('auth')->group(function () {
     // Investment Analytics routes must come before resource routes to prevent conflicts
     Route::get('investments/analytics', [InvestmentController::class, 'analyticsDashboard'])->name('investments.analytics');
 
-    Route::resource('investments', InvestmentController::class);
+    // Import routes should come before resource routes to avoid conflicts with {investment} parameter
+    Route::get('investments/import', [InvestmentController::class, 'importForm'])->name('investments.import.form');
     Route::post('investments/import', [InvestmentController::class, 'importCsv'])->name('investments.import');
+
+    Route::resource('investments', InvestmentController::class);
     Route::post('investments/{investment}/record-transaction', [InvestmentController::class, 'recordTransaction'])->name('investments.record-transaction');
     Route::post('investments/{investment}/record-buy', [InvestmentController::class, 'recordBuy'])->name('investments.record-buy');
     Route::post('investments/{investment}/record-sell', [InvestmentController::class, 'recordSell'])->name('investments.record-sell');

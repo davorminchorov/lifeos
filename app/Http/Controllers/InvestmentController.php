@@ -84,6 +84,14 @@ class InvestmentController extends Controller
     }
 
     /**
+     * Show the import CSV form page.
+     */
+    public function importForm()
+    {
+        return view('investments.import');
+    }
+
+    /**
      * Store a newly created resource in storage.
      */
     public function store(StoreInvestmentRequest $request)
