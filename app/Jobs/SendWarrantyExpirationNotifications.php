@@ -41,11 +41,19 @@ class SendWarrantyExpirationNotifications implements ShouldQueue
     private function dispatchEventsForDay(int $days): void
     {
         $targetDate = now()->addDays($days)->toDateString();
+        $today = now()->toDateString();
 
-        $warranties = Warranty::with('user')
-            ->where('current_status', 'active')
-            ->whereDate('warranty_expiration_date', $targetDate)
-            ->get();
+        $query = Warranty::with('user')
+            ->where('current_status', 'active');
+
+        if ($days === 0) {
+            // Include items expiring today or already expired (still active status)
+            $query->whereDate('warranty_expiration_date', '<=', $today);
+        } else {
+            $query->whereDate('warranty_expiration_date', $targetDate);
+        }
+
+        $warranties = $query->get();
 
         Log::info("Found {$warranties->count()} warranties expiring in {$days} days");
 

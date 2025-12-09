@@ -41,11 +41,19 @@ class SendUtilityBillDueNotifications implements ShouldQueue
     private function dispatchEventsForDay(int $days): void
     {
         $targetDate = now()->addDays($days)->toDateString();
+        $today = now()->toDateString();
 
-        $utilityBills = UtilityBill::with('user')
-            ->where('payment_status', 'pending')
-            ->whereDate('due_date', $targetDate)
-            ->get();
+        $query = UtilityBill::with('user')
+            ->where('payment_status', 'pending');
+
+        if ($days === 0) {
+            // Include items due today or overdue (still pending)
+            $query->whereDate('due_date', '<=', $today);
+        } else {
+            $query->whereDate('due_date', $targetDate);
+        }
+
+        $utilityBills = $query->get();
 
         Log::info("Found {$utilityBills->count()} utility bills due in {$days} days");
 

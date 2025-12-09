@@ -41,11 +41,19 @@ class SendSubscriptionRenewalNotifications implements ShouldQueue
     private function dispatchEventsForDay(int $days): void
     {
         $targetDate = now()->addDays($days)->toDateString();
+        $today = now()->toDateString();
 
-        $subscriptions = Subscription::with('user')
-            ->where('status', 'active')
-            ->whereDate('next_billing_date', $targetDate)
-            ->get();
+        $query = Subscription::with('user')
+            ->where('status', 'active');
+
+        if ($days === 0) {
+            // Include items due today or overdue (covers cases where next_billing_date advanced earlier)
+            $query->whereDate('next_billing_date', '<=', $today);
+        } else {
+            $query->whereDate('next_billing_date', $targetDate);
+        }
+
+        $subscriptions = $query->get();
 
         Log::info("Found {$subscriptions->count()} subscriptions due in {$days} days");
 

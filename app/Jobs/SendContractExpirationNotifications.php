@@ -41,12 +41,19 @@ class SendContractExpirationNotifications implements ShouldQueue
     private function dispatchEventsForDay(int $days): void
     {
         $targetDate = now()->addDays($days)->toDateString();
+        $today = now()->toDateString();
 
-        // Get contracts expiring on target date
-        $contracts = Contract::with('user')
-            ->where('status', 'active')
-            ->whereDate('end_date', $targetDate)
-            ->get();
+        // Get contracts expiring on target date (or today/overdue when days === 0)
+        $baseQuery = Contract::with('user')
+            ->where('status', 'active');
+
+        if ($days === 0) {
+            $baseQuery->whereDate('end_date', '<=', $today);
+        } else {
+            $baseQuery->whereDate('end_date', $targetDate);
+        }
+
+        $contracts = $baseQuery->get();
 
         // Also get contracts that need notice period alerts
         if ($days > 0) {
