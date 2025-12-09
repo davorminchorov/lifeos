@@ -81,7 +81,6 @@
                     name="quantity"
                     label="Quantity"
                     type="number"
-                    required
                     step="0.00000001"
                     min="0"
                     placeholder="0.00000000"
@@ -93,7 +92,6 @@
                     name="purchase_price"
                     label="Purchase Price (per unit)"
                     type="number"
-                    required
                     step="0.00000001"
                     min="0"
                     prefix="$"
@@ -122,8 +120,7 @@
                     name="purchase_date"
                     label="Purchase Date"
                     type="date"
-                    required
-                    value="{{ old('purchase_date', $investment->purchase_date->format('Y-m-d')) }}"
+                    value="{{ old('purchase_date', optional($investment->purchase_date)->format('Y-m-d')) }}"
                 />
 
                 <x-form.input
@@ -198,7 +195,6 @@
                 <x-form.select
                     name="risk_tolerance"
                     label="Risk Tolerance"
-                    required
                 >
                     <option value="conservative" {{ old('risk_tolerance', $investment->risk_tolerance) === 'conservative' ? 'selected' : '' }}>Conservative</option>
                     <option value="moderate" {{ old('risk_tolerance', $investment->risk_tolerance) === 'moderate' ? 'selected' : '' }}>Moderate</option>

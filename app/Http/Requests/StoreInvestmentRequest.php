@@ -54,7 +54,7 @@ class StoreInvestmentRequest extends FormRequest
             'tax_lots' => 'nullable|array',
             'target_allocation_percentage' => 'nullable|numeric|min:0|max:100',
             'notes' => 'nullable|string|max:1000',
-            'status' => 'nullable|string|in:active,sold,pending',
+            'status' => 'nullable|string|in:active,monitoring,sold,pending',
 
             // Project-specific fields (all optional, validated when type is project)
             'project_type' => 'nullable|string|max:100',
