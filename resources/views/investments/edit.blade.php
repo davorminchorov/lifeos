@@ -3,29 +3,27 @@
 @section('title', 'Edit Investment - LifeOS')
 
 @section('header')
-    <div class="flex justify-between items-center">
+    <div class="flex items-center justify-between mb-8">
         <div>
-            <h1 class="text-3xl font-bold text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
-                Edit Investment: {{ $investment->name }}
-            </h1>
-            <p class="mt-2 text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)]">
-                Update your investment information
-            </p>
+            <h1 class="text-3xl font-bold text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Edit Investment</h1>
+            <p class="text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] mt-2">Update your investment information for {{ $investment->name }}</p>
         </div>
-        <div class="flex space-x-3">
-            <a href="{{ route('investments.show', $investment) }}" class="bg-[color:var(--color-info-600)] hover:bg-[color:var(--color-info-700)] text-white px-4 py-2 rounded-md text-sm font-medium">
-                View Details
-            </a>
-            <a href="{{ route('investments.index') }}" class="bg-[color:var(--color-primary-500)] hover:bg-[color:var(--color-primary-600)] dark:bg-[color:var(--color-dark-400)] dark:hover:bg-[color:var(--color-dark-500)] text-white px-4 py-2 rounded-md text-sm font-medium">
-                Back to List
-            </a>
-        </div>
+        <a href="{{ route('investments.index') }}"
+           class="inline-flex items-center px-4 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] hover:bg-[color:var(--color-primary-200)] dark:hover:bg-[color:var(--color-dark-300)]">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+            Back to List
+        </a>
     </div>
 @endsection
 
 @section('content')
-    <div class="max-w-4xl mx-auto">
-        <form method="POST" action="{{ route('investments.update', $investment) }}" class="space-y-6">
+    <div class="container mx-auto px-4 py-8">
+        <div class="max-w-4xl mx-auto">
+        <!-- Form Wrapper matching Create styling -->
+        <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] shadow-md rounded-lg border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)]">
+        <form method="POST" action="{{ route('investments.update', $investment) }}" class="space-y-6 p-6">
             @csrf
             @method('PUT')
 
@@ -367,15 +365,21 @@
             </x-form.section>
 
             <!-- Form Actions -->
-            <div class="flex items-center justify-end space-x-4 pt-6 border-t border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)]">
-                <a href="{{ route('investments.show', $investment) }}" class="bg-white hover:bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] px-4 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md text-sm font-medium dark:bg-[color:var(--color-dark-200)] dark:text-[color:var(--color-primary-300)] dark:text-[color:var(--color-dark-400)] dark:border-[color:var(--color-dark-300)] dark:hover:bg-[color:var(--color-primary-700)]">
-                    Cancel
-                </a>
-                <button type="submit" class="bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] text-white px-4 py-2 rounded-md text-sm font-medium">
-                    Update Investment
-                </button>
+            <div class="border-t border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)] pt-6">
+                <div class="flex justify-end space-x-3">
+                    <a href="{{ route('investments.index') }}"
+                       class="inline-flex items-center px-4 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] hover:bg-[color:var(--color-primary-200)] dark:hover:bg-[color:var(--color-dark-300)]">
+                        Cancel
+                    </a>
+                    <button type="submit"
+                            class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[color:var(--color-accent-600)] hover:bg-[color:var(--color-accent-700)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[color:var(--color-accent-500)]">
+                        Update Investment
+                    </button>
+                </div>
             </div>
         </form>
+        </div>
+        </div>
     </div>
 
 <script>
