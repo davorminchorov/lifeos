@@ -99,6 +99,11 @@
                             <a href="{{ route('job-applications.index') }}" class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('job-applications.*') ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]' : 'border-transparent text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] hover:text-[color:var(--color-primary-600)] dark:hover:text-[color:var(--color-dark-400)] hover:border-[color:var(--color-primary-400)]' }} text-sm font-medium transition-colors duration-200">
                                 Job Applications
                             </a>
+
+                            <!-- Cycle Menu -->
+                            <a href="{{ route('cycle-menus.index') }}" class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('cycle-menus.*') ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]' : 'border-transparent text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] hover:text-[color:var(--color-primary-600)] dark:hover:text-[color:var(--color-dark-400)] hover:border-[color:var(--color-primary-400)]' }} text-sm font-medium transition-colors duration-200">
+                                Cycle Menu
+                            </a>
                         </div>
                         @endauth
                     </div>

@@ -515,3 +515,85 @@ return [
 ---
 
 This document defines the v1 scope for the Cycle Menu Fitness Plan module. Implementation should follow Laravel 12 best practices with proper testing, validation, and API resource patterns. The module integrates seamlessly into the LifeOS personal management platform.
+
+## 24. Cycle Menu MVP — Implementation Plan (Focused Scope)
+
+Status: Approved plan; ready to implement
+
+### 24.1 Scope Summary
+- Add a new navigation entry for Cycle Menu (or reorganize under Nutrition if preferred).
+- Support multiple items per day within a cycle menu.
+- Send a daily notification at 09:00 about today’s menu.
+
+Assumptions (pending future iteration if needed):
+- Items can be free‑text with an optional link to `Recipe` if available.
+- Use application timezone for 09:00 notifications initially; per‑user timezones can be added later.
+- In‑app notifications enabled; email optional if mail is configured.
+
+### 24.2 Information Architecture & Navigation
+- Add primary or secondary navigation entry labeled “Cycle Menu”.
+- Use named route helpers for URL generation and active state highlighting.
+- Follow Tailwind v4 and existing dark mode conventions defined in `DESIGN_SYSTEM.md`.
+
+### 24.3 Data Model & Migrations (Laravel 12)
+- Tables:
+  - `cycle_menus`: id, name, starts_on (date), cycle_length_days (int), is_active (bool), notes, timestamps.
+  - `cycle_menu_days`: id, cycle_menu_id (FK), day_index (int), notes, unique([cycle_menu_id, day_index]), timestamps.
+  - `cycle_menu_items`: id, cycle_menu_day_id (FK), title, meal_type (enum: breakfast, lunch, dinner, snack, other), time_of_day (time nullable), quantity (string), recipe_id (FK nullable), position (int), timestamps.
+- Indexes and foreign keys for all relationships. Defer soft deletes unless needed.
+- Factories for each model for testing and seed data.
+
+### 24.4 Eloquent Models & Relationships
+- `CycleMenu` hasMany `CycleMenuDay`; scope `active()`.
+- `CycleMenuDay` belongsTo `CycleMenu`; hasMany `CycleMenuItem` (ordered by `position`).
+- `CycleMenuItem` belongsTo `CycleMenuDay`; optional belongsTo `Recipe`.
+- Use `casts()` methods per project conventions.
+
+### 24.5 Authorization & Validation
+- Policies for CRUD (owner‑only) on CycleMenu, Day, and Item.
+- Form Requests for store/update on all three resources; include custom error messages.
+
+### 24.6 Controllers & Routes
+- `CycleMenuController`: index, create, store, show, edit, update, destroy.
+- `CycleMenuDayController`: edit/update and reordering endpoint.
+- `CycleMenuItemController`: store, update, destroy, reorder.
+- Define named routes in `routes/web.php`; add API routes later if needed.
+
+### 24.7 Views (Blade + Tailwind v4)
+- Index: list of cycle menus, active badge, quick actions.
+- Show: grid (e.g., 7‑day) with per‑day columns showing multiple items and supporting drag/drop ordering.
+- Edit Day modal: repeatable item fields; maintain `position` for ordering.
+- Ensure accessibility and dark mode support per `DESIGN_SYSTEM.md`.
+
+### 24.8 Daily 09:00 Notification
+- Notification class `DailyMenuNotification` (in‑app; mail optional) implements `ShouldQueue`.
+- Scheduler in `bootstrap/app.php`: `dailyAt('09:00')` using app timezone.
+- Logic: For active CycleMenu(s), compute today’s `day_index` from `starts_on` and `cycle_length_days`; eager load items and notify the user with today’s list.
+
+### 24.9 Tests (Pest/Feature)
+- Factories and relationship tests for the three models.
+- Feature tests: create menu with multiple items per day; reorder items; view today’s items.
+- Notification test: scheduler dispatches `DailyMenuNotification` at 09:00; assert queued.
+
+### 24.10 Seeders & Demo Data
+- Demo Cycle Menu: 7 days with several items per day.
+- Update `DatabaseSeeder` to conditionally seed demo data in non‑production.
+
+### 24.11 Performance & N+1
+- Eager load `days.items` for index/show.
+- Proper indexes on FKs; batch queries in the scheduler to avoid per‑day loops.
+
+### 24.12 Rollout Steps
+1) Generate migrations, models, factories, policies, and form requests via `php artisan make:` with `--no-interaction`.
+2) Implement controllers, routes, and views.
+3) Implement the notification and scheduler.
+4) Write feature and unit tests; run and fix.
+5) Seed demo data; verify UX.
+6) Run Pint (`vendor/bin/pint`).
+7) Update README with usage instructions.
+
+### 24.13 Timeline
+- Day 1: Data model, migrations, models, factories.
+- Day 2: Controllers, validation, routes, initial views, navigation update.
+- Day 3: Notifications + scheduler, tests, polish.
+- Day 4: QA, docs, demo.

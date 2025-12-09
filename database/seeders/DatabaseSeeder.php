@@ -19,5 +19,12 @@ class DatabaseSeeder extends Seeder
             'name' => 'Test User',
             'email' => 'test@example.com',
         ]);
+
+        // Seed demo data for non-production environments
+        if (! app()->environment('production')) {
+            $this->call([
+                DemoCycleMenuSeeder::class,
+            ]);
+        }
     }
 }

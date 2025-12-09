@@ -15,6 +15,9 @@ use App\Http\Controllers\JobApplicationInterviewController;
 use App\Http\Controllers\JobApplicationKanbanController;
 use App\Http\Controllers\JobApplicationOfferController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\CycleMenuController;
+use App\Http\Controllers\CycleMenuDayController;
+use App\Http\Controllers\CycleMenuItemController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\SubscriptionController;
@@ -170,5 +173,15 @@ Route::middleware('auth')->group(function () {
         Route::get('{category}/{filename}/info', [FileUploadController::class, 'getFileInfo'])->name('info');
         Route::delete('{category}/{filename}', [FileUploadController::class, 'delete'])->name('delete');
         Route::get('types/{category?}', [FileUploadController::class, 'getAllowedTypes'])->name('types');
+    });
+
+    // Cycle Menu Routes
+    Route::resource('cycle-menus', CycleMenuController::class);
+    Route::put('cycle-menu-days/{cycle_menu_day}', [CycleMenuDayController::class, 'update'])->name('cycle-menu-days.update');
+    Route::prefix('cycle-menu-items')->name('cycle-menu-items.')->group(function () {
+        Route::post('/', [CycleMenuItemController::class, 'store'])->name('store');
+        Route::put('{cycle_menu_item}', [CycleMenuItemController::class, 'update'])->name('update');
+        Route::delete('{cycle_menu_item}', [CycleMenuItemController::class, 'destroy'])->name('destroy');
+        Route::post('reorder', [CycleMenuItemController::class, 'reorder'])->name('reorder');
     });
 });

@@ -109,6 +109,31 @@ LifeOS provides a comprehensive suite of tools to manage various aspects of your
   - Fully optimized mobile experience across all 50+ templates
   - Touch-optimized interfaces with larger touch targets (44px minimum)
   - Responsive table solutions with card-based mobile layouts
+
+### 🍽️ Cycle Menu (MVP)
+- Plan rotating menus with a configurable cycle length (default 7 days).
+- Add multiple items per day with type (breakfast, lunch, dinner, snack, other), time, and quantity.
+- Simple manual ordering of items per day.
+- Daily notification at 09:00 (application timezone) with today’s items.
+
+Getting started:
+1. Migrate and (optionally) seed demo data:
+   - `php artisan migrate`
+   - `php artisan db:seed --class=DemoCycleMenuSeeder` (non‑production)
+2. Open the Cycle Menu from the top navigation.
+3. Create a menu (name, start date, cycle length, active toggle). Days 0..(length‑1) are auto‑created.
+4. Open a menu to add items to each day, set types/times/quantities, and reorder by position.
+
+Notifications:
+- Scheduler entry `cycle-menu-daily-notify` runs the command `cycle-menus:notify-today` daily at 09:00.
+- Manually trigger:
+  - Dry run (no notifications sent): `php artisan cycle-menus:notify-today --dry-run`
+  - Real send: `php artisan cycle-menus:notify-today`
+- In‑app notifications include a link back to the menu.
+
+Notes:
+- Policies are permissive for MVP (any authenticated user). Ownership can be added later via `user_id` columns and stricter policies.
+- Views use Tailwind v4 and support dark mode.
   - Collapsible mobile navigation with hamburger menu
   - Mobile-first form optimization
   - Progressive enhancement approach
