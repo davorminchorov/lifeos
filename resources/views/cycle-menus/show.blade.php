@@ -48,8 +48,13 @@
                             <form method="POST" action="{{ route('cycle-menu-days.update', $day) }}" class="space-y-2">
                                 @csrf
                                 @method('PUT')
-                                <label class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]" for="notes_{{ $day->id }}">Notes</label>
-                                <textarea id="notes_{{ $day->id }}" name="notes" rows="3" class="block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-[color:var(--color-dark-100)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">{{ old('notes', $day->notes) }}</textarea>
+                                <x-form.input
+                                    type="textarea"
+                                    name="notes"
+                                    :id="'notes_' . $day->id"
+                                    label="Notes"
+                                    :value="$day->notes"
+                                />
                                 <div class="flex justify-end pt-1">
                                     <button type="submit" class="text-sm bg-[color:var(--color-primary-500)] hover:bg-[color:var(--color-primary-600)] text-white px-3 py-1.5 rounded-md">Save Notes</button>
                                 </div>
@@ -63,26 +68,36 @@
                             <form method="POST" action="{{ route('cycle-menu-items.store') }}" class="space-y-3">
                                 @csrf
                                 <input type="hidden" name="cycle_menu_day_id" value="{{ $day->id }}">
-                                <div>
-                                    <label class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]" for="title_{{ $i }}">Add Item</label>
-                                    <input id="title_{{ $i }}" name="title" type="text" placeholder="e.g., Oatmeal with berries" required class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-[color:var(--color-dark-100)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">
-                                </div>
+                                <x-form.input
+                                    name="title"
+                                    :id="'title_' . $i"
+                                    label="Add Item"
+                                    placeholder="e.g., Oatmeal with berries"
+                                    required
+                                />
                                 <div class="grid grid-cols-3 gap-3">
                                     <div class="col-span-1">
-                                        <label class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]" for="meal_type_{{ $i }}">Type</label>
-                                        <select id="meal_type_{{ $i }}" name="meal_type" class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-[color:var(--color-dark-100)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">
+                                        <x-form.select name="meal_type" :id="'meal_type_' . $i" label="Type">
                                             @foreach (\App\Enums\MealType::cases() as $type)
-                                                <option value="{{ $type->value }}">{{ ucfirst($type->value) }}</option>
+                                                <option value="{{ $type->value }}" @selected(old('meal_type') === $type->value)>{{ ucfirst($type->value) }}</option>
                                             @endforeach
-                                        </select>
+                                        </x-form.select>
                                     </div>
                                     <div class="col-span-1">
-                                        <label class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]" for="time_{{ $i }}">Time</label>
-                                        <input id="time_{{ $i }}" name="time_of_day" type="time" class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-[color:var(--color-dark-100)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">
+                                        <x-form.input
+                                            name="time_of_day"
+                                            :id="'time_' . $i"
+                                            label="Time"
+                                            type="time"
+                                        />
                                     </div>
                                     <div class="col-span-1">
-                                        <label class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]" for="qty_{{ $i }}">Quantity</label>
-                                        <input id="qty_{{ $i }}" name="quantity" type="text" placeholder="e.g., 1 serving" class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-[color:var(--color-dark-100)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">
+                                        <x-form.input
+                                            name="quantity"
+                                            :id="'qty_' . $i"
+                                            label="Quantity"
+                                            placeholder="e.g., 1 serving"
+                                        />
                                     </div>
                                 </div>
                                 <div class="flex justify-end">
@@ -105,9 +120,9 @@
                                             <input type="hidden" name="orders[{{ $idx }}][id]" value="{{ $item->id }}">
                                             <label class="sr-only" for="pos_{{ $item->id }}">Position</label>
                                             @can('update', $item)
-                                                <input id="pos_{{ $item->id }}" name="orders[{{ $idx }}][position]" type="number" min="0" value="{{ $item->position }}" class="w-16 rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-[color:var(--color-dark-100)] dark:text-[color:var(--color-dark-600)]">
+                                                <input id="pos_{{ $item->id }}" name="orders[{{ $idx }}][position]" type="number" min="0" value="{{ $item->position }}" class="w-16 rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">
                                             @else
-                                                <input id="pos_{{ $item->id }}" type="number" value="{{ $item->position }}" class="w-16 rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-[color:var(--color-dark-100)] dark:text-[color:var(--color-dark-600)]" disabled>
+                                                <input id="pos_{{ $item->id }}" type="number" value="{{ $item->position }}" class="w-16 rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]" disabled>
                                             @endcan
                                         </div>
                                         <div class="flex-1">
