@@ -32,15 +32,15 @@
         <div class="mb-4 rounded-md bg-[color:var(--color-accent-50)] text-[color:var(--color-accent-700)] px-4 py-3">{{ session('status') }}</div>
     @endif
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-{{ min(4, max(1, $menu->cycle_length_days)) }} gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-{{ min(4, max(1, $menu->cycle_length_days)) }} gap-6">
         @for ($i = 0; $i < $menu->cycle_length_days; $i++)
             @php($day = $daysByIndex->get($i))
-            <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] shadow sm:rounded-lg flex flex-col">
-                <div class="px-4 py-3 sm:px-6 border-b border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] flex items-center justify-between">
+            <div class="h-full rounded-lg ring-1 ring-[color:var(--color-primary-300)]/60 dark:ring-[color:var(--color-dark-300)] bg-[color:var(--color-primary-100)]/60 dark:bg-[color:var(--color-dark-200)] shadow-sm flex flex-col">
+                <div class="px-4 py-3 sm:px-6 border-b border-[color:var(--color-primary-300)]/60 dark:border-[color:var(--color-dark-300)] flex items-center justify-between">
                     <div class="font-semibold text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Day {{ $i + 1 }}</div>
                 </div>
 
-                <div class="p-4 space-y-4">
+                <div class="p-4 space-y-5">
                     {{-- Day Notes --}}
                     @if ($day)
                         @can('update', $day)
@@ -48,9 +48,9 @@
                                 @csrf
                                 @method('PUT')
                                 <label class="block text-xs font-medium text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)]" for="notes_{{ $day->id }}">Notes</label>
-                                <textarea id="notes_{{ $day->id }}" name="notes" rows="2" class="block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-[color:var(--color-dark-100)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">{{ old('notes', $day->notes) }}</textarea>
-                                <div class="flex justify-end">
-                                    <button type="submit" class="text-xs bg-[color:var(--color-primary-500)] hover:bg-[color:var(--color-primary-600)] text-white px-3 py-1 rounded-md">Save Notes</button>
+                                <textarea id="notes_{{ $day->id }}" name="notes" rows="3" class="block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-[color:var(--color-dark-100)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">{{ old('notes', $day->notes) }}</textarea>
+                                <div class="flex justify-end pt-1">
+                                    <button type="submit" class="text-xs bg-[color:var(--color-primary-500)] hover:bg-[color:var(--color-primary-600)] text-white px-3 py-1.5 rounded-md">Save Notes</button>
                                 </div>
                             </form>
                         @endcan
@@ -59,14 +59,14 @@
                     {{-- Add Item --}}
                     @if ($day)
                         @can('create', \App\Models\CycleMenuItem::class)
-                            <form method="POST" action="{{ route('cycle-menu-items.store') }}" class="space-y-2">
+                            <form method="POST" action="{{ route('cycle-menu-items.store') }}" class="space-y-3">
                                 @csrf
                                 <input type="hidden" name="cycle_menu_day_id" value="{{ $day->id }}">
                                 <div>
                                     <label class="block text-xs font-medium text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)]" for="title_{{ $i }}">Add Item</label>
                                     <input id="title_{{ $i }}" name="title" type="text" placeholder="e.g., Oatmeal with berries" required class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-[color:var(--color-dark-100)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">
                                 </div>
-                                <div class="grid grid-cols-3 gap-2">
+                                <div class="grid grid-cols-3 gap-3">
                                     <div class="col-span-1">
                                         <label class="block text-xs font-medium text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)]" for="meal_type_{{ $i }}">Type</label>
                                         <select id="meal_type_{{ $i }}" name="meal_type" class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-[color:var(--color-dark-100)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">
@@ -95,10 +95,11 @@
                     <div class="space-y-2">
                         <div class="text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Items</div>
                         @if ($day && $day->items->count())
-                            <form method="POST" action="{{ route('cycle-menu-items.reorder') }}" class="space-y-2">
+                            {{-- Reorder form --}}
+                            <form method="POST" action="{{ route('cycle-menu-items.reorder') }}" class="space-y-2" id="reorder_form_{{ $i }}">
                                 @csrf
                                 @foreach ($day->items as $idx => $item)
-                                    <div class="flex items-start gap-2 bg-[color:var(--color-primary-200)] dark:bg-[color:var(--color-dark-100)] rounded-md px-3 py-2">
+                                    <div class="flex items-start gap-3 bg-[color:var(--color-primary-200)]/60 dark:bg-[color:var(--color-dark-100)] rounded-md px-3 py-2">
                                         <div class="shrink-0">
                                             <input type="hidden" name="orders[{{ $idx }}][id]" value="{{ $item->id }}">
                                             <label class="sr-only" for="pos_{{ $item->id }}">Position</label>
@@ -121,11 +122,7 @@
                                             </div>
                                         </div>
                                         @can('delete', $item)
-                                            <form method="POST" action="{{ route('cycle-menu-items.destroy', $item) }}" onsubmit="return confirm('Remove this item?');">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="text-[color:var(--color-danger-600)] hover:underline text-xs">Remove</button>
-                                            </form>
+                                            <button type="submit" form="delete_item_{{ $item->id }}" class="text-[color:var(--color-danger-600)] hover:underline text-xs" onclick="return confirm('Remove this item?');">Remove</button>
                                         @endcan
                                     </div>
                                 @endforeach
@@ -138,6 +135,15 @@
                                     @endcan
                                 @endif
                             </form>
+                            {{-- Separate delete forms to avoid nested forms --}}
+                            @foreach ($day->items as $item)
+                                @can('delete', $item)
+                                    <form method="POST" action="{{ route('cycle-menu-items.destroy', $item) }}" id="delete_item_{{ $item->id }}" class="hidden">
+                                        @csrf
+                                        @method('DELETE')
+                                    </form>
+                                @endcan
+                            @endforeach
                         @else
                             <div class="text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)]">No items yet.</div>
                         @endif
