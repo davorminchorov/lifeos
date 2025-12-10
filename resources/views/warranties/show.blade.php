@@ -14,16 +14,12 @@
         </div>
         <div class="flex space-x-3">
             @if($warranty->current_status === 'active' && !$warranty->is_expired)
-                <button onclick="openClaimModal({{ $warranty->id }})" class="bg-[color:var(--color-warning-500)] hover:bg-[color:var(--color-warning-600)] text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200">
+                <x-button type="button" variant="secondary" onclick="openClaimModal({{ $warranty->id }})">
                     File Claim
-                </button>
+                </x-button>
             @endif
-            <a href="{{ route('warranties.edit', $warranty) }}" class="bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200">
-                Edit
-            </a>
-            <a href="{{ route('warranties.index') }}" class="bg-[color:var(--color-primary-500)] hover:bg-[color:var(--color-primary-600)] text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200">
-                Back to List
-            </a>
+            <x-button href="{{ route('warranties.edit', $warranty) }}" variant="primary">Edit</x-button>
+            <x-button href="{{ route('warranties.index') }}" variant="secondary">Back to List</x-button>
         </div>
     </div>
 @endsection

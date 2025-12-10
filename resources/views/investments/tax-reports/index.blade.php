@@ -102,18 +102,18 @@
                 <div class="bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] rounded-lg p-6 mb-8">
                     <h3 class="text-lg font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] dark:text-[color:var(--color-primary-100)] dark:text-[color:var(--color-dark-200)] mb-4">Generate Tax Reports</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <a href="{{ route('investments.tax-reports.capital-gains', ['tax_year' => $taxSummary['tax_year']]) }}" class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[color:var(--color-accent-500)]">
+                        <x-button href="{{ route('investments.tax-reports.capital-gains', ['tax_year' => $taxSummary['tax_year']]) }}" variant="primary">
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                             </svg>
                             Capital Gains Report
-                        </a>
-                        <a href="{{ route('investments.tax-reports.dividend-income', ['tax_year' => $taxSummary['tax_year']]) }}" class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-[color:var(--color-success-600)] hover:bg-[color:var(--color-success-600)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                        </x-button>
+                        <x-button href="{{ route('investments.tax-reports.dividend-income', ['tax_year' => $taxSummary['tax_year']]) }}" variant="secondary">
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
                             </svg>
                             Dividend Income Report
-                        </a>
+                        </x-button>
                     </div>
                 </div>
 

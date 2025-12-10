@@ -13,12 +13,8 @@
             </p>
         </div>
         <div class="flex space-x-3">
-            <a href="{{ route('subscriptions.show', $subscription) }}" class="bg-[color:var(--color-primary-500)] hover:bg-[color:var(--color-primary-600)] dark:bg-[color:var(--color-dark-400)] dark:hover:bg-[color:var(--color-dark-500)] text-white px-4 py-2 rounded-md text-sm font-medium">
-                View Details
-            </a>
-            <a href="{{ route('subscriptions.index') }}" class="bg-[color:var(--color-primary-500)] hover:bg-[color:var(--color-primary-600)] dark:bg-[color:var(--color-dark-400)] dark:hover:bg-[color:var(--color-dark-500)] text-white px-4 py-2 rounded-md text-sm font-medium">
-                Back to List
-            </a>
+            <x-button href="{{ route('subscriptions.show', $subscription) }}" variant="secondary">View Details</x-button>
+            <x-button href="{{ route('subscriptions.index') }}" variant="secondary">Back to List</x-button>
         </div>
     </div>
 @endsection
@@ -43,20 +39,12 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Service Name -->
                         <div>
-                            <label for="service_name" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Service Name *</label>
-                            <input type="text" name="service_name" id="service_name" value="{{ old('service_name', $subscription->service_name) }}" required
-                                   class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-[color:var(--color-dark-100)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">
-                            @error('service_name')
-                                <p class="mt-1 text-sm text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]">{{ $message }}</p>
-                            @enderror
+                            <x-form.input name="service_name" label="Service Name" :required="true" :value="old('service_name', $subscription->service_name)" inputClass="@error('service_name') border-danger-400 @enderror" />
                         </div>
 
                         <!-- Category -->
                         <div>
-                            <label for="category" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Category *</label>
-                            <select name="category" id="category" required
-                                    class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-[color:var(--color-dark-100)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">
-                                <option value="">Select Category</option>
+                            <x-form.select name="category" label="Category" :required="true" placeholder="Select Category" selectClass="@error('category') border-danger-400 @enderror">
                                 <option value="Entertainment" {{ old('category', $subscription->category) === 'Entertainment' ? 'selected' : '' }}>Entertainment</option>
                                 <option value="Software" {{ old('category', $subscription->category) === 'Software' ? 'selected' : '' }}>Software</option>
                                 <option value="Fitness" {{ old('category', $subscription->category) === 'Fitness' ? 'selected' : '' }}>Fitness</option>
@@ -65,34 +53,21 @@
                                 <option value="Development" {{ old('category', $subscription->category) === 'Development' ? 'selected' : '' }}>Development</option>
                                 <option value="Health" {{ old('category', $subscription->category) === 'Health' ? 'selected' : '' }}>Health</option>
                                 <option value="Communication" {{ old('category', $subscription->category) === 'Communication' ? 'selected' : '' }}>Communication</option>
-                            </select>
-                            @error('category')
-                                <p class="mt-1 text-sm text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]">{{ $message }}</p>
-                            @enderror
+                            </x-form.select>
                         </div>
 
                         <!-- Description -->
                         <div class="md:col-span-2">
-                            <label for="description" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Description</label>
-                            <textarea name="description" id="description" rows="3"
-                                      class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-[color:var(--color-dark-100)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">{{ old('description', $subscription->description) }}</textarea>
-                            @error('description')
-                                <p class="mt-1 text-sm text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]">{{ $message }}</p>
-                            @enderror
+                            <x-form.input type="textarea" name="description" label="Description" rows="3" :value="old('description', $subscription->description)" inputClass="@error('description') border-danger-400 @enderror" />
                         </div>
 
                         <!-- Status -->
                         <div>
-                            <label for="status" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Status *</label>
-                            <select name="status" id="status" required
-                                    class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-[color:var(--color-dark-100)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">
+                            <x-form.select name="status" label="Status" :required="true" selectClass="@error('status') border-danger-400 @enderror">
                                 <option value="active" {{ old('status', $subscription->status) === 'active' ? 'selected' : '' }}>Active</option>
                                 <option value="paused" {{ old('status', $subscription->status) === 'paused' ? 'selected' : '' }}>Paused</option>
                                 <option value="cancelled" {{ old('status', $subscription->status) === 'cancelled' ? 'selected' : '' }}>Cancelled</option>
-                            </select>
-                            @error('status')
-                                <p class="mt-1 text-sm text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]">{{ $message }}</p>
-                            @enderror
+                            </x-form.select>
                         </div>
                     </div>
                 </div>
@@ -111,65 +86,53 @@
                 <div class="border-t border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)] px-4 py-5 sm:px-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Cost -->
-                        <div>
-                            <label for="cost" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Cost *</label>
-                            <div class="mt-1 relative rounded-md shadow-sm">
-                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <span class="text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)] sm:text-sm">{{ $subscription->currency }}</span>
-                                </div>
-                                <input type="number" name="cost" id="cost" step="0.01" min="0" value="{{ old('cost', $subscription->cost) }}" required
-                                       class="pl-12 mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-[color:var(--color-dark-100)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">
-                            </div>
-                            @error('cost')
-                                <p class="mt-1 text-sm text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]">{{ $message }}</p>
-                            @enderror
-                        </div>
+                        <x-form.input
+                            type="number"
+                            name="cost"
+                            label="Cost"
+                            prefix="$"
+                            step="0.01"
+                            min="0"
+                            :required="true"
+                            :value="old('cost', $subscription->cost)"
+                            inputClass="@error('cost') border-danger-400 @enderror"
+                        />
 
                         <!-- Currency -->
-                        <div>
-                            <label for="currency" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Currency *</label>
-                            <select name="currency" id="currency" required
-                                    class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-[color:var(--color-dark-100)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">
-                                <option value="MKD" {{ old('currency', $subscription->currency) === 'MKD' ? 'selected' : '' }}>MKD - Macedonian Denar</option>
-                                <option value="USD" {{ old('currency', $subscription->currency) === 'USD' ? 'selected' : '' }}>USD ($) - US Dollar</option>
-                                <option value="EUR" {{ old('currency', $subscription->currency) === 'EUR' ? 'selected' : '' }}>EUR (€) - Euro</option>
-                                <option value="GBP" {{ old('currency', $subscription->currency) === 'GBP' ? 'selected' : '' }}>GBP (£) - British Pound</option>
-                                <option value="CAD" {{ old('currency', $subscription->currency) === 'CAD' ? 'selected' : '' }}>CAD (C$) - Canadian Dollar</option>
-                                <option value="AUD" {{ old('currency', $subscription->currency) === 'AUD' ? 'selected' : '' }}>AUD (A$) - Australian Dollar</option>
-                                <option value="CHF" {{ old('currency', $subscription->currency) === 'CHF' ? 'selected' : '' }}>CHF (CHF) - Swiss Franc</option>
-                                <option value="RSD" {{ old('currency', $subscription->currency) === 'RSD' ? 'selected' : '' }}>RSD (RSD) - Serbian Dinar</option>
-                                <option value="BGN" {{ old('currency', $subscription->currency) === 'BGN' ? 'selected' : '' }}>BGN (лв) - Bulgarian Lev</option>
-                            </select>
-                            @error('currency')
-                                <p class="mt-1 text-sm text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]">{{ $message }}</p>
-                            @enderror
-                        </div>
+                        <x-form.select name="currency" label="Currency" :required="true" selectClass="@error('currency') border-danger-400 @enderror">
+                            <option value="MKD" {{ old('currency', $subscription->currency) === 'MKD' ? 'selected' : '' }}>MKD - Macedonian Denar</option>
+                            <option value="USD" {{ old('currency', $subscription->currency) === 'USD' ? 'selected' : '' }}>USD ($) - US Dollar</option>
+                            <option value="EUR" {{ old('currency', $subscription->currency) === 'EUR' ? 'selected' : '' }}>EUR (€) - Euro</option>
+                            <option value="GBP" {{ old('currency', $subscription->currency) === 'GBP' ? 'selected' : '' }}>GBP (£) - British Pound</option>
+                            <option value="CAD" {{ old('currency', $subscription->currency) === 'CAD' ? 'selected' : '' }}>CAD (C$) - Canadian Dollar</option>
+                            <option value="AUD" {{ old('currency', $subscription->currency) === 'AUD' ? 'selected' : '' }}>AUD (A$) - Australian Dollar</option>
+                            <option value="CHF" {{ old('currency', $subscription->currency) === 'CHF' ? 'selected' : '' }}>CHF (CHF) - Swiss Franc</option>
+                            <option value="RSD" {{ old('currency', $subscription->currency) === 'RSD' ? 'selected' : '' }}>RSD (RSD) - Serbian Dinar</option>
+                            <option value="BGN" {{ old('currency', $subscription->currency) === 'BGN' ? 'selected' : '' }}>BGN (лв) - Bulgarian Lev</option>
+                        </x-form.select>
 
                         <!-- Billing Cycle -->
-                        <div>
-                            <label for="billing_cycle" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Billing Cycle *</label>
-                            <select name="billing_cycle" id="billing_cycle" required onchange="toggleCustomDays(this)"
-                                    class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-[color:var(--color-dark-100)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">
-                                <option value="">Select Billing Cycle</option>
-                                <option value="weekly" {{ old('billing_cycle', $subscription->billing_cycle) === 'weekly' ? 'selected' : '' }}>Weekly</option>
-                                <option value="monthly" {{ old('billing_cycle', $subscription->billing_cycle) === 'monthly' ? 'selected' : '' }}>Monthly</option>
-                                <option value="yearly" {{ old('billing_cycle', $subscription->billing_cycle) === 'yearly' ? 'selected' : '' }}>Yearly</option>
-                                <option value="custom" {{ old('billing_cycle', $subscription->billing_cycle) === 'custom' ? 'selected' : '' }}>Custom</option>
-                            </select>
-                            @error('billing_cycle')
-                                <p class="mt-1 text-sm text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]">{{ $message }}</p>
-                            @enderror
-                        </div>
+                        <x-form.select name="billing_cycle" label="Billing Cycle" :required="true" onchange="toggleCustomDays(this)" selectClass="@error('billing_cycle') border-danger-400 @enderror">
+                            <option value="">Select Billing Cycle</option>
+                            <option value="weekly" {{ old('billing_cycle', $subscription->billing_cycle) === 'weekly' ? 'selected' : '' }}>Weekly</option>
+                            <option value="monthly" {{ old('billing_cycle', $subscription->billing_cycle) === 'monthly' ? 'selected' : '' }}>Monthly</option>
+                            <option value="yearly" {{ old('billing_cycle', $subscription->billing_cycle) === 'yearly' ? 'selected' : '' }}>Yearly</option>
+                            <option value="custom" {{ old('billing_cycle', $subscription->billing_cycle) === 'custom' ? 'selected' : '' }}>Custom</option>
+                        </x-form.select>
 
                         <!-- Custom Billing Days -->
                         <div id="custom_days_field" style="display: {{ old('billing_cycle', $subscription->billing_cycle) === 'custom' ? 'block' : 'none' }};">
-                            <label for="billing_cycle_days" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Custom Days</label>
-                            <input type="number" name="billing_cycle_days" id="billing_cycle_days" min="1" max="365" value="{{ old('billing_cycle_days', $subscription->billing_cycle_days) }}"
-                                   class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-[color:var(--color-dark-100)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">
-                            <p class="mt-1 text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)]">Number of days between billing</p>
-                            @error('billing_cycle_days')
-                                <p class="mt-1 text-sm text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]">{{ $message }}</p>
-                            @enderror
+                            <x-form.input
+                                type="number"
+                                name="billing_cycle_days"
+                                id="billing_cycle_days"
+                                label="Custom Days"
+                                min="1"
+                                max="365"
+                                :value="old('billing_cycle_days', $subscription->billing_cycle_days)"
+                                helpText="Number of days between billing"
+                                inputClass="@error('billing_cycle_days') border-danger-400 @enderror"
+                            />
                         </div>
                     </div>
                 </div>
@@ -188,35 +151,13 @@
                 <div class="border-t border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)] px-4 py-5 sm:px-6">
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <!-- Start Date -->
-                        <div>
-                            <label for="start_date" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Start Date *</label>
-                            <input type="date" name="start_date" id="start_date" value="{{ old('start_date', $subscription->start_date?->format('Y-m-d')) }}" required
-                                   class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-[color:var(--color-dark-100)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">
-                            @error('start_date')
-                                <p class="mt-1 text-sm text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]">{{ $message }}</p>
-                            @enderror
-                        </div>
+                        <x-form.input type="date" name="start_date" label="Start Date" :required="true" :value="old('start_date', $subscription->start_date?->format('Y-m-d'))" inputClass="@error('start_date') border-danger-400 @enderror" />
 
                         <!-- Next Billing Date -->
-                        <div>
-                            <label for="next_billing_date" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Next Billing Date *</label>
-                            <input type="date" name="next_billing_date" id="next_billing_date" value="{{ old('next_billing_date', $subscription->next_billing_date?->format('Y-m-d')) }}" required
-                                   class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-[color:var(--color-dark-100)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">
-                            @error('next_billing_date')
-                                <p class="mt-1 text-sm text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]">{{ $message }}</p>
-                            @enderror
-                        </div>
+                        <x-form.input type="date" name="next_billing_date" label="Next Billing Date" :required="true" :value="old('next_billing_date', $subscription->next_billing_date?->format('Y-m-d'))" inputClass="@error('next_billing_date') border-danger-400 @enderror" />
 
                         <!-- Cancellation Date -->
-                        <div>
-                            <label for="cancellation_date" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Cancellation Date</label>
-                            <input type="date" name="cancellation_date" id="cancellation_date" value="{{ old('cancellation_date', $subscription->cancellation_date?->format('Y-m-d')) }}"
-                                   class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-[color:var(--color-dark-100)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">
-                            <p class="mt-1 text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)]">Only if cancelled</p>
-                            @error('cancellation_date')
-                                <p class="mt-1 text-sm text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]">{{ $message }}</p>
-                            @enderror
-                        </div>
+                        <x-form.input type="date" name="cancellation_date" label="Cancellation Date" :value="old('cancellation_date', $subscription->cancellation_date?->format('Y-m-d'))" helpText="Only if cancelled" inputClass="@error('cancellation_date') border-danger-400 @enderror" />
                     </div>
                 </div>
             </div>
@@ -234,59 +175,31 @@
                 <div class="border-t border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)] px-4 py-5 sm:px-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Payment Method -->
-                        <div>
-                            <label for="payment_method" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Payment Method</label>
-                            <select name="payment_method" id="payment_method"
-                                    class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-[color:var(--color-dark-100)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">
-                                <option value="">Select Payment Method</option>
-                                <option value="Credit Card" {{ old('payment_method', $subscription->payment_method) === 'Credit Card' ? 'selected' : '' }}>Credit Card</option>
-                                <option value="Debit Card" {{ old('payment_method', $subscription->payment_method) === 'Debit Card' ? 'selected' : '' }}>Debit Card</option>
-                                <option value="PayPal" {{ old('payment_method', $subscription->payment_method) === 'PayPal' ? 'selected' : '' }}>PayPal</option>
-                                <option value="Bank Transfer" {{ old('payment_method', $subscription->payment_method) === 'Bank Transfer' ? 'selected' : '' }}>Bank Transfer</option>
-                                <option value="Apple Pay" {{ old('payment_method', $subscription->payment_method) === 'Apple Pay' ? 'selected' : '' }}>Apple Pay</option>
-                                <option value="Google Pay" {{ old('payment_method', $subscription->payment_method) === 'Google Pay' ? 'selected' : '' }}>Google Pay</option>
-                            </select>
-                            @error('payment_method')
-                                <p class="mt-1 text-sm text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]">{{ $message }}</p>
-                            @enderror
-                        </div>
+                        <x-form.select name="payment_method" label="Payment Method" selectClass="@error('payment_method') border-danger-400 @enderror">
+                            <option value="">Select Payment Method</option>
+                            <option value="Credit Card" {{ old('payment_method', $subscription->payment_method) === 'Credit Card' ? 'selected' : '' }}>Credit Card</option>
+                            <option value="Debit Card" {{ old('payment_method', $subscription->payment_method) === 'Debit Card' ? 'selected' : '' }}>Debit Card</option>
+                            <option value="PayPal" {{ old('payment_method', $subscription->payment_method) === 'PayPal' ? 'selected' : '' }}>PayPal</option>
+                            <option value="Bank Transfer" {{ old('payment_method', $subscription->payment_method) === 'Bank Transfer' ? 'selected' : '' }}>Bank Transfer</option>
+                            <option value="Apple Pay" {{ old('payment_method', $subscription->payment_method) === 'Apple Pay' ? 'selected' : '' }}>Apple Pay</option>
+                            <option value="Google Pay" {{ old('payment_method', $subscription->payment_method) === 'Google Pay' ? 'selected' : '' }}>Google Pay</option>
+                        </x-form.select>
 
                         <!-- Merchant Info -->
-                        <div>
-                            <label for="merchant_info" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Merchant/Company</label>
-                            <input type="text" name="merchant_info" id="merchant_info" value="{{ old('merchant_info', $subscription->merchant_info) }}"
-                                   class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-[color:var(--color-dark-100)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">
-                            @error('merchant_info')
-                                <p class="mt-1 text-sm text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]">{{ $message }}</p>
-                            @enderror
-                        </div>
+                        <x-form.input name="merchant_info" label="Merchant/Company" :value="old('merchant_info', $subscription->merchant_info)" inputClass="@error('merchant_info') border-danger-400 @enderror" />
 
                         <!-- Auto Renewal -->
-                        <div class="flex items-center">
-                            <input type="hidden" name="auto_renewal" value="0">
-                            <input type="checkbox" name="auto_renewal" id="auto_renewal" value="1" {{ old('auto_renewal', $subscription->auto_renewal) ? 'checked' : '' }}
-                                   class="rounded border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-[color:var(--color-dark-100)] text-[color:var(--color-accent-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">
-                            <label for="auto_renewal" class="ml-2 block text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
-                                Auto-renewal enabled
-                            </label>
-                        </div>
+                        <x-form.checkbox name="auto_renewal" label="Auto-renewal enabled" :checked="old('auto_renewal', $subscription->auto_renewal)" />
 
                         <!-- Cancellation Difficulty -->
-                        <div>
-                            <label for="cancellation_difficulty" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Cancellation Difficulty</label>
-                            <select name="cancellation_difficulty" id="cancellation_difficulty"
-                                    class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-[color:var(--color-dark-100)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">
-                                <option value="">Not Rated</option>
-                                <option value="1" {{ old('cancellation_difficulty', $subscription->cancellation_difficulty) == '1' ? 'selected' : '' }}>1 - Very Easy</option>
-                                <option value="2" {{ old('cancellation_difficulty', $subscription->cancellation_difficulty) == '2' ? 'selected' : '' }}>2 - Easy</option>
-                                <option value="3" {{ old('cancellation_difficulty', $subscription->cancellation_difficulty) == '3' ? 'selected' : '' }}>3 - Moderate</option>
-                                <option value="4" {{ old('cancellation_difficulty', $subscription->cancellation_difficulty) == '4' ? 'selected' : '' }}>4 - Hard</option>
-                                <option value="5" {{ old('cancellation_difficulty', $subscription->cancellation_difficulty) == '5' ? 'selected' : '' }}>5 - Very Hard</option>
-                            </select>
-                            @error('cancellation_difficulty')
-                                <p class="mt-1 text-sm text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]">{{ $message }}</p>
-                            @enderror
-                        </div>
+                        <x-form.select name="cancellation_difficulty" label="Cancellation Difficulty" selectClass="@error('cancellation_difficulty') border-danger-400 @enderror">
+                            <option value="">Not Rated</option>
+                            <option value="1" {{ old('cancellation_difficulty', $subscription->cancellation_difficulty) == '1' ? 'selected' : '' }}>1 - Very Easy</option>
+                            <option value="2" {{ old('cancellation_difficulty', $subscription->cancellation_difficulty) == '2' ? 'selected' : '' }}>2 - Easy</option>
+                            <option value="3" {{ old('cancellation_difficulty', $subscription->cancellation_difficulty) == '3' ? 'selected' : '' }}>3 - Moderate</option>
+                            <option value="4" {{ old('cancellation_difficulty', $subscription->cancellation_difficulty) == '4' ? 'selected' : '' }}>4 - Hard</option>
+                            <option value="5" {{ old('cancellation_difficulty', $subscription->cancellation_difficulty) == '5' ? 'selected' : '' }}>5 - Very Hard</option>
+                        </x-form.select>
                     </div>
                 </div>
             </div>
@@ -304,40 +217,21 @@
                 <div class="border-t border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)] px-4 py-5 sm:px-6">
                     <div class="space-y-6">
                         <!-- Tags -->
-                        <div>
-                            <label for="tags" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Tags</label>
-                            @php
-                                $currentTags = old('tags', is_array($subscription->tags) ? implode(', ', $subscription->tags) : '');
-                            @endphp
-                            <input type="text" name="tags" id="tags" value="{{ $currentTags }}" placeholder="essential, work, family (separated by commas)"
-                                   class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-[color:var(--color-dark-100)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">
-                            <p class="mt-1 text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)]">Enter tags separated by commas</p>
-                            @error('tags')
-                                <p class="mt-1 text-sm text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]">{{ $message }}</p>
-                            @enderror
-                        </div>
+                        @php
+                            $currentTags = old('tags', is_array($subscription->tags) ? implode(', ', $subscription->tags) : '');
+                        @endphp
+                        <x-form.input name="tags" id="tags" label="Tags" :value="$currentTags" placeholder="essential, work, family (separated by commas)" helpText="Enter tags separated by commas" inputClass="@error('tags') border-danger-400 @enderror" />
 
                         <!-- Notes -->
-                        <div>
-                            <label for="notes" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Notes</label>
-                            <textarea name="notes" id="notes" rows="4" placeholder="Additional notes about this subscription..."
-                                      class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] dark:bg-[color:var(--color-dark-100)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">{{ old('notes', $subscription->notes) }}</textarea>
-                            @error('notes')
-                                <p class="mt-1 text-sm text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]">{{ $message }}</p>
-                            @enderror
-                        </div>
+                        <x-form.input type="textarea" name="notes" label="Notes" rows="4" :value="old('notes', $subscription->notes)" placeholder="Additional notes about this subscription..." inputClass="@error('notes') border-danger-400 @enderror" />
                     </div>
                 </div>
             </div>
 
             <!-- Submit Buttons -->
             <div class="flex justify-end space-x-3">
-                <a href="{{ route('subscriptions.show', $subscription) }}" class="bg-[color:var(--color-primary-200)] hover:bg-[color:var(--color-primary-300)] text-[color:var(--color-primary-700)] dark:bg-[color:var(--color-dark-300)] dark:hover:bg-[color:var(--color-dark-400)] dark:text-[color:var(--color-dark-600)] px-4 py-2 rounded-md text-sm font-medium">
-                    Cancel
-                </a>
-                <button type="submit" class="bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] text-white px-4 py-2 rounded-md text-sm font-medium">
-                    Update Subscription
-                </button>
+                <x-button href="{{ route('subscriptions.show', $subscription) }}" variant="secondary">Cancel</x-button>
+                <x-button type="submit" variant="primary">Update Subscription</x-button>
             </div>
         </form>
     </div>
@@ -358,29 +252,6 @@
             }
         }
 
-        // Parse tags from comma-separated string on form submission
-        document.addEventListener('DOMContentLoaded', function() {
-            const form = document.querySelector('form');
-            const tagsInput = document.getElementById('tags');
-
-            form.addEventListener('submit', function(e) {
-                if (tagsInput.value) {
-                    // Convert comma-separated tags to array format that Laravel expects
-                    const tags = tagsInput.value.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0);
-
-                    // Remove the original tags input
-                    tagsInput.remove();
-
-                    // Add hidden inputs for each tag
-                    tags.forEach((tag, index) => {
-                        const hiddenInput = document.createElement('input');
-                        hiddenInput.type = 'hidden';
-                        hiddenInput.name = `tags[${index}]`;
-                        hiddenInput.value = tag;
-                        form.appendChild(hiddenInput);
-                    });
-                }
-            });
-        });
+        // Note: Tags are submitted as a comma-separated string. The server can split them as needed.
     </script>
 @endsection

@@ -13,9 +13,9 @@
             </p>
         </div>
         <div class="flex-shrink-0">
-            <a href="{{ route('expenses.create') }}" class="w-full sm:w-auto inline-flex justify-center items-center bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] text-white px-6 py-3 sm:px-4 sm:py-2 rounded-lg sm:rounded-md text-base sm:text-sm font-medium transition-colors duration-200 shadow-sm touch-manipulation">
+            <x-button href="{{ route('expenses.create') }}" variant="primary" size="md" class="w-full sm:w-auto">
                 Add Expense
-            </a>
+            </x-button>
         </div>
     </div>
 @endsection
@@ -86,12 +86,8 @@
                 </div>
 
                 <div class="col-span-full">
-                    <button type="submit" class="bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 shadow-sm">
-                        Apply Filters
-                    </button>
-                    <a href="{{ route('expenses.index') }}" class="ml-2 bg-[color:var(--color-primary-200)] hover:bg-[color:var(--color-primary-300)] text-[color:var(--color-primary-700)] dark:bg-[color:var(--color-dark-300)] dark:hover:bg-[color:var(--color-dark-400)] dark:text-[color:var(--color-dark-600)] px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200">
-                        Clear
-                    </a>
+                    <x-button type="submit" variant="primary">Apply Filters</x-button>
+                    <x-button href="{{ route('expenses.index') }}" variant="secondary" class="ml-2">Clear</x-button>
                 </div>
             </form>
         </div>
@@ -210,9 +206,7 @@
                     </div>
                     <h3 class="text-lg font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] mb-2">No expenses found</h3>
                     <p class="text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] mb-4">Get started by adding your first expense.</p>
-                    <a href="{{ route('expenses.create') }}" class="bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200">
-                        Add Expense
-                    </a>
+                    <x-button href="{{ route('expenses.create') }}" variant="primary">Add Expense</x-button>
                 </div>
             @endif
         </div>

@@ -13,9 +13,9 @@
             </p>
         </div>
         <div class="flex-shrink-0">
-            <a href="{{ route('warranties.create') }}" class="w-full sm:w-auto inline-flex justify-center items-center bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] text-white px-6 py-3 sm:px-4 sm:py-2 rounded-lg sm:rounded-md text-base sm:text-sm font-medium transition-colors duration-200 shadow-sm touch-manipulation">
+            <x-button href="{{ route('warranties.create') }}" variant="primary" class="w-full sm:w-auto">
                 Add Warranty
-            </a>
+            </x-button>
         </div>
     </div>
 @endsection
@@ -27,53 +27,46 @@
             <form method="GET" action="{{ route('warranties.index') }}" class="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <!-- Search -->
                 <div>
-                    <label for="search" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Search</label>
-                    <input type="text" name="search" id="search" value="{{ request('search') }}"
-                           placeholder="Search warranties..."
-                           class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">
+                    <x-form.input
+                        name="search"
+                        label="Search"
+                        type="text"
+                        :value="request('search')"
+                        placeholder="Search warranties..."
+                    />
                 </div>
 
                 <!-- Status Filter -->
                 <div>
-                    <label for="status" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Status</label>
-                    <select name="status" id="status" class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">
-                        <option value="">All Status</option>
+                    <x-form.select name="status" label="Status" placeholder="All Status">
                         <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Active</option>
                         <option value="expired" {{ request('status') === 'expired' ? 'selected' : '' }}>Expired</option>
                         <option value="claimed" {{ request('status') === 'claimed' ? 'selected' : '' }}>Claimed</option>
                         <option value="transferred" {{ request('status') === 'transferred' ? 'selected' : '' }}>Transferred</option>
-                    </select>
+                    </x-form.select>
                 </div>
 
                 <!-- Warranty Type Filter -->
                 <div>
-                    <label for="warranty_type" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Type</label>
-                    <select name="warranty_type" id="warranty_type" class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">
-                        <option value="">All Types</option>
+                    <x-form.select name="warranty_type" label="Type" placeholder="All Types">
                         <option value="manufacturer" {{ request('warranty_type') === 'manufacturer' ? 'selected' : '' }}>Manufacturer</option>
                         <option value="extended" {{ request('warranty_type') === 'extended' ? 'selected' : '' }}>Extended</option>
                         <option value="store" {{ request('warranty_type') === 'store' ? 'selected' : '' }}>Store</option>
-                    </select>
+                    </x-form.select>
                 </div>
 
                 <!-- Expiring Soon -->
                 <div>
-                    <label for="expiring_soon" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Expiring Soon</label>
-                    <select name="expiring_soon" id="expiring_soon" class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">
-                        <option value="">All</option>
+                    <x-form.select name="expiring_soon" label="Expiring Soon" placeholder="All">
                         <option value="7" {{ request('expiring_soon') === '7' ? 'selected' : '' }}>Expiring in 7 days</option>
                         <option value="30" {{ request('expiring_soon') === '30' ? 'selected' : '' }}>Expiring in 30 days</option>
                         <option value="90" {{ request('expiring_soon') === '90' ? 'selected' : '' }}>Expiring in 90 days</option>
-                    </select>
+                    </x-form.select>
                 </div>
 
                 <div class="col-span-full">
-                    <button type="submit" class="bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 shadow-sm">
-                        Apply Filters
-                    </button>
-                    <a href="{{ route('warranties.index') }}" class="ml-2 bg-[color:var(--color-primary-200)] hover:bg-[color:var(--color-primary-300)] text-[color:var(--color-primary-700)] dark:bg-[color:var(--color-dark-300)] dark:hover:bg-[color:var(--color-dark-400)] dark:text-[color:var(--color-dark-600)] px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200">
-                        Clear
-                    </a>
+                    <x-button type="submit" variant="primary">Apply Filters</x-button>
+                    <x-button href="{{ route('warranties.index') }}" variant="secondary" class="ml-2">Clear</x-button>
                 </div>
             </form>
         </div>
@@ -192,9 +185,7 @@
                     <h3 class="mt-2 text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">No warranties</h3>
                     <p class="mt-1 text-sm text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">Get started by adding your first warranty.</p>
                     <div class="mt-6">
-                        <a href="{{ route('warranties.create') }}" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)]">
-                            Add Warranty
-                        </a>
+                        <x-button href="{{ route('warranties.create') }}" variant="primary">Add Warranty</x-button>
                     </div>
                 </div>
             @endif

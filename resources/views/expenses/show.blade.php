@@ -13,12 +13,8 @@
             </p>
         </div>
         <div class="flex space-x-3">
-            <a href="{{ route('expenses.edit', $expense) }}" class="bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200">
-                Edit
-            </a>
-            <a href="{{ route('expenses.index') }}" class="bg-[color:var(--color-primary-500)] hover:bg-[color:var(--color-primary-600)] text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200">
-                Back to Expenses
-            </a>
+            <x-button href="{{ route('expenses.edit', $expense) }}" variant="primary">Edit</x-button>
+            <x-button href="{{ route('expenses.index') }}" variant="secondary">Back to Expenses</x-button>
         </div>
     </div>
 @endsection
@@ -167,15 +163,8 @@
                 <h3 class="text-lg font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] mb-4">Actions</h3>
 
                 <div class="space-y-3">
-                    <a href="{{ route('expenses.edit', $expense) }}" class="w-full bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] text-white px-4 py-2 rounded-md text-sm font-medium text-center block">
-                        Edit Expense
-                    </a>
-
-                    <button type="button"
-                            class="w-full bg-[color:var(--color-danger-600)] hover:bg-[color:var(--color-danger-700)] text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200"
-                            x-on:click="$dispatch('open-modal', { id: 'deleteExpenseModal' })">
-                        Delete Expense
-                    </button>
+                    <x-button href="{{ route('expenses.edit', $expense) }}" variant="primary" class="w-full text-center block">Edit Expense</x-button>
+                    <x-button type="button" variant="danger" class="w-full" x-on:click="$dispatch('open-modal', { id: 'deleteExpenseModal' })">Delete Expense</x-button>
                 </div>
             </div>
 

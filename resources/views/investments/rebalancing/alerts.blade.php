@@ -14,15 +14,13 @@
                         <p class="text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] mt-1">Stay informed about your portfolio allocation and performance</p>
                     </div>
                     <div class="flex space-x-3">
-                        <a href="{{ route('investments.index') }}" class="inline-flex items-center px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] shadow-sm text-sm leading-4 font-medium rounded-md text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] hover:bg-[color:var(--color-primary-100)] dark:hover:bg-[color:var(--color-dark-200)]">
-                            ← Back to Investments
-                        </a>
-                        <button onclick="generateRebalancingRecommendations()" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)]">
+                        <x-button href="{{ route('investments.index') }}" variant="secondary">← Back to Investments</x-button>
+                        <x-button type="button" variant="primary" onclick="generateRebalancingRecommendations()">
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                             </svg>
                             Get Recommendations
-                        </button>
+                        </x-button>
                     </div>
                 </div>
 

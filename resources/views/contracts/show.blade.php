@@ -50,18 +50,16 @@
         </div>
         <div class="flex space-x-3">
             @if($contract->status === 'active')
-                <button type="button" onclick="document.getElementById('terminate-modal').classList.remove('hidden')"
-                        class="bg-[color:var(--color-danger-500)] hover:bg-[color:var(--color-danger-600)] text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200">
+                <x-button type="button" variant="danger" onclick="document.getElementById('terminate-modal').classList.remove('hidden')">
                     Terminate
-                </button>
-                <button type="button" onclick="document.getElementById('renew-modal').classList.remove('hidden')"
-                        class="bg-[color:var(--color-success-500)] hover:bg-[color:var(--color-success-600)] text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200">
+                </x-button>
+                <x-button type="button" variant="primary" onclick="document.getElementById('renew-modal').classList.remove('hidden')">
                     Renew
-                </button>
+                </x-button>
             @endif
-            <a href="{{ route('contracts.edit', $contract) }}" class="bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200">
+            <x-button href="{{ route('contracts.edit', $contract) }}" variant="secondary">
                 Edit Contract
-            </a>
+            </x-button>
         </div>
     </div>
 @endsection
@@ -286,17 +284,15 @@
                 <div class="px-4 py-5 sm:px-6">
                     <h3 class="text-lg leading-6 font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Quick Actions</h3>
                     <div class="mt-4 space-y-2">
-                        <button type="button" onclick="document.getElementById('amendment-modal').classList.remove('hidden')"
-                                class="w-full text-left px-3 py-2 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] hover:bg-[color:var(--color-primary-100)] dark:hover:bg-[color:var(--color-dark-200)] rounded-md">
-                            Add Amendment
-                        </button>
-                        @if($contract->status === 'active')
-                            <button type="button" onclick="document.getElementById('terminate-modal').classList.remove('hidden')"
-                                    class="w-full text-left px-3 py-2 text-sm text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)] hover:bg-[color:var(--color-danger-50)] dark:hover:bg-[color:var(--color-danger-900)] rounded-md">
-                                Terminate Contract
-                            </button>
-                        @endif
-                    </div>
+                <x-button type="button" variant="secondary" class="w-full justify-start" onclick="document.getElementById('amendment-modal').classList.remove('hidden')">
+                    Add Amendment
+                </x-button>
+                @if($contract->status === 'active')
+                    <x-button type="button" variant="danger" class="w-full justify-start" onclick="document.getElementById('terminate-modal').classList.remove('hidden')">
+                        Terminate Contract
+                    </x-button>
+                @endif
+            </div>
                 </div>
             </div>
         </div>

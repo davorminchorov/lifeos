@@ -13,15 +13,9 @@
             </p>
         </div>
         <div class="flex flex-col sm:flex-row gap-3 sm:gap-2 flex-shrink-0">
-            <a href="{{ route('investments.analytics') }}" class="w-full sm:w-auto inline-flex justify-center items-center bg-[color:var(--color-primary-200)] hover:bg-[color:var(--color-primary-300)] text-[color:var(--color-primary-700)] dark:bg-[color:var(--color-dark-300)] dark:hover:bg-[color:var(--color-dark-400)] dark:text-[color:var(--color-dark-600)] px-6 py-3 sm:px-4 sm:py-2 rounded-lg sm:rounded-md text-base sm:text-sm font-medium transition-colors duration-200 touch-manipulation">
-                Analytics
-            </a>
-            <a href="{{ route('investments.import.form') }}" class="w-full sm:w-auto inline-flex justify-center items-center bg-[color:var(--color-primary-200)] hover:bg-[color:var(--color-primary-300)] text-[color:var(--color-primary-700)] dark:bg-[color:var(--color-dark-300)] dark:hover:bg-[color:var(--color-dark-400)] dark:text-[color:var(--color-dark-600)] px-6 py-3 sm:px-4 sm:py-2 rounded-lg sm:rounded-md text-base sm:text-sm font-medium transition-colors duration-200 touch-manipulation">
-                Import CSV
-            </a>
-            <a href="{{ route('investments.create') }}" class="w-full sm:w-auto inline-flex justify-center items-center bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] text-white px-6 py-3 sm:px-4 sm:py-2 rounded-lg sm:rounded-md text-base sm:text-sm font-medium transition-colors duration-200 shadow-sm touch-manipulation">
-                Add Investment
-            </a>
+            <x-button href="{{ route('investments.analytics') }}" variant="secondary" class="w-full sm:w-auto">Analytics</x-button>
+            <x-button href="{{ route('investments.import.form') }}" variant="secondary" class="w-full sm:w-auto">Import CSV</x-button>
+            <x-button href="{{ route('investments.create') }}" variant="primary" class="w-full sm:w-auto">Add Investment</x-button>
         </div>
     </div>
 @endsection
@@ -81,12 +75,8 @@
                 </div>
 
                 <div class="col-span-full">
-                    <button type="submit" class="bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 shadow-sm">
-                        Apply Filters
-                    </button>
-                    <a href="{{ route('investments.index') }}" class="ml-2 bg-[color:var(--color-primary-200)] hover:bg-[color:var(--color-primary-300)] text-[color:var(--color-primary-700)] dark:bg-[color:var(--color-dark-300)] dark:hover:bg-[color:var(--color-dark-400)] dark:text-[color:var(--color-dark-600)] px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200">
-                        Clear
-                    </a>
+                    <x-button type="submit" variant="primary">Apply Filters</x-button>
+                    <x-button href="{{ route('investments.index') }}" variant="secondary" class="ml-2">Clear</x-button>
                 </div>
             </form>
         </div>
@@ -208,9 +198,7 @@
                     </div>
                     <h3 class="text-lg font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] mb-2">No investments found</h3>
                     <p class="text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] mb-4">Get started by adding your first investment.</p>
-                    <a href="{{ route('investments.create') }}" class="bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 shadow-sm">
-                        Add Investment
-                    </a>
+                    <x-button href="{{ route('investments.create') }}" variant="primary">Add Investment</x-button>
                 </div>
             @endif
         </div>

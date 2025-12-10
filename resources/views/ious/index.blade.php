@@ -13,9 +13,9 @@
             </p>
         </div>
         <div class="flex-shrink-0">
-            <a href="{{ route('ious.create') }}" class="w-full sm:w-auto inline-flex justify-center items-center bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] text-white px-6 py-3 sm:px-4 sm:py-2 rounded-lg sm:rounded-md text-base sm:text-sm font-medium transition-colors duration-200 shadow-sm touch-manipulation">
+            <x-button href="{{ route('ious.create') }}" variant="primary" class="w-full sm:w-auto">
                 Add IOU
-            </a>
+            </x-button>
         </div>
     </div>
 @endsection
@@ -105,67 +105,35 @@
             <form method="GET" action="{{ route('ious.index') }}" class="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <!-- Search -->
                 <div>
-                    <label for="search" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Search</label>
-                    <input
-                        type="text"
-                        name="search"
-                        id="search"
-                        value="{{ request('search') }}"
-                        placeholder="Search IOUs..."
-                        class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] bg-white dark:bg-[color:var(--color-dark-100)] text-[color:var(--color-primary-900)] dark:text-white shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)] sm:text-sm"
-                    />
+                    <x-form.input name="search" label="Search" placeholder="Search IOUs..." :value="request('search')" />
                 </div>
 
                 <!-- Type Filter -->
                 <div>
-                    <label for="type" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Type</label>
-                    <select
-                        name="type"
-                        id="type"
-                        class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] bg-white dark:bg-[color:var(--color-dark-100)] text-[color:var(--color-primary-900)] dark:text-white shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)] sm:text-sm"
-                    >
-                        <option value="">All Types</option>
+                    <x-form.select name="type" label="Type" placeholder="All Types">
                         <option value="owe" {{ request('type') === 'owe' ? 'selected' : '' }}>I Owe</option>
                         <option value="owed" {{ request('type') === 'owed' ? 'selected' : '' }}>Owed to Me</option>
-                    </select>
+                    </x-form.select>
                 </div>
 
                 <!-- Status Filter -->
                 <div>
-                    <label for="status" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Status</label>
-                    <select
-                        name="status"
-                        id="status"
-                        class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] bg-white dark:bg-[color:var(--color-dark-100)] text-[color:var(--color-primary-900)] dark:text-white shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)] sm:text-sm"
-                    >
-                        <option value="">All Statuses</option>
+                    <x-form.select name="status" label="Status" placeholder="All Statuses">
                         <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Pending</option>
                         <option value="partially_paid" {{ request('status') === 'partially_paid' ? 'selected' : '' }}>Partially Paid</option>
                         <option value="paid" {{ request('status') === 'paid' ? 'selected' : '' }}>Paid</option>
                         <option value="cancelled" {{ request('status') === 'cancelled' ? 'selected' : '' }}>Cancelled</option>
-                    </select>
+                    </x-form.select>
                 </div>
 
                 <!-- Category Filter -->
                 <div>
-                    <label for="category" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Category</label>
-                    <input
-                        type="text"
-                        name="category"
-                        id="category"
-                        value="{{ request('category') }}"
-                        placeholder="Category..."
-                        class="mt-1 block w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] bg-white dark:bg-[color:var(--color-dark-100)] text-[color:var(--color-primary-900)] dark:text-white shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)] sm:text-sm"
-                    />
+                    <x-form.input name="category" label="Category" placeholder="Category..." :value="request('category')" />
                 </div>
 
                 <div class="col-span-full">
-                    <button type="submit" class="bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 shadow-sm">
-                        Apply Filters
-                    </button>
-                    <a href="{{ route('ious.index') }}" class="ml-2 bg-[color:var(--color-primary-200)] hover:bg-[color:var(--color-primary-300)] text-[color:var(--color-primary-700)] dark:bg-[color:var(--color-dark-300)] dark:hover:bg-[color:var(--color-dark-400)] dark:text-[color:var(--color-dark-600)] px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200">
-                        Clear
-                    </a>
+                    <x-button type="submit" variant="primary">Apply Filters</x-button>
+                    <x-button href="{{ route('ious.index') }}" variant="secondary" class="ml-2">Clear</x-button>
                 </div>
             </form>
         </div>
@@ -253,9 +221,7 @@
                     <h3 class="mt-2 text-sm font-medium text-[color:var(--color-primary-900)] dark:text-white">No IOUs</h3>
                     <p class="mt-1 text-sm text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">Get started by creating a new IOU.</p>
                     <div class="mt-6">
-                        <a href="{{ route('ious.create') }}" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[color:var(--color-accent-500)]">
-                            Add IOU
-                        </a>
+                        <x-button href="{{ route('ious.create') }}" variant="primary">Add IOU</x-button>
                     </div>
                 </div>
             @endif

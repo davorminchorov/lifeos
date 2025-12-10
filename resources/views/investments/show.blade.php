@@ -16,12 +16,8 @@
             </p>
         </div>
         <div class="flex space-x-3">
-            <a href="{{ route('investments.edit', $investment) }}" class="bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200">
-                Edit
-            </a>
-            <a href="{{ route('investments.index') }}" class="bg-[color:var(--color-primary-500)] hover:bg-[color:var(--color-primary-600)] text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200">
-                Back to List
-            </a>
+            <x-button href="{{ route('investments.edit', $investment) }}" variant="primary">Edit</x-button>
+            <x-button href="{{ route('investments.index') }}" variant="secondary">Back to List</x-button>
         </div>
     </div>
 @endsection

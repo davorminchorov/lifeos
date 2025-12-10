@@ -12,9 +12,9 @@
                 Customize your LifeOS experience and interface preferences
             </p>
         </div>
-        <a href="{{ route('settings.index') }}" class="bg-[color:var(--color-primary-200)] hover:bg-[color:var(--color-primary-300)] text-[color:var(--color-primary-700)] dark:bg-[color:var(--color-dark-300)] dark:hover:bg-[color:var(--color-dark-400)] dark:text-[color:var(--color-dark-600)] px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200">
+        <x-button href="{{ route('settings.index') }}" variant="secondary">
             Back to Settings
-        </a>
+        </x-button>
     </div>
 @endsection
 
@@ -115,50 +115,38 @@
                 <div class="space-y-4">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label for="date_format" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
-                                Date Format
-                            </label>
-                            <select name="date_format" id="date_format" class="mt-1 block w-full border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)] bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
+                            <x-form.select name="date_format" label="Date Format">
                                 <option value="m/d/Y">MM/DD/YYYY ({{ date('m/d/Y') }})</option>
                                 <option value="d/m/Y">DD/MM/YYYY ({{ date('d/m/Y') }})</option>
                                 <option value="Y-m-d">YYYY-MM-DD ({{ date('Y-m-d') }})</option>
                                 <option value="F j, Y">Month Day, Year ({{ date('F j, Y') }})</option>
-                            </select>
+                            </x-form.select>
                         </div>
 
                         <div>
-                            <label for="currency_format" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
-                                Currency Format
-                            </label>
-                            <select name="currency_format" id="currency_format" class="mt-1 block w-full border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)] bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
+                            <x-form.select name="currency_format" label="Currency Format">
                                 <option value="MKD">MKD (MKD1,234.56)</option>
                                 <option value="USD">USD ($1,234.56)</option>
                                 <option value="EUR">EUR (€1,234.56)</option>
                                 <option value="GBP">GBP (£1,234.56)</option>
                                 <option value="JPY">JPY (¥1,235)</option>
                                 <option value="CAD">CAD (C$1,234.56)</option>
-                            </select>
+                            </x-form.select>
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label for="items_per_page" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
-                                Items Per Page
-                            </label>
-                            <select name="items_per_page" id="items_per_page" class="mt-1 block w-full border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)] bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
+                            <x-form.select name="items_per_page" label="Items Per Page">
                                 <option value="10">10 items</option>
                                 <option value="25">25 items</option>
                                 <option value="50">50 items</option>
                                 <option value="100">100 items</option>
-                            </select>
+                            </x-form.select>
                         </div>
 
                         <div>
-                            <label for="timezone" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
-                                Timezone
-                            </label>
-                            <select name="timezone" id="timezone" class="mt-1 block w-full border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)] bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
+                            <x-form.select name="timezone" label="Timezone">
                                 <option value="America/New_York">Eastern Time (UTC-5)</option>
                                 <option value="America/Chicago">Central Time (UTC-6)</option>
                                 <option value="America/Denver">Mountain Time (UTC-7)</option>
@@ -167,15 +155,15 @@
                                 <option value="Europe/London">London (UTC+0)</option>
                                 <option value="Europe/Paris">Paris (UTC+1)</option>
                                 <option value="Asia/Tokyo">Tokyo (UTC+9)</option>
-                            </select>
+                            </x-form.select>
                         </div>
                     </div>
                 </div>
 
                 <div class="flex justify-end mt-6">
-                    <button type="button" onclick="saveDisplayPreferences()" class="bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 shadow-sm">
+                    <x-button type="button" variant="primary" onclick="saveDisplayPreferences()">
                         Save Preferences
-                    </button>
+                    </x-button>
                 </div>
             </div>
         </div>
@@ -200,36 +188,18 @@
                 </div>
 
                 <div class="space-y-3">
-                    <label class="flex items-center">
-                        <input type="checkbox" checked class="rounded border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] text-[color:var(--color-accent-500)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">
-                        <span class="ml-2 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Quick Stats Overview</span>
-                    </label>
-                    <label class="flex items-center">
-                        <input type="checkbox" checked class="rounded border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] text-[color:var(--color-accent-500)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">
-                        <span class="ml-2 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Recent Notifications</span>
-                    </label>
-                    <label class="flex items-center">
-                        <input type="checkbox" checked class="rounded border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] text-[color:var(--color-accent-500)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">
-                        <span class="ml-2 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Subscription Summary</span>
-                    </label>
-                    <label class="flex items-center">
-                        <input type="checkbox" checked class="rounded border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] text-[color:var(--color-accent-500)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">
-                        <span class="ml-2 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Upcoming Renewals</span>
-                    </label>
-                    <label class="flex items-center">
-                        <input type="checkbox" class="rounded border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] text-[color:var(--color-accent-500)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">
-                        <span class="ml-2 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Investment Performance Chart</span>
-                    </label>
-                    <label class="flex items-center">
-                        <input type="checkbox" class="rounded border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] text-[color:var(--color-accent-500)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">
-                        <span class="ml-2 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Monthly Expense Breakdown</span>
-                    </label>
+                    <x-form.checkbox name="dash_quick_stats" label="Quick Stats Overview" :checked="true" />
+                    <x-form.checkbox name="dash_recent_notifications" label="Recent Notifications" :checked="true" />
+                    <x-form.checkbox name="dash_subscription_summary" label="Subscription Summary" :checked="true" />
+                    <x-form.checkbox name="dash_upcoming_renewals" label="Upcoming Renewals" :checked="true" />
+                    <x-form.checkbox name="dash_investment_performance" label="Investment Performance Chart" />
+                    <x-form.checkbox name="dash_monthly_expense_breakdown" label="Monthly Expense Breakdown" />
                 </div>
 
                 <div class="flex justify-end mt-6">
-                    <button type="button" onclick="saveDashboardPreferences()" class="bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 shadow-sm">
+                    <x-button type="button" variant="primary" onclick="saveDashboardPreferences()">
                         Save Dashboard Layout
-                    </button>
+                    </x-button>
                 </div>
             </div>
         </div>
@@ -255,43 +225,25 @@
                 </div>
 
                 <div class="space-y-3">
-                    <label class="flex items-center">
-                        <input type="checkbox" class="rounded border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] text-[color:var(--color-accent-500)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">
-                        <span class="ml-2 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">High contrast mode</span>
-                    </label>
-                    <label class="flex items-center">
-                        <input type="checkbox" class="rounded border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] text-[color:var(--color-accent-500)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">
-                        <span class="ml-2 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Larger text size</span>
-                    </label>
-                    <label class="flex items-center">
-                        <input type="checkbox" class="rounded border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] text-[color:var(--color-accent-500)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">
-                        <span class="ml-2 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Reduce motion effects</span>
-                    </label>
-                    <label class="flex items-center">
-                        <input type="checkbox" checked class="rounded border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] text-[color:var(--color-accent-500)] shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">
-                        <span class="ml-2 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Keyboard navigation support</span>
-                    </label>
+                    <x-form.checkbox name="acc_high_contrast" label="High contrast mode" />
+                    <x-form.checkbox name="acc_larger_text" label="Larger text size" />
+                    <x-form.checkbox name="acc_reduce_motion" label="Reduce motion effects" />
+                    <x-form.checkbox name="acc_keyboard_navigation" label="Keyboard navigation support" :checked="true" />
                 </div>
 
                 <div class="flex justify-end mt-6">
-                    <button type="button" onclick="saveAccessibilityPreferences()" class="bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 shadow-sm">
+                    <x-button type="button" variant="primary" onclick="saveAccessibilityPreferences()">
                         Save Accessibility Settings
-                    </button>
+                    </x-button>
                 </div>
             </div>
         </div>
 
         <!-- Quick Actions -->
         <div class="flex flex-wrap gap-4 justify-center">
-            <a href="{{ route('settings.account') }}" class="bg-[color:var(--color-primary-300)] hover:bg-[color:var(--color-primary-400)] text-[color:var(--color-primary-700)] dark:bg-[color:var(--color-dark-300)] dark:hover:bg-[color:var(--color-dark-400)] dark:text-[color:var(--color-dark-600)] px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200">
-                Account Settings
-            </a>
-            <a href="{{ route('notifications.preferences') }}" class="bg-[color:var(--color-primary-300)] hover:bg-[color:var(--color-primary-400)] text-[color:var(--color-primary-700)] dark:bg-[color:var(--color-dark-300)] dark:hover:bg-[color:var(--color-dark-400)] dark:text-[color:var(--color-dark-600)] px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200">
-                Notifications
-            </a>
-            <a href="{{ route('dashboard') }}" class="bg-[color:var(--color-primary-300)] hover:bg-[color:var(--color-primary-400)] text-[color:var(--color-primary-700)] dark:bg-[color:var(--color-dark-300)] dark:hover:bg-[color:var(--color-dark-400)] dark:text-[color:var(--color-dark-600)] px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200">
-                Back to Dashboard
-            </a>
+            <x-button href="{{ route('settings.account') }}" variant="secondary">Account Settings</x-button>
+            <x-button href="{{ route('notifications.preferences') }}" variant="secondary">Notifications</x-button>
+            <x-button href="{{ route('dashboard') }}" variant="secondary">Back to Dashboard</x-button>
         </div>
 
     </div>
@@ -343,12 +295,26 @@
     }
 
     function saveDashboardPreferences() {
-        // In a real application, you would collect checkbox states and send to server
+        const prefs = {
+            dash_quick_stats: document.getElementById('dash_quick_stats')?.checked || false,
+            dash_recent_notifications: document.getElementById('dash_recent_notifications')?.checked || false,
+            dash_subscription_summary: document.getElementById('dash_subscription_summary')?.checked || false,
+            dash_upcoming_renewals: document.getElementById('dash_upcoming_renewals')?.checked || false,
+            dash_investment_performance: document.getElementById('dash_investment_performance')?.checked || false,
+            dash_monthly_expense_breakdown: document.getElementById('dash_monthly_expense_breakdown')?.checked || false,
+        };
+        localStorage.setItem('dashboard_preferences', JSON.stringify(prefs));
         showNotification('Dashboard layout saved successfully!');
     }
 
     function saveAccessibilityPreferences() {
-        // In a real application, you would collect checkbox states and send to server
+        const prefs = {
+            acc_high_contrast: document.getElementById('acc_high_contrast')?.checked || false,
+            acc_larger_text: document.getElementById('acc_larger_text')?.checked || false,
+            acc_reduce_motion: document.getElementById('acc_reduce_motion')?.checked || false,
+            acc_keyboard_navigation: document.getElementById('acc_keyboard_navigation')?.checked || false,
+        };
+        localStorage.setItem('accessibility_preferences', JSON.stringify(prefs));
         showNotification('Accessibility settings saved successfully!');
     }
 
@@ -372,6 +338,38 @@
             document.getElementById('currency_format').value = prefs.currency_format || 'MKD';
             document.getElementById('items_per_page').value = prefs.items_per_page || '25';
             document.getElementById('timezone').value = prefs.timezone || 'America/New_York';
+        }
+
+        const dash = localStorage.getItem('dashboard_preferences');
+        if (dash) {
+            const p = JSON.parse(dash);
+            const dashKeys = [
+                'dash_quick_stats',
+                'dash_recent_notifications',
+                'dash_subscription_summary',
+                'dash_upcoming_renewals',
+                'dash_investment_performance',
+                'dash_monthly_expense_breakdown'
+            ];
+            dashKeys.forEach(k => {
+                const el = document.getElementById(k);
+                if (el && typeof p[k] !== 'undefined') el.checked = !!p[k];
+            });
+        }
+
+        const acc = localStorage.getItem('accessibility_preferences');
+        if (acc) {
+            const p = JSON.parse(acc);
+            const accKeys = [
+                'acc_high_contrast',
+                'acc_larger_text',
+                'acc_reduce_motion',
+                'acc_keyboard_navigation'
+            ];
+            accKeys.forEach(k => {
+                const el = document.getElementById(k);
+                if (el && typeof p[k] !== 'undefined') el.checked = !!p[k];
+            });
         }
     });
 </script>

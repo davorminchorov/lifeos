@@ -14,28 +14,25 @@
             <div class="flex space-x-3">
                 <form method="POST" action="{{ route('utility-bills.duplicate', $utilityBill) }}">
                     @csrf
-                    <button type="submit"
-                            class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[color:var(--color-success-600)] hover:bg-[color:var(--color-success-700)]">
+                    <x-button type="submit" variant="secondary">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h8m-8 4h8m-8 4h5"></path>
                         </svg>
                         Duplicate
-                    </button>
+                    </x-button>
                 </form>
-                <a href="{{ route('utility-bills.edit', $utilityBill) }}"
-                   class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[color:var(--color-accent-600)] hover:bg-[color:var(--color-accent-700)]">
+                <x-button href="{{ route('utility-bills.edit', $utilityBill) }}" variant="secondary">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                     </svg>
                     Edit
-                </a>
-                <a href="{{ route('utility-bills.index') }}"
-                   class="inline-flex items-center px-4 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] hover:bg-[color:var(--color-primary-200)] dark:hover:bg-[color:var(--color-dark-300)]">
+                </x-button>
+                <x-button href="{{ route('utility-bills.index') }}" variant="secondary">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                     </svg>
                     Back to Bills
-                </a>
+                </x-button>
             </div>
         </div>
 
@@ -272,31 +269,30 @@
                         <form action="{{ route('utility-bills.mark-paid', $utilityBill) }}" method="POST">
                             @csrf
                             @method('PATCH')
-                            <button type="submit" class="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[color:var(--color-success-600)] hover:bg-[color:var(--color-success-700)]">
+                            <x-button type="submit" variant="primary" class="w-full">
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                                 </svg>
                                 Mark as Paid
-                            </button>
+                            </x-button>
                         </form>
                         @endif
-                        <a href="{{ route('utility-bills.edit', $utilityBill) }}"
-                           class="w-full inline-flex justify-center items-center px-4 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] hover:bg-[color:var(--color-primary-200)] dark:hover:bg-[color:var(--color-dark-300)]">
+                        <x-button href="{{ route('utility-bills.edit', $utilityBill) }}" variant="secondary" class="w-full">
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                             </svg>
                             Edit Bill
-                        </a>
+                        </x-button>
                         <form action="{{ route('utility-bills.destroy', $utilityBill) }}" method="POST"
                               onsubmit="return confirm('Are you sure you want to delete this utility bill?')">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="w-full inline-flex justify-center items-center px-4 py-2 border border-[color:var(--color-danger-300)] dark:border-[color:var(--color-danger-600)] rounded-md shadow-sm text-sm font-medium text-[color:var(--color-danger-700)] dark:text-[color:var(--color-danger-400)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] hover:bg-[color:var(--color-danger-50)] dark:hover:bg-[color:var(--color-danger-800)]/20">
+                            <x-button type="submit" variant="danger" class="w-full">
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1 1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                                 </svg>
                                 Delete Bill
-                            </button>
+                            </x-button>
                         </form>
                     </div>
                 </div>

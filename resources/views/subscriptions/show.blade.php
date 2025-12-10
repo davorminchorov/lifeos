@@ -13,12 +13,8 @@
             </p>
         </div>
         <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-            <a href="{{ route('subscriptions.edit', $subscription) }}" class="w-full sm:w-auto inline-flex justify-center bg-[color:var(--color-warning-500)] hover:bg-[color:var(--color-warning-600)] text-white px-6 py-3 sm:px-4 sm:py-2 rounded-md text-base sm:text-sm font-medium transition-colors duration-200">
-                Edit
-            </a>
-            <a href="{{ route('subscriptions.index') }}" class="w-full sm:w-auto inline-flex justify-center bg-[color:var(--color-primary-500)] hover:bg-[color:var(--color-primary-600)] text-white px-6 py-3 sm:px-4 sm:py-2 rounded-md text-base sm:text-sm font-medium transition-colors duration-200">
-                Back to List
-            </a>
+            <x-button href="{{ route('subscriptions.edit', $subscription) }}" variant="primary" class="w-full sm:w-auto">Edit</x-button>
+            <x-button href="{{ route('subscriptions.index') }}" variant="secondary" class="w-full sm:w-auto">Back to List</x-button>
         </div>
     </div>
 @endsection
@@ -225,16 +221,18 @@
                                             <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
                                         </svg>
                                     @endfor
+                                    @php
+                                        $labels = [
+                                            1 => 'Very Easy',
+                                            2 => 'Easy',
+                                            3 => 'Moderate',
+                                            4 => 'Hard',
+                                            5 => 'Very Hard',
+                                        ];
+                                        $label = $labels[$subscription->cancellation_difficulty] ?? '';
+                                    @endphp
                                     <span class="ml-2 text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)]">
-                                        ({{ $subscription->cancellation_difficulty }}/5 -
-                                        @switch($subscription->cancellation_difficulty)
-                                            @case(1) Very Easy @break
-                                            @case(2) Easy @break
-                                            @case(3) Moderate @break
-                                            @case(4) Hard @break
-                                            @case(5) Very Hard @break
-                                        @endswitch
-                                        )
+                                        ({{ $subscription->cancellation_difficulty }}/5 - {{ $label }})
                                     </span>
                                 </div>
                             </dd>
@@ -340,43 +338,21 @@
         </div>
         <div class="border-t border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)] px-4 py-5 sm:px-6">
             <div class="flex flex-wrap gap-3">
-                <a href="{{ route('subscriptions.edit', $subscription) }}" class="bg-[color:var(--color-warning-500)] hover:bg-[color:var(--color-warning-600)] text-white px-4 py-2 rounded-md text-sm font-medium">
-                    Edit Subscription
-                </a>
+                <x-button href="{{ route('subscriptions.edit', $subscription) }}" variant="primary">Edit Subscription</x-button>
 
                 @if($subscription->status === 'active')
-                    <button type="button"
-                            class="bg-[color:var(--color-warning-500)] hover:bg-[color:var(--color-warning-600)] text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200"
-                            x-on:click="$dispatch('open-modal', { id: 'pauseModal' })">
-                        Pause Subscription
-                    </button>
-                    <button type="button"
-                            class="bg-[color:var(--color-danger-600)] hover:bg-[color:var(--color-danger-700)] text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200"
-                            x-on:click="$dispatch('open-modal', { id: 'cancelModal' })">
-                        Cancel Subscription
-                    </button>
+                    <x-button type="button" variant="secondary" x-on:click="$dispatch('open-modal', { id: 'pauseModal' })">Pause Subscription</x-button>
+                    <x-button type="button" variant="danger" x-on:click="$dispatch('open-modal', { id: 'cancelModal' })">Cancel Subscription</x-button>
                 @elseif($subscription->status === 'paused')
-                    <button type="button"
-                            class="bg-[color:var(--color-success-600)] hover:bg-[color:var(--color-success-700)] text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200"
-                            x-on:click="$dispatch('open-modal', { id: 'resumeModal' })">
-                        Resume Subscription
-                    </button>
-                    <button type="button"
-                            class="bg-[color:var(--color-danger-600)] hover:bg-[color:var(--color-danger-700)] text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200"
-                            x-on:click="$dispatch('open-modal', { id: 'cancelModal' })">
-                        Cancel Subscription
-                    </button>
+                    <x-button type="button" variant="secondary" x-on:click="$dispatch('open-modal', { id: 'resumeModal' })">Resume Subscription</x-button>
+                    <x-button type="button" variant="danger" x-on:click="$dispatch('open-modal', { id: 'cancelModal' })">Cancel Subscription</x-button>
                 @elseif($subscription->status === 'cancelled')
                     <div class="text-sm text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">
                         This subscription has been cancelled and cannot be modified.
                     </div>
                 @endif
 
-                <button type="button"
-                        class="bg-[color:var(--color-primary-600)] hover:bg-[color:var(--color-primary-700)] text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200"
-                        x-on:click="$dispatch('open-modal', { id: 'deleteModal' })">
-                    Delete Subscription
-                </button>
+                <x-button type="button" variant="danger" x-on:click="$dispatch('open-modal', { id: 'deleteModal' })">Delete Subscription</x-button>
             </div>
         </div>
     </div>

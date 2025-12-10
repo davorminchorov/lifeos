@@ -13,9 +13,9 @@
             </p>
         </div>
         <div class="flex-shrink-0">
-            <a href="{{ route('utility-bills.create') }}" class="w-full sm:w-auto inline-flex justify-center items-center bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] text-white px-6 py-3 sm:px-4 sm:py-2 rounded-lg sm:rounded-md text-base sm:text-sm font-medium transition-colors duration-200 shadow-sm touch-manipulation">
+            <x-button href="{{ route('utility-bills.create') }}" variant="primary" class="w-full sm:w-auto">
                 Add Utility Bill
-            </a>
+            </x-button>
         </div>
     </div>
 @endsection
@@ -80,12 +80,8 @@
                 </div>
 
                 <div class="col-span-full">
-                    <button type="submit" class="bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 shadow-sm">
-                        Apply Filters
-                    </button>
-                    <a href="{{ route('utility-bills.index') }}" class="ml-2 bg-[color:var(--color-primary-200)] hover:bg-[color:var(--color-primary-300)] text-[color:var(--color-primary-700)] dark:bg-[color:var(--color-dark-300)] dark:hover:bg-[color:var(--color-dark-400)] dark:text-[color:var(--color-dark-600)] px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200">
-                        Clear
-                    </a>
+                    <x-button type="submit" variant="primary">Apply Filters</x-button>
+                    <x-button href="{{ route('utility-bills.index') }}" variant="secondary" class="ml-2">Clear</x-button>
                 </div>
             </form>
         </div>

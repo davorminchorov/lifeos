@@ -13,9 +13,7 @@
             </p>
         </div>
         <div class="flex space-x-3">
-            <a href="{{ route('subscriptions.index') }}" class="bg-[color:var(--color-primary-500)] hover:bg-[color:var(--color-primary-600)] dark:bg-[color:var(--color-dark-400)] dark:hover:bg-[color:var(--color-dark-500)] text-white px-4 py-2 rounded-md text-sm font-medium">
-                Back to Subscriptions
-            </a>
+            <x-button href="{{ route('subscriptions.index') }}" variant="secondary">Back to Subscriptions</x-button>
         </div>
     </div>
 @endsection

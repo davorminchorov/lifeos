@@ -11,13 +11,12 @@
                 <h1 class="text-3xl font-bold text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Add Utility Bill</h1>
                 <p class="text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] mt-2">Add a new utility bill to track your usage and payments</p>
             </div>
-            <a href="{{ route('utility-bills.index') }}"
-               class="inline-flex items-center px-4 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] hover:bg-[color:var(--color-primary-200)] dark:hover:bg-[color:var(--color-dark-300)]">
+            <x-button href="{{ route('utility-bills.index') }}" variant="secondary">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                 </svg>
                 Back to Bills
-            </a>
+            </x-button>
         </div>
 
         <!-- Form -->
@@ -27,176 +26,106 @@
 
                 <!-- Basic Information -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label for="utility_type" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Utility Type *</label>
-                        <select name="utility_type" id="utility_type" required
-                                class="mt-1 block w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
-                            <option value="">Select utility type</option>
-                            <option value="electricity" {{ old('utility_type') == 'electricity' ? 'selected' : '' }}>Electricity</option>
-                            <option value="gas" {{ old('utility_type') == 'gas' ? 'selected' : '' }}>Gas</option>
-                            <option value="water" {{ old('utility_type') == 'water' ? 'selected' : '' }}>Water</option>
-                            <option value="internet" {{ old('utility_type') == 'internet' ? 'selected' : '' }}>Internet</option>
-                            <option value="cable_tv" {{ old('utility_type') == 'cable_tv' ? 'selected' : '' }}>Cable TV</option>
-                            <option value="phone" {{ old('utility_type') == 'phone' ? 'selected' : '' }}>Phone</option>
-                            <option value="trash" {{ old('utility_type') == 'trash' ? 'selected' : '' }}>Trash Collection</option>
-                            <option value="sewer" {{ old('utility_type') == 'sewer' ? 'selected' : '' }}>Sewer</option>
-                            <option value="other" {{ old('utility_type') == 'other' ? 'selected' : '' }}>Other</option>
-                        </select>
-                        @error('utility_type')
-                            <p class="mt-1 text-sm text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]">{{ $message }}</p>
-                        @enderror
-                    </div>
+                    <x-form.select name="utility_type" label="Utility Type" :required="true" placeholder="Select utility type">
+                        <option value="electricity" {{ old('utility_type') == 'electricity' ? 'selected' : '' }}>Electricity</option>
+                        <option value="gas" {{ old('utility_type') == 'gas' ? 'selected' : '' }}>Gas</option>
+                        <option value="water" {{ old('utility_type') == 'water' ? 'selected' : '' }}>Water</option>
+                        <option value="internet" {{ old('utility_type') == 'internet' ? 'selected' : '' }}>Internet</option>
+                        <option value="cable_tv" {{ old('utility_type') == 'cable_tv' ? 'selected' : '' }}>Cable TV</option>
+                        <option value="phone" {{ old('utility_type') == 'phone' ? 'selected' : '' }}>Phone</option>
+                        <option value="trash" {{ old('utility_type') == 'trash' ? 'selected' : '' }}>Trash Collection</option>
+                        <option value="sewer" {{ old('utility_type') == 'sewer' ? 'selected' : '' }}>Sewer</option>
+                        <option value="other" {{ old('utility_type') == 'other' ? 'selected' : '' }}>Other</option>
+                    </x-form.select>
 
-                    <div>
-                        <label for="service_provider" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Service Provider *</label>
-                        <input type="text" name="service_provider" id="service_provider" required
-                               value="{{ old('service_provider') }}"
-                               class="mt-1 block w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]"
-                               placeholder="e.g., Pacific Gas & Electric">
-                        @error('service_provider')
-                            <p class="mt-1 text-sm text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]">{{ $message }}</p>
-                        @enderror
-                    </div>
+                    <x-form.input
+                        name="service_provider"
+                        label="Service Provider"
+                        :required="true"
+                        placeholder="e.g., Pacific Gas & Electric"
+                    />
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label for="account_number" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Account Number</label>
-                        <input type="text" name="account_number" id="account_number"
-                               value="{{ old('account_number') }}"
-                               class="mt-1 block w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]"
-                               placeholder="Account number">
-                        @error('account_number')
-                            <p class="mt-1 text-sm text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]">{{ $message }}</p>
-                        @enderror
-                    </div>
+                    <x-form.input
+                        name="account_number"
+                        label="Account Number"
+                        placeholder="Account number"
+                    />
 
-                    <div>
-                        <label for="payment_status" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Payment Status *</label>
-                        <select name="payment_status" id="payment_status" required
-                                class="mt-1 block w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
-                            <option value="pending" {{ old('payment_status') == 'pending' ? 'selected' : '' }}>Pending</option>
-                            <option value="paid" {{ old('payment_status') == 'paid' ? 'selected' : '' }}>Paid</option>
-                            <option value="overdue" {{ old('payment_status') == 'overdue' ? 'selected' : '' }}>Overdue</option>
-                        </select>
-                        @error('payment_status')
-                            <p class="mt-1 text-sm text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]">{{ $message }}</p>
-                        @enderror
-                    </div>
+                    <x-form.select name="payment_status" label="Payment Status" :required="true">
+                        <option value="pending" {{ old('payment_status') == 'pending' ? 'selected' : '' }}>Pending</option>
+                        <option value="paid" {{ old('payment_status') == 'paid' ? 'selected' : '' }}>Paid</option>
+                        <option value="overdue" {{ old('payment_status') == 'overdue' ? 'selected' : '' }}>Overdue</option>
+                    </x-form.select>
                 </div>
 
-                <div>
-                    <label for="service_address" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Service Address</label>
-                    <textarea name="service_address" id="service_address" rows="3"
-                              class="mt-1 block w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]"
-                              placeholder="Address where the service is provided">{{ old('service_address') }}</textarea>
-                    @error('service_address')
-                        <p class="mt-1 text-sm text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]">{{ $message }}</p>
-                    @enderror
-                </div>
+                <x-form.input type="textarea" name="service_address" label="Service Address" rows="3" placeholder="Address where the service is provided" />
 
                 <!-- Bill Details -->
                 <div class="border-t border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)] pt-6">
                     <h3 class="text-lg font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] mb-4">Bill Details</h3>
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div>
-                            <label for="bill_amount" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Bill Amount *</label>
-                            <div class="mt-1 relative rounded-md shadow-sm">
-                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <span class="text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] sm:text-sm">$</span>
-                                </div>
-                                <input type="number" step="0.01" name="bill_amount" id="bill_amount" required
-                                       value="{{ old('bill_amount') }}"
-                                       class="block w-full pl-7 pr-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]"
-                                       placeholder="0.00">
-                            </div>
-                            @error('bill_amount')
-                                <p class="mt-1 text-sm text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]">{{ $message }}</p>
-                            @enderror
-                        </div>
+                        <x-form.input
+                            type="number"
+                            name="bill_amount"
+                            label="Bill Amount"
+                            prefix="$"
+                            step="0.01"
+                            :required="true"
+                            placeholder="0.00"
+                        />
 
-                        <div>
-                            <label for="currency" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Currency *</label>
-                            <select name="currency" id="currency" required
-                                    class="mt-1 block w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
-                                <option value="MKD" {{ old('currency', 'MKD') === 'MKD' ? 'selected' : '' }}>MKD - Macedonian Denar</option>
-                                <option value="USD" {{ old('currency') === 'USD' ? 'selected' : '' }}>USD ($) - US Dollar</option>
-                                <option value="EUR" {{ old('currency') === 'EUR' ? 'selected' : '' }}>EUR (€) - Euro</option>
-                                <option value="GBP" {{ old('currency') === 'GBP' ? 'selected' : '' }}>GBP (£) - British Pound</option>
-                                <option value="CAD" {{ old('currency') === 'CAD' ? 'selected' : '' }}>CAD (C$) - Canadian Dollar</option>
-                                <option value="AUD" {{ old('currency') === 'AUD' ? 'selected' : '' }}>AUD (A$) - Australian Dollar</option>
-                                <option value="JPY" {{ old('currency') === 'JPY' ? 'selected' : '' }}>JPY (¥) - Japanese Yen</option>
-                                <option value="CHF" {{ old('currency') === 'CHF' ? 'selected' : '' }}>CHF (CHF) - Swiss Franc</option>
-                                <option value="RSD" {{ old('currency') === 'RSD' ? 'selected' : '' }}>RSD (RSD) - Serbian Dinar</option>
-                                <option value="BGN" {{ old('currency') === 'BGN' ? 'selected' : '' }}>BGN (лв) - Bulgarian Lev</option>
-                            </select>
-                            @error('currency')
-                                <p class="mt-1 text-sm text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]">{{ $message }}</p>
-                            @enderror
-                        </div>
+                        <x-form.select name="currency" label="Currency" :required="true">
+                            <option value="MKD" {{ old('currency', 'MKD') === 'MKD' ? 'selected' : '' }}>MKD - Macedonian Denar</option>
+                            <option value="USD" {{ old('currency') === 'USD' ? 'selected' : '' }}>USD ($) - US Dollar</option>
+                            <option value="EUR" {{ old('currency') === 'EUR' ? 'selected' : '' }}>EUR (€) - Euro</option>
+                            <option value="GBP" {{ old('currency') === 'GBP' ? 'selected' : '' }}>GBP (£) - British Pound</option>
+                            <option value="CAD" {{ old('currency') === 'CAD' ? 'selected' : '' }}>CAD (C$) - Canadian Dollar</option>
+                            <option value="AUD" {{ old('currency') === 'AUD' ? 'selected' : '' }}>AUD (A$) - Australian Dollar</option>
+                            <option value="JPY" {{ old('currency') === 'JPY' ? 'selected' : '' }}>JPY (¥) - Japanese Yen</option>
+                            <option value="CHF" {{ old('currency') === 'CHF' ? 'selected' : '' }}>CHF (CHF) - Swiss Franc</option>
+                            <option value="RSD" {{ old('currency') === 'RSD' ? 'selected' : '' }}>RSD (RSD) - Serbian Dinar</option>
+                            <option value="BGN" {{ old('currency') === 'BGN' ? 'selected' : '' }}>BGN (лв) - Bulgarian Lev</option>
+                        </x-form.select>
 
-                        <div>
-                            <label for="usage_amount" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Usage Amount</label>
-                            <input type="number" step="0.0001" name="usage_amount" id="usage_amount"
-                                   value="{{ old('usage_amount') }}"
-                                   class="mt-1 block w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]"
-                                   placeholder="0.0000">
-                            @error('usage_amount')
-                                <p class="mt-1 text-sm text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]">{{ $message }}</p>
-                            @enderror
-                        </div>
+                        <x-form.input
+                            type="number"
+                            name="usage_amount"
+                            label="Usage Amount"
+                            step="0.0001"
+                            placeholder="0.0000"
+                        />
 
-                        <div>
-                            <label for="usage_unit" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Usage Unit</label>
-                            <select name="usage_unit" id="usage_unit"
-                                    class="mt-1 block w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
-                                <option value="">Select unit</option>
-                                <option value="kWh" {{ old('usage_unit') == 'kWh' ? 'selected' : '' }}>kWh (Kilowatt hours)</option>
-                                <option value="therms" {{ old('usage_unit') == 'therms' ? 'selected' : '' }}>Therms</option>
-                                <option value="gallons" {{ old('usage_unit') == 'gallons' ? 'selected' : '' }}>Gallons</option>
-                                <option value="GB" {{ old('usage_unit') == 'GB' ? 'selected' : '' }}>GB (Gigabytes)</option>
-                                <option value="minutes" {{ old('usage_unit') == 'minutes' ? 'selected' : '' }}>Minutes</option>
-                                <option value="other" {{ old('usage_unit') == 'other' ? 'selected' : '' }}>Other</option>
-                            </select>
-                            @error('usage_unit')
-                                <p class="mt-1 text-sm text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]">{{ $message }}</p>
-                            @enderror
-                        </div>
+                        <x-form.select name="usage_unit" label="Usage Unit" placeholder="Select unit">
+                            <option value="kWh" {{ old('usage_unit') == 'kWh' ? 'selected' : '' }}>kWh (Kilowatt hours)</option>
+                            <option value="therms" {{ old('usage_unit') == 'therms' ? 'selected' : '' }}>Therms</option>
+                            <option value="gallons" {{ old('usage_unit') == 'gallons' ? 'selected' : '' }}>Gallons</option>
+                            <option value="GB" {{ old('usage_unit') == 'GB' ? 'selected' : '' }}>GB (Gigabytes)</option>
+                            <option value="minutes" {{ old('usage_unit') == 'minutes' ? 'selected' : '' }}>Minutes</option>
+                            <option value="other" {{ old('usage_unit') == 'other' ? 'selected' : '' }}>Other</option>
+                        </x-form.select>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-                        <div>
-                            <label for="rate_per_unit" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Rate per Unit</label>
-                            <div class="mt-1 relative rounded-md shadow-sm">
-                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <span class="text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] sm:text-sm">$</span>
-                                </div>
-                                <input type="number" step="0.000001" name="rate_per_unit" id="rate_per_unit"
-                                       value="{{ old('rate_per_unit') }}"
-                                       class="block w-full pl-7 pr-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]"
-                                       placeholder="0.000000">
-                            </div>
-                            @error('rate_per_unit')
-                                <p class="mt-1 text-sm text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]">{{ $message }}</p>
-                            @enderror
-                        </div>
+                        <x-form.input
+                            type="number"
+                            name="rate_per_unit"
+                            label="Rate per Unit"
+                            prefix="$"
+                            step="0.000001"
+                            placeholder="0.000000"
+                        />
 
-                        <div>
-                            <label for="budget_alert_threshold" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Budget Alert Threshold</label>
-                            <div class="mt-1 relative rounded-md shadow-sm">
-                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <span class="text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] sm:text-sm">$</span>
-                                </div>
-                                <input type="number" step="0.01" name="budget_alert_threshold" id="budget_alert_threshold"
-                                       value="{{ old('budget_alert_threshold') }}"
-                                       class="block w-full pl-7 pr-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]"
-                                       placeholder="0.00">
-                            </div>
-                            @error('budget_alert_threshold')
-                                <p class="mt-1 text-sm text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]">{{ $message }}</p>
-                            @enderror
-                        </div>
+                        <x-form.input
+                            type="number"
+                            name="budget_alert_threshold"
+                            label="Budget Alert Threshold"
+                            prefix="$"
+                            step="0.01"
+                            placeholder="0.00"
+                        />
                     </div>
                 </div>
 
@@ -205,45 +134,13 @@
                     <h3 class="text-lg font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] mb-4">Billing Period</h3>
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div>
-                            <label for="bill_period_start" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Period Start *</label>
-                            <input type="date" name="bill_period_start" id="bill_period_start" required
-                                   value="{{ old('bill_period_start') }}"
-                                   class="mt-1 block w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
-                            @error('bill_period_start')
-                                <p class="mt-1 text-sm text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <div>
-                            <label for="bill_period_end" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Period End *</label>
-                            <input type="date" name="bill_period_end" id="bill_period_end" required
-                                   value="{{ old('bill_period_end') }}"
-                                   class="mt-1 block w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
-                            @error('bill_period_end')
-                                <p class="mt-1 text-sm text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <div>
-                            <label for="due_date" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Due Date *</label>
-                            <input type="date" name="due_date" id="due_date" required
-                                   value="{{ old('due_date') }}"
-                                   class="mt-1 block w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
-                            @error('due_date')
-                                <p class="mt-1 text-sm text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]">{{ $message }}</p>
-                            @enderror
-                        </div>
+                        <x-form.input type="date" name="bill_period_start" label="Period Start" :required="true" />
+                        <x-form.input type="date" name="bill_period_end" label="Period End" :required="true" />
+                        <x-form.input type="date" name="due_date" label="Due Date" :required="true" />
                     </div>
 
                     <div class="mt-4">
-                        <label for="payment_date" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Payment Date</label>
-                        <input type="date" name="payment_date" id="payment_date"
-                               value="{{ old('payment_date') }}"
-                               class="mt-1 block w-full md:w-1/3 px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
-                        @error('payment_date')
-                            <p class="mt-1 text-sm text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]">{{ $message }}</p>
-                        @enderror
+                        <x-form.input type="date" name="payment_date" label="Payment Date" containerClass="md:w-1/3" />
                     </div>
                 </div>
 
@@ -252,59 +149,24 @@
                     <h3 class="text-lg font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] mb-4">Additional Information</h3>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label for="service_plan" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Service Plan</label>
-                            <input type="text" name="service_plan" id="service_plan"
-                                   value="{{ old('service_plan') }}"
-                                   class="mt-1 block w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]"
-                                   placeholder="e.g., Residential Standard">
-                            @error('service_plan')
-                                <p class="mt-1 text-sm text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <div class="flex items-center">
-                            <input type="checkbox" name="auto_pay_enabled" id="auto_pay_enabled" value="1"
-                                   {{ old('auto_pay_enabled') ? 'checked' : '' }}
-                                   class="h-4 w-4 text-[color:var(--color-accent-600)] focus:ring-[color:var(--color-accent-500)] border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)]">
-                            <label for="auto_pay_enabled" class="ml-2 block text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
-                                Auto-pay enabled
-                            </label>
-                        </div>
+                        <x-form.input name="service_plan" label="Service Plan" placeholder="e.g., Residential Standard" />
+                        <x-form.checkbox name="auto_pay_enabled" label="Auto-pay enabled" :checked="old('auto_pay_enabled', false)" />
                     </div>
 
                     <div class="mt-4">
-                        <label for="contract_terms" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Contract Terms</label>
-                        <textarea name="contract_terms" id="contract_terms" rows="3"
-                                  class="mt-1 block w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]"
-                                  placeholder="Contract details, terms, or special conditions">{{ old('contract_terms') }}</textarea>
-                        @error('contract_terms')
-                            <p class="mt-1 text-sm text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]">{{ $message }}</p>
-                        @enderror
+                        <x-form.input type="textarea" name="contract_terms" label="Contract Terms" rows="3" placeholder="Contract details, terms, or special conditions" />
                     </div>
 
                     <div class="mt-4">
-                        <label for="notes" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Notes</label>
-                        <textarea name="notes" id="notes" rows="3"
-                                  class="mt-1 block w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]"
-                                  placeholder="Additional notes or comments">{{ old('notes') }}</textarea>
-                        @error('notes')
-                            <p class="mt-1 text-sm text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]">{{ $message }}</p>
-                        @enderror
+                        <x-form.input type="textarea" name="notes" label="Notes" rows="3" placeholder="Additional notes or comments" />
                     </div>
                 </div>
 
                 <!-- Submit Button -->
                 <div class="border-t border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)] pt-6">
                     <div class="flex justify-end space-x-3">
-                        <a href="{{ route('utility-bills.index') }}"
-                           class="inline-flex items-center px-4 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] hover:bg-[color:var(--color-primary-200)] dark:hover:bg-[color:var(--color-dark-300)]">
-                            Cancel
-                        </a>
-                        <button type="submit"
-                                class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[color:var(--color-accent-600)] hover:bg-[color:var(--color-accent-700)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[color:var(--color-accent-500)]">
-                            Add Utility Bill
-                        </button>
+                        <x-button href="{{ route('utility-bills.index') }}" variant="secondary">Cancel</x-button>
+                        <x-button type="submit" variant="primary">Add Utility Bill</x-button>
                     </div>
                 </div>
             </form>
