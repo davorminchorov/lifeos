@@ -21,6 +21,7 @@ class CycleMenuController extends Controller
     public function index(Request $request): View
     {
         $menus = CycleMenu::query()
+            ->where('user_id', auth()->id())
             ->with(['days' => function ($q) {
                 $q->with('items');
             }])
@@ -40,7 +41,10 @@ class CycleMenuController extends Controller
 
     public function store(StoreCycleMenuRequest $request): RedirectResponse
     {
-        $menu = CycleMenu::create($request->validated());
+        $data = $request->validated();
+        $data['user_id'] = auth()->id();
+
+        $menu = CycleMenu::create($data);
 
         // Ensure Day records exist for the cycle length (0..length-1)
         $length = $menu->cycle_length_days;

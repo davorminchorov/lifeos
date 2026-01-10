@@ -79,6 +79,7 @@ it('creates a cycle menu and auto-creates days, then adds multiple items and reo
 it('adds missing days when cycle length increases without deleting existing days', function () {
     $user = User::factory()->create();
     $menu = CycleMenu::factory()->create([
+        'user_id' => $user->id,
         'cycle_length_days' => 3,
         'is_active' => false,
     ]);

@@ -14,7 +14,7 @@ class CycleMenuPolicy
 
     public function view(?User $user, CycleMenu $cycleMenu): bool
     {
-        return (bool) $user;
+        return $user && $user->id === $cycleMenu->user_id;
     }
 
     public function create(?User $user): bool
@@ -24,11 +24,11 @@ class CycleMenuPolicy
 
     public function update(?User $user, CycleMenu $cycleMenu): bool
     {
-        return (bool) $user;
+        return $user && $user->id === $cycleMenu->user_id;
     }
 
     public function delete(?User $user, CycleMenu $cycleMenu): bool
     {
-        return (bool) $user;
+        return $user && $user->id === $cycleMenu->user_id;
     }
 }
