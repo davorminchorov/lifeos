@@ -13,9 +13,9 @@
             </p>
         </div>
         <div class="flex space-x-3">
-            <a href="{{ route('profile.show') }}" class="bg-[color:var(--color-primary-600)] hover:bg-[color:var(--color-primary-700)] text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200">
+            <x-button href="{{ route('profile.show') }}" variant="primary">
                 Back to Profile
-            </a>
+            </x-button>
         </div>
     </div>
 @endsection
@@ -43,37 +43,29 @@
                     @csrf
                     @method('PATCH')
 
-                    <div>
-                        <label for="name" class="block text-sm font-medium text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-400)]">
-                            Full Name
-                        </label>
-                        <input type="text" name="name" id="name" value="{{ old('name', $user->name) }}" required
-                               class="mt-1 block w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-400)] rounded-md shadow-sm bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)]">
-                        @error('name')
-                            <p class="mt-1 text-sm text-[color:var(--color-danger-600)]">{{ $message }}</p>
-                        @enderror
-                    </div>
+                    <x-form.input
+                        name="name"
+                        label="Full Name"
+                        type="text"
+                        required
+                        value="{{ old('name', $user->name) }}"
+                    />
 
-                    <div>
-                        <label for="email" class="block text-sm font-medium text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-400)]">
-                            Email Address
-                        </label>
-                        <input type="email" name="email" id="email" value="{{ old('email', $user->email) }}" required
-                               class="mt-1 block w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-400)] rounded-md shadow-sm bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)]">
-                        @error('email')
-                            <p class="mt-1 text-sm text-[color:var(--color-danger-600)]">{{ $message }}</p>
-                        @enderror
-                    </div>
+                    <x-form.input
+                        name="email"
+                        label="Email Address"
+                        type="email"
+                        required
+                        value="{{ old('email', $user->email) }}"
+                    />
 
                     <div class="flex justify-end space-x-3">
-                        <a href="{{ route('profile.show') }}"
-                           class="px-4 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-400)] rounded-md shadow-sm text-sm font-medium text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-400)] bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] hover:bg-[color:var(--color-primary-100)] dark:hover:bg-[color:var(--color-dark-200)] transition-colors duration-200">
+                        <x-button href="{{ route('profile.show') }}" variant="secondary">
                             Cancel
-                        </a>
-                        <button type="submit"
-                                class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[color:var(--color-accent-600)] hover:bg-[color:var(--color-accent-700)] transition-colors duration-200">
+                        </x-button>
+                        <x-button type="submit" variant="primary">
                             Update Profile
-                        </button>
+                        </x-button>
                     </div>
                 </form>
             </div>

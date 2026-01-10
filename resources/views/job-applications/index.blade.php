@@ -13,18 +13,18 @@
             </p>
         </div>
         <div class="flex gap-2 flex-shrink-0">
-            <a href="{{ route('job-applications.kanban') }}" class="w-full sm:w-auto inline-flex justify-center items-center bg-[color:var(--color-primary-200)] hover:bg-[color:var(--color-primary-300)] text-[color:var(--color-primary-700)] dark:bg-[color:var(--color-dark-300)] dark:hover:bg-[color:var(--color-dark-400)] dark:text-[color:var(--color-dark-600)] px-6 py-3 sm:px-4 sm:py-2 rounded-lg sm:rounded-md text-base sm:text-sm font-medium transition-colors duration-200 touch-manipulation">
+            <x-button href="{{ route('job-applications.kanban') }}" variant="secondary" class="w-full sm:w-auto">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"></path>
                 </svg>
                 Kanban View
-            </a>
-            <a href="{{ route('job-applications.create') }}" class="w-full sm:w-auto inline-flex justify-center items-center bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] text-white px-6 py-3 sm:px-4 sm:py-2 rounded-lg sm:rounded-md text-base sm:text-sm font-medium transition-colors duration-200 shadow-sm touch-manipulation">
+            </x-button>
+            <x-button href="{{ route('job-applications.create') }}" variant="primary" class="w-full sm:w-auto">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                 </svg>
                 Add Application
-            </a>
+            </x-button>
         </div>
     </div>
 @endsection
@@ -98,15 +98,15 @@
 
                 <div class="col-span-full">
                     <div class="flex flex-col sm:flex-row gap-3 sm:gap-2">
-                        <button type="submit" class="w-full sm:w-auto inline-flex justify-center items-center bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] text-white px-6 py-3 sm:px-4 sm:py-2 rounded-lg sm:rounded-md text-base sm:text-sm font-medium transition-colors duration-200 shadow-sm touch-manipulation">
+                        <x-button type="submit" variant="primary" class="w-full sm:w-auto">
                             Apply Filters
-                        </button>
-                        <a href="{{ route('job-applications.index') }}" class="w-full sm:w-auto inline-flex justify-center items-center bg-[color:var(--color-primary-200)] hover:bg-[color:var(--color-primary-300)] text-[color:var(--color-primary-700)] dark:bg-[color:var(--color-dark-300)] dark:hover:bg-[color:var(--color-dark-400)] dark:text-[color:var(--color-dark-600)] px-6 py-3 sm:px-4 sm:py-2 rounded-lg sm:rounded-md text-base sm:text-sm font-medium transition-colors duration-200 touch-manipulation">
+                        </x-button>
+                        <x-button href="{{ route('job-applications.index') }}" variant="secondary" class="w-full sm:w-auto">
                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
                             </svg>
                             Clear Filters
-                        </a>
+                        </x-button>
                     </div>
                 </div>
             </form>
@@ -180,12 +180,12 @@
                             @endif
 
                             <div class="flex gap-2 pt-2">
-                                <a href="{{ route('job-applications.show', $application) }}" class="flex-1 inline-flex justify-center items-center bg-[color:var(--color-primary-200)] hover:bg-[color:var(--color-primary-300)] text-[color:var(--color-primary-700)] dark:bg-[color:var(--color-dark-300)] dark:hover:bg-[color:var(--color-dark-400)] dark:text-[color:var(--color-dark-600)] px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 touch-manipulation">
+                                <x-button href="{{ route('job-applications.show', $application) }}" variant="secondary" size="sm" class="flex-1">
                                     View Details
-                                </a>
-                                <a href="{{ route('job-applications.edit', $application) }}" class="flex-1 inline-flex justify-center items-center bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 touch-manipulation">
+                                </x-button>
+                                <x-button href="{{ route('job-applications.edit', $application) }}" variant="primary" size="sm" class="flex-1">
                                     Edit
-                                </a>
+                                </x-button>
                             </div>
                         </div>
                     @endforeach
@@ -316,16 +316,16 @@
                     </p>
                     <div class="mt-6">
                         @if(request()->hasAny(['search', 'status', 'source', 'priority']))
-                            <a href="{{ route('job-applications.index') }}" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)]">
+                            <x-button href="{{ route('job-applications.index') }}" variant="primary">
                                 Clear Filters
-                            </a>
+                            </x-button>
                         @else
-                            <a href="{{ route('job-applications.create') }}" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)]">
+                            <x-button href="{{ route('job-applications.create') }}" variant="primary">
                                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                                 </svg>
                                 Add Your First Application
-                            </a>
+                            </x-button>
                         @endif
                     </div>
                 </div>

@@ -13,13 +13,13 @@
             </p>
         </div>
         <div class="flex flex-col sm:flex-row gap-3 sm:gap-2 flex-shrink-0">
-            <a href="{{ route('notifications.preferences') }}" class="w-full sm:w-auto inline-flex justify-center items-center bg-[color:var(--color-primary-200)] hover:bg-[color:var(--color-primary-300)] text-[color:var(--color-primary-700)] dark:bg-[color:var(--color-dark-300)] dark:hover:bg-[color:var(--color-dark-400)] dark:text-[color:var(--color-dark-600)] px-6 py-3 sm:px-4 sm:py-2 rounded-lg sm:rounded-md text-base sm:text-sm font-medium transition-colors duration-200 touch-manipulation">
+            <x-button href="{{ route('notifications.preferences') }}" variant="secondary" class="w-full sm:w-auto">
                 Preferences
-            </a>
+            </x-button>
             @if($unreadCount > 0)
-                <button onclick="markAllAsRead()" class="w-full sm:w-auto inline-flex justify-center items-center bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] text-white px-6 py-3 sm:px-4 sm:py-2 rounded-lg sm:rounded-md text-base sm:text-sm font-medium transition-colors duration-200 shadow-sm touch-manipulation">
+                <x-button onclick="markAllAsRead()" variant="primary" class="w-full sm:w-auto">
                     Mark All Read
-                </button>
+                </x-button>
             @endif
         </div>
     </div>
