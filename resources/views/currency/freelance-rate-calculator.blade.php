@@ -46,7 +46,7 @@
                     <label for="currency" class="block text-sm font-medium text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] mb-1">
                         Currency
                     </label>
-                    <select id="currency" class="w-full px-4 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-lg bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] focus:ring-2 focus:ring-[color:var(--color-accent-500)] focus:border-transparent" onchange="calculateRates()">
+                    <select id="currency" class="w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-lg bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] focus:ring-2 focus:ring-[color:var(--color-accent-500)] focus:border-transparent" onchange="calculateRates()">
                         <option value="MKD" data-symbol="MKD">MKD - Macedonian Denar</option>
                         <option value="USD" data-symbol="$" selected>USD - US Dollar</option>
                         <option value="EUR" data-symbol="€">EUR - Euro</option>
@@ -65,7 +65,7 @@
                     <label for="annual-income" class="block text-sm font-medium text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] mb-1">
                         Desired Annual Income
                     </label>
-                    <input type="number" id="annual-income" value="60000" min="0" step="1000" class="w-full px-4 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-lg bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] focus:ring-2 focus:ring-[color:var(--color-accent-500)] focus:border-transparent" oninput="calculateRates()">
+                    <input type="number" id="annual-income" value="60000" min="0" step="1000" class="w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-lg bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] focus:ring-2 focus:ring-[color:var(--color-accent-500)] focus:border-transparent" oninput="calculateRates()">
                 </div>
 
                 <!-- Working Hours per Week -->
@@ -73,7 +73,7 @@
                     <label for="hours-per-week" class="block text-sm font-medium text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] mb-1">
                         Working Hours per Week
                     </label>
-                    <input type="number" id="hours-per-week" value="40" min="1" max="80" step="1" class="w-full px-4 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-lg bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] focus:ring-2 focus:ring-[color:var(--color-accent-500)] focus:border-transparent" oninput="calculateRates()">
+                    <input type="number" id="hours-per-week" value="40" min="1" max="80" step="1" class="w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-lg bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] focus:ring-2 focus:ring-[color:var(--color-accent-500)] focus:border-transparent" oninput="calculateRates()">
                 </div>
 
                 <!-- Working Weeks per Year -->
@@ -81,7 +81,7 @@
                     <label for="weeks-per-year" class="block text-sm font-medium text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] mb-1">
                         Working Weeks per Year
                     </label>
-                    <input type="number" id="weeks-per-year" value="48" min="1" max="52" step="1" class="w-full px-4 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-lg bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] focus:ring-2 focus:ring-[color:var(--color-accent-500)] focus:border-transparent" oninput="calculateRates()">
+                    <input type="number" id="weeks-per-year" value="48" min="1" max="52" step="1" class="w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-lg bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] focus:ring-2 focus:ring-[color:var(--color-accent-500)] focus:border-transparent" oninput="calculateRates()">
                     <p class="mt-1 text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)]">
                         52 weeks minus vacation time (typically 2-4 weeks)
                     </p>
@@ -92,7 +92,7 @@
                     <label for="expenses-percentage" class="block text-sm font-medium text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] mb-1">
                         Business Expenses (%)
                     </label>
-                    <input type="number" id="expenses-percentage" value="20" min="0" max="100" step="1" class="w-full px-4 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-lg bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] focus:ring-2 focus:ring-[color:var(--color-accent-500)] focus:border-transparent" oninput="calculateRates()">
+                    <input type="number" id="expenses-percentage" value="20" min="0" max="100" step="1" class="w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-lg bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] focus:ring-2 focus:ring-[color:var(--color-accent-500)] focus:border-transparent" oninput="calculateRates()">
                     <p class="mt-1 text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)]">
                         Software, equipment, insurance, etc. (typically 15-30%)
                     </p>
@@ -103,7 +103,7 @@
                     <label for="profit-margin" class="block text-sm font-medium text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] mb-1">
                         Profit Margin (%)
                     </label>
-                    <input type="number" id="profit-margin" value="15" min="0" max="100" step="1" class="w-full px-4 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-lg bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] focus:ring-2 focus:ring-[color:var(--color-accent-500)] focus:border-transparent" oninput="calculateRates()">
+                    <input type="number" id="profit-margin" value="15" min="0" max="100" step="1" class="w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-lg bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] focus:ring-2 focus:ring-[color:var(--color-accent-500)] focus:border-transparent" oninput="calculateRates()">
                     <p class="mt-1 text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)]">
                         Your business profit (typically 10-20%)
                     </p>
@@ -114,7 +114,7 @@
                     <label for="tax-rate" class="block text-sm font-medium text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] mb-1">
                         Tax Rate (%)
                     </label>
-                    <input type="number" id="tax-rate" value="25" min="0" max="100" step="1" class="w-full px-4 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-lg bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] focus:ring-2 focus:ring-[color:var(--color-accent-500)] focus:border-transparent" oninput="calculateRates()">
+                    <input type="number" id="tax-rate" value="25" min="0" max="100" step="1" class="w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-lg bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] focus:ring-2 focus:ring-[color:var(--color-accent-500)] focus:border-transparent" oninput="calculateRates()">
                     <p class="mt-1 text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)]">
                         Your estimated tax rate (varies by location)
                     </p>
