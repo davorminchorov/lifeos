@@ -29,4 +29,12 @@ class StoreCycleMenuRequest extends FormRequest
             'cycle_length_days.min' => 'Cycle length must be at least 1 day.',
         ];
     }
+
+    protected function prepareForValidation(): void
+    {
+        // Ensure is_active is converted to boolean (false if unchecked)
+        if (! $this->has('is_active')) {
+            $this->merge(['is_active' => false]);
+        }
+    }
 }

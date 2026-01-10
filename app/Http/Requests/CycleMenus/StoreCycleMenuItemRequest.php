@@ -25,4 +25,14 @@ class StoreCycleMenuItemRequest extends FormRequest
             'position' => ['nullable', 'integer', 'min:0'],
         ];
     }
+
+    protected function prepareForValidation(): void
+    {
+        // Convert time from H:i to H:i:s for database storage
+        if ($this->has('time_of_day') && $this->time_of_day && strlen($this->time_of_day) === 5) {
+            $this->merge([
+                'time_of_day' => $this->time_of_day . ':00',
+            ]);
+        }
+    }
 }

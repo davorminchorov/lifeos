@@ -130,7 +130,7 @@
                                             <div class="text-xs text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)]">
                                                 {{ ucfirst($item->meal_type->value) }}
                                                 @if ($item->time_of_day)
-                                                    • {{ \Illuminate\Support\Carbon::createFromFormat('H:i:s', $item->time_of_day)->format('H:i') }}
+                                                    • {{ date('H:i', strtotime($item->time_of_day)) }}
                                                 @endif
                                                 @if ($item->quantity)
                                                     • {{ $item->quantity }}

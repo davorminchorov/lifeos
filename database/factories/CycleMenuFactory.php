@@ -15,6 +15,7 @@ class CycleMenuFactory extends Factory
     public function definition(): array
     {
         return [
+            'user_id' => \App\Models\User::factory(),
             'name' => $this->faker->words(3, true),
             'starts_on' => $this->faker->dateTimeBetween('-1 week', '+1 week')->format('Y-m-d'),
             'cycle_length_days' => 7,
