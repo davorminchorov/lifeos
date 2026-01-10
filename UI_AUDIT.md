@@ -214,10 +214,19 @@ Notifications module standardization (new in this update):
 - notifications/index.blade.php
   - Converted header actions (Preferences, Mark All Read) to <x-button> (secondary/primary).
 
+Currency module standardization (new in this update):
+- currency/index.blade.php
+  - Converted table Refresh Rate action button to <x-button size="sm" variant="primary"> with preserved onclick behavior.
+
+Cycle Menus module standardization (new in this update):
+- cycle-menus/index.blade.php
+  - Converted header New Cycle Menu CTA to <x-button variant="primary">.
+
 Remaining candidates (next pass):
 - Job Applications related pages (edit, show, kanban, interviews, offers)
-- Currency module pages
-- Cycle Menus module
+- Cycle Menus forms (create, edit, show)
+- Currency freelance rate calculator
+- Budgets analytics page
 - Any other pages not yet standardized
 
 Follow-ups:
