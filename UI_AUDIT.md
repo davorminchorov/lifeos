@@ -192,8 +192,42 @@ Warranties module standardization (completed in this update):
 - warranties/show.blade.php
   - Converted header actions to <x-button> (File Claim secondary with onclick preserved, Edit primary, Back secondary).
 
+Job Applications module standardization (new in this update):
+- job-applications/index.blade.php
+  - Converted header CTAs (Kanban View, Add Application) to <x-button> (secondary/primary).
+  - Replaced filter action controls (Apply Filters, Clear Filters) with <x-button> (primary/secondary).
+  - Converted mobile card action buttons (View Details, Edit) to <x-button size="sm"> for consistency.
+  - Replaced empty-state CTAs with <x-button> for consistent styling and dark mode.
+- job-applications/create.blade.php
+  - Migrated all form fields to shared components: <x-form.input>, <x-form.select>, and <x-form.checkbox>.
+  - Converted header Back button and form Cancel/Submit buttons to <x-button> variants.
+  - Preserved all original field names and IDs (company_name, company_website, job_title, job_url, job_description, location, remote, salary_min, salary_max, currency, status, source, priority, applied_at, next_action_at, contact_name, contact_email, contact_phone, notes, tags).
+  - Maintained all validation and behavior; no controller changes required.
+
+Profile module standardization (new in this update):
+- profile/edit.blade.php
+  - Converted header Back button to <x-button variant="primary">.
+  - Migrated form inputs (name, email) to <x-form.input> component.
+  - Replaced form action buttons (Cancel, Update Profile) with <x-button> variants.
+
+Notifications module standardization (new in this update):
+- notifications/index.blade.php
+  - Converted header actions (Preferences, Mark All Read) to <x-button> (secondary/primary).
+
+Currency module standardization (new in this update):
+- currency/index.blade.php
+  - Converted table Refresh Rate action button to <x-button size="sm" variant="primary"> with preserved onclick behavior.
+
+Cycle Menus module standardization (new in this update):
+- cycle-menus/index.blade.php
+  - Converted header New Cycle Menu CTA to <x-button variant="primary">.
+
 Remaining candidates (next pass):
-- Investments filters/tables — ensure filters use shared components and tables follow header/row token guidelines.
+- Job Applications related pages (edit, show, kanban, interviews, offers)
+- Cycle Menus forms (create, edit, show)
+- Currency freelance rate calculator
+- Budgets analytics page
+- Any other pages not yet standardized
 
 Follow-ups:
 - Consider a small Blade fragment for currency selection list to DRY the repeated options across Budgets and Expenses.
