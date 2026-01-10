@@ -3,7 +3,7 @@
 namespace App\Jobs;
 
 use App\Events\SubscriptionRenewalDue;
-use App\Models\Subscription;
+use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -18,36 +18,141 @@ class SendSubscriptionRenewalNotifications implements ShouldQueue
     public function __construct(
         private ?array $notificationDays = null
     ) {
-        $this->notificationDays = $notificationDays ?? [7, 3, 1, 0];
+        // Legacy support: Allow specific days to be passed for backward compatibility
+        // If null, will use each user's individual preferences
+        $this->notificationDays = $notificationDays;
     }
 
     /**
      * Execute the job.
+     *
+     * This job now processes notifications per user, respecting their individual
+     * notification preferences for days and channels.
      */
     public function handle(): void
     {
         Log::info('Starting subscription renewal notification job');
 
-        foreach ($this->notificationDays as $days) {
-            $this->dispatchEventsForDay($days);
+        if ($this->notificationDays !== null) {
+            // Legacy mode: Use system-wide notification days (for backward compatibility)
+            Log::info('Running in legacy mode with system-wide notification days: '.implode(', ', $this->notificationDays));
+            $this->handleLegacyMode();
+        } else {
+            // New mode: Respect individual user preferences
+            Log::info('Running in user-centric mode with individual user preferences');
+            $this->handleUserCentricMode();
         }
 
         Log::info('Completed subscription renewal notification job');
     }
 
     /**
-     * Dispatch events for subscriptions due in specific days.
+     * Handle notifications using user-centric approach.
+     *
+     * Processes each user's subscriptions according to their notification preferences.
+     */
+    private function handleUserCentricMode(): void
+    {
+        // Get all users who have active subscriptions
+        $users = User::whereHas('subscriptions', function ($query) {
+            $query->where('status', 'active');
+        })->get();
+
+        Log::info("Processing notifications for {$users->count()} users with active subscriptions");
+
+        foreach ($users as $user) {
+            $this->processNotificationsForUser($user);
+        }
+    }
+
+    /**
+     * Handle notifications using legacy system-wide days.
+     *
+     * Maintains backward compatibility with old behavior.
+     */
+    private function handleLegacyMode(): void
+    {
+        foreach ($this->notificationDays as $days) {
+            $this->dispatchEventsForDay($days);
+        }
+    }
+
+    /**
+     * Process notifications for a specific user based on their preferences.
+     */
+    private function processNotificationsForUser(User $user): void
+    {
+        // Get user's enabled notification channels
+        $enabledChannels = $user->getEnabledNotificationChannels('subscription_renewal');
+
+        // Skip if user has disabled all notification channels
+        if (empty($enabledChannels)) {
+            Log::info("Skipping user {$user->id} ({$user->email}) - all notification channels disabled");
+
+            return;
+        }
+
+        // Get user's preferred notification days
+        $notificationDays = $user->getNotificationDays('subscription_renewal');
+
+        Log::info("Processing user {$user->id} ({$user->email}) with notification days: ".implode(', ', $notificationDays));
+
+        // Process notifications for each of the user's preferred days
+        foreach ($notificationDays as $days) {
+            $this->dispatchEventsForUserAndDay($user, $days);
+        }
+    }
+
+    /**
+     * Dispatch events for a specific user's subscriptions due in specific days.
+     */
+    private function dispatchEventsForUserAndDay(User $user, int $days): void
+    {
+        $targetDate = now()->addDays($days)->toDateString();
+        $today = now()->toDateString();
+
+        // Query subscriptions for this specific user
+        $query = $user->subscriptions()
+            ->where('status', 'active');
+
+        if ($days === 0) {
+            // Include items due today or overdue
+            $query->whereDate('next_billing_date', '<=', $today);
+        } else {
+            $query->whereDate('next_billing_date', $targetDate);
+        }
+
+        $subscriptions = $query->get();
+
+        if ($subscriptions->count() > 0) {
+            Log::info("Found {$subscriptions->count()} subscriptions for user {$user->id} due in {$days} days");
+        }
+
+        // Dispatch event for each subscription
+        foreach ($subscriptions as $subscription) {
+            try {
+                event(new SubscriptionRenewalDue($subscription, $days));
+            } catch (\Exception $e) {
+                Log::error("Failed to dispatch SubscriptionRenewalDue for subscription {$subscription->id}: {$e->getMessage()}");
+            }
+        }
+    }
+
+    /**
+     * Dispatch events for subscriptions due in specific days (legacy method).
+     *
+     * This method is kept for backward compatibility when using system-wide notification days.
      */
     private function dispatchEventsForDay(int $days): void
     {
         $targetDate = now()->addDays($days)->toDateString();
         $today = now()->toDateString();
 
-        $query = Subscription::with('user')
+        $query = \App\Models\Subscription::with('user')
             ->where('status', 'active');
 
         if ($days === 0) {
-            // Include items due today or overdue (covers cases where next_billing_date advanced earlier)
+            // Include items due today or overdue
             $query->whereDate('next_billing_date', '<=', $today);
         } else {
             $query->whereDate('next_billing_date', $targetDate);
