@@ -9,7 +9,7 @@
             <p class="mt-2 text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)]">Plan meals in repeating cycles and see each day’s items.</p>
         </div>
         @can('create', App\Models\CycleMenu::class)
-            <a href="{{ route('cycle-menus.create') }}" class="bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] text-white px-4 py-2 rounded-md text-sm font-medium">New Cycle Menu</a>
+            <x-button href="{{ route('cycle-menus.create') }}" variant="primary">New Cycle Menu</x-button>
         @endcan
     </div>
 @endsection
