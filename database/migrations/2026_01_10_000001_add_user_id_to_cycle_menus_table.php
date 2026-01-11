@@ -8,8 +8,17 @@ return new class extends Migration
 {
     public function up(): void
     {
+        // First, add the column without foreign key constraint
         Schema::table('cycle_menus', function (Blueprint $table) {
-            $table->foreignId('user_id')->after('id')->constrained()->cascadeOnDelete();
+            $table->unsignedBigInteger('user_id')->after('id')->nullable();
+        });
+
+        // Clean up orphaned records: delete cycle_menus that don't have a valid user_id
+        \DB::statement('DELETE FROM cycle_menus WHERE user_id IS NULL OR user_id NOT IN (SELECT id FROM users)');
+
+        // Now add the foreign key constraint
+        Schema::table('cycle_menus', function (Blueprint $table) {
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

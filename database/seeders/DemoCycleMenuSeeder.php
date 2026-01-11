@@ -6,6 +6,7 @@ use App\Enums\MealType;
 use App\Models\CycleMenu;
 use App\Models\CycleMenuDay;
 use App\Models\CycleMenuItem;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Carbon;
 
@@ -13,16 +14,32 @@ class DemoCycleMenuSeeder extends Seeder
 {
     public function run(): void
     {
+        // Get or create a user for the demo menu
+        $user = User::query()->first();
+
+        if (!$user) {
+            $user = User::factory()->create([
+                'name' => 'Demo User',
+                'email' => 'demo@lifeos.test',
+            ]);
+        }
+
         // Create or find a demo active cycle menu starting today
         $menu = CycleMenu::query()->firstOrCreate(
             ['name' => 'Demo 7-Day Cycle Menu'],
             [
+                'user_id' => $user->id,
                 'starts_on' => Carbon::now()->toDateString(),
                 'cycle_length_days' => 7,
                 'is_active' => true,
                 'notes' => 'Sample menu with multiple items per day.',
             ]
         );
+
+        // Ensure the menu has a user_id if it was created before the migration
+        if (!$menu->user_id) {
+            $menu->update(['user_id' => $user->id]);
+        }
 
         // Ensure days 0..6 exist
         for ($i = 0; $i < $menu->cycle_length_days; $i++) {
