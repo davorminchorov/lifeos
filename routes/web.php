@@ -8,6 +8,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\FileUploadController;
 use App\Http\Controllers\InvestmentController;
+use App\Http\Controllers\ProjectInvestmentController;
 use App\Http\Controllers\IouController;
 use App\Http\Controllers\JobApplicationAnalyticsController;
 use App\Http\Controllers\JobApplicationController;
@@ -97,6 +98,11 @@ Route::middleware('auth')->group(function () {
     Route::get('investments/tax-reports/dividend-income', [InvestmentController::class, 'dividendIncomeReport'])->name('investments.tax-reports.dividend-income');
     Route::get('investments/rebalancing/alerts', [InvestmentController::class, 'rebalancingAlerts'])->name('investments.rebalancing.alerts');
     Route::post('investments/rebalancing/recommendations', [InvestmentController::class, 'rebalancingRecommendations'])->name('investments.rebalancing.recommendations');
+
+    // Project Investment Routes
+    Route::get('project-investments/analytics', [ProjectInvestmentController::class, 'analytics'])->name('project-investments.analytics');
+    Route::resource('project-investments', ProjectInvestmentController::class);
+    Route::post('project-investments/{project_investment}/update-value', [ProjectInvestmentController::class, 'updateValue'])->name('project-investments.update-value');
 
     Route::resource('expenses', ExpenseController::class);
     Route::get('expenses/analytics', [ExpenseController::class, 'analytics'])->name('expenses.analytics');
