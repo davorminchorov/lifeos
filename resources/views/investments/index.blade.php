@@ -48,7 +48,8 @@
                         <option value="etf" {{ request('investment_type') === 'etf' ? 'selected' : '' }}>ETF</option>
                         <option value="mutual_fund" {{ request('investment_type') === 'mutual_fund' ? 'selected' : '' }}>Mutual Fund</option>
                         <option value="real_estate" {{ request('investment_type') === 'real_estate' ? 'selected' : '' }}>Real Estate</option>
-                        <option value="project" {{ request('investment_type') === 'project' ? 'selected' : '' }}>Project</option>
+                        <option value="commodities" {{ request('investment_type') === 'commodities' ? 'selected' : '' }}>Commodities</option>
+                        <option value="cash" {{ request('investment_type') === 'cash' ? 'selected' : '' }}>Cash</option>
                     </x-form.select>
                 </div>
 

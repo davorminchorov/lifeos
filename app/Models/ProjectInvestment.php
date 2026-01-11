@@ -73,13 +73,14 @@ class ProjectInvestment extends Model
     }
 
     // Calculate gain/loss percentage
-    public function getGainLossPercentageAttribute()
+    public function getGainLossPercentageAttribute(): float
     {
-        if ($this->investment_amount == 0) {
-            return 0;
+        $investmentAmount = (float) $this->investment_amount;
+        if ($investmentAmount === 0.0) {
+            return 0.0;
         }
 
-        return ($this->gain_loss / $this->investment_amount) * 100;
+        return ((float) $this->gain_loss / $investmentAmount) * 100;
     }
 
     // Get formatted investment amount with currency

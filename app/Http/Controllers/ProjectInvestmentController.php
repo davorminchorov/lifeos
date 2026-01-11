@@ -5,17 +5,17 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreProjectInvestmentRequest;
 use App\Http\Requests\UpdateProjectInvestmentRequest;
 use App\Models\ProjectInvestment;
-use App\Services\CurrencyService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ProjectInvestmentController extends Controller
 {
-    protected CurrencyService $currencyService;
+    /**
+     * Allowed columns for sorting.
+     */
+    private const ALLOWED_SORT_COLUMNS = ['start_date', 'name', 'investment_amount', 'current_value', 'created_at', 'status', 'stage'];
 
-    public function __construct(CurrencyService $currencyService)
-    {
-        $this->currencyService = $currencyService;
-    }
+    private const ALLOWED_SORT_ORDERS = ['asc', 'desc'];
 
     /**
      * Display a listing of project investments.
@@ -49,23 +49,33 @@ class ProjectInvestmentController extends Controller
             });
         }
 
-        // Sort by start date by default
+        // Validate and apply sorting
         $sortBy = $request->get('sort_by', 'start_date');
         $sortOrder = $request->get('sort_order', 'desc');
+
+        // Validate sort parameters against allowlist
+        if (! in_array($sortBy, self::ALLOWED_SORT_COLUMNS, true)) {
+            $sortBy = 'start_date';
+        }
+        if (! in_array($sortOrder, self::ALLOWED_SORT_ORDERS, true)) {
+            $sortOrder = 'desc';
+        }
+
         $query->orderBy($sortBy, $sortOrder);
 
         $projectInvestments = $query->paginate($request->get('per_page', 15));
 
-        // Calculate summary statistics
-        $allProjects = ProjectInvestment::where('user_id', auth()->id())->get();
+        // Calculate summary statistics using database queries for efficiency
+        $userId = auth()->id();
         $summary = [
-            'total_projects' => $allProjects->count(),
-            'active_projects' => $allProjects->where('status', 'active')->count(),
-            'total_invested' => $allProjects->sum('investment_amount'),
-            'total_current_value' => $allProjects->sum('current_value') ?: $allProjects->sum('investment_amount'),
-            'total_gain_loss' => $allProjects->sum(function ($project) {
-                return $project->gain_loss;
-            }),
+            'total_projects' => ProjectInvestment::where('user_id', $userId)->count(),
+            'active_projects' => ProjectInvestment::where('user_id', $userId)->where('status', 'active')->count(),
+            'total_invested' => (float) ProjectInvestment::where('user_id', $userId)->sum('investment_amount'),
+            'total_current_value' => (float) (ProjectInvestment::where('user_id', $userId)->sum('current_value')
+                ?: ProjectInvestment::where('user_id', $userId)->sum('investment_amount')),
+            'total_gain_loss' => (float) ProjectInvestment::where('user_id', $userId)
+                ->select(DB::raw('SUM(COALESCE(current_value, investment_amount) - investment_amount) as gain_loss'))
+                ->value('gain_loss'),
         ];
 
         return view('project-investments.index', compact('projectInvestments', 'summary'));

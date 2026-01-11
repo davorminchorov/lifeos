@@ -3,9 +3,9 @@
 @section('title', $projectInvestment->name . ' - Project Investments - LifeOS')
 
 @section('header')
-    <div class="flex justify-between items-center">
+    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>
-            <h1 class="text-3xl font-bold text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
+            <h1 class="text-2xl sm:text-3xl font-bold text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                 {{ $projectInvestment->name }}
             </h1>
             <p class="mt-2 text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)]">
@@ -15,9 +15,9 @@
                 @endif
             </p>
         </div>
-        <div class="flex space-x-3">
-            <x-button href="{{ route('project-investments.edit', $projectInvestment) }}" variant="primary">Edit</x-button>
-            <x-button href="{{ route('project-investments.index') }}" variant="secondary">Back to List</x-button>
+        <div class="flex flex-col sm:flex-row gap-2 sm:gap-3">
+            <x-button href="{{ route('project-investments.edit', $projectInvestment) }}" variant="primary" class="w-full sm:w-auto">Edit</x-button>
+            <x-button href="{{ route('project-investments.index') }}" variant="secondary" class="w-full sm:w-auto">Back to List</x-button>
         </div>
     </div>
 @endsection

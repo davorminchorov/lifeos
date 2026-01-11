@@ -22,14 +22,14 @@ class UpdateProjectInvestmentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255',
+            'name' => 'sometimes|required|string|max:255',
             'project_type' => 'nullable|string|max:100',
             'stage' => 'nullable|string|in:idea,prototype,mvp,growth,mature',
             'business_model' => 'nullable|string|in:subscription,ads,one-time,freemium',
-            'website_url' => 'nullable|url|max:255',
-            'repository_url' => 'nullable|url|max:255',
+            'website_url' => ['nullable', 'url:http,https', 'max:255'],
+            'repository_url' => ['nullable', 'url:http,https', 'max:255'],
             'equity_percentage' => 'nullable|numeric|min:0|max:100',
-            'investment_amount' => 'required|numeric|min:0|max:999999999',
+            'investment_amount' => 'sometimes|required|numeric|min:0|max:999999999',
             'currency' => 'nullable|string|in:MKD,USD,EUR,GBP,CAD,AUD,JPY,CHF,RSD,BGN',
             'current_value' => 'nullable|numeric|min:0|max:999999999',
             'start_date' => 'nullable|date',

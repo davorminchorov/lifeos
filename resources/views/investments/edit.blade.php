@@ -51,7 +51,6 @@
                     <option value="etf" {{ old('investment_type', $investment->investment_type) === 'etf' ? 'selected' : '' }}>ETF</option>
                     <option value="commodities" {{ old('investment_type', $investment->investment_type) === 'commodities' ? 'selected' : '' }}>Commodities</option>
                     <option value="cash" {{ old('investment_type', $investment->investment_type) === 'cash' ? 'selected' : '' }}>Cash</option>
-                    <option value="project" {{ old('investment_type', $investment->investment_type) === 'project' ? 'selected' : '' }}>Project</option>
                 </x-form.select>
 
                 <x-form.input
