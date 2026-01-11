@@ -13,12 +13,12 @@
             </p>
         </div>
         <div class="flex space-x-3">
-            <a href="{{ route('job-applications.edit', $application) }}" class="bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200">
+            <x-button href="{{ route('job-applications.edit', $application) }}" variant="primary">
                 Edit
-            </a>
-            <a href="{{ route('job-applications.index') }}" class="bg-[color:var(--color-primary-500)] hover:bg-[color:var(--color-primary-600)] text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200">
+            </x-button>
+            <x-button href="{{ route('job-applications.index') }}" variant="secondary">
                 Back to List
-            </a>
+            </x-button>
         </div>
     </div>
 @endsection
@@ -343,12 +343,12 @@
                             Scheduled and completed interviews
                         </p>
                     </div>
-                    <a href="{{ route('job-applications.interviews.create', $application) }}" class="inline-flex items-center px-4 py-2 bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] text-white text-sm font-medium rounded-md transition-colors">
+                    <x-button href="{{ route('job-applications.interviews.create', $application) }}" variant="primary">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                         </svg>
                         Schedule Interview
-                    </a>
+                    </x-button>
                 </div>
                 <div class="border-t border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)]">
                     @if($application->interviews->count() > 0)
@@ -423,12 +423,12 @@
                                 Get started by scheduling your first interview.
                             </p>
                             <div class="mt-6">
-                                <a href="{{ route('job-applications.interviews.create', $application) }}" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)]">
+                                <x-button href="{{ route('job-applications.interviews.create', $application) }}" variant="primary">
                                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                                     </svg>
                                     Schedule Interview
-                                </a>
+                                </x-button>
                             </div>
                         </div>
                     @endif
@@ -449,12 +449,12 @@
                         </p>
                     </div>
                     @if(!$application->offer)
-                        <a href="{{ route('job-applications.offers.create', $application) }}" class="inline-flex items-center px-4 py-2 bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] text-white text-sm font-medium rounded-md transition-colors">
+                        <x-button href="{{ route('job-applications.offers.create', $application) }}" variant="primary">
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                             </svg>
                             Record Offer
-                        </a>
+                        </x-button>
                     @endif
                 </div>
                 <div class="border-t border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)]">
@@ -535,9 +535,9 @@
                             @endif
                         </dl>
                         <div class="px-4 py-4 sm:px-6 flex justify-end gap-3 bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)]">
-                            <a href="{{ route('job-applications.offers.edit', [$application, $application->offer]) }}" class="inline-flex items-center px-4 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] hover:bg-[color:var(--color-primary-200)] dark:hover:bg-[color:var(--color-dark-300)]">
+                            <x-button href="{{ route('job-applications.offers.edit', [$application, $application->offer]) }}" variant="secondary">
                                 Edit Offer
-                            </a>
+                            </x-button>
                         </div>
                     @else
                         <div class="px-4 py-12 text-center">
@@ -549,12 +549,12 @@
                                 Once you receive an offer, you can record the details here.
                             </p>
                             <div class="mt-6">
-                                <a href="{{ route('job-applications.offers.create', $application) }}" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)]">
+                                <x-button href="{{ route('job-applications.offers.create', $application) }}" variant="primary">
                                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                                     </svg>
                                     Record Offer
-                                </a>
+                                </x-button>
                             </div>
                         </div>
                     @endif

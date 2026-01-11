@@ -13,18 +13,18 @@
             </p>
         </div>
         <div class="flex gap-2 flex-shrink-0">
-            <a href="{{ route('job-applications.index') }}" class="w-full sm:w-auto inline-flex justify-center items-center bg-[color:var(--color-primary-200)] hover:bg-[color:var(--color-primary-300)] text-[color:var(--color-primary-700)] dark:bg-[color:var(--color-dark-300)] dark:hover:bg-[color:var(--color-dark-400)] dark:text-[color:var(--color-dark-600)] px-6 py-3 sm:px-4 sm:py-2 rounded-lg sm:rounded-md text-base sm:text-sm font-medium transition-colors duration-200 touch-manipulation">
+            <x-button href="{{ route('job-applications.index') }}" variant="secondary">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path>
                 </svg>
                 List View
-            </a>
-            <a href="{{ route('job-applications.create') }}" class="w-full sm:w-auto inline-flex justify-center items-center bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] text-white px-6 py-3 sm:px-4 sm:py-2 rounded-lg sm:rounded-md text-base sm:text-sm font-medium transition-colors duration-200 shadow-sm touch-manipulation">
+            </x-button>
+            <x-button href="{{ route('job-applications.create') }}" variant="primary">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                 </svg>
                 Add Application
-            </a>
+            </x-button>
         </div>
     </div>
 @endsection
@@ -77,9 +77,9 @@
                 </div>
 
                 <div class="flex items-end">
-                    <button type="submit" class="w-full inline-flex justify-center items-center bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] text-white px-6 py-3 sm:px-4 sm:py-2 rounded-lg sm:rounded-md text-base sm:text-sm font-medium transition-colors duration-200 shadow-sm touch-manipulation">
+                    <x-button type="submit" variant="primary" class="w-full">
                         Apply Filters
-                    </button>
+                    </x-button>
                 </div>
             </form>
         </div>
