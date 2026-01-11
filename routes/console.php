@@ -21,7 +21,7 @@ Schedule::command('subscriptions:check-renewals --dispatch-job')
     ->description('Check and send subscription renewal notifications');
 
 // Schedule Cycle Menu daily notification at 9:00 AM
-Schedule::command('cycle-menus:notify-today')
+Schedule::command('cycle-menus:notify-today --dispatch-job')
     ->dailyAt('09:00')
     ->name('cycle-menu-daily-notify')
     ->description("Send today's Cycle Menu notification");

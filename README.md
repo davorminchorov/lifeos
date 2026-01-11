@@ -125,10 +125,11 @@ Getting started:
 4. Open a menu to add items to each day, set types/times/quantities, and reorder by position.
 
 Notifications:
-- Scheduler entry `cycle-menu-daily-notify` runs the command `cycle-menus:notify-today` daily at 09:00.
+- Scheduler entry `cycle-menu-daily-notify` runs the command `cycle-menus:notify-today --dispatch-job` daily at 09:00.
 - Manually trigger:
   - Dry run (no notifications sent): `php artisan cycle-menus:notify-today --dry-run`
-  - Real send: `php artisan cycle-menus:notify-today`
+  - Dispatch to queue: `php artisan cycle-menus:notify-today --dispatch-job`
+  - Run immediately: `php artisan cycle-menus:notify-today`
 - In‑app notifications include a link back to the menu.
 
 Notes:

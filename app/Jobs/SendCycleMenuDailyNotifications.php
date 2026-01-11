@@ -1,77 +1,46 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Jobs;
 
-use App\Jobs\SendCycleMenuDailyNotifications;
 use App\Models\CycleMenu;
 use App\Models\CycleMenuDay;
-use App\Notifications\DailyMenuNotification;
 use App\Models\User;
-use Illuminate\Console\Command;
+use App\Notifications\DailyMenuNotification;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Log;
 
-class CycleMenuDailyNotify extends Command
+class SendCycleMenuDailyNotifications implements ShouldQueue
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'cycle-menus:notify-today
-                            {--dry-run : Output the message instead of notifying users}
-                            {--dispatch-job : Dispatch the job to queue instead of running immediately}';
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
-     * The console command description.
-     *
-     * @var string
+     * Execute the job.
      */
-    protected $description = 'Send a 09:00 notification with today\'s cycle menu items for active menus';
-
-    public function handle(): int
+    public function handle(): void
     {
-        $this->info('🔍 Checking cycle menus for today...');
+        Log::info('Starting cycle menu daily notification job');
 
-        // Handle dispatch-job flag
-        if ($this->option('dispatch-job')) {
-            // Dispatch to queue for background processing
-            SendCycleMenuDailyNotifications::dispatch();
-            $this->info('📤 Cycle menu daily notification job dispatched to queue');
-            return self::SUCCESS;
-        }
-
-        // Handle dry-run mode (no job dispatch, inline execution with preview)
-        if ($this->option('dry-run')) {
-            return $this->handleDryRun();
-        }
-
-        // Run immediately (inline execution)
-        $job = new SendCycleMenuDailyNotifications();
-        $job->handle();
-        $this->info('✅ Cycle menu daily notifications processed');
-
-        return self::SUCCESS;
-    }
-
-    /**
-     * Handle dry-run mode - show what would be sent without sending notifications
-     */
-    private function handleDryRun(): int
-    {
         $tz = config('app.timezone');
         $today = Carbon::now($tz)->startOfDay();
 
         $menus = CycleMenu::query()->active()->get();
         if ($menus->isEmpty()) {
-            $this->info('No active cycle menus.');
-            return self::SUCCESS;
+            Log::info('No active cycle menus found');
+            return;
         }
 
         $users = User::query()->get();
         if ($users->isEmpty()) {
-            $this->info('No users to notify.');
-            return self::SUCCESS;
+            Log::info('No users to notify');
+            return;
         }
+
+        $notificationCount = 0;
 
         foreach ($menus as $menu) {
             if (empty($menu->cycle_length_days) || $menu->cycle_length_days < 1) {
@@ -130,9 +99,26 @@ class CycleMenuDailyNotify extends Command
                 'message' => 'Today\'s menu (' . $menu->name . ')',
             ];
 
-            $this->line('DRY RUN: ' . json_encode($payload));
+            foreach ($users as $user) {
+                try {
+                    $user->notify(new DailyMenuNotification($payload));
+                    $notificationCount++;
+                } catch (\Exception $e) {
+                    Log::error("Failed to send cycle menu notification to user {$user->id}: {$e->getMessage()}");
+                }
+            }
+
+            Log::info("Notified users for menu '{$menu->name}' (day index {$index})");
         }
 
-        return self::SUCCESS;
+        Log::info("Completed cycle menu daily notification job. Sent {$notificationCount} notifications.");
+    }
+
+    /**
+     * Handle a job failure.
+     */
+    public function failed(\Throwable $exception): void
+    {
+        Log::error('Cycle menu daily notification job failed: '.$exception->getMessage());
     }
 }
