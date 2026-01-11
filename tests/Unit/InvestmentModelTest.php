@@ -61,15 +61,15 @@ class InvestmentModelTest extends TestCase
 
     public function test_by_type_scope_filters_by_investment_type(): void
     {
-        Investment::factory()->create(['user_id' => $this->user->id, 'investment_type' => 'stocks']);
+        Investment::factory()->create(['user_id' => $this->user->id, 'investment_type' => 'stock']);
         Investment::factory()->create(['user_id' => $this->user->id, 'investment_type' => 'crypto']);
-        Investment::factory()->create(['user_id' => $this->user->id, 'investment_type' => 'stocks']);
+        Investment::factory()->create(['user_id' => $this->user->id, 'investment_type' => 'stock']);
 
-        $stockInvestments = Investment::byType('stocks')->get();
+        $stockInvestments = Investment::byType('stock')->get();
 
         $this->assertCount(2, $stockInvestments);
         $stockInvestments->each(function ($investment) {
-            $this->assertEquals('stocks', $investment->investment_type);
+            $this->assertEquals('stock', $investment->investment_type);
         });
     }
 
