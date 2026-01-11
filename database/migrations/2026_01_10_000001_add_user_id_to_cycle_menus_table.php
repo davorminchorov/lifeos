@@ -8,18 +8,31 @@ return new class extends Migration
 {
     public function up(): void
     {
-        // First, add the column without foreign key constraint
-        Schema::table('cycle_menus', function (Blueprint $table) {
-            $table->unsignedBigInteger('user_id')->after('id')->nullable();
-        });
+        // First, add the column without foreign key constraint (if it doesn't exist)
+        if (!Schema::hasColumn('cycle_menus', 'user_id')) {
+            Schema::table('cycle_menus', function (Blueprint $table) {
+                $table->unsignedBigInteger('user_id')->after('id')->nullable();
+            });
+        }
 
         // Clean up orphaned records: delete cycle_menus that don't have a valid user_id
         \DB::statement('DELETE FROM cycle_menus WHERE user_id IS NULL OR user_id NOT IN (SELECT id FROM users)');
 
-        // Now add the foreign key constraint
-        Schema::table('cycle_menus', function (Blueprint $table) {
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-        });
+        // Now add the foreign key constraint (if it doesn't exist)
+        $foreignKeys = \DB::select("
+            SELECT CONSTRAINT_NAME
+            FROM information_schema.TABLE_CONSTRAINTS
+            WHERE TABLE_SCHEMA = DATABASE()
+            AND TABLE_NAME = 'cycle_menus'
+            AND CONSTRAINT_TYPE = 'FOREIGN KEY'
+            AND CONSTRAINT_NAME = 'cycle_menus_user_id_foreign'
+        ");
+
+        if (empty($foreignKeys)) {
+            Schema::table('cycle_menus', function (Blueprint $table) {
+                $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            });
+        }
     }
 
     public function down(): void
