@@ -218,6 +218,8 @@
                     </div>
 
                     <a href="{{ route('job-applications.index') }}" class="block pl-3 pr-4 py-2 border-l-4 {{ request()->routeIs('job-applications.*') ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-accent-600)] bg-[color:var(--color-accent-50)]' : 'border-transparent text-[color:var(--color-primary-600)] hover:text-[color:var(--color-primary-700)] hover:bg-[color:var(--color-primary-200)] hover:border-[color:var(--color-primary-400)]' }} text-base font-medium transition-colors duration-200">Job Applications</a>
+
+                    <a href="{{ route('cycle-menus.index') }}" class="block pl-3 pr-4 py-2 border-l-4 {{ request()->routeIs('cycle-menus.*') ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-accent-600)] bg-[color:var(--color-accent-50)]' : 'border-transparent text-[color:var(--color-primary-600)] hover:text-[color:var(--color-primary-700)] hover:bg-[color:var(--color-primary-200)] hover:border-[color:var(--color-primary-400)]' }} text-base font-medium transition-colors duration-200">Cycle Menu</a>
                 </div>
             </div>
             @endauth
