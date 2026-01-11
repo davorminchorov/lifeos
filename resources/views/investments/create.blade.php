@@ -50,7 +50,6 @@
                             <option value="etf" {{ old('investment_type') === 'etf' ? 'selected' : '' }}>ETF</option>
                             <option value="commodities" {{ old('investment_type') === 'commodities' ? 'selected' : '' }}>Commodities</option>
                             <option value="cash" {{ old('investment_type') === 'cash' ? 'selected' : '' }}>Cash</option>
-                            <option value="project" {{ old('investment_type') === 'project' ? 'selected' : '' }}>Project</option>
                         </select>
                         @error('investment_type')
                             <p class="mt-1 text-sm text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]">{{ $message }}</p>

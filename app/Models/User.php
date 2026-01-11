@@ -80,6 +80,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Get the user's project investments.
+     */
+    public function projectInvestments(): HasMany
+    {
+        return $this->hasMany(ProjectInvestment::class);
+    }
+
+    /**
      * Get notification preference for a specific type.
      */
     public function getNotificationPreference(string $type): ?UserNotificationPreference

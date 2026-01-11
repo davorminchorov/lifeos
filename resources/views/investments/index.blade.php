@@ -48,7 +48,8 @@
                         <option value="etf" {{ request('investment_type') === 'etf' ? 'selected' : '' }}>ETF</option>
                         <option value="mutual_fund" {{ request('investment_type') === 'mutual_fund' ? 'selected' : '' }}>Mutual Fund</option>
                         <option value="real_estate" {{ request('investment_type') === 'real_estate' ? 'selected' : '' }}>Real Estate</option>
-                        <option value="project" {{ request('investment_type') === 'project' ? 'selected' : '' }}>Project</option>
+                        <option value="commodities" {{ request('investment_type') === 'commodities' ? 'selected' : '' }}>Commodities</option>
+                        <option value="cash" {{ request('investment_type') === 'cash' ? 'selected' : '' }}>Cash</option>
                     </x-form.select>
                 </div>
 
@@ -106,7 +107,6 @@
                                     $totalCost = $investment->total_cost_basis;
                                     $gainLoss = $investment->unrealized_gain_loss;
                                     $gainLossPercent = $investment->unrealized_gain_loss_percentage;
-                                    $currencyService = app(\App\Services\CurrencyService::class);
                                 @endphp
                                 <tr class="hover:bg-[color:var(--color-primary-100)] dark:hover:bg-[color:var(--color-dark-200)]">
                                     <td class="px-6 py-4 whitespace-nowrap">
@@ -116,18 +116,7 @@
                                                     {{ $investment->symbol_identifier ?? $investment->name }}
                                                 </div>
                                                 <div class="text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)]">
-                                                    @if($investment->investment_type === 'project')
-                                                        @if($investment->project_type)
-                                                            {{ $investment->project_type }}
-                                                            @if($investment->project_stage)
-                                                                · {{ ucfirst($investment->project_stage) }}
-                                                            @endif
-                                                        @else
-                                                            {{ $investment->name }}
-                                                        @endif
-                                                    @else
-                                                        {{ $investment->name }}
-                                                    @endif
+                                                    {{ $investment->name }}
                                                 </div>
                                             </div>
                                         </div>
@@ -138,22 +127,10 @@
                                         </span>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
-                                        @if($investment->investment_type === 'project')
-                                            @if($investment->equity_percentage)
-                                                {{ number_format($investment->equity_percentage, 2) }}% equity
-                                            @else
-                                                N/A
-                                            @endif
-                                        @else
-                                            {{ $investment->quantity !== null ? number_format($investment->quantity, 4) : 'N/A' }}
-                                        @endif
+                                        {{ $investment->quantity !== null ? number_format($investment->quantity, 4) : 'N/A' }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
-                                        @if($investment->investment_type === 'project' && $investment->project_amount)
-                                            {{ app(\App\Services\CurrencyService::class)->format($investment->project_amount, $investment->project_currency ?? 'MKD') }}
-                                        @else
-                                            {{ $investment->formatted_purchase_price }}
-                                        @endif
+                                        {{ $investment->formatted_purchase_price }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                                         {{ $investment->formatted_current_market_value }}

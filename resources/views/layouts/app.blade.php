@@ -67,7 +67,7 @@
 
                             <!-- Assets & Liabilities Dropdown -->
                             <div class="relative inline-flex items-center nav-dropdown">
-                                <button type="button" class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs(['investments.*', 'contracts.*', 'warranties.*', 'ious.*']) ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]' : 'border-transparent text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] hover:text-[color:var(--color-primary-600)] dark:hover:text-[color:var(--color-dark-400)] hover:border-[color:var(--color-primary-400)]' }} text-sm font-medium transition-colors duration-200" aria-haspopup="true" aria-expanded="false" aria-controls="menu-assets">
+                                <button type="button" class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs(['investments.*', 'project-investments.*', 'contracts.*', 'warranties.*', 'ious.*']) ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]' : 'border-transparent text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] hover:text-[color:var(--color-primary-600)] dark:hover:text-[color:var(--color-dark-400)] hover:border-[color:var(--color-primary-400)]' }} text-sm font-medium transition-colors duration-200" aria-haspopup="true" aria-expanded="false" aria-controls="menu-assets">
                                     Assets & Liabilities
                                     <svg class="ml-1 h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
@@ -78,6 +78,10 @@
                                         <a href="{{ route('investments.index') }}" role="menuitem" class="block px-4 py-2 text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] hover:bg-[color:var(--color-primary-100)] dark:hover:bg-[color:var(--color-dark-200)] transition-colors duration-200 {{ request()->routeIs('investments.*') ? 'bg-[color:var(--color-accent-50)] text-[color:var(--color-accent-600)]' : '' }}">
                                             <div class="font-medium">Investments</div>
                                             <div class="text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)]">Portfolio tracking</div>
+                                        </a>
+                                        <a href="{{ route('project-investments.index') }}" role="menuitem" class="block px-4 py-2 text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] hover:bg-[color:var(--color-primary-100)] dark:hover:bg-[color:var(--color-dark-200)] transition-colors duration-200 {{ request()->routeIs('project-investments.*') ? 'bg-[color:var(--color-accent-50)] text-[color:var(--color-accent-600)]' : '' }}">
+                                            <div class="font-medium">Project Investments</div>
+                                            <div class="text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)]">Startups & projects</div>
                                         </a>
                                         <a href="{{ route('contracts.index') }}" role="menuitem" class="block px-4 py-2 text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] hover:bg-[color:var(--color-primary-100)] dark:hover:bg-[color:var(--color-dark-200)] transition-colors duration-200 {{ request()->routeIs('contracts.*') ? 'bg-[color:var(--color-accent-50)] text-[color:var(--color-accent-600)]' : '' }}">
                                             <div class="font-medium">Contracts</div>
@@ -179,7 +183,7 @@
             @auth
             @php
                 $financeOpen = request()->routeIs(['budgets.*', 'expenses.*', 'subscriptions.*', 'utility-bills.*']);
-                $assetsOpen = request()->routeIs(['investments.*', 'contracts.*', 'warranties.*', 'ious.*']);
+                $assetsOpen = request()->routeIs(['investments.*', 'project-investments.*', 'contracts.*', 'warranties.*', 'ious.*']);
             @endphp
             <div id="mobile-menu" class="sm:hidden hidden">
                 <div class="pt-2 pb-3 space-y-1">
@@ -211,6 +215,7 @@
                         </button>
                         <div class="mobile-group-items {{ $assetsOpen ? '' : 'hidden' }}">
                             <a href="{{ route('investments.index') }}" class="block pl-8 pr-4 py-2 border-l-4 {{ request()->routeIs('investments.*') ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-accent-600)] bg-[color:var(--color-accent-50)]' : 'border-transparent text-[color:var(--color-primary-600)] hover:text-[color:var(--color-primary-700)] hover:bg-[color:var(--color-primary-200)] hover:border-[color:var(--color-primary-400)]' }} text-sm font-medium transition-colors duration-200">Investments</a>
+                            <a href="{{ route('project-investments.index') }}" class="block pl-8 pr-4 py-2 border-l-4 {{ request()->routeIs('project-investments.*') ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-accent-600)] bg-[color:var(--color-accent-50)]' : 'border-transparent text-[color:var(--color-primary-600)] hover:text-[color:var(--color-primary-700)] hover:bg-[color:var(--color-primary-200)] hover:border-[color:var(--color-primary-400)]' }} text-sm font-medium transition-colors duration-200">Project Investments</a>
                             <a href="{{ route('contracts.index') }}" class="block pl-8 pr-4 py-2 border-l-4 {{ request()->routeIs('contracts.*') ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-accent-600)] bg-[color:var(--color-accent-50)]' : 'border-transparent text-[color:var(--color-primary-600)] hover:text-[color:var(--color-primary-700)] hover:bg-[color:var(--color-primary-200)] hover:border-[color:var(--color-primary-400)]' }} text-sm font-medium transition-colors duration-200">Contracts</a>
                             <a href="{{ route('warranties.index') }}" class="block pl-8 pr-4 py-2 border-l-4 {{ request()->routeIs('warranties.*') ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-accent-600)] bg-[color:var(--color-accent-50)]' : 'border-transparent text-[color:var(--color-primary-600)] hover:text-[color:var(--color-primary-700)] hover:bg-[color:var(--color-primary-200)] hover:border-[color:var(--color-primary-400)]' }} text-sm font-medium transition-colors duration-200">Warranties</a>
                             <a href="{{ route('ious.index') }}" class="block pl-8 pr-4 py-2 border-l-4 {{ request()->routeIs('ious.*') ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-accent-600)] bg-[color:var(--color-accent-50)]' : 'border-transparent text-[color:var(--color-primary-600)] hover:text-[color:var(--color-primary-700)] hover:bg-[color:var(--color-primary-200)] hover:border-[color:var(--color-primary-400)]' }} text-sm font-medium transition-colors duration-200">IOUs</a>
