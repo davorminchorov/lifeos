@@ -59,6 +59,9 @@ jobs:
         run: |
           cp .env.example .env || true
           php artisan key:generate --ansi
+          # Create mock Vite manifest for testing
+          mkdir -p public/build
+          echo '{}' > public/build/manifest.json
           # Wait for MySQL to be ready
           for i in {1..30}; do
             if mysqladmin ping -h 127.0.0.1 -uroot -proot --silent; then
