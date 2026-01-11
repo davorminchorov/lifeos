@@ -5,10 +5,10 @@
 @section('header')
     <div class="flex justify-between items-center">
         <div>
-            <h1 class="text-3xl font-bold text-primary-700 dark:text-dark-600">
+            <h1 class="text-3xl font-bold text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                 Budget Analytics
             </h1>
-            <p class="mt-2 text-primary-600 dark:text-dark-500">
+            <p class="mt-2 text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)]">
                 Insights and performance analysis of your budgets
             </p>
         </div>
