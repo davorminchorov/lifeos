@@ -24,7 +24,7 @@
     @endphp
 
     @if($bill->is_over_budget ?? false)
-        <div class="highlight" style="border-left-color: #F59E0B; background-color: #FFFBEB;">
+        <div class="highlight highlight-warning">
             <strong>⚠️ Budget Alert:</strong> This bill of <strong>{{ $billAmountMkd }}</strong> exceeds your budget threshold of {{ $budgetThresholdMkd }}.
         </div>
     @else
