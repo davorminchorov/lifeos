@@ -18,6 +18,16 @@ class ProjectInvestmentController extends Controller
     private const ALLOWED_SORT_ORDERS = ['asc', 'desc'];
 
     /**
+     * Authorize that the user owns the project investment.
+     */
+    private function authorizeOwnership(ProjectInvestment $projectInvestment): void
+    {
+        if ($projectInvestment->user_id !== auth()->id()) {
+            abort(403);
+        }
+    }
+
+    /**
      * Display a listing of project investments.
      */
     public function index(Request $request)
@@ -65,20 +75,26 @@ class ProjectInvestmentController extends Controller
 
         $projectInvestments = $query->paginate($request->get('per_page', 15));
 
-        // Calculate summary statistics using database queries for efficiency
-        $userId = auth()->id();
-        $summary = [
-            'total_projects' => ProjectInvestment::where('user_id', $userId)->count(),
-            'active_projects' => ProjectInvestment::where('user_id', $userId)->where('status', 'active')->count(),
-            'total_invested' => (float) ProjectInvestment::where('user_id', $userId)->sum('investment_amount'),
-            'total_current_value' => (float) (ProjectInvestment::where('user_id', $userId)->sum('current_value')
-                ?: ProjectInvestment::where('user_id', $userId)->sum('investment_amount')),
-            'total_gain_loss' => (float) ProjectInvestment::where('user_id', $userId)
-                ->select(DB::raw('SUM(COALESCE(current_value, investment_amount) - investment_amount) as gain_loss'))
-                ->value('gain_loss'),
+        // Calculate summary statistics using a single aggregated database query
+        $summary = ProjectInvestment::where('user_id', auth()->id())
+            ->selectRaw('
+                COUNT(*) as total_projects,
+                SUM(CASE WHEN status = ? THEN 1 ELSE 0 END) as active_projects,
+                COALESCE(SUM(investment_amount), 0) as total_invested,
+                COALESCE(SUM(COALESCE(current_value, investment_amount)), 0) as total_current_value,
+                COALESCE(SUM(COALESCE(current_value, investment_amount) - investment_amount), 0) as total_gain_loss
+            ', ['active'])
+            ->first();
+
+        $summaryData = [
+            'total_projects' => (int) $summary->total_projects,
+            'active_projects' => (int) $summary->active_projects,
+            'total_invested' => (float) $summary->total_invested,
+            'total_current_value' => (float) $summary->total_current_value,
+            'total_gain_loss' => (float) $summary->total_gain_loss,
         ];
 
-        return view('project-investments.index', compact('projectInvestments', 'summary'));
+        return view('project-investments.index', ['projectInvestments' => $projectInvestments, 'summary' => $summaryData]);
     }
 
     /**
@@ -108,10 +124,7 @@ class ProjectInvestmentController extends Controller
      */
     public function show(ProjectInvestment $projectInvestment)
     {
-        // Ensure user owns this project
-        if ($projectInvestment->user_id !== auth()->id()) {
-            abort(403);
-        }
+        $this->authorizeOwnership($projectInvestment);
 
         return view('project-investments.show', compact('projectInvestment'));
     }
@@ -121,10 +134,7 @@ class ProjectInvestmentController extends Controller
      */
     public function edit(ProjectInvestment $projectInvestment)
     {
-        // Ensure user owns this project
-        if ($projectInvestment->user_id !== auth()->id()) {
-            abort(403);
-        }
+        $this->authorizeOwnership($projectInvestment);
 
         return view('project-investments.edit', compact('projectInvestment'));
     }
@@ -134,10 +144,7 @@ class ProjectInvestmentController extends Controller
      */
     public function update(UpdateProjectInvestmentRequest $request, ProjectInvestment $projectInvestment)
     {
-        // Ensure user owns this project
-        if ($projectInvestment->user_id !== auth()->id()) {
-            abort(403);
-        }
+        $this->authorizeOwnership($projectInvestment);
 
         $projectInvestment->update($request->validated());
 
@@ -150,10 +157,7 @@ class ProjectInvestmentController extends Controller
      */
     public function destroy(ProjectInvestment $projectInvestment)
     {
-        // Ensure user owns this project
-        if ($projectInvestment->user_id !== auth()->id()) {
-            abort(403);
-        }
+        $this->authorizeOwnership($projectInvestment);
 
         $projectInvestment->delete();
 
@@ -166,10 +170,7 @@ class ProjectInvestmentController extends Controller
      */
     public function updateValue(Request $request, ProjectInvestment $projectInvestment)
     {
-        // Ensure user owns this project
-        if ($projectInvestment->user_id !== auth()->id()) {
-            abort(403);
-        }
+        $this->authorizeOwnership($projectInvestment);
 
         $request->validate([
             'current_value' => 'required|numeric|min:0',
@@ -189,41 +190,93 @@ class ProjectInvestmentController extends Controller
     public function analytics()
     {
         $userId = auth()->id();
-        $projects = ProjectInvestment::where('user_id', $userId)->get();
+
+        // Get aggregate statistics using database queries
+        $stats = ProjectInvestment::where('user_id', $userId)
+            ->selectRaw('
+                COUNT(*) as total_projects,
+                SUM(CASE WHEN status = ? THEN 1 ELSE 0 END) as active_projects,
+                SUM(CASE WHEN status = ? THEN 1 ELSE 0 END) as completed_projects,
+                SUM(CASE WHEN status = ? THEN 1 ELSE 0 END) as sold_projects,
+                SUM(CASE WHEN status = ? THEN 1 ELSE 0 END) as abandoned_projects,
+                COALESCE(SUM(investment_amount), 0) as total_invested,
+                COALESCE(SUM(COALESCE(current_value, investment_amount)), 0) as total_current_value,
+                COALESCE(SUM(COALESCE(current_value, investment_amount) - investment_amount), 0) as total_gain_loss
+            ', ['active', 'completed', 'sold', 'abandoned'])
+            ->first();
+
+        // Get breakdown by stage using database aggregation
+        $byStage = ProjectInvestment::where('user_id', $userId)
+            ->whereNotNull('stage')
+            ->groupBy('stage')
+            ->selectRaw('
+                stage,
+                COUNT(*) as count,
+                COALESCE(SUM(investment_amount), 0) as invested,
+                COALESCE(SUM(COALESCE(current_value, investment_amount)), 0) as current_value
+            ')
+            ->get()
+            ->keyBy('stage')
+            ->map(fn ($item) => [
+                'count' => (int) $item->count,
+                'invested' => (float) $item->invested,
+                'current_value' => (float) $item->current_value,
+            ]);
+
+        // Get breakdown by business model using database aggregation
+        $byBusinessModel = ProjectInvestment::where('user_id', $userId)
+            ->whereNotNull('business_model')
+            ->groupBy('business_model')
+            ->selectRaw('
+                business_model,
+                COUNT(*) as count,
+                COALESCE(SUM(investment_amount), 0) as invested,
+                COALESCE(SUM(COALESCE(current_value, investment_amount)), 0) as current_value
+            ')
+            ->get()
+            ->keyBy('business_model')
+            ->map(fn ($item) => [
+                'count' => (int) $item->count,
+                'invested' => (float) $item->invested,
+                'current_value' => (float) $item->current_value,
+            ]);
+
+        // Get breakdown by project type using database aggregation
+        $byProjectType = ProjectInvestment::where('user_id', $userId)
+            ->whereNotNull('project_type')
+            ->groupBy('project_type')
+            ->selectRaw('
+                project_type,
+                COUNT(*) as count,
+                COALESCE(SUM(investment_amount), 0) as invested,
+                COALESCE(SUM(COALESCE(current_value, investment_amount)), 0) as current_value
+            ')
+            ->get()
+            ->keyBy('project_type')
+            ->map(fn ($item) => [
+                'count' => (int) $item->count,
+                'invested' => (float) $item->invested,
+                'current_value' => (float) $item->current_value,
+            ]);
+
+        // Get projects sorted by investment amount for the list
+        $projects = ProjectInvestment::where('user_id', $userId)
+            ->orderByDesc('investment_amount')
+            ->get();
 
         $analytics = [
-            'total_projects' => $projects->count(),
-            'active_projects' => $projects->where('status', 'active')->count(),
-            'completed_projects' => $projects->where('status', 'completed')->count(),
-            'sold_projects' => $projects->where('status', 'sold')->count(),
-            'abandoned_projects' => $projects->where('status', 'abandoned')->count(),
-            'total_invested' => $projects->sum('investment_amount'),
-            'total_current_value' => $projects->sum('current_value') ?: $projects->sum('investment_amount'),
-            'total_gain_loss' => $projects->sum(function ($project) {
-                return $project->gain_loss;
-            }),
-            'by_stage' => $projects->groupBy('stage')->map(function ($group) {
-                return [
-                    'count' => $group->count(),
-                    'invested' => $group->sum('investment_amount'),
-                    'current_value' => $group->sum('current_value') ?: $group->sum('investment_amount'),
-                ];
-            }),
-            'by_business_model' => $projects->groupBy('business_model')->map(function ($group) {
-                return [
-                    'count' => $group->count(),
-                    'invested' => $group->sum('investment_amount'),
-                    'current_value' => $group->sum('current_value') ?: $group->sum('investment_amount'),
-                ];
-            }),
-            'by_project_type' => $projects->groupBy('project_type')->map(function ($group) {
-                return [
-                    'count' => $group->count(),
-                    'invested' => $group->sum('investment_amount'),
-                    'current_value' => $group->sum('current_value') ?: $group->sum('investment_amount'),
-                ];
-            }),
-            'projects' => $projects->sortByDesc('investment_amount')->values(),
+            'total_projects' => (int) $stats->total_projects,
+            'active_projects' => (int) $stats->active_projects,
+            'completed_projects' => (int) $stats->completed_projects,
+            'sold_projects' => (int) $stats->sold_projects,
+            'abandoned_projects' => (int) $stats->abandoned_projects,
+            'total_invested' => (float) $stats->total_invested,
+            'total_current_value' => (float) $stats->total_current_value,
+            'total_gain_loss' => (float) $stats->total_gain_loss,
+            'by_stage' => $byStage,
+            'by_business_model' => $byBusinessModel,
+            'by_project_type' => $byProjectType,
+            'projects' => $projects,
         ];
 
         return view('project-investments.analytics', compact('analytics'));

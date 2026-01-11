@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\CurrencyService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -9,6 +10,23 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class ProjectInvestment extends Model
 {
     use HasFactory;
+
+    /**
+     * Cached CurrencyService instance.
+     */
+    private ?CurrencyService $currencyServiceCache = null;
+
+    /**
+     * Get the CurrencyService instance, caching it for reuse.
+     */
+    private function getCurrencyService(): CurrencyService
+    {
+        if ($this->currencyServiceCache === null) {
+            $this->currencyServiceCache = app(CurrencyService::class);
+        }
+
+        return $this->currencyServiceCache;
+    }
 
     protected $fillable = [
         'user_id',
@@ -86,25 +104,19 @@ class ProjectInvestment extends Model
     // Get formatted investment amount with currency
     public function getFormattedInvestmentAmountAttribute()
     {
-        $currencyService = app(\App\Services\CurrencyService::class);
-
-        return $currencyService->format($this->investment_amount, $this->currency);
+        return $this->getCurrencyService()->format($this->investment_amount, $this->currency);
     }
 
     // Get formatted current value with currency
     public function getFormattedCurrentValueAttribute()
     {
-        $currencyService = app(\App\Services\CurrencyService::class);
-
-        return $currencyService->format($this->current_value ?? $this->investment_amount, $this->currency);
+        return $this->getCurrencyService()->format($this->current_value ?? $this->investment_amount, $this->currency);
     }
 
     // Get formatted gain/loss with currency
     public function getFormattedGainLossAttribute()
     {
-        $currencyService = app(\App\Services\CurrencyService::class);
-
-        return $currencyService->format($this->gain_loss, $this->currency);
+        return $this->getCurrencyService()->format($this->gain_loss, $this->currency);
     }
 
     // Check if project is active
