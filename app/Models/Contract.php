@@ -73,11 +73,23 @@ class Contract extends Model
     public function scopeRequiringNotice($query)
     {
         // Filter contracts where notice period deadline has passed or is approaching
-        // Use raw SQL to compare end_date with current date + notice_period_days
-        return $query->whereNotNull('notice_period_days')
-            ->whereNotNull('end_date')
-            ->where('status', 'active')
-            ->whereRaw('end_date <= DATE_ADD(CURDATE(), INTERVAL notice_period_days DAY)');
+        // Use database-agnostic date comparison
+        $driver = config('database.default');
+        $connection = config("database.connections.{$driver}.driver");
+
+        if ($connection === 'sqlite') {
+            // SQLite: use date() with modifiers
+            return $query->whereNotNull('notice_period_days')
+                ->whereNotNull('end_date')
+                ->where('status', 'active')
+                ->whereRaw("julianday(end_date) <= julianday(date('now')) + notice_period_days");
+        } else {
+            // MySQL: use DATE_ADD
+            return $query->whereNotNull('notice_period_days')
+                ->whereNotNull('end_date')
+                ->where('status', 'active')
+                ->whereRaw('end_date <= DATE_ADD(CURDATE(), INTERVAL notice_period_days DAY)');
+        }
     }
 
     // Check if contract is expired

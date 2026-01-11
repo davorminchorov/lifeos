@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('investments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->enum('investment_type', ['stocks', 'bonds', 'etf', 'mutual_fund', 'crypto', 'real_estate', 'commodities', 'cash']);
+            $table->enum('investment_type', ['stock', 'bond', 'etf', 'mutual_fund', 'crypto', 'real_estate', 'commodities', 'cash', 'project']);
             $table->string('symbol_identifier')->nullable(); // ticker symbol or identifier
             $table->string('name'); // investment name/description
             $table->decimal('quantity', 15, 8); // support crypto decimals
