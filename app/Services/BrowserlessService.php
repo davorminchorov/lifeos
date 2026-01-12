@@ -145,8 +145,8 @@ module.exports = async ({ page }) => {
             ]);
         }
 
-        // Wait a bit for dashboard to load
-        await page.waitForTimeout(3000);
+        // Wait for dashboard to load (Puppeteer v24 compatible)
+        await new Promise(r => setTimeout(r, 3000));
 
         // Check if we're logged in by looking for common dashboard elements
         const currentUrl = page.url();
