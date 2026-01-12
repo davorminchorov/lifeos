@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\BrowserlessController;
 use App\Http\Controllers\BudgetController;
 use App\Http\Controllers\ContractController;
 use App\Http\Controllers\CurrencyController;
@@ -64,6 +65,16 @@ Route::middleware('auth')->group(function () {
         Route::post('/gmail-receipts/toggle-auto-sync', [GmailReceiptController::class, 'toggleAutoSync'])->name('gmail-receipts.toggle-auto-sync');
         Route::get('/gmail-receipts/emails', [GmailReceiptController::class, 'processedEmails'])->name('gmail-receipts.emails');
         Route::post('/gmail-receipts/emails/{processedEmail}/retry', [GmailReceiptController::class, 'retryEmail'])->name('gmail-receipts.emails.retry');
+
+        // Investor Portal Integration (Browserless)
+        Route::get('/investor-portal', [BrowserlessController::class, 'settings'])->name('investor-portal');
+        Route::post('/investor-portal/connect', [BrowserlessController::class, 'connect'])->name('investor-portal.connect');
+        Route::post('/investor-portal/disconnect', [BrowserlessController::class, 'disconnect'])->name('investor-portal.disconnect');
+        Route::post('/investor-portal/sync', [BrowserlessController::class, 'sync'])->name('investor-portal.sync');
+        Route::post('/investor-portal/toggle-auto-sync', [BrowserlessController::class, 'toggleAutoSync'])->name('investor-portal.toggle-auto-sync');
+        Route::get('/investor-portal/test-connection', [BrowserlessController::class, 'testConnection'])->name('investor-portal.test-connection');
+        Route::get('/investor-portal/history', [BrowserlessController::class, 'history'])->name('investor-portal.history');
+        Route::get('/investor-portal/{investorData}', [BrowserlessController::class, 'show'])->name('investor-portal.show');
     });
 
     // Life Management Platform Routes

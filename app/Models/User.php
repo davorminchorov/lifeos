@@ -88,6 +88,22 @@ class User extends Authenticatable
     }
 
     /**
+     * Get the user's browserless connections.
+     */
+    public function browserlessConnections(): HasMany
+    {
+        return $this->hasMany(BrowserlessConnection::class);
+    }
+
+    /**
+     * Get the user's investor data.
+     */
+    public function investorData(): HasMany
+    {
+        return $this->hasMany(InvestorData::class);
+    }
+
+    /**
      * Get the user's notification preferences.
      */
     public function notificationPreferences(): HasMany
