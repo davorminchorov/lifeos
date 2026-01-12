@@ -11,8 +11,10 @@ return new class extends Migration
     public function up(): void
     {
         // Make symbol_identifier nullable to support project investments
-        // Assumes MySQL / MariaDB. If using a different driver, adjust accordingly.
-        DB::statement('ALTER TABLE investments MODIFY COLUMN symbol_identifier VARCHAR(255) NULL');
+        // Only execute for MySQL/MariaDB (SQLite handles this differently)
+        if (DB::getDriverName() === 'mysql') {
+            DB::statement('ALTER TABLE investments MODIFY COLUMN symbol_identifier VARCHAR(255) NULL');
+        }
     }
 
     /**
@@ -26,6 +28,9 @@ return new class extends Migration
             ->update(['symbol_identifier' => 'UNKNOWN']);
 
         // Revert symbol_identifier to NOT NULL
-        DB::statement('ALTER TABLE investments MODIFY COLUMN symbol_identifier VARCHAR(255) NOT NULL');
+        // Only execute for MySQL/MariaDB (SQLite handles this differently)
+        if (DB::getDriverName() === 'mysql') {
+            DB::statement('ALTER TABLE investments MODIFY COLUMN symbol_identifier VARCHAR(255) NOT NULL');
+        }
     }
 };

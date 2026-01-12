@@ -19,19 +19,29 @@ return new class extends Migration
         \DB::statement('DELETE FROM cycle_menus WHERE user_id IS NULL OR user_id NOT IN (SELECT id FROM users)');
 
         // Now add the foreign key constraint (if it doesn't exist)
-        $foreignKeys = \DB::select("
-            SELECT CONSTRAINT_NAME
-            FROM information_schema.TABLE_CONSTRAINTS
-            WHERE TABLE_SCHEMA = DATABASE()
-            AND TABLE_NAME = 'cycle_menus'
-            AND CONSTRAINT_TYPE = 'FOREIGN KEY'
-            AND CONSTRAINT_NAME = 'cycle_menus_user_id_foreign'
-        ");
+        // Check if foreign key exists in a database-agnostic way
+        $hasForeignKey = false;
 
-        if (empty($foreignKeys)) {
-            Schema::table('cycle_menus', function (Blueprint $table) {
-                $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            });
+        if (\DB::getDriverName() === 'mysql') {
+            $foreignKeys = \DB::select("
+                SELECT CONSTRAINT_NAME
+                FROM information_schema.TABLE_CONSTRAINTS
+                WHERE TABLE_SCHEMA = DATABASE()
+                AND TABLE_NAME = 'cycle_menus'
+                AND CONSTRAINT_TYPE = 'FOREIGN KEY'
+                AND CONSTRAINT_NAME = 'cycle_menus_user_id_foreign'
+            ");
+            $hasForeignKey = !empty($foreignKeys);
+        }
+
+        if (!$hasForeignKey) {
+            try {
+                Schema::table('cycle_menus', function (Blueprint $table) {
+                    $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+                });
+            } catch (\Exception $e) {
+                // Foreign key might already exist, ignore
+            }
         }
     }
 

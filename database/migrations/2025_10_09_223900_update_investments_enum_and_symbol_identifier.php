@@ -15,8 +15,10 @@ return new class extends Migration
         DB::table('investments')->where('investment_type', 'bonds')->update(['investment_type' => 'bond']);
 
         // Modify enum values to singular set including 'project'
-        // Assumes MySQL / MariaDB. If using a different driver, adjust accordingly.
-        DB::statement("ALTER TABLE investments MODIFY COLUMN investment_type ENUM('stock','bond','etf','mutual_fund','crypto','real_estate','commodities','cash','project') NOT NULL");
+        // Only execute for MySQL/MariaDB (SQLite doesn't use ENUM)
+        if (DB::getDriverName() === 'mysql') {
+            DB::statement("ALTER TABLE investments MODIFY COLUMN investment_type ENUM('stock','bond','etf','mutual_fund','crypto','real_estate','commodities','cash','project') NOT NULL");
+        }
     }
 
     /**
@@ -29,6 +31,9 @@ return new class extends Migration
         DB::table('investments')->where('investment_type', 'bond')->update(['investment_type' => 'bonds']);
 
         // Revert enum to include plural forms and 'project'
-        DB::statement("ALTER TABLE investments MODIFY COLUMN investment_type ENUM('stocks','bonds','etf','mutual_fund','crypto','real_estate','commodities','cash','project') NOT NULL");
+        // Only execute for MySQL/MariaDB (SQLite doesn't use ENUM)
+        if (DB::getDriverName() === 'mysql') {
+            DB::statement("ALTER TABLE investments MODIFY COLUMN investment_type ENUM('stocks','bonds','etf','mutual_fund','crypto','real_estate','commodities','cash','project') NOT NULL");
+        }
     }
 };
