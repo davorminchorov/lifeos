@@ -7,6 +7,7 @@ use App\Http\Controllers\CurrencyController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\FileUploadController;
+use App\Http\Controllers\GmailReceiptController;
 use App\Http\Controllers\InvestmentController;
 use App\Http\Controllers\ProjectInvestmentController;
 use App\Http\Controllers\IouController;
@@ -53,6 +54,16 @@ Route::middleware('auth')->group(function () {
         Route::get('/account', [SettingsController::class, 'account'])->name('account');
         Route::get('/application', [SettingsController::class, 'application'])->name('application');
         Route::get('/notifications', [SettingsController::class, 'notifications'])->name('notifications');
+
+        // Gmail Receipt Integration
+        Route::get('/gmail-receipts', [GmailReceiptController::class, 'settings'])->name('gmail-receipts');
+        Route::post('/gmail-receipts/connect', [GmailReceiptController::class, 'connect'])->name('gmail-receipts.connect');
+        Route::get('/gmail-receipts/callback', [GmailReceiptController::class, 'callback'])->name('gmail-receipts.callback');
+        Route::post('/gmail-receipts/disconnect', [GmailReceiptController::class, 'disconnect'])->name('gmail-receipts.disconnect');
+        Route::post('/gmail-receipts/sync', [GmailReceiptController::class, 'sync'])->name('gmail-receipts.sync');
+        Route::post('/gmail-receipts/toggle-auto-sync', [GmailReceiptController::class, 'toggleAutoSync'])->name('gmail-receipts.toggle-auto-sync');
+        Route::get('/gmail-receipts/emails', [GmailReceiptController::class, 'processedEmails'])->name('gmail-receipts.emails');
+        Route::post('/gmail-receipts/emails/{processedEmail}/retry', [GmailReceiptController::class, 'retryEmail'])->name('gmail-receipts.emails.retry');
     });
 
     // Life Management Platform Routes
