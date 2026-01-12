@@ -62,3 +62,10 @@ Schedule::command('subscriptions:update-next-billing')
     ->name('subscription-update-next-billing-direct')
     ->description('Advance subscription next_billing_date (direct execution)')
     ->when(config('app.debug', false)); // Only in debug mode
+
+// Schedule Gmail receipt sync to run every hour
+Schedule::command('gmail:sync-receipts --all --queue')
+    ->hourly()
+    ->name('gmail-sync-receipts')
+    ->description('Sync receipts from Gmail for all active connections')
+    ->when(config('gmail_receipts.sync.auto_sync_enabled', true)); // Only when auto-sync is enabled
