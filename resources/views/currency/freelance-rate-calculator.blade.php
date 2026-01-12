@@ -171,6 +171,20 @@
                 </div>
             </div>
 
+            <!-- Working Days Card -->
+            <div class="bg-[color:var(--color-success-50)] dark:bg-[color:var(--color-success-900)] border border-[color:var(--color-success-200)] dark:border-[color:var(--color-success-800)] shadow-sm rounded-lg p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-sm font-medium text-[color:var(--color-success-700)] dark:text-[color:var(--color-success-300)] mb-1">Working Days in {{ $month_name }}</h3>
+                        <div class="text-3xl font-bold text-[color:var(--color-success-800)] dark:text-[color:var(--color-success-200)]">{{ $working_days }}</div>
+                        <p class="text-xs text-[color:var(--color-success-600)] dark:text-[color:var(--color-success-400)] mt-1">Weekdays excluding holidays</p>
+                    </div>
+                    <svg class="w-12 h-12 text-[color:var(--color-success-500)] opacity-20 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
+                    </svg>
+                </div>
+            </div>
+
             <!-- MKD Conversion Card -->
             <div id="mkd-conversion-card" class="bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] border border-[color:var(--color-success-200)] dark:border-[color:var(--color-success-500)] shadow-sm rounded-lg p-6" style="display: none;">
                 <div class="flex items-center justify-between">

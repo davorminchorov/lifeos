@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Services\CurrencyService;
+use App\Services\WorkingDaysService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -12,7 +13,8 @@ use Illuminate\View\View;
 class CurrencyController extends Controller
 {
     public function __construct(
-        private CurrencyService $currencyService
+        private CurrencyService $currencyService,
+        private WorkingDaysService $workingDaysService
     ) {}
 
     /**
@@ -20,7 +22,9 @@ class CurrencyController extends Controller
      */
     public function freelanceRateCalculator(): View
     {
-        return view('currency.freelance-rate-calculator');
+        $workingDaysInfo = $this->workingDaysService->getCurrentMonthWorkingDaysInfo();
+
+        return view('currency.freelance-rate-calculator', $workingDaysInfo);
     }
 
     /**
