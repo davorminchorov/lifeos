@@ -103,6 +103,8 @@ FetchInvestorData::dispatch($connection);
 - `POST /settings/investor-portal/connect` - Enable connection
 - `POST /settings/investor-portal/disconnect` - Disable connection
 - `POST /settings/investor-portal/sync` - Trigger manual sync
+- `POST /settings/investor-portal/toggle-auto-sync` - Toggle automatic syncing on/off
+- `POST /settings/investor-portal/test-connection` - Test Browserless API connection
 - `GET /settings/investor-portal/history` - View crawl history
 - `GET /settings/investor-portal/{investorData}` - View specific crawl result
 

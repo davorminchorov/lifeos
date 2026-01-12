@@ -252,7 +252,7 @@ class BrowserlessController extends Controller
     /**
      * View crawled data history.
      */
-    public function history(Request $request)
+    public function history()
     {
         $query = InvestorData::where('user_id', auth()->id())
             ->orderBy('crawled_at', 'desc');

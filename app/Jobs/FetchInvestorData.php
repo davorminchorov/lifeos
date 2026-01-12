@@ -117,10 +117,8 @@ class FetchInvestorData implements ShouldQueue
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            // Mark sync as failed
-            $this->connection->markSyncFailed($e->getMessage());
-
             // Re-throw to trigger retry logic
+            // Note: markSyncFailed() is called in failed() method after all retries are exhausted
             throw $e;
         }
     }

@@ -80,16 +80,14 @@ class BrowserlessConnection extends Model
      */
     public function markSyncFailed(string $error): void
     {
+        $newFailureCount = $this->consecutive_failures + 1;
+
         $this->update([
             'last_synced_at' => now(),
             'last_error' => $error,
-            'consecutive_failures' => $this->consecutive_failures + 1,
+            'consecutive_failures' => $newFailureCount,
+            'sync_enabled' => $newFailureCount < 5,
         ]);
-
-        // Disable sync if too many consecutive failures
-        if ($this->consecutive_failures >= 5) {
-            $this->update(['sync_enabled' => false]);
-        }
     }
 
     /**

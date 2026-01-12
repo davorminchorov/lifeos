@@ -72,7 +72,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/investor-portal/disconnect', [BrowserlessController::class, 'disconnect'])->name('investor-portal.disconnect');
         Route::post('/investor-portal/sync', [BrowserlessController::class, 'sync'])->name('investor-portal.sync');
         Route::post('/investor-portal/toggle-auto-sync', [BrowserlessController::class, 'toggleAutoSync'])->name('investor-portal.toggle-auto-sync');
-        Route::get('/investor-portal/test-connection', [BrowserlessController::class, 'testConnection'])->name('investor-portal.test-connection');
+        Route::post('/investor-portal/test-connection', [BrowserlessController::class, 'testConnection'])->name('investor-portal.test-connection');
         Route::get('/investor-portal/history', [BrowserlessController::class, 'history'])->name('investor-portal.history');
         Route::get('/investor-portal/{investorData}', [BrowserlessController::class, 'show'])->name('investor-portal.show');
     });

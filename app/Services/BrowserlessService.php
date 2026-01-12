@@ -55,7 +55,6 @@ class BrowserlessService
 
         Log::info('Starting investor portal crawl', [
             'url' => $loginUrl,
-            'username' => $username,
         ]);
 
         // Puppeteer script to login and extract data
@@ -112,9 +111,9 @@ class BrowserlessService
      */
     protected function getPuppeteerScript(string $loginUrl, string $username, string $password): string
     {
-        // Escape credentials for JavaScript
-        $usernameEscaped = addslashes($username);
-        $passwordEscaped = addslashes($password);
+        // Safely escape credentials for JavaScript using json_encode
+        $usernameEscaped = json_encode($username, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+        $passwordEscaped = json_encode($password, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 
         return <<<JS
 module.exports = async ({ page }) => {
@@ -128,13 +127,13 @@ module.exports = async ({ page }) => {
         // Find and fill in the username field
         const usernameFields = await page.$$('input[type="text"]');
         if (usernameFields.length > 0) {
-            await usernameFields[0].type('{$usernameEscaped}');
+            await usernameFields[0].type({$usernameEscaped});
         }
 
         // Find and fill in the password field
         const passwordFields = await page.$$('input[type="password"]');
         if (passwordFields.length > 0) {
-            await passwordFields[0].type('{$passwordEscaped}');
+            await passwordFields[0].type({$passwordEscaped});
         }
 
         // Find and click the login button

@@ -31,7 +31,7 @@ return [
     | Maximum time in seconds to wait for a crawl operation to complete.
     |
     */
-    'timeout' => env('BROWSERLESS_TIMEOUT', 60),
+    'timeout' => (int) env('BROWSERLESS_TIMEOUT', 60),
 
     /*
     |--------------------------------------------------------------------------
@@ -57,7 +57,7 @@ return [
     |
     */
     'retry' => [
-        'max_attempts' => env('BROWSERLESS_RETRY_ATTEMPTS', 3),
-        'delay_seconds' => env('BROWSERLESS_RETRY_DELAY', 60),
+        'max_attempts' => (int) env('BROWSERLESS_RETRY_ATTEMPTS', 3),
+        'delay_seconds' => (int) env('BROWSERLESS_RETRY_DELAY', 60),
     ],
 ];
