@@ -58,6 +58,9 @@ class FetchInvestorData implements ShouldQueue
         ]);
 
         try {
+            // Refresh connection to get latest state (important for retries)
+            $this->connection->refresh();
+
             // Check if connection is still active
             if (! $this->connection->isActive()) {
                 Log::warning('Browserless connection is not active', [

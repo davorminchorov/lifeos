@@ -18,7 +18,7 @@ class BrowserlessService
 
         $this->apiKey = config('browserless.api_key');
         $this->apiEndpoint = config('browserless.api_endpoint');
-        $this->timeout = config('browserless.timeout');
+        $this->timeout = config('browserless.timeout', 60);
     }
 
     /**
@@ -111,7 +111,8 @@ class BrowserlessService
      */
     protected function getPuppeteerScript(string $loginUrl, string $username, string $password): string
     {
-        // Safely escape credentials for JavaScript using json_encode
+        // Safely escape all values for JavaScript using json_encode
+        $loginUrlEscaped = json_encode($loginUrl, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
         $usernameEscaped = json_encode($username, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
         $passwordEscaped = json_encode($password, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 
@@ -119,7 +120,7 @@ class BrowserlessService
 module.exports = async ({ page }) => {
     try {
         // Navigate to login page
-        await page.goto('{$loginUrl}', { waitUntil: 'networkidle2', timeout: 30000 });
+        await page.goto({$loginUrlEscaped}, { waitUntil: 'networkidle2', timeout: 30000 });
 
         // Wait for login form to be visible
         await page.waitForSelector('input[type="text"], input[name*="korisnik"], input[name*="user"]', { timeout: 10000 });
@@ -148,8 +149,17 @@ module.exports = async ({ page }) => {
         // Wait for dashboard to load (Puppeteer v24 compatible)
         await new Promise(r => setTimeout(r, 3000));
 
-        // Check if we're logged in by looking for common dashboard elements
+        // Verify login was successful
         const currentUrl = page.url();
+        const pageContent = await page.content();
+
+        // Check if still on login page or if there's an error
+        if (currentUrl.includes('frmPrijava.aspx') ||
+            pageContent.includes('neispravna') ||
+            pageContent.includes('pogreška') ||
+            pageContent.includes('error')) {
+            throw new Error('Login failed - invalid credentials or login page still present');
+        }
 
         // Extract all fund data from the dashboard
         const fondsData = await page.evaluate(() => {
