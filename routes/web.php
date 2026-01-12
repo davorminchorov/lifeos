@@ -8,6 +8,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\FileUploadController;
 use App\Http\Controllers\GmailReceiptController;
+use App\Http\Controllers\HolidayController;
 use App\Http\Controllers\InvestmentController;
 use App\Http\Controllers\ProjectInvestmentController;
 use App\Http\Controllers\IouController;
@@ -201,4 +202,7 @@ Route::middleware('auth')->group(function () {
         Route::delete('{cycle_menu_item}', [CycleMenuItemController::class, 'destroy'])->name('destroy');
         Route::post('reorder', [CycleMenuItemController::class, 'reorder'])->name('reorder');
     });
+
+    // Holidays Routes
+    Route::get('/holidays', [HolidayController::class, 'index'])->name('holidays.index');
 });
