@@ -37,7 +37,7 @@ class CycleMenuFeatureTest extends TestCase
         $this->assertNotNull($menu->days()->where('day_index', 0)->first());
         $day = $menu->days()->where('day_index', 0)->first();
 
-        // Add three items via HTTP
+        // Add three items via HTTP (time_of_day expects H:i format without seconds)
         $this->actingAs($user)
             ->post(route('cycle-menu-items.store'), [
                 'cycle_menu_day_id' => $day->id,
@@ -45,7 +45,7 @@ class CycleMenuFeatureTest extends TestCase
                 'meal_type' => MealType::Breakfast->value,
                 'time_of_day' => '08:00',
                 'quantity' => '1 bowl',
-            ])->assertRedirect();
+            ])->assertSessionHasNoErrors()->assertRedirect();
 
         $this->actingAs($user)
             ->post(route('cycle-menu-items.store'), [
@@ -54,7 +54,7 @@ class CycleMenuFeatureTest extends TestCase
                 'meal_type' => MealType::Lunch->value,
                 'time_of_day' => '12:30',
                 'quantity' => '1 wrap',
-            ])->assertRedirect();
+            ])->assertSessionHasNoErrors()->assertRedirect();
 
         $this->actingAs($user)
             ->post(route('cycle-menu-items.store'), [
@@ -63,9 +63,14 @@ class CycleMenuFeatureTest extends TestCase
                 'meal_type' => MealType::Snack->value,
                 'time_of_day' => '15:00',
                 'quantity' => '1 cup',
-            ])->assertRedirect();
+            ])->assertSessionHasNoErrors()->assertRedirect();
+
+        // Verify items were created
+        $itemCount = \App\Models\CycleMenuItem::where('cycle_menu_day_id', $day->id)->count();
+        $this->assertEquals(3, $itemCount, "Expected 3 items to be created for day {$day->id}");
 
         $day->refresh();
+        $day->load('items');
         $this->assertCount(3, $day->items);
 
         // Reorder: send positions [2,0,1] by id order

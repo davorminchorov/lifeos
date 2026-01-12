@@ -18,7 +18,7 @@ class UpdateCycleMenuItemRequest extends FormRequest
         return [
             'title' => ['sometimes', 'required', 'string', 'max:255'],
             'meal_type' => ['sometimes', 'required', new Enum(MealType::class)],
-            'time_of_day' => ['sometimes', 'nullable', 'date_format:H:i'],
+            'time_of_day' => ['sometimes', 'nullable', 'date_format:H:i,H:i:s'],
             'quantity' => ['sometimes', 'nullable', 'string', 'max:255'],
             'recipe_id' => ['sometimes', 'nullable', 'exists:recipes,id'],
             'position' => ['sometimes', 'integer', 'min:0'],

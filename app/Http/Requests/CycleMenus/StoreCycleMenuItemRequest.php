@@ -19,7 +19,7 @@ class StoreCycleMenuItemRequest extends FormRequest
             'cycle_menu_day_id' => ['required', 'exists:cycle_menu_days,id'],
             'title' => ['required', 'string', 'max:255'],
             'meal_type' => ['required', new Enum(MealType::class)],
-            'time_of_day' => ['nullable', 'date_format:H:i'],
+            'time_of_day' => ['nullable', 'date_format:H:i,H:i:s'],
             'quantity' => ['nullable', 'string', 'max:255'],
             'recipe_id' => ['nullable', 'exists:recipes,id'],
             'position' => ['nullable', 'integer', 'min:0'],
