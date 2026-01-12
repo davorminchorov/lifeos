@@ -98,7 +98,22 @@
                         <!-- Column Header -->
                         <div class="bg-[color:var(--color-primary-200)] dark:bg-[color:var(--color-dark-300)] rounded-t-lg px-4 py-3 flex items-center justify-between">
                             <div class="flex items-center gap-2">
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-{{ $column['color'] }}-100 text-{{ $column['color'] }}-800 dark:bg-{{ $column['color'] }}-900 dark:text-{{ $column['color'] }}-200">
+                                @php
+                                    $colorMap = [
+                                        'blue' => 'info',
+                                        'green' => 'success',
+                                        'emerald' => 'success',
+                                        'red' => 'danger',
+                                        'yellow' => 'warning',
+                                        'orange' => 'warning',
+                                        'gray' => 'primary',
+                                        'slate' => 'primary',
+                                        'indigo' => 'primary',
+                                        'purple' => 'accent',
+                                    ];
+                                    $tokenColor = $colorMap[$column['color']] ?? 'primary';
+                                @endphp
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[color:var(--color-{{ $tokenColor }}-100)] text-[color:var(--color-{{ $tokenColor }}-800)] dark:bg-[color:var(--color-{{ $tokenColor }}-900)] dark:text-[color:var(--color-{{ $tokenColor }}-200)]">
                                     {{ $column['label'] }}
                                 </span>
                                 <span class="text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)]">
@@ -142,7 +157,7 @@
                                             </svg>
                                             {{ $application->location }}
                                             @if($application->remote)
-                                                <span class="ml-1 text-blue-600 dark:text-blue-400">• Remote</span>
+                                                <span class="ml-1 text-[color:var(--color-info-600)] dark:text-[color:var(--color-info-400)]">• Remote</span>
                                             @endif
                                         </div>
                                     @endif
@@ -166,12 +181,12 @@
                                     </div>
 
                                     <div class="mt-3 flex gap-2">
-                                        <a href="{{ route('job-applications.show', $application) }}" class="flex-1 text-center px-3 py-1.5 bg-[color:var(--color-primary-200)] hover:bg-[color:var(--color-primary-300)] text-[color:var(--color-primary-700)] dark:bg-[color:var(--color-dark-300)] dark:hover:bg-[color:var(--color-dark-400)] dark:text-[color:var(--color-dark-600)] rounded text-xs font-medium transition-colors">
+                                        <x-button href="{{ route('job-applications.show', $application) }}" variant="secondary" class="flex-1 text-xs">
                                             View
-                                        </a>
-                                        <a href="{{ route('job-applications.edit', $application) }}" class="flex-1 text-center px-3 py-1.5 bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] text-white rounded text-xs font-medium transition-colors">
+                                        </x-button>
+                                        <x-button href="{{ route('job-applications.edit', $application) }}" variant="primary" class="flex-1 text-xs">
                                             Edit
-                                        </a>
+                                        </x-button>
                                     </div>
                                 </div>
                             @empty
@@ -195,7 +210,22 @@
                     <!-- Column Header -->
                     <div class="bg-[color:var(--color-primary-200)] dark:bg-[color:var(--color-dark-300)] px-4 py-3 flex items-center justify-between rounded-t-lg">
                         <div class="flex items-center gap-2">
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-{{ $column['color'] }}-100 text-{{ $column['color'] }}-800 dark:bg-{{ $column['color'] }}-900 dark:text-{{ $column['color'] }}-200">
+                            @php
+                                $colorMap = [
+                                    'blue' => 'info',
+                                    'green' => 'success',
+                                    'emerald' => 'success',
+                                    'red' => 'danger',
+                                    'yellow' => 'warning',
+                                    'orange' => 'warning',
+                                    'gray' => 'primary',
+                                    'slate' => 'primary',
+                                    'indigo' => 'primary',
+                                    'purple' => 'accent',
+                                ];
+                                $tokenColor = $colorMap[$column['color']] ?? 'primary';
+                            @endphp
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[color:var(--color-{{ $tokenColor }}-100)] text-[color:var(--color-{{ $tokenColor }}-800)] dark:bg-[color:var(--color-{{ $tokenColor }}-900)] dark:text-[color:var(--color-{{ $tokenColor }}-200)]">
                                 {{ $column['label'] }}
                             </span>
                             <span class="text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)]">
@@ -227,7 +257,7 @@
                                         </svg>
                                         {{ $application->location }}
                                         @if($application->remote)
-                                            <span class="ml-1 text-blue-600 dark:text-blue-400">• Remote</span>
+                                            <span class="ml-1 text-[color:var(--color-info-600)] dark:text-[color:var(--color-info-400)]">• Remote</span>
                                         @endif
                                     </div>
                                 @endif
@@ -263,12 +293,12 @@
                                 </div>
 
                                 <div class="mt-3 flex gap-2">
-                                    <a href="{{ route('job-applications.show', $application) }}" class="flex-1 text-center px-3 py-1.5 bg-[color:var(--color-primary-200)] hover:bg-[color:var(--color-primary-300)] text-[color:var(--color-primary-700)] dark:bg-[color:var(--color-dark-300)] dark:hover:bg-[color:var(--color-dark-400)] dark:text-[color:var(--color-dark-600)] rounded text-xs font-medium transition-colors">
+                                    <x-button href="{{ route('job-applications.show', $application) }}" variant="secondary" class="flex-1 text-xs">
                                         View
-                                    </a>
-                                    <a href="{{ route('job-applications.edit', $application) }}" class="flex-1 text-center px-3 py-1.5 bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] text-white rounded text-xs font-medium transition-colors">
+                                    </x-button>
+                                    <x-button href="{{ route('job-applications.edit', $application) }}" variant="primary" class="flex-1 text-xs">
                                         Edit
-                                    </a>
+                                    </x-button>
                                 </div>
                             </div>
                         @empty
@@ -285,7 +315,7 @@
         <div x-show="message"
              x-transition
              class="fixed bottom-4 right-4 px-6 py-3 rounded-lg shadow-lg z-50"
-             :class="messageType === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'"
+             :class="messageType === 'success' ? 'bg-[color:var(--color-success-500)] text-white' : 'bg-[color:var(--color-danger-500)] text-white'"
              x-cloak>
             <span x-text="message"></span>
         </div>

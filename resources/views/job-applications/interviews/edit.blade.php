@@ -13,13 +13,14 @@
                     {{ $application->job_title }} at {{ $application->company_name }}
                 </p>
             </div>
-            <a href="{{ route('job-applications.show', $application) }}"
-               class="inline-flex items-center px-4 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] hover:bg-[color:var(--color-primary-200)] dark:hover:bg-[color:var(--color-dark-300)]">
+            <x-button
+                href="{{ route('job-applications.show', $application) }}"
+                variant="secondary">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                 </svg>
                 Back to Application
-            </a>
+            </x-button>
         </div>
 
         <!-- Form -->
@@ -33,55 +34,42 @@
                     <h3 class="text-lg font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] mb-4">Interview Details</h3>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label for="type" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Interview Type *</label>
-                            <select name="type" id="type" required
-                                    class="mt-1 block w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
-                                <option value="">Select Type</option>
-                                @foreach($types as $typeOption)
-                                    <option value="{{ $typeOption->value }}" {{ old('type', $interview->type->value) === $typeOption->value ? 'selected' : '' }}>
-                                        {{ ucfirst(str_replace('_', ' ', $typeOption->value)) }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('type')
-                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                            @enderror
-                        </div>
+                        <x-form.select
+                            name="type"
+                            label="Interview Type"
+                            :required="true"
+                            placeholder="Select Type">
+                            @foreach($types as $typeOption)
+                                <option value="{{ $typeOption->value }}" {{ old('type', $interview->type->value) === $typeOption->value ? 'selected' : '' }}>
+                                    {{ ucfirst(str_replace('_', ' ', $typeOption->value)) }}
+                                </option>
+                            @endforeach
+                        </x-form.select>
 
-                        <div>
-                            <label for="scheduled_at" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Scheduled Date & Time *</label>
-                            <input type="datetime-local" name="scheduled_at" id="scheduled_at" required
-                                   value="{{ old('scheduled_at', $interview->scheduled_at?->format('Y-m-d\TH:i')) }}"
-                                   class="mt-1 block w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
-                            @error('scheduled_at')
-                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                            @enderror
-                        </div>
+                        <x-form.input
+                            name="scheduled_at"
+                            type="datetime-local"
+                            label="Scheduled Date & Time"
+                            :required="true"
+                            :value="$interview->scheduled_at?->format('Y-m-d\TH:i')" />
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-                        <div>
-                            <label for="duration_minutes" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Duration (minutes)</label>
-                            <input type="number" name="duration_minutes" id="duration_minutes" min="1" max="480"
-                                   value="{{ old('duration_minutes', $interview->duration_minutes) }}"
-                                   class="mt-1 block w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]"
-                                   placeholder="60">
-                            @error('duration_minutes')
-                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                            @enderror
-                        </div>
+                        <x-form.input
+                            name="duration_minutes"
+                            type="number"
+                            label="Duration (minutes)"
+                            min="1"
+                            max="480"
+                            :value="$interview->duration_minutes"
+                            placeholder="60" />
 
-                        <div>
-                            <label for="interviewer_name" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Interviewer Name</label>
-                            <input type="text" name="interviewer_name" id="interviewer_name"
-                                   value="{{ old('interviewer_name', $interview->interviewer_name) }}"
-                                   class="mt-1 block w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]"
-                                   placeholder="e.g., John Smith">
-                            @error('interviewer_name')
-                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                            @enderror
-                        </div>
+                        <x-form.input
+                            name="interviewer_name"
+                            type="text"
+                            label="Interviewer Name"
+                            :value="$interview->interviewer_name"
+                            placeholder="e.g., John Smith" />
                     </div>
                 </div>
 
@@ -90,27 +78,19 @@
                     <h3 class="text-lg font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] mb-4">Location Details</h3>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label for="location" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Location</label>
-                            <input type="text" name="location" id="location"
-                                   value="{{ old('location', $interview->location) }}"
-                                   class="mt-1 block w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]"
-                                   placeholder="Office address or 'Remote'">
-                            @error('location')
-                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                            @enderror
-                        </div>
+                        <x-form.input
+                            name="location"
+                            type="text"
+                            label="Location"
+                            :value="$interview->location"
+                            placeholder="Office address or 'Remote'" />
 
-                        <div>
-                            <label for="video_link" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Video Call Link</label>
-                            <input type="url" name="video_link" id="video_link"
-                                   value="{{ old('video_link', $interview->video_link) }}"
-                                   class="mt-1 block w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]"
-                                   placeholder="https://zoom.us/j/...">
-                            @error('video_link')
-                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                            @enderror
-                        </div>
+                        <x-form.input
+                            name="video_link"
+                            type="url"
+                            label="Video Call Link"
+                            :value="$interview->video_link"
+                            placeholder="https://zoom.us/j/..." />
                     </div>
                 </div>
 
@@ -118,15 +98,13 @@
                 <div class="border-t border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)] pt-6">
                     <h3 class="text-lg font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] mb-4">Preparation Notes</h3>
 
-                    <div>
-                        <label for="notes" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Notes</label>
-                        <textarea name="notes" id="notes" rows="4"
-                                  class="mt-1 block w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]"
-                                  placeholder="Preparation notes, key points to mention, questions to ask...">{{ old('notes', $interview->notes) }}</textarea>
-                        @error('notes')
-                            <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                        @enderror
-                    </div>
+                    <x-form.input
+                        name="notes"
+                        type="textarea"
+                        label="Notes"
+                        rows="4"
+                        :value="$interview->notes"
+                        placeholder="Preparation notes, key points to mention, questions to ask..." />
                 </div>
 
                 <!-- Post-Interview -->
@@ -134,55 +112,51 @@
                     <h3 class="text-lg font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] mb-4">Post-Interview</h3>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label for="outcome" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Outcome</label>
-                            <select name="outcome" id="outcome"
-                                    class="mt-1 block w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
-                                <option value="">Not yet determined</option>
-                                @foreach($outcomes as $outcomeOption)
-                                    <option value="{{ $outcomeOption->value }}" {{ old('outcome', $interview->outcome?->value) === $outcomeOption->value ? 'selected' : '' }}>
-                                        {{ ucfirst($outcomeOption->value) }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('outcome')
-                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                            @enderror
-                        </div>
+                        <x-form.select
+                            name="outcome"
+                            label="Outcome"
+                            placeholder="Not yet determined">
+                            @foreach($outcomes as $outcomeOption)
+                                <option value="{{ $outcomeOption->value }}" {{ old('outcome', $interview->outcome?->value) === $outcomeOption->value ? 'selected' : '' }}>
+                                    {{ ucfirst($outcomeOption->value) }}
+                                </option>
+                            @endforeach
+                        </x-form.select>
 
                         <div class="flex items-end">
-                            <label class="flex items-center">
-                                <input type="checkbox" name="completed" id="completed" value="1" {{ old('completed', $interview->completed) ? 'checked' : '' }}
-                                       class="rounded border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] text-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)]">
-                                <span class="ml-2 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Mark as Completed</span>
-                            </label>
+                            <x-form.checkbox
+                                name="completed"
+                                label="Mark as Completed"
+                                :checked="$interview->completed" />
                         </div>
                     </div>
 
                     <div class="mt-6">
-                        <label for="feedback" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Feedback</label>
-                        <textarea name="feedback" id="feedback" rows="4"
-                                  class="mt-1 block w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]"
-                                  placeholder="How did the interview go? What went well? Areas for improvement...">{{ old('feedback', $interview->feedback) }}</textarea>
-                        @error('feedback')
-                            <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                        @enderror
+                        <x-form.input
+                            name="feedback"
+                            type="textarea"
+                            label="Feedback"
+                            rows="4"
+                            :value="$interview->feedback"
+                            placeholder="How did the interview go? What went well? Areas for improvement..." />
                     </div>
                 </div>
 
                 <!-- Form Actions -->
                 <div class="border-t border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)] pt-6 flex justify-end gap-3">
-                    <a href="{{ route('job-applications.show', $application) }}"
-                       class="inline-flex justify-center items-center px-6 py-3 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] hover:bg-[color:var(--color-primary-200)] dark:hover:bg-[color:var(--color-dark-300)] transition-colors">
+                    <x-button
+                        href="{{ route('job-applications.show', $application) }}"
+                        variant="secondary">
                         Cancel
-                    </a>
-                    <button type="submit"
-                            class="inline-flex justify-center items-center px-6 py-3 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] transition-colors">
+                    </x-button>
+                    <x-button
+                        type="submit"
+                        variant="primary">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                         </svg>
                         Update Interview
-                    </button>
+                    </x-button>
                 </div>
             </form>
         </div>

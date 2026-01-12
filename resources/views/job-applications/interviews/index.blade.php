@@ -13,12 +13,12 @@
             </p>
         </div>
         <div class="flex space-x-3">
-            <a href="{{ route('job-applications.interviews.create', $application) }}" class="bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200">
+            <x-button href="{{ route('job-applications.interviews.create', $application) }}" variant="primary">
                 Schedule Interview
-            </a>
-            <a href="{{ route('job-applications.show', $application) }}" class="bg-[color:var(--color-primary-500)] hover:bg-[color:var(--color-primary-600)] text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200">
+            </x-button>
+            <x-button href="{{ route('job-applications.show', $application) }}" variant="secondary">
                 Back to Application
-            </a>
+            </x-button>
         </div>
     </div>
 @endsection
@@ -33,9 +33,9 @@
                 <h3 class="mt-2 text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">No interviews scheduled</h3>
                 <p class="mt-1 text-sm text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">Get started by scheduling your first interview.</p>
                 <div class="mt-6">
-                    <a href="{{ route('job-applications.interviews.create', $application) }}" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)]">
+                    <x-button href="{{ route('job-applications.interviews.create', $application) }}" variant="primary">
                         Schedule Interview
-                    </a>
+                    </x-button>
                 </div>
             </div>
         @else
@@ -50,7 +50,7 @@
                                             {{ ucfirst(str_replace('_', ' ', $interview->type->value)) }}
                                         </span>
                                         @if($interview->completed)
-                                            <span class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200">
+                                            <span class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[color:var(--color-success-100)] dark:bg-[color:var(--color-success-900)] text-[color:var(--color-success-800)] dark:text-[color:var(--color-success-200)]">
                                                 Completed
                                             </span>
                                         @endif
@@ -82,9 +82,9 @@
                                 <div class="ml-4 shrink-0 flex items-center space-x-2">
                                     @if($interview->outcome)
                                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                            @if($interview->outcome->value === 'positive') bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200
-                                            @elseif($interview->outcome->value === 'negative') bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200
-                                            @elseif($interview->outcome->value === 'neutral') bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200
+                                            @if($interview->outcome->value === 'positive') bg-[color:var(--color-success-100)] dark:bg-[color:var(--color-success-900)] text-[color:var(--color-success-800)] dark:text-[color:var(--color-success-200)]
+                                            @elseif($interview->outcome->value === 'negative') bg-[color:var(--color-danger-100)] dark:bg-[color:var(--color-danger-900)] text-[color:var(--color-danger-800)] dark:text-[color:var(--color-danger-200)]
+                                            @elseif($interview->outcome->value === 'neutral') bg-[color:var(--color-warning-100)] dark:bg-[color:var(--color-warning-900)] text-[color:var(--color-warning-800)] dark:text-[color:var(--color-warning-200)]
                                             @else bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200
                                             @endif">
                                             {{ ucfirst($interview->outcome->value) }}

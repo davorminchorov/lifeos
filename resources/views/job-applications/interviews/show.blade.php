@@ -13,12 +13,12 @@
             </p>
         </div>
         <div class="flex space-x-3">
-            <a href="{{ route('job-applications.interviews.edit', [$application, $interview]) }}" class="bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200">
+            <x-button href="{{ route('job-applications.interviews.edit', [$application, $interview]) }}" variant="primary">
                 Edit Interview
-            </a>
-            <a href="{{ route('job-applications.show', $application) }}" class="bg-[color:var(--color-primary-500)] hover:bg-[color:var(--color-primary-600)] text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200">
+            </x-button>
+            <x-button href="{{ route('job-applications.show', $application) }}" variant="secondary">
                 Back to Application
-            </a>
+            </x-button>
         </div>
     </div>
 @endsection
@@ -38,14 +38,14 @@
                 </div>
                 <div class="flex items-center space-x-2">
                     @if($interview->completed)
-                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200">
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-[color:var(--color-success-100)] dark:bg-[color:var(--color-success-900)] text-[color:var(--color-success-800)] dark:text-[color:var(--color-success-200)]">
                             <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
                             </svg>
                             Completed
                         </span>
                     @else
-                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200">
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-[color:var(--color-warning-100)] dark:bg-[color:var(--color-warning-900)] text-[color:var(--color-warning-800)] dark:text-[color:var(--color-warning-200)]">
                             <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path>
                             </svg>
@@ -109,9 +109,9 @@
                             <dt class="text-sm font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">Outcome</dt>
                             <dd class="mt-1 text-sm sm:mt-0 sm:col-span-2">
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                    @if($interview->outcome->value === 'positive') bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200
-                                    @elseif($interview->outcome->value === 'negative') bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200
-                                    @elseif($interview->outcome->value === 'neutral') bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200
+                                    @if($interview->outcome->value === 'positive') bg-[color:var(--color-success-100)] dark:bg-[color:var(--color-success-900)] text-[color:var(--color-success-800)] dark:text-[color:var(--color-success-200)]
+                                    @elseif($interview->outcome->value === 'negative') bg-[color:var(--color-danger-100)] dark:bg-[color:var(--color-danger-900)] text-[color:var(--color-danger-800)] dark:text-[color:var(--color-danger-200)]
+                                    @elseif($interview->outcome->value === 'neutral') bg-[color:var(--color-warning-100)] dark:bg-[color:var(--color-warning-900)] text-[color:var(--color-warning-800)] dark:text-[color:var(--color-warning-200)]
                                     @else bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200
                                     @endif">
                                     {{ ucfirst($interview->outcome->value) }}
@@ -164,23 +164,23 @@
                         <form method="POST" action="{{ route('job-applications.interviews.complete', [$application, $interview]) }}">
                             @csrf
                             @method('PATCH')
-                            <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                            <x-button type="submit" variant="primary">
                                 <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
                                 </svg>
                                 Mark as Completed
-                            </button>
+                            </x-button>
                         </form>
                     @endif
                     <form method="POST" action="{{ route('job-applications.interviews.destroy', [$application, $interview]) }}" onsubmit="return confirm('Are you sure you want to delete this interview?');">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                        <x-button type="submit" variant="danger">
                             <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path>
                             </svg>
                             Delete Interview
-                        </button>
+                        </x-button>
                     </form>
                 </div>
             </div>

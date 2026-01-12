@@ -45,35 +45,27 @@
                     @method('PATCH')
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label for="name" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
-                                Full Name
-                            </label>
-                            <input type="text" name="name" id="name" value="{{ old('name', auth()->user()->name) }}"
-                                   class="mt-1 block w-full border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)] bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]"
-                                   required>
-                            @error('name')
-                                <p class="mt-1 text-sm text-[color:var(--color-danger-600)]">{{ $message }}</p>
-                            @enderror
-                        </div>
+                        <x-form.input
+                            name="name"
+                            label="Full Name"
+                            type="text"
+                            :value="auth()->user()->name"
+                            :required="true"
+                        />
 
-                        <div>
-                            <label for="email" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
-                                Email Address
-                            </label>
-                            <input type="email" name="email" id="email" value="{{ old('email', auth()->user()->email) }}"
-                                   class="mt-1 block w-full border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)] bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]"
-                                   required>
-                            @error('email')
-                                <p class="mt-1 text-sm text-[color:var(--color-danger-600)]">{{ $message }}</p>
-                            @enderror
-                        </div>
+                        <x-form.input
+                            name="email"
+                            label="Email Address"
+                            type="email"
+                            :value="auth()->user()->email"
+                            :required="true"
+                        />
                     </div>
 
                     <div class="flex justify-end">
-                        <button type="submit" class="bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 shadow-sm">
+                        <x-button type="submit" variant="primary">
                             Update Information
-                        </button>
+                        </x-button>
                     </div>
                 </form>
             </div>
@@ -102,39 +94,28 @@
                     @csrf
                     @method('PATCH')
 
-                    <div>
-                        <label for="current_password" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
-                            Current Password
-                        </label>
-                        <input type="password" name="current_password" id="current_password"
-                               class="mt-1 block w-full md:w-1/2 border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)] bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]"
-                               required>
-                        @error('current_password')
-                            <p class="mt-1 text-sm text-[color:var(--color-danger-600)]">{{ $message }}</p>
-                        @enderror
-                    </div>
+                    <x-form.input
+                        name="current_password"
+                        label="Current Password"
+                        type="password"
+                        :required="true"
+                        containerClass="md:w-1/2"
+                    />
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label for="password" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
-                                New Password
-                            </label>
-                            <input type="password" name="password" id="password"
-                                   class="mt-1 block w-full border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)] bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]"
-                                   required>
-                            @error('password')
-                                <p class="mt-1 text-sm text-[color:var(--color-danger-600)]">{{ $message }}</p>
-                            @enderror
-                        </div>
+                        <x-form.input
+                            name="password"
+                            label="New Password"
+                            type="password"
+                            :required="true"
+                        />
 
-                        <div>
-                            <label for="password_confirmation" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
-                                Confirm New Password
-                            </label>
-                            <input type="password" name="password_confirmation" id="password_confirmation"
-                                   class="mt-1 block w-full border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)] bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]"
-                                   required>
-                        </div>
+                        <x-form.input
+                            name="password_confirmation"
+                            label="Confirm New Password"
+                            type="password"
+                            :required="true"
+                        />
                     </div>
 
                     <div class="bg-[color:var(--color-warning-50)] dark:bg-[color:var(--color-warning-500)]/20 border border-[color:var(--color-warning-500)]/30 dark:border-[color:var(--color-warning-600)] rounded-md p-4">
@@ -155,9 +136,9 @@
                     </div>
 
                     <div class="flex justify-end">
-                        <button type="submit" class="bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 shadow-sm">
+                        <x-button type="submit" variant="primary">
                             Update Password
-                        </button>
+                        </x-button>
                     </div>
                 </form>
             </div>

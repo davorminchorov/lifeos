@@ -16,7 +16,7 @@
 @endsection
 
 @section('content')
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6" x-data="rateCalculator()">
         <!-- Input Form -->
         <div class="bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] shadow-sm rounded-lg p-6">
             <h2 class="text-lg font-semibold text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] mb-4">
@@ -29,96 +29,133 @@
                     Work Type
                 </label>
                 <div class="flex gap-3">
-                    <button type="button" id="part-time-btn" onclick="setWorkType('part-time')" class="flex-1 px-4 py-3 text-sm font-medium rounded-lg border-2 transition-all duration-200 border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] hover:border-[color:var(--color-accent-500)]">
-                        <div class="font-semibold">Part-Time</div>
-                        <div class="text-xs mt-1">20-30 hours/week</div>
-                    </button>
-                    <button type="button" id="full-time-btn" onclick="setWorkType('full-time')" class="flex-1 px-4 py-3 text-sm font-medium rounded-lg border-2 transition-all duration-200 bg-[color:var(--color-accent-500)] border-[color:var(--color-accent-500)] text-white">
-                        <div class="font-semibold">Full-Time</div>
-                        <div class="text-xs mt-1">40 hours/week</div>
-                    </button>
+                    <x-button
+                        type="button"
+                        variant="secondary"
+                        @click="setWorkType('part-time')"
+                        x-bind:class="workType === 'part-time' ? 'bg-[color:var(--color-accent-500)] border-[color:var(--color-accent-500)] text-white hover:bg-[color:var(--color-accent-600)]' : ''"
+                        class="flex-1 py-3"
+                    >
+                        <div class="text-center">
+                            <div class="font-semibold">Part-Time</div>
+                            <div class="text-xs mt-1">20-30 hours/week</div>
+                        </div>
+                    </x-button>
+                    <x-button
+                        type="button"
+                        variant="secondary"
+                        @click="setWorkType('full-time')"
+                        x-bind:class="workType === 'full-time' ? 'bg-[color:var(--color-accent-500)] border-[color:var(--color-accent-500)] text-white hover:bg-[color:var(--color-accent-600)]' : ''"
+                        class="flex-1 py-3"
+                    >
+                        <div class="text-center">
+                            <div class="font-semibold">Full-Time</div>
+                            <div class="text-xs mt-1">40 hours/week</div>
+                        </div>
+                    </x-button>
                 </div>
             </div>
 
             <form id="rate-calculator-form" class="space-y-4">
                 <!-- Currency Selection -->
-                <div>
-                    <label for="currency" class="block text-sm font-medium text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] mb-1">
-                        Currency
-                    </label>
-                    <select id="currency" class="w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-lg bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] focus:ring-2 focus:ring-[color:var(--color-accent-500)] focus:border-transparent" onchange="calculateRates()">
-                        <option value="MKD" data-symbol="MKD">MKD - Macedonian Denar</option>
-                        <option value="USD" data-symbol="$" selected>USD - US Dollar</option>
-                        <option value="EUR" data-symbol="€">EUR - Euro</option>
-                        <option value="GBP" data-symbol="£">GBP - British Pound</option>
-                        <option value="CAD" data-symbol="C$">CAD - Canadian Dollar</option>
-                        <option value="AUD" data-symbol="A$">AUD - Australian Dollar</option>
-                        <option value="JPY" data-symbol="¥">JPY - Japanese Yen</option>
-                        <option value="CHF" data-symbol="CHF">CHF - Swiss Franc</option>
-                        <option value="RSD" data-symbol="RSD">RSD - Serbian Dinar</option>
-                        <option value="BGN" data-symbol="лв">BGN - Bulgarian Lev</option>
-                    </select>
-                </div>
+                <x-form.select
+                    name="currency"
+                    id="currency"
+                    label="Currency"
+                    onchange="calculateRates()"
+                >
+                    <option value="MKD" data-symbol="MKD">MKD - Macedonian Denar</option>
+                    <option value="USD" data-symbol="$" selected>USD - US Dollar</option>
+                    <option value="EUR" data-symbol="€">EUR - Euro</option>
+                    <option value="GBP" data-symbol="£">GBP - British Pound</option>
+                    <option value="CAD" data-symbol="C$">CAD - Canadian Dollar</option>
+                    <option value="AUD" data-symbol="A$">AUD - Australian Dollar</option>
+                    <option value="JPY" data-symbol="¥">JPY - Japanese Yen</option>
+                    <option value="CHF" data-symbol="CHF">CHF - Swiss Franc</option>
+                    <option value="RSD" data-symbol="RSD">RSD - Serbian Dinar</option>
+                    <option value="BGN" data-symbol="лв">BGN - Bulgarian Lev</option>
+                </x-form.select>
 
                 <!-- Desired Annual Income -->
-                <div>
-                    <label for="annual-income" class="block text-sm font-medium text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] mb-1">
-                        Desired Annual Income
-                    </label>
-                    <input type="number" id="annual-income" value="60000" min="0" step="1000" class="w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-lg bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] focus:ring-2 focus:ring-[color:var(--color-accent-500)] focus:border-transparent" oninput="calculateRates()">
-                </div>
+                <x-form.input
+                    type="number"
+                    name="annual-income"
+                    id="annual-income"
+                    label="Desired Annual Income"
+                    value="60000"
+                    min="0"
+                    step="1000"
+                    onchange="calculateRates()"
+                />
 
                 <!-- Working Hours per Week -->
-                <div>
-                    <label for="hours-per-week" class="block text-sm font-medium text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] mb-1">
-                        Working Hours per Week
-                    </label>
-                    <input type="number" id="hours-per-week" value="40" min="1" max="80" step="1" class="w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-lg bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] focus:ring-2 focus:ring-[color:var(--color-accent-500)] focus:border-transparent" oninput="calculateRates()">
-                </div>
+                <x-form.input
+                    type="number"
+                    name="hours-per-week"
+                    id="hours-per-week"
+                    label="Working Hours per Week"
+                    value="40"
+                    min="1"
+                    max="80"
+                    step="1"
+                    onchange="calculateRates()"
+                />
 
                 <!-- Working Weeks per Year -->
-                <div>
-                    <label for="weeks-per-year" class="block text-sm font-medium text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] mb-1">
-                        Working Weeks per Year
-                    </label>
-                    <input type="number" id="weeks-per-year" value="48" min="1" max="52" step="1" class="w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-lg bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] focus:ring-2 focus:ring-[color:var(--color-accent-500)] focus:border-transparent" oninput="calculateRates()">
-                    <p class="mt-1 text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)]">
-                        52 weeks minus vacation time (typically 2-4 weeks)
-                    </p>
-                </div>
+                <x-form.input
+                    type="number"
+                    name="weeks-per-year"
+                    id="weeks-per-year"
+                    label="Working Weeks per Year"
+                    value="48"
+                    min="1"
+                    max="52"
+                    step="1"
+                    onchange="calculateRates()"
+                    helpText="52 weeks minus vacation time (typically 2-4 weeks)"
+                />
 
                 <!-- Business Expenses -->
-                <div>
-                    <label for="expenses-percentage" class="block text-sm font-medium text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] mb-1">
-                        Business Expenses (%)
-                    </label>
-                    <input type="number" id="expenses-percentage" value="20" min="0" max="100" step="1" class="w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-lg bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] focus:ring-2 focus:ring-[color:var(--color-accent-500)] focus:border-transparent" oninput="calculateRates()">
-                    <p class="mt-1 text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)]">
-                        Software, equipment, insurance, etc. (typically 15-30%)
-                    </p>
-                </div>
+                <x-form.input
+                    type="number"
+                    name="expenses-percentage"
+                    id="expenses-percentage"
+                    label="Business Expenses (%)"
+                    value="20"
+                    min="0"
+                    max="100"
+                    step="1"
+                    onchange="calculateRates()"
+                    helpText="Software, equipment, insurance, etc. (typically 15-30%)"
+                />
 
                 <!-- Profit Margin -->
-                <div>
-                    <label for="profit-margin" class="block text-sm font-medium text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] mb-1">
-                        Profit Margin (%)
-                    </label>
-                    <input type="number" id="profit-margin" value="15" min="0" max="100" step="1" class="w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-lg bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] focus:ring-2 focus:ring-[color:var(--color-accent-500)] focus:border-transparent" oninput="calculateRates()">
-                    <p class="mt-1 text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)]">
-                        Your business profit (typically 10-20%)
-                    </p>
-                </div>
+                <x-form.input
+                    type="number"
+                    name="profit-margin"
+                    id="profit-margin"
+                    label="Profit Margin (%)"
+                    value="15"
+                    min="0"
+                    max="100"
+                    step="1"
+                    onchange="calculateRates()"
+                    helpText="Your business profit (typically 10-20%)"
+                />
 
                 <!-- Tax Rate -->
-                <div>
-                    <label for="tax-rate" class="block text-sm font-medium text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] mb-1">
-                        Tax Rate (%)
-                    </label>
-                    <input type="number" id="tax-rate" value="25" min="0" max="100" step="1" class="w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-lg bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] focus:ring-2 focus:ring-[color:var(--color-accent-500)] focus:border-transparent" oninput="calculateRates()">
-                    <p class="mt-1 text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)]">
-                        Your estimated tax rate (varies by location)
-                    </p>
-                </div>
+                <x-form.input
+                    type="number"
+                    name="tax-rate"
+                    id="tax-rate"
+                    label="Tax Rate (%)"
+                    value="25"
+                    min="0"
+                    max="100"
+                    step="1"
+                    onchange="calculateRates()"
+                    helpText="Your estimated tax rate (varies by location)"
+                />
             </form>
         </div>
 
@@ -269,8 +306,6 @@
 
 @push('scripts')
 <script>
-    let currentWorkType = 'full-time';
-
     // Hardcoded exchange rates to MKD (approximate values)
     const exchangeRatesToMKD = {
         'USD': 56.50,
@@ -285,36 +320,23 @@
         'MKD': 1.00
     };
 
-    function setWorkType(type) {
-        currentWorkType = type;
+    function rateCalculator() {
+        return {
+            workType: 'full-time',
 
-        const partTimeBtn = document.getElementById('part-time-btn');
-        const fullTimeBtn = document.getElementById('full-time-btn');
-        const hoursInput = document.getElementById('hours-per-week');
+            setWorkType(type) {
+                this.workType = type;
+                const hoursInput = document.getElementById('hours-per-week');
 
-        if (type === 'part-time') {
-            // Style part-time as active
-            partTimeBtn.classList.add('bg-[color:var(--color-accent-500)]', 'border-[color:var(--color-accent-500)]', 'text-white');
-            partTimeBtn.classList.remove('border-[color:var(--color-primary-300)]', 'dark:border-[color:var(--color-dark-300)]', 'text-[color:var(--color-primary-600)]', 'dark:text-[color:var(--color-dark-500)]');
+                if (type === 'part-time') {
+                    hoursInput.value = 25;
+                } else {
+                    hoursInput.value = 40;
+                }
 
-            // Style full-time as inactive
-            fullTimeBtn.classList.remove('bg-[color:var(--color-accent-500)]', 'border-[color:var(--color-accent-500)]', 'text-white');
-            fullTimeBtn.classList.add('border-[color:var(--color-primary-300)]', 'dark:border-[color:var(--color-dark-300)]', 'text-[color:var(--color-primary-600)]', 'dark:text-[color:var(--color-dark-500)]');
-
-            hoursInput.value = 25;
-        } else {
-            // Style full-time as active
-            fullTimeBtn.classList.add('bg-[color:var(--color-accent-500)]', 'border-[color:var(--color-accent-500)]', 'text-white');
-            fullTimeBtn.classList.remove('border-[color:var(--color-primary-300)]', 'dark:border-[color:var(--color-dark-300)]', 'text-[color:var(--color-primary-600)]', 'dark:text-[color:var(--color-dark-500)]');
-
-            // Style part-time as inactive
-            partTimeBtn.classList.remove('bg-[color:var(--color-accent-500)]', 'border-[color:var(--color-accent-500)]', 'text-white');
-            partTimeBtn.classList.add('border-[color:var(--color-primary-300)]', 'dark:border-[color:var(--color-dark-300)]', 'text-[color:var(--color-primary-600)]', 'dark:text-[color:var(--color-dark-500)]');
-
-            hoursInput.value = 40;
-        }
-
-        calculateRates();
+                calculateRates();
+            }
+        };
     }
 
     function getCurrencySymbol() {
