@@ -72,6 +72,22 @@ class User extends Authenticatable
     }
 
     /**
+     * Get the user's Gmail connections.
+     */
+    public function gmailConnections(): HasMany
+    {
+        return $this->hasMany(GmailConnection::class);
+    }
+
+    /**
+     * Get the user's processed emails.
+     */
+    public function processedEmails(): HasMany
+    {
+        return $this->hasMany(ProcessedEmail::class);
+    }
+
+    /**
      * Get the user's notification preferences.
      */
     public function notificationPreferences(): HasMany
