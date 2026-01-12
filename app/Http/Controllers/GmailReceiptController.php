@@ -25,6 +25,15 @@ class GmailReceiptController extends Controller
      */
     public function settings()
     {
+        // Validate Gmail credentials are configured
+        if (! config('gmail_receipts.client_id') || ! config('gmail_receipts.client_secret')) {
+            return view('settings.gmail-receipts', [
+                'connection' => null,
+                'stats' => null,
+                'error' => 'Gmail API credentials are not configured. Please set GMAIL_CLIENT_ID and GMAIL_CLIENT_SECRET in your .env file.',
+            ]);
+        }
+
         $connection = auth()->user()->gmailConnections()->first();
 
         $stats = null;
@@ -157,7 +166,18 @@ class GmailReceiptController extends Controller
                     ->with('error', 'No Gmail connection found.');
             }
 
-            $this->gmailService->disconnect($connection);
+            $success = $this->gmailService->disconnect($connection);
+
+            if (! $success) {
+                Log::warning('Gmail token revocation failed but connection removed', [
+                    'user_id' => auth()->id(),
+                    'connection_id' => $connection->id,
+                ]);
+
+                return redirect()
+                    ->route('settings.gmail-receipts')
+                    ->with('warning', 'Gmail connection removed, but token revocation failed. You may need to revoke access manually from your Google Account settings.');
+            }
 
             return redirect()
                 ->route('settings.gmail-receipts')
@@ -255,6 +275,10 @@ class GmailReceiptController extends Controller
      */
     public function processedEmails(Request $request)
     {
+        $request->validate([
+            'status' => 'nullable|in:pending,processed,failed,skipped',
+        ]);
+
         $query = ProcessedEmail::where('user_id', auth()->id())
             ->with('expense')
             ->orderBy('created_at', 'desc');
