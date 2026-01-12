@@ -19,16 +19,34 @@ return new class extends Migration
         \DB::statement('DELETE FROM cycle_menus WHERE user_id IS NULL OR user_id NOT IN (SELECT id FROM users)');
 
         // Now add the foreign key constraint (if it doesn't exist)
-        $foreignKeys = \DB::select("
-            SELECT CONSTRAINT_NAME
-            FROM information_schema.TABLE_CONSTRAINTS
-            WHERE TABLE_SCHEMA = DATABASE()
-            AND TABLE_NAME = 'cycle_menus'
-            AND CONSTRAINT_TYPE = 'FOREIGN KEY'
-            AND CONSTRAINT_NAME = 'cycle_menus_user_id_foreign'
-        ");
+        // Use database-specific query to check for existing foreign key
+        $foreignKeyExists = false;
 
-        if (empty($foreignKeys)) {
+        if (\DB::getDriverName() === 'mysql') {
+            $foreignKeys = \DB::select("
+                SELECT CONSTRAINT_NAME
+                FROM information_schema.TABLE_CONSTRAINTS
+                WHERE TABLE_SCHEMA = DATABASE()
+                AND TABLE_NAME = 'cycle_menus'
+                AND CONSTRAINT_TYPE = 'FOREIGN KEY'
+                AND CONSTRAINT_NAME = 'cycle_menus_user_id_foreign'
+            ");
+            $foreignKeyExists = !empty($foreignKeys);
+        } else {
+            // For SQLite and other databases, we'll try to add the constraint
+            // and catch any errors if it already exists
+            try {
+                Schema::table('cycle_menus', function (Blueprint $table) {
+                    $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+                });
+                $foreignKeyExists = true; // Set to true to skip the second add attempt
+            } catch (\Exception $e) {
+                // Foreign key already exists or not supported, skip
+                $foreignKeyExists = true;
+            }
+        }
+
+        if (!$foreignKeyExists) {
             Schema::table('cycle_menus', function (Blueprint $table) {
                 $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             });

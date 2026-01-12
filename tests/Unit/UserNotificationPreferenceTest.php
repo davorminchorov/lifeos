@@ -4,17 +4,30 @@ namespace Tests\Unit;
 
 use App\Models\User;
 use App\Models\UserNotificationPreference;
+use App\Observers\UserObserver;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
 
 class UserNotificationPreferenceTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // Disable UserObserver to prevent auto-creation of notification preferences
+        User::unsetEventDispatcher();
+    }
+
     public function test_belongs_to_user()
     {
         $user = User::factory()->create();
-        $preference = UserNotificationPreference::factory()->create(['user_id' => $user->id]);
+        $preference = UserNotificationPreference::factory()->create([
+            'user_id' => $user->id,
+            'notification_type' => 'subscription_renewal',
+        ]);
 
         $this->assertInstanceOf(User::class, $preference->user);
         $this->assertEquals($user->id, $preference->user->id);
@@ -22,7 +35,10 @@ class UserNotificationPreferenceTest extends TestCase
 
     public function test_can_get_notification_days()
     {
+        $user = User::factory()->create();
         $preference = UserNotificationPreference::factory()->create([
+            'user_id' => $user->id,
+            'notification_type' => 'contract_expiration',
             'settings' => ['days_before' => [30, 7, 1]],
         ]);
 
@@ -31,7 +47,10 @@ class UserNotificationPreferenceTest extends TestCase
 
     public function test_returns_default_notification_days_when_not_set()
     {
+        $user = User::factory()->create();
         $preference = UserNotificationPreference::factory()->create([
+            'user_id' => $user->id,
+            'notification_type' => 'warranty_expiration',
             'settings' => null,
         ]);
 
@@ -40,7 +59,11 @@ class UserNotificationPreferenceTest extends TestCase
 
     public function test_can_set_notification_days()
     {
-        $preference = UserNotificationPreference::factory()->create();
+        $user = User::factory()->create();
+        $preference = UserNotificationPreference::factory()->create([
+            'user_id' => $user->id,
+            'notification_type' => 'utility_bill_due',
+        ]);
         $preference->setNotificationDays([14, 7, 3]);
 
         $this->assertEquals([14, 7, 3], $preference->getNotificationDays());
@@ -49,7 +72,10 @@ class UserNotificationPreferenceTest extends TestCase
 
     public function test_can_check_if_channel_is_enabled()
     {
+        $user = User::factory()->create();
         $preference = UserNotificationPreference::factory()->create([
+            'user_id' => $user->id,
+            'notification_type' => 'investment_alert',
             'email_enabled' => true,
             'database_enabled' => false,
             'push_enabled' => true,
@@ -63,7 +89,10 @@ class UserNotificationPreferenceTest extends TestCase
 
     public function test_can_get_enabled_channels()
     {
+        $user = User::factory()->create();
         $preference = UserNotificationPreference::factory()->create([
+            'user_id' => $user->id,
+            'notification_type' => 'budget_threshold',
             'email_enabled' => true,
             'database_enabled' => false,
             'push_enabled' => true,
@@ -116,6 +145,7 @@ class UserNotificationPreferenceTest extends TestCase
     public function test_casts_boolean_attributes()
     {
         $preference = UserNotificationPreference::factory()->create([
+            'notification_type' => 'spending_pattern',
             'email_enabled' => '1',
             'database_enabled' => '0',
             'push_enabled' => '1',
@@ -149,7 +179,10 @@ class UserNotificationPreferenceTest extends TestCase
 
     public function test_preserves_existing_settings_when_updating_days()
     {
+        $user = User::factory()->create();
         $preference = UserNotificationPreference::factory()->create([
+            'user_id' => $user->id,
+            'notification_type' => 'contract_expiration',
             'settings' => [
                 'days_before' => [7, 3, 1],
                 'custom_setting' => 'value',
@@ -164,7 +197,10 @@ class UserNotificationPreferenceTest extends TestCase
 
     public function test_handles_null_settings_when_setting_days()
     {
+        $user = User::factory()->create();
         $preference = UserNotificationPreference::factory()->create([
+            'user_id' => $user->id,
+            'notification_type' => 'spending_pattern',
             'settings' => null,
         ]);
 

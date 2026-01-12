@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use http\Exception\InvalidArgumentException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -324,7 +323,7 @@ class CurrencyService
         $apiKey = config('currency.conversion.api_key');
 
         if (! $apiKey) {
-            throw new InvalidArgumentException('The API key is required for exchangerate-api.io');
+            throw new \InvalidArgumentException('The API key is required for exchangerate-api.io');
         }
 
         $url = "https://v6.exchangerate-api.com/v6/{$apiKey}/latest/{$fromCurrency}";

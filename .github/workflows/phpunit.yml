@@ -59,6 +59,32 @@ jobs:
         run: |
           cp .env.example .env || true
           php artisan key:generate --ansi
+          # Create mock Vite manifest for testing
+          mkdir -p public/build
+          cat > public/build/manifest.json << 'EOF'
+          {
+            "resources/css/app.css": {
+              "file": "assets/app.css",
+              "src": "resources/css/app.css",
+              "isEntry": true
+            },
+            "resources/js/app.js": {
+              "file": "assets/app.js",
+              "src": "resources/js/app.js",
+              "isEntry": true
+            },
+            "resources/js/dashboard.js": {
+              "file": "assets/dashboard.js",
+              "src": "resources/js/dashboard.js",
+              "isEntry": true
+            }
+          }
+          EOF
+          # Create empty asset files
+          mkdir -p public/build/assets
+          touch public/build/assets/app.css
+          touch public/build/assets/app.js
+          touch public/build/assets/dashboard.js
           # Wait for MySQL to be ready
           for i in {1..30}; do
             if mysqladmin ping -h 127.0.0.1 -uroot -proot --silent; then
