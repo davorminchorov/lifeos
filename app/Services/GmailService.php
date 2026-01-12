@@ -44,10 +44,28 @@ class GmailService
     }
 
     /**
+     * Validate that Gmail API credentials are configured.
+     */
+    protected function validateCredentials(): void
+    {
+        $clientId = config('gmail_receipts.client_id');
+        $clientSecret = config('gmail_receipts.client_secret');
+
+        if (! $clientId || ! $clientSecret) {
+            throw new \RuntimeException(
+                'Gmail API credentials are not configured. '.
+                'Please set GMAIL_CLIENT_ID and GMAIL_CLIENT_SECRET in your .env file.'
+            );
+        }
+    }
+
+    /**
      * Get the authorization URL for OAuth flow.
      */
     public function getAuthUrl(?string $state = null): string
     {
+        $this->validateCredentials();
+
         if ($state) {
             $this->client->setState($state);
         }
@@ -60,6 +78,8 @@ class GmailService
      */
     public function authenticate(User $user, string $authCode): GmailConnection
     {
+        $this->validateCredentials();
+
         try {
             // Exchange authorization code for access token
             $token = $this->client->fetchAccessTokenWithAuthCode($authCode);

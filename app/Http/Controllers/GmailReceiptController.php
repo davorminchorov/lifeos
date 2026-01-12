@@ -71,6 +71,11 @@ class GmailReceiptController extends Controller
             $authUrl = $this->gmailService->getAuthUrl($state);
 
             return redirect()->away($authUrl);
+        } catch (\RuntimeException $e) {
+            // Configuration error - show specific message
+            return redirect()
+                ->route('settings.gmail-receipts')
+                ->with('error', $e->getMessage());
         } catch (Exception $e) {
             Log::error('Failed to initiate Gmail OAuth', [
                 'user_id' => auth()->id(),
@@ -138,6 +143,13 @@ class GmailReceiptController extends Controller
             return redirect()
                 ->route('settings.gmail-receipts')
                 ->with('success', 'Gmail connected successfully! Your receipts are being synced in the background.');
+        } catch (\RuntimeException $e) {
+            // Configuration error - show specific message
+            session()->forget('gmail_oauth_state');
+
+            return redirect()
+                ->route('settings.gmail-receipts')
+                ->with('error', $e->getMessage());
         } catch (Exception $e) {
             Log::error('Gmail OAuth callback failed', [
                 'user_id' => auth()->id(),
