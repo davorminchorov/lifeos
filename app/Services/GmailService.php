@@ -32,7 +32,12 @@ class GmailService
         $this->client->setApplicationName(config('app.name'));
         $this->client->setClientId(config('gmail_receipts.client_id'));
         $this->client->setClientSecret(config('gmail_receipts.client_secret'));
-        $this->client->setRedirectUri(config('gmail_receipts.redirect_uri'));
+
+        // Compute redirect URI at runtime to avoid config caching issues
+        $redirectUri = config('gmail_receipts.redirect_uri')
+            ?: config('app.url').'/settings/gmail-receipts/callback';
+        $this->client->setRedirectUri($redirectUri);
+
         $this->client->setScopes(config('gmail_receipts.scopes'));
         $this->client->setAccessType('offline');
         $this->client->setPrompt('consent');
