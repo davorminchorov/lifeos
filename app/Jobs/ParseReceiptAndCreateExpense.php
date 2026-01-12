@@ -218,7 +218,7 @@ class ParseReceiptAndCreateExpense implements ShouldQueue
         $notes = [];
 
         if (isset($parsedData['confidence']) && $parsedData['confidence'] < 0.8) {
-            $notes[] = 'Automatically imported from Gmail (confidence: '.($parsedData['confidence'] * 100).'%). Please verify details.';
+            $notes[] = 'Automatically imported from Gmail (confidence: '.round($parsedData['confidence'] * 100).'%). Please verify details.';
         } else {
             $notes[] = 'Automatically imported from Gmail receipt.';
         }

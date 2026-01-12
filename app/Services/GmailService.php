@@ -95,9 +95,13 @@ class GmailService
                 $connection->update($data);
             } else {
                 // Create new connection (must include refresh_token)
+                if (! isset($token['refresh_token'])) {
+                    throw new Exception('Refresh token is required for new Gmail connections');
+                }
+
                 $data['user_id'] = $user->id;
                 $data['email_address'] = $userInfo->email;
-                $data['refresh_token'] = $token['refresh_token'] ?? null;
+                $data['refresh_token'] = $token['refresh_token'];
                 $connection = GmailConnection::create($data);
             }
 
@@ -155,9 +159,10 @@ class GmailService
      */
     protected function setConnection(GmailConnection $connection): void
     {
-        // Refresh token if expired
+        // Refresh token if expired and reload the connection
         if ($connection->isTokenExpired()) {
-            $connection = $this->refreshToken($connection);
+            $this->refreshToken($connection);
+            $connection->refresh();
         }
 
         $this->client->setAccessToken([
@@ -205,6 +210,11 @@ class GmailService
 
                 foreach ($response->getMessages() as $message) {
                     $messages[] = $this->getMessageDetails($message->getId());
+
+                    // Rate limiting: sleep 100ms between message fetches
+                    if (count($messages) < $maxResults) {
+                        usleep(100000);
+                    }
 
                     if (count($messages) >= $maxResults) {
                         break 2;
@@ -316,24 +326,35 @@ class GmailService
         $payload = $message->getPayload();
         $allowedExtensions = config('gmail_receipts.attachment_extensions', []);
 
-        if ($payload->getParts()) {
-            foreach ($payload->getParts() as $part) {
-                if ($part->getFilename() && $part->getBody()->getAttachmentId()) {
-                    $extension = strtolower(pathinfo($part->getFilename(), PATHINFO_EXTENSION));
+        $this->extractAttachmentsFromParts($payload, $attachments, $allowedExtensions);
 
-                    if (in_array($extension, $allowedExtensions)) {
-                        $attachments[] = [
-                            'filename' => $part->getFilename(),
-                            'attachment_id' => $part->getBody()->getAttachmentId(),
-                            'mime_type' => $part->getMimeType(),
-                            'size' => $part->getBody()->getSize(),
-                        ];
-                    }
-                }
+        return $attachments;
+    }
+
+    /**
+     * Recursively extract attachments from message parts.
+     */
+    protected function extractAttachmentsFromParts($part, array &$attachments, array $allowedExtensions): void
+    {
+        if ($part->getFilename() && $part->getBody()->getAttachmentId()) {
+            $extension = strtolower(pathinfo($part->getFilename(), PATHINFO_EXTENSION));
+
+            if (in_array($extension, $allowedExtensions)) {
+                $attachments[] = [
+                    'filename' => $part->getFilename(),
+                    'attachment_id' => $part->getBody()->getAttachmentId(),
+                    'mime_type' => $part->getMimeType(),
+                    'size' => $part->getBody()->getSize(),
+                ];
             }
         }
 
-        return $attachments;
+        // Recursively check nested parts
+        if ($part->getParts()) {
+            foreach ($part->getParts() as $subPart) {
+                $this->extractAttachmentsFromParts($subPart, $attachments, $allowedExtensions);
+            }
+        }
     }
 
     /**
@@ -367,7 +388,11 @@ class GmailService
                 $basename = 'receipt_'.bin2hex(random_bytes(8));
             }
 
-            $uniqueFilename = $basename.'_'.time().'.'.$extension;
+            // Build unique filename, only add extension if it exists
+            $uniqueFilename = $basename.'_'.time();
+            if (! empty($extension)) {
+                $uniqueFilename .= '.'.$extension;
+            }
 
             // Store file
             $fullPath = $path.$uniqueFilename;
@@ -455,8 +480,10 @@ class GmailService
     public function disconnect(GmailConnection $connection): bool
     {
         try {
-            // Revoke access token
-            $this->client->revokeToken($connection->access_token);
+            // Revoke access token if available
+            if ($connection->access_token) {
+                $this->client->revokeToken($connection->access_token);
+            }
 
             // Delete the connection
             $connection->delete();

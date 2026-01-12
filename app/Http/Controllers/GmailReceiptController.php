@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\ParseReceiptAndCreateExpense;
 use App\Jobs\ProcessGmailReceipts;
 use App\Models\GmailConnection;
 use App\Models\ProcessedEmail;
@@ -30,13 +31,13 @@ class GmailReceiptController extends Controller
         if ($connection) {
             $stats = [
                 'total_processed' => ProcessedEmail::where('user_id', auth()->id())
-                    ->where('processing_status', ProcessedEmail::STATUS_PROCESSED)
+                    ->processed()
                     ->count(),
                 'pending' => ProcessedEmail::where('user_id', auth()->id())
-                    ->where('processing_status', ProcessedEmail::STATUS_PENDING)
+                    ->pending()
                     ->count(),
                 'failed' => ProcessedEmail::where('user_id', auth()->id())
-                    ->where('processing_status', ProcessedEmail::STATUS_FAILED)
+                    ->failed()
                     ->count(),
                 'last_synced' => $connection->last_synced_at?->diffForHumans(),
             ];
@@ -296,7 +297,7 @@ class GmailReceiptController extends Controller
             ]);
 
             // Re-dispatch parsing job
-            \App\Jobs\ParseReceiptAndCreateExpense::dispatch($processedEmail, $connection);
+            ParseReceiptAndCreateExpense::dispatch($processedEmail, $connection);
 
             return redirect()
                 ->back()

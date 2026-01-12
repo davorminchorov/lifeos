@@ -13,7 +13,7 @@ return [
 
     'client_id' => env('GMAIL_CLIENT_ID'),
     'client_secret' => env('GMAIL_CLIENT_SECRET'),
-    'redirect_uri' => env('GMAIL_REDIRECT_URI', config('app.url').'/settings/gmail-receipts/callback'),
+    'redirect_uri' => env('GMAIL_REDIRECT_URI', env('APP_URL').'/settings/gmail-receipts/callback'),
 
     /*
     |--------------------------------------------------------------------------
@@ -192,14 +192,14 @@ return [
     */
 
     'amount_patterns' => [
-        '/Total[:\s]+\$?([0-9,]+\.[0-9]{2})/i',
-        '/Amount[:\s]+\$?([0-9,]+\.[0-9]{2})/i',
-        '/Grand Total[:\s]+\$?([0-9,]+\.[0-9]{2})/i',
-        '/Order Total[:\s]+\$?([0-9,]+\.[0-9]{2})/i',
-        '/Payment[:\s]+\$?([0-9,]+\.[0-9]{2})/i',
-        '/Charged[:\s]+\$?([0-9,]+\.[0-9]{2})/i',
-        '/Price[:\s]+\$?([0-9,]+\.[0-9]{2})/i',
-        '/\$([0-9,]+\.[0-9]{2})\s+(?:USD|CAD|EUR|GBP)/i',
+        '/Total[:\s]+\$?([0-9,]+(?:\.[0-9]{2})?)/i',
+        '/Amount[:\s]+\$?([0-9,]+(?:\.[0-9]{2})?)/i',
+        '/Grand Total[:\s]+\$?([0-9,]+(?:\.[0-9]{2})?)/i',
+        '/Order Total[:\s]+\$?([0-9,]+(?:\.[0-9]{2})?)/i',
+        '/Payment[:\s]+\$?([0-9,]+(?:\.[0-9]{2})?)/i',
+        '/Charged[:\s]+\$?([0-9,]+(?:\.[0-9]{2})?)/i',
+        '/Price[:\s]+\$?([0-9,]+(?:\.[0-9]{2})?)/i',
+        '/\$([0-9,]+(?:\.[0-9]{2})?)\s+(?:USD|CAD|EUR|GBP)/i',
     ],
 
     /*
