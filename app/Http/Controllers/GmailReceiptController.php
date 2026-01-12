@@ -30,13 +30,13 @@ class GmailReceiptController extends Controller
         if ($connection) {
             $stats = [
                 'total_processed' => ProcessedEmail::where('user_id', auth()->id())
-                    ->where('processing_status', 'processed')
+                    ->where('processing_status', ProcessedEmail::STATUS_PROCESSED)
                     ->count(),
                 'pending' => ProcessedEmail::where('user_id', auth()->id())
-                    ->where('processing_status', 'pending')
+                    ->where('processing_status', ProcessedEmail::STATUS_PENDING)
                     ->count(),
                 'failed' => ProcessedEmail::where('user_id', auth()->id())
-                    ->where('processing_status', 'failed')
+                    ->where('processing_status', ProcessedEmail::STATUS_FAILED)
                     ->count(),
                 'last_synced' => $connection->last_synced_at?->diffForHumans(),
             ];
@@ -54,7 +54,11 @@ class GmailReceiptController extends Controller
     public function connect()
     {
         try {
-            $authUrl = $this->gmailService->getAuthUrl();
+            // Generate random state for CSRF protection
+            $state = bin2hex(random_bytes(32));
+            session(['gmail_oauth_state' => $state]);
+
+            $authUrl = $this->gmailService->getAuthUrl($state);
 
             return redirect()->away($authUrl);
         } catch (Exception $e) {
@@ -82,10 +86,31 @@ class GmailReceiptController extends Controller
                     'error' => $request->error,
                 ]);
 
+                session()->forget('gmail_oauth_state');
+
                 return redirect()
                     ->route('settings.gmail-receipts')
                     ->with('error', 'Gmail connection was cancelled.');
             }
+
+            // Validate state parameter for CSRF protection
+            $sessionState = session('gmail_oauth_state');
+            $requestState = $request->input('state');
+
+            if (! $sessionState || ! $requestState || ! hash_equals($sessionState, $requestState)) {
+                Log::warning('Gmail OAuth state mismatch', [
+                    'user_id' => auth()->id(),
+                ]);
+
+                session()->forget('gmail_oauth_state');
+
+                return redirect()
+                    ->route('settings.gmail-receipts')
+                    ->with('error', 'Invalid OAuth state. Please try again.');
+            }
+
+            // Clean up state from session
+            session()->forget('gmail_oauth_state');
 
             // Validate auth code
             if (! $request->has('code')) {
@@ -108,6 +133,8 @@ class GmailReceiptController extends Controller
                 'user_id' => auth()->id(),
                 'error' => $e->getMessage(),
             ]);
+
+            session()->forget('gmail_oauth_state');
 
             return redirect()
                 ->route('settings.gmail-receipts')
@@ -264,7 +291,7 @@ class GmailReceiptController extends Controller
 
             // Reset status to pending
             $processedEmail->update([
-                'processing_status' => 'pending',
+                'processing_status' => ProcessedEmail::STATUS_PENDING,
                 'failure_reason' => null,
             ]);
 

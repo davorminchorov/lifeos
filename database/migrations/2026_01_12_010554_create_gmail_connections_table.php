@@ -21,6 +21,9 @@ return new class extends Migration
             $table->timestamp('last_synced_at')->nullable();
             $table->boolean('sync_enabled')->default(true);
             $table->timestamps();
+
+            // Prevent duplicate connections for same user and email
+            $table->unique(['user_id', 'email_address']);
         });
     }
 

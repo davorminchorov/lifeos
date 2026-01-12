@@ -113,7 +113,7 @@ class ProcessGmailReceipts implements ShouldQueue
                     $processedEmail = ProcessedEmail::create([
                         'user_id' => $this->connection->user_id,
                         'gmail_message_id' => $emailData['id'],
-                        'processing_status' => 'pending',
+                        'processing_status' => ProcessedEmail::STATUS_PENDING,
                         'email_data' => $emailData,
                     ]);
 
@@ -147,8 +147,8 @@ class ProcessGmailReceipts implements ShouldQueue
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            // Mark job as failed
-            $this->fail($e);
+            // Re-throw to trigger retry logic
+            throw $e;
         }
     }
 

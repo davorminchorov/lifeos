@@ -41,8 +41,12 @@ class GmailService
     /**
      * Get the authorization URL for OAuth flow.
      */
-    public function getAuthUrl(): string
+    public function getAuthUrl(?string $state = null): string
     {
+        if ($state) {
+            $this->client->setState($state);
+        }
+
         return $this->client->createAuthUrl();
     }
 
@@ -69,19 +73,33 @@ class GmailService
                 ? Carbon::now()->addSeconds($token['expires_in'])
                 : null;
 
-            // Create or update Gmail connection
-            $connection = GmailConnection::updateOrCreate(
-                [
-                    'user_id' => $user->id,
-                    'email_address' => $userInfo->email,
-                ],
-                [
-                    'access_token' => $token['access_token'],
-                    'refresh_token' => $token['refresh_token'] ?? null,
-                    'token_expires_at' => $expiresAt,
-                    'sync_enabled' => true,
-                ]
-            );
+            // Find existing connection
+            $connection = GmailConnection::where('user_id', $user->id)
+                ->where('email_address', $userInfo->email)
+                ->first();
+
+            // Prepare update data
+            $data = [
+                'access_token' => $token['access_token'],
+                'token_expires_at' => $expiresAt,
+                'sync_enabled' => true,
+            ];
+
+            // Only update refresh_token if a new one is provided
+            if (isset($token['refresh_token'])) {
+                $data['refresh_token'] = $token['refresh_token'];
+            }
+
+            if ($connection) {
+                // Update existing connection
+                $connection->update($data);
+            } else {
+                // Create new connection (must include refresh_token)
+                $data['user_id'] = $user->id;
+                $data['email_address'] = $userInfo->email;
+                $data['refresh_token'] = $token['refresh_token'] ?? null;
+                $connection = GmailConnection::create($data);
+            }
 
             return $connection;
         } catch (Exception $e) {
@@ -335,9 +353,20 @@ class GmailService
             $month = Carbon::now()->format('m');
             $path = config('gmail_receipts.storage_path')."/{$userId}/{$year}/{$month}/";
 
+            // Sanitize filename to prevent path traversal
+            $sanitizedFilename = basename($filename);
+            $sanitizedFilename = preg_replace('/[^a-zA-Z0-9._-]/', '_', $sanitizedFilename);
+            $sanitizedFilename = substr($sanitizedFilename, 0, 255);
+
             // Generate unique filename
-            $extension = pathinfo($filename, PATHINFO_EXTENSION);
-            $basename = pathinfo($filename, PATHINFO_FILENAME);
+            $extension = pathinfo($sanitizedFilename, PATHINFO_EXTENSION);
+            $basename = pathinfo($sanitizedFilename, PATHINFO_FILENAME);
+
+            // Fallback if basename is empty after sanitization
+            if (empty($basename)) {
+                $basename = 'receipt_'.bin2hex(random_bytes(8));
+            }
+
             $uniqueFilename = $basename.'_'.time().'.'.$extension;
 
             // Store file

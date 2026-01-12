@@ -9,6 +9,17 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class ProcessedEmail extends Model
 {
     /**
+     * Processing status constants.
+     */
+    public const STATUS_PENDING = 'pending';
+
+    public const STATUS_PROCESSED = 'processed';
+
+    public const STATUS_FAILED = 'failed';
+
+    public const STATUS_SKIPPED = 'skipped';
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
@@ -57,7 +68,7 @@ class ProcessedEmail extends Model
      */
     public function scopePending(Builder $query): void
     {
-        $query->where('processing_status', 'pending');
+        $query->where('processing_status', self::STATUS_PENDING);
     }
 
     /**
@@ -65,7 +76,7 @@ class ProcessedEmail extends Model
      */
     public function scopeProcessed(Builder $query): void
     {
-        $query->where('processing_status', 'processed');
+        $query->where('processing_status', self::STATUS_PROCESSED);
     }
 
     /**
@@ -73,7 +84,7 @@ class ProcessedEmail extends Model
      */
     public function scopeFailed(Builder $query): void
     {
-        $query->where('processing_status', 'failed');
+        $query->where('processing_status', self::STATUS_FAILED);
     }
 
     /**
@@ -81,7 +92,7 @@ class ProcessedEmail extends Model
      */
     public function scopeSkipped(Builder $query): void
     {
-        $query->where('processing_status', 'skipped');
+        $query->where('processing_status', self::STATUS_SKIPPED);
     }
 
     /**
@@ -91,8 +102,9 @@ class ProcessedEmail extends Model
     {
         $this->update([
             'expense_id' => $expenseId,
-            'processing_status' => 'processed',
+            'processing_status' => self::STATUS_PROCESSED,
             'processed_at' => now(),
+            'failure_reason' => null,
         ]);
     }
 
@@ -102,7 +114,7 @@ class ProcessedEmail extends Model
     public function markAsFailed(string $reason): void
     {
         $this->update([
-            'processing_status' => 'failed',
+            'processing_status' => self::STATUS_FAILED,
             'failure_reason' => $reason,
             'processed_at' => now(),
         ]);
@@ -114,7 +126,7 @@ class ProcessedEmail extends Model
     public function markAsSkipped(string $reason): void
     {
         $this->update([
-            'processing_status' => 'skipped',
+            'processing_status' => self::STATUS_SKIPPED,
             'failure_reason' => $reason,
             'processed_at' => now(),
         ]);

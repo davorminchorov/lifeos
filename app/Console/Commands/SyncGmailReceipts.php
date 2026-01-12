@@ -91,15 +91,18 @@ class SyncGmailReceipts extends Command
      */
     protected function getConnections(?string $userId, bool $syncAll): \Illuminate\Database\Eloquent\Collection
     {
+        if (! $userId && ! $syncAll) {
+            $this->error('Please specify a user ID or use --all to sync all users');
+
+            return new \Illuminate\Database\Eloquent\Collection;
+        }
+
         $query = GmailConnection::query()
             ->with('user')
             ->where('sync_enabled', true);
 
         if ($userId) {
             $query->where('user_id', $userId);
-        } elseif (! $syncAll) {
-            $this->error('Please specify a user ID or use --all to sync all users');
-            exit(Command::INVALID);
         }
 
         return $query->get()->filter(function ($connection) {

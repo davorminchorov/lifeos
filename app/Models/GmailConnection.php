@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Log;
 
 class GmailConnection extends Model
 {
@@ -61,7 +63,22 @@ class GmailConnection extends Model
     protected function accessToken(): Attribute
     {
         return Attribute::make(
-            get: fn (?string $value) => $value ? Crypt::decryptString($value) : null,
+            get: function (?string $value) {
+                if (! $value) {
+                    return null;
+                }
+
+                try {
+                    return Crypt::decryptString($value);
+                } catch (DecryptException $e) {
+                    Log::error('Failed to decrypt access token', [
+                        'connection_id' => $this->id,
+                        'error' => $e->getMessage(),
+                    ]);
+
+                    return null;
+                }
+            },
             set: fn (?string $value) => $value ? Crypt::encryptString($value) : null,
         );
     }
@@ -72,7 +89,22 @@ class GmailConnection extends Model
     protected function refreshToken(): Attribute
     {
         return Attribute::make(
-            get: fn (?string $value) => $value ? Crypt::decryptString($value) : null,
+            get: function (?string $value) {
+                if (! $value) {
+                    return null;
+                }
+
+                try {
+                    return Crypt::decryptString($value);
+                } catch (DecryptException $e) {
+                    Log::error('Failed to decrypt refresh token', [
+                        'connection_id' => $this->id,
+                        'error' => $e->getMessage(),
+                    ]);
+
+                    return null;
+                }
+            },
             set: fn (?string $value) => $value ? Crypt::encryptString($value) : null,
         );
     }

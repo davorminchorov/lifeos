@@ -13,7 +13,7 @@ return [
 
     'client_id' => env('GMAIL_CLIENT_ID'),
     'client_secret' => env('GMAIL_CLIENT_SECRET'),
-    'redirect_uri' => env('GMAIL_REDIRECT_URI', env('APP_URL').'/settings/gmail-receipts/callback'),
+    'redirect_uri' => env('GMAIL_REDIRECT_URI', config('app.url').'/settings/gmail-receipts/callback'),
 
     /*
     |--------------------------------------------------------------------------

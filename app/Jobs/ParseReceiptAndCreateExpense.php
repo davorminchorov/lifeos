@@ -163,9 +163,6 @@ class ParseReceiptAndCreateExpense implements ShouldQueue
                 ]);
             }
         } catch (Exception $e) {
-            // Mark as failed with error message
-            $this->processedEmail->markAsFailed($e->getMessage());
-
             Log::error('Failed to parse receipt and create expense', [
                 'processed_email_id' => $this->processedEmail->id,
                 'error' => $e->getMessage(),
@@ -173,6 +170,7 @@ class ParseReceiptAndCreateExpense implements ShouldQueue
             ]);
 
             // Re-throw to trigger job retry
+            // Status will be marked as failed in failed() handler after all retries exhausted
             throw $e;
         }
     }
@@ -243,7 +241,7 @@ class ParseReceiptAndCreateExpense implements ShouldQueue
         ]);
 
         // Mark as failed if not already marked
-        if ($this->processedEmail->processing_status === 'pending') {
+        if ($this->processedEmail->processing_status === ProcessedEmail::STATUS_PENDING) {
             $this->processedEmail->markAsFailed('Job failed after maximum retries: '.$exception->getMessage());
         }
     }
