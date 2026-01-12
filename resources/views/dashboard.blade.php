@@ -36,13 +36,12 @@
                     <!-- Period Selector -->
                     <div class="flex items-center space-x-2">
                         <label class="text-sm font-medium text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)]">Period:</label>
-                        <select x-model="selectedPeriod" @change="changePeriod(selectedPeriod)"
-                                class="rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] text-sm">
+                        <x-form.select x-model="selectedPeriod" @change="changePeriod(selectedPeriod)" class="text-sm">
                             <option value="3months">3 Months</option>
                             <option value="6months" selected>6 Months</option>
                             <option value="1year">1 Year</option>
                             <option value="2years">2 Years</option>
-                        </select>
+                        </x-form.select>
 
                         <!-- Export Dropdown -->
                         <div class="ml-4 relative" x-data="{ open: false }" @click.away="open = false">

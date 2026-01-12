@@ -20,7 +20,7 @@
         </div>
         <div class="flex items-center gap-3">
             @can('update', $menu)
-                <a href="{{ route('cycle-menus.edit', $menu) }}" class="bg-[color:var(--color-primary-500)] hover:bg-[color:var(--color-primary-600)] text-white px-4 py-2 rounded-md text-sm font-medium">Edit Menu</a>
+                <x-button href="{{ route('cycle-menus.edit', $menu) }}" variant="primary">Edit Menu</x-button>
             @endcan
             <a href="{{ route('cycle-menus.index') }}" class="text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] hover:underline">Back to list</a>
         </div>
@@ -56,7 +56,7 @@
                                     :value="$day->notes"
                                 />
                                 <div class="flex justify-end pt-1">
-                                    <button type="submit" class="text-sm bg-[color:var(--color-primary-500)] hover:bg-[color:var(--color-primary-600)] text-white px-3 py-1.5 rounded-md">Save Notes</button>
+                                    <x-button type="submit" variant="primary">Save Notes</x-button>
                                 </div>
                             </form>
                         @endcan
@@ -101,7 +101,7 @@
                                     </div>
                                 </div>
                                 <div class="flex justify-end">
-                                    <button type="submit" class="bg-[color:var(--color-accent-500)] hover:bg-[color:var(--color-accent-600)] text-white px-3 py-1.5 rounded-md text-sm">Add</button>
+                                    <x-button type="submit" variant="primary">Add</x-button>
                                 </div>
                             </form>
                         @endcan
@@ -138,7 +138,7 @@
                                             </div>
                                         </div>
                                         @can('delete', $item)
-                                            <button type="submit" form="delete_item_{{ $item->id }}" class="text-[color:var(--color-danger-600)] hover:underline text-sm" onclick="return confirm('Remove this item?');">Remove</button>
+                                            <x-button type="submit" variant="secondary" form="delete_item_{{ $item->id }}" onclick="return confirm('Remove this item?');">Remove</x-button>
                                         @endcan
                                     </div>
                                 @endforeach
@@ -146,7 +146,7 @@
                                 @if ($firstItem)
                                     @can('update', $firstItem)
                                         <div class="flex justify-end">
-                                            <button type="submit" class="text-sm bg-[color:var(--color-primary-500)] hover:bg-[color:var(--color-primary-600)] text-white px-3 py-1.5 rounded-md">Save Order</button>
+                                            <x-button type="submit" variant="primary">Save Order</x-button>
                                         </div>
                                     @endcan
                                 @endif
