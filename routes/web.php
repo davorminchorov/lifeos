@@ -26,6 +26,8 @@ use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\UtilityBillController;
 use App\Http\Controllers\WarrantyController;
+use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\InvoiceController;
 use Illuminate\Support\Facades\Route;
 
 // Authentication Routes
@@ -205,4 +207,13 @@ Route::middleware('auth')->group(function () {
 
     // Holidays Routes
     Route::get('/holidays', [HolidayController::class, 'index'])->name('holidays.index');
+
+    // Invoicing Routes
+    Route::prefix('invoicing')->name('invoicing.')->group(function () {
+        // Customers
+        Route::resource('customers', CustomerController::class);
+
+        // Invoices
+        Route::resource('invoices', InvoiceController::class);
+    });
 });
