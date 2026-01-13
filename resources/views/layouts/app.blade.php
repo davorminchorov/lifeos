@@ -65,6 +65,28 @@
                                 </div>
                             </div>
 
+                            <!-- Invoicing Dropdown -->
+                            <div class="relative inline-flex items-center nav-dropdown">
+                                <button type="button" class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('invoicing.*') ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]' : 'border-transparent text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] hover:text-[color:var(--color-primary-600)] dark:hover:text-[color:var(--color-dark-400)] hover:border-[color:var(--color-primary-400)]' }} text-sm font-medium transition-colors duration-200" aria-haspopup="true" aria-expanded="false" aria-controls="menu-invoicing">
+                                    Invoicing
+                                    <svg class="ml-1 h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                                    </svg>
+                                </button>
+                                <div id="menu-invoicing" class="dropdown-menu hidden absolute top-full left-0 mt-2 w-56 rounded-lg shadow-lg bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] ring-1 ring-black/50 z-50" role="menu">
+                                    <div class="py-1">
+                                        <a href="{{ route('invoicing.customers.index') }}" role="menuitem" class="block px-4 py-2 text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] hover:bg-[color:var(--color-primary-100)] dark:hover:bg-[color:var(--color-dark-200)] transition-colors duration-200 {{ request()->routeIs('invoicing.customers.*') ? 'bg-[color:var(--color-accent-50)] text-[color:var(--color-accent-600)]' : '' }}">
+                                            <div class="font-medium">Customers</div>
+                                            <div class="text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)]">Manage customers</div>
+                                        </a>
+                                        <a href="{{ route('invoicing.invoices.index') }}" role="menuitem" class="block px-4 py-2 text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] hover:bg-[color:var(--color-primary-100)] dark:hover:bg-[color:var(--color-dark-200)] transition-colors duration-200 {{ request()->routeIs('invoicing.invoices.*') ? 'bg-[color:var(--color-accent-50)] text-[color:var(--color-accent-600)]' : '' }}">
+                                            <div class="font-medium">Invoices</div>
+                                            <div class="text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)]">Create & manage invoices</div>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
                             <!-- Assets & Liabilities Dropdown -->
                             <div class="relative inline-flex items-center nav-dropdown">
                                 <button type="button" class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs(['investments.*', 'project-investments.*', 'contracts.*', 'warranties.*', 'ious.*']) ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]' : 'border-transparent text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] hover:text-[color:var(--color-primary-600)] dark:hover:text-[color:var(--color-dark-400)] hover:border-[color:var(--color-primary-400)]' }} text-sm font-medium transition-colors duration-200" aria-haspopup="true" aria-expanded="false" aria-controls="menu-assets">
