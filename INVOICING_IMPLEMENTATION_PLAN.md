@@ -31,7 +31,7 @@ The invoicing module will enable LifeOS to:
 - Handle taxes (VAT/GST/sales tax), discounts, and credit notes
 - Generate compliant invoice numbers and PDFs
 - Automate email delivery and payment reminders
-- Process payments via Stripe or manual methods
+- Process manual payments and track payment history
 - Track refunds and credit note applications
 
 **Key Design Principles:**
@@ -92,8 +92,7 @@ app/
 ├── Jobs/
 │   ├── GenerateInvoicePdf.php
 │   ├── SendInvoiceIssuedEmail.php
-│   ├── SendPaymentReminderEmail.php
-│   └── SyncStripePaymentStatus.php
+│   └── SendPaymentReminderEmail.php
 ├── Listeners/
 │   ├── SendInvoiceNotification.php
 │   └── UpdateInvoiceStatus.php
@@ -113,11 +112,7 @@ app/
     ├── NumberingService.php
     ├── TaxService.php
     ├── DiscountService.php
-    ├── PdfRendererService.php
-    └── PaymentProviders/
-        ├── PaymentProviderInterface.php
-        ├── StripeProvider.php
-        └── ManualProvider.php
+    └── PdfRendererService.php
 
 database/
 ├── factories/
@@ -252,27 +247,7 @@ config/
 
 ---
 
-### Phase 5: Stripe Integration (Week 7-8)
-**Goal:** Automate payment collection via Stripe
-
-**Tasks:**
-1. Create `PaymentProviderInterface`
-2. Implement `StripeProvider`
-3. Set up Stripe webhooks endpoint
-4. Implement webhook handlers (payment succeeded/failed/refunded)
-5. Create `SyncStripePaymentStatus` job
-6. Add Stripe payment link generation
-7. Test webhook security (signature verification)
-8. Add idempotency key handling
-
-**Deliverables:**
-- ✅ Stripe payments work end-to-end
-- ✅ Webhooks update payment status automatically
-- ✅ Payment links can be sent to customers
-
----
-
-### Phase 6: Refunds & Credit Notes (Week 9)
+### Phase 5: Refunds & Credit Notes (Week 7)
 **Goal:** Handle refunds and credit notes
 
 **Tasks:**
@@ -287,13 +262,13 @@ config/
 9. Send credit note emails
 
 **Deliverables:**
-- ✅ Refunds can be processed (manual & Stripe)
+- ✅ Refunds can be processed
 - ✅ Credit notes can be created and applied
 - ✅ Credit balance tracked per customer
 
 ---
 
-### Phase 7: Dunning & Reminders (Week 10)
+### Phase 6: Dunning & Reminders (Week 8)
 **Goal:** Automate payment reminders
 
 **Tasks:**
@@ -313,7 +288,7 @@ config/
 
 ---
 
-### Phase 8: Analytics & Reporting (Week 11)
+### Phase 7: Analytics & Reporting (Week 9)
 **Goal:** Financial insights and reporting
 
 **Tasks:**
@@ -333,7 +308,7 @@ config/
 
 ---
 
-### Phase 9: Subscription Integration (Week 12)
+### Phase 8: Subscription Integration (Week 10)
 **Goal:** Auto-generate invoices from subscriptions
 
 **Tasks:**
@@ -352,20 +327,19 @@ config/
 
 ---
 
-### Phase 10: Polish & Testing (Week 13-14)
+### Phase 9: Polish & Testing (Week 11-12)
 **Goal:** Production readiness
 
 **Tasks:**
 1. Write comprehensive feature tests
 2. Write unit tests for services (tax, discount, numbering)
-3. Add integration tests for Stripe webhooks
-4. Implement audit logging for all invoice actions
-5. Add permission checks (Admin, Finance, Support, Viewer)
-6. Optimize database queries (N+1 prevention)
-7. Add data validation and sanitization
-8. Security review (PII encryption, CSRF, XSS)
-9. Documentation (API docs, user guide)
-10. Performance testing
+3. Implement audit logging for all invoice actions
+4. Add permission checks (Admin, Finance, Support, Viewer)
+5. Optimize database queries (N+1 prevention)
+6. Add data validation and sanitization
+7. Security review (PII encryption, CSRF, XSS)
+8. Documentation (API docs, user guide)
+9. Performance testing
 
 **Deliverables:**
 - ✅ Test coverage > 80%
@@ -543,8 +517,8 @@ Schema::create('payments', function (Blueprint $table) {
     $table->foreignId('invoice_id')->constrained()->cascadeOnDelete();
 
     // Payment Provider
-    $table->string('provider')->default('manual'); // 'stripe', 'manual', etc.
-    $table->string('provider_payment_id')->nullable(); // Stripe payment intent ID
+    $table->string('provider')->default('manual'); // 'manual', 'bank_transfer', etc.
+    $table->string('provider_payment_id')->nullable(); // External payment reference ID
 
     // Amount
     $table->bigInteger('amount'); // Payment amount (cents)
@@ -684,7 +658,7 @@ Schema::create('refunds', function (Blueprint $table) {
 
     // Provider
     $table->string('provider')->default('manual');
-    $table->string('provider_refund_id')->nullable(); // Stripe refund ID
+    $table->string('provider_refund_id')->nullable(); // External refund reference ID
 
     // Status
     $table->enum('status', ['pending', 'succeeded', 'failed', 'canceled'])->default('pending');
@@ -1508,10 +1482,6 @@ Route::middleware(['auth'])->group(function () {
             ->name('discounts.validate');
     });
 });
-
-// Webhooks (no auth middleware)
-Route::post('/webhooks/stripe', [StripeWebhookController::class, 'handle'])
-    ->name('webhooks.stripe');
 ```
 
 ---
@@ -2282,26 +2252,6 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Payment Provider
-    |--------------------------------------------------------------------------
-    */
-
-    'payment_provider' => env('PAYMENT_PROVIDER', 'manual'), // 'stripe' or 'manual'
-
-    /*
-    |--------------------------------------------------------------------------
-    | Stripe Configuration
-    |--------------------------------------------------------------------------
-    */
-
-    'stripe' => [
-        'key' => env('STRIPE_KEY'),
-        'secret' => env('STRIPE_SECRET'),
-        'webhook_secret' => env('STRIPE_WEBHOOK_SECRET'),
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
     | PDF Configuration
     |--------------------------------------------------------------------------
     */
@@ -2387,7 +2337,6 @@ class InvoicePolicy
 4. **Deployment:**
    - Run migrations
    - Seed tax rates
-   - Configure Stripe (if using)
    - Set up cron for dunning
 
 ---
