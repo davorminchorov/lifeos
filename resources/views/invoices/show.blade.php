@@ -39,6 +39,16 @@
                     Download PDF
                 </x-button>
 
+                <!-- Email Actions -->
+                @if($invoice->customer->email && $invoice->items->count() > 0 && $invoice->total > 0)
+                    <x-button @click="showSendEmailForm = true" variant="secondary">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                        </svg>
+                        Send Email
+                    </x-button>
+                @endif
+
                 @if($invoice->status === \App\Enums\InvoiceStatus::DRAFT)
                     <x-button href="{{ route('invoicing.invoices.edit', $invoice) }}" variant="secondary">
                         Edit Details
@@ -443,6 +453,89 @@
             </div>
         </div>
 
+        <!-- Send Email Form Modal -->
+        <div x-show="showSendEmailForm"
+             x-cloak
+             class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+             @click.self="showSendEmailForm = false">
+            <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+                <div class="px-6 py-4 border-b border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)] flex justify-between items-center">
+                    <h3 class="text-lg font-semibold text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
+                        Send Invoice via Email
+                    </h3>
+                    <button @click="showSendEmailForm = false" class="text-[color:var(--color-primary-500)] hover:text-[color:var(--color-primary-700)]">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <form method="POST" action="{{ route('invoicing.invoices.send-email', $invoice) }}" class="px-6 py-4">
+                    @csrf
+
+                    <div class="space-y-4">
+                        <!-- Recipient Info -->
+                        <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                            <div class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                <div class="flex-1">
+                                    <p class="text-sm font-medium text-blue-700 dark:text-blue-300">
+                                        Email will be sent to: <strong>{{ $invoice->customer->email }}</strong>
+                                    </p>
+                                    <p class="text-xs text-blue-600 dark:text-blue-400 mt-1">
+                                        The invoice PDF will be attached to the email.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        @if($invoice->last_sent_at)
+                            <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-3">
+                                <p class="text-sm text-yellow-700 dark:text-yellow-300">
+                                    <strong>Last sent:</strong> {{ $invoice->last_sent_at->format('M d, Y g:i A') }}
+                                </p>
+                            </div>
+                        @endif
+
+                        <x-form.input
+                            type="textarea"
+                            name="message"
+                            label="Custom Message (Optional)"
+                            placeholder="Add a personal message to include in the email..."
+                            rows="4"
+                            helpText="Leave blank to use the default message template"
+                        />
+
+                        <div class="bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-300)] border border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-400)] rounded-lg p-4">
+                            <h4 class="text-sm font-semibold text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] mb-2">
+                                Email Preview
+                            </h4>
+                            <p class="text-xs text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] mb-2">
+                                Subject: <strong>Invoice {{ $invoice->number ?? 'Draft' }} from LifeOS</strong>
+                            </p>
+                            <p class="text-xs text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)]">
+                                The email will include invoice details, payment information, and the PDF attachment.
+                            </p>
+                        </div>
+
+                        <div class="flex gap-3 pt-4">
+                            <x-button type="submit" variant="primary" class="flex-1">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                </svg>
+                                Send Invoice
+                            </x-button>
+                            <x-button type="button" variant="secondary" @click="showSendEmailForm = false">
+                                Cancel
+                            </x-button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
         <!-- Payment History -->
         @if($invoice->status !== \App\Enums\InvoiceStatus::DRAFT)
             <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] shadow rounded-lg border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] mb-8">
@@ -566,6 +659,7 @@ function invoiceManager() {
     return {
         showAddItemForm: false,
         showRecordPaymentForm: false,
+        showSendEmailForm: false,
         voidReason: ''
     }
 }

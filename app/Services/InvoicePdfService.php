@@ -98,7 +98,7 @@ class InvoicePdfService
      * @param Invoice $invoice
      * @return string
      */
-    protected function generateFilename(Invoice $invoice): string
+    public function generateFilename(Invoice $invoice): string
     {
         $number = $invoice->number ?: 'draft-' . $invoice->id;
         $number = str_replace('/', '-', $number);

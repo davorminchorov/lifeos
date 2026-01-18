@@ -247,6 +247,12 @@ Route::middleware('auth')->group(function () {
         Route::get('invoices/{invoice}/pdf/download', [InvoiceController::class, 'downloadPdf'])
             ->name('invoices.pdf.download');
 
+        // Invoice Email
+        Route::post('invoices/{invoice}/send-email', [InvoiceController::class, 'sendEmail'])
+            ->name('invoices.send-email');
+        Route::post('invoices/{invoice}/send-reminder', [InvoiceController::class, 'sendReminder'])
+            ->name('invoices.send-reminder');
+
         // Payments
         Route::post('invoices/{invoice}/payments', [PaymentController::class, 'store'])
             ->name('invoices.payments.store');

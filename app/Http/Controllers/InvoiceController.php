@@ -7,6 +7,7 @@ use App\Http\Requests\StoreInvoiceRequest;
 use App\Http\Requests\UpdateInvoiceRequest;
 use App\Models\Customer;
 use App\Models\Invoice;
+use App\Services\InvoiceEmailService;
 use App\Services\InvoicingService;
 use App\Services\InvoicePdfService;
 use Illuminate\Http\Request;
@@ -15,7 +16,8 @@ class InvoiceController extends Controller
 {
     public function __construct(
         protected InvoicingService $invoicingService,
-        protected InvoicePdfService $pdfService
+        protected InvoicePdfService $pdfService,
+        protected InvoiceEmailService $emailService
     ) {}
     /**
      * Display a listing of the resource.
@@ -249,5 +251,72 @@ class InvoiceController extends Controller
         }
 
         return $this->pdfService->stream($invoice);
+    }
+
+    /**
+     * Send invoice via email to customer.
+     */
+    public function sendEmail(Request $request, Invoice $invoice)
+    {
+        // Ensure user owns this invoice
+        if ($invoice->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        // Validate request
+        $request->validate([
+            'message' => ['nullable', 'string', 'max:1000'],
+            'attach_pdf' => ['nullable', 'boolean'],
+        ]);
+
+        try {
+            // Check if invoice can be sent
+            $errors = $this->emailService->getSendValidationErrors($invoice);
+            if (!empty($errors)) {
+                return redirect()->back()
+                    ->with('error', 'Cannot send invoice: ' . implode(' ', $errors));
+            }
+
+            $this->emailService->sendInvoice(
+                $invoice,
+                $request->input('message'),
+                $request->boolean('attach_pdf', true)
+            );
+
+            return redirect()->route('invoicing.invoices.show', $invoice)
+                ->with('success', 'Invoice sent successfully to ' . $invoice->customer->email);
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', $e->getMessage());
+        }
+    }
+
+    /**
+     * Send invoice reminder via email.
+     */
+    public function sendReminder(Request $request, Invoice $invoice)
+    {
+        // Ensure user owns this invoice
+        if ($invoice->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        // Validate request
+        $request->validate([
+            'message' => ['nullable', 'string', 'max:1000'],
+        ]);
+
+        try {
+            $this->emailService->sendReminder(
+                $invoice,
+                $request->input('message')
+            );
+
+            return redirect()->route('invoicing.invoices.show', $invoice)
+                ->with('success', 'Reminder sent successfully to ' . $invoice->customer->email);
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', $e->getMessage());
+        }
     }
 }

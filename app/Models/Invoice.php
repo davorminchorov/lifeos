@@ -35,6 +35,7 @@ class Invoice extends Model
         'due_at',
         'paid_at',
         'voided_at',
+        'last_sent_at',
         'net_terms_days',
         'notes',
         'internal_notes',
@@ -58,6 +59,7 @@ class Invoice extends Model
             'due_at' => 'datetime',
             'paid_at' => 'datetime',
             'voided_at' => 'datetime',
+            'last_sent_at' => 'datetime',
             'metadata' => 'array',
         ];
     }
