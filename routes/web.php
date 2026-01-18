@@ -30,6 +30,7 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\InvoiceItemController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\CreditNoteController;
 use Illuminate\Support\Facades\Route;
 
 // Authentication Routes
@@ -239,5 +240,10 @@ Route::middleware('auth')->group(function () {
             ->name('invoices.payments.show');
         Route::delete('invoices/{invoice}/payments/{payment}', [PaymentController::class, 'destroy'])
             ->name('invoices.payments.destroy');
+
+        // Credit Notes
+        Route::resource('credit-notes', CreditNoteController::class);
+        Route::post('credit-notes/{credit_note}/apply', [CreditNoteController::class, 'apply'])
+            ->name('credit-notes.apply');
     });
 });
