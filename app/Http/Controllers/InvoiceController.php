@@ -8,12 +8,14 @@ use App\Http\Requests\UpdateInvoiceRequest;
 use App\Models\Customer;
 use App\Models\Invoice;
 use App\Services\InvoicingService;
+use App\Services\InvoicePdfService;
 use Illuminate\Http\Request;
 
 class InvoiceController extends Controller
 {
     public function __construct(
-        protected InvoicingService $invoicingService
+        protected InvoicingService $invoicingService,
+        protected InvoicePdfService $pdfService
     ) {}
     /**
      * Display a listing of the resource.
@@ -221,5 +223,31 @@ class InvoiceController extends Controller
             return redirect()->back()
                 ->with('error', $e->getMessage());
         }
+    }
+
+    /**
+     * Download invoice as PDF.
+     */
+    public function downloadPdf(Invoice $invoice)
+    {
+        // Ensure user owns this invoice
+        if ($invoice->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        return $this->pdfService->download($invoice);
+    }
+
+    /**
+     * View invoice PDF in browser.
+     */
+    public function viewPdf(Invoice $invoice)
+    {
+        // Ensure user owns this invoice
+        if ($invoice->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        return $this->pdfService->stream($invoice);
     }
 }

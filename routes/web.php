@@ -241,6 +241,12 @@ Route::middleware('auth')->group(function () {
         Route::post('invoices/{invoice}/void', [InvoiceController::class, 'void'])
             ->name('invoices.void');
 
+        // Invoice PDF
+        Route::get('invoices/{invoice}/pdf', [InvoiceController::class, 'viewPdf'])
+            ->name('invoices.pdf.view');
+        Route::get('invoices/{invoice}/pdf/download', [InvoiceController::class, 'downloadPdf'])
+            ->name('invoices.pdf.download');
+
         // Payments
         Route::post('invoices/{invoice}/payments', [PaymentController::class, 'store'])
             ->name('invoices.payments.store');
