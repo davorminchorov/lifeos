@@ -135,9 +135,9 @@
                         <select name="status" id="status"
                                 class="w-full rounded-md border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] focus:border-[color:var(--color-accent-500)] focus:ring-[color:var(--color-accent-500)]">
                             <option value="">All Statuses</option>
-                            <option value="available" {{ request('status') === 'available' ? 'selected' : '' }}>Available</option>
+                            <option value="draft" {{ request('status') === 'draft' ? 'selected' : '' }}>Draft</option>
+                            <option value="issued" {{ request('status') === 'issued' ? 'selected' : '' }}>Issued</option>
                             <option value="applied" {{ request('status') === 'applied' ? 'selected' : '' }}>Applied</option>
-                            <option value="refunded" {{ request('status') === 'refunded' ? 'selected' : '' }}>Refunded</option>
                             <option value="void" {{ request('status') === 'void' ? 'selected' : '' }}>Void</option>
                         </select>
                     </div>
