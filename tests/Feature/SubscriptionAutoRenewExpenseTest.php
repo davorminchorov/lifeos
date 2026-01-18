@@ -36,11 +36,14 @@ class SubscriptionAutoRenewExpenseTest extends TestCase
             'amount' => 999.99,
             'currency' => 'MKD',
             'category' => 'Entertainment',
-            'expense_date' => now()->toDateString(),
             'status' => 'confirmed',
         ]);
 
-        $expense = Expense::first();
+        $expense = Expense::where('user_id', $user->id)
+            ->where('amount', 999.99)
+            ->first();
+        $this->assertNotNull($expense);
+        $this->assertEquals(now()->toDateString(), $expense->expense_date->toDateString());
         $this->assertTrue(in_array('subscription:'.$subscription->id, $expense->tags ?? []));
     }
 

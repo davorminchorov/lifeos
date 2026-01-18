@@ -84,8 +84,18 @@ class DashboardController extends Controller
      */
     private function getSpendingTrendsData($startDate, $endDate)
     {
+        $driver = config('database.default');
+        $connection = config("database.connections.{$driver}.driver");
+
+        // Use different SQL syntax based on database driver
+        if ($connection === 'sqlite') {
+            $yearMonth = "strftime('%Y', expense_date) as year, strftime('%m', expense_date) as month";
+        } else {
+            $yearMonth = 'YEAR(expense_date) as year, MONTH(expense_date) as month';
+        }
+
         $expenses = Expense::whereBetween('expense_date', [$startDate, $endDate])
-            ->selectRaw('YEAR(expense_date) as year, MONTH(expense_date) as month, SUM(amount) as total')
+            ->selectRaw("{$yearMonth}, SUM(amount) as total")
             ->groupBy('year', 'month')
             ->orderBy('year')
             ->orderBy('month')
@@ -100,8 +110,8 @@ class DashboardController extends Controller
             $monthLabel = $current->format('M Y');
             $labels[] = $monthLabel;
 
-            $monthExpense = $expenses->where('year', $current->year)
-                ->where('month', $current->month)
+            $monthExpense = $expenses->where('year', (string) $current->year)
+                ->where('month', str_pad($current->month, 2, '0', STR_PAD_LEFT))
                 ->first();
 
             $monthlyAmount = $monthExpense ? $this->currencyService->convertToDefault((float) $monthExpense->total, 'MKD') : 0;

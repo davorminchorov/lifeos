@@ -103,4 +103,5 @@ jobs:
           DB_DATABASE: lifeos
           DB_USERNAME: root
           DB_PASSWORD: root
+          CURRENCY_API_KEY: test_api_key_for_testing
         run: php artisan test --colors=always
