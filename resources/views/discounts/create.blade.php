@@ -82,14 +82,14 @@
                         <!-- Valid From -->
                         <x-form.input
                             type="date"
-                            name="valid_from"
+                            name="starts_at"
                             label="Valid From"
                         />
 
                         <!-- Valid Until -->
                         <x-form.input
                             type="date"
-                            name="valid_until"
+                            name="ends_at"
                             label="Valid Until"
                         />
                     </div>

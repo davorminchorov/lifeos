@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->foreignId('invoice_id')->constrained()->cascadeOnDelete();
 
             // Payment Provider
@@ -44,6 +45,10 @@ return new class extends Migration
             // Payment Method
             $table->string('payment_method')->nullable();
             $table->json('payment_method_details')->nullable();
+
+            // Payment Details
+            $table->date('payment_date')->nullable();
+            $table->string('reference')->nullable();
 
             // Metadata
             $table->json('metadata')->nullable();

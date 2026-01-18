@@ -96,9 +96,9 @@
                         <!-- Valid Until -->
                         <x-form.input
                             type="date"
-                            name="valid_until"
+                            name="valid_to"
                             label="Valid Until"
-                            :value="old('valid_until', $taxRate->valid_until?->format('Y-m-d'))"
+                            :value="old('valid_to', $taxRate->valid_to?->format('Y-m-d'))"
                         />
                     </div>
                     <p class="mt-2 text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">

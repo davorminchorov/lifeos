@@ -274,6 +274,7 @@ class InvoicingService
         DB::transaction(function () use ($invoice, $amount, $paymentData) {
             // Create payment record
             $invoice->payments()->create([
+                'user_id' => $invoice->user_id,
                 'amount' => $amount,
                 'currency' => $invoice->currency,
                 'status' => 'succeeded',

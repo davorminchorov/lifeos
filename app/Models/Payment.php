@@ -15,6 +15,7 @@ class Payment extends Model
     use HasFactory;
 
     protected $fillable = [
+        'user_id',
         'invoice_id',
         'provider',
         'provider_payment_id',
@@ -28,6 +29,8 @@ class Payment extends Model
         'failure_message',
         'payment_method',
         'payment_method_details',
+        'payment_date',
+        'reference',
         'metadata',
         'notes',
     ];
@@ -40,9 +43,15 @@ class Payment extends Model
             'attempted_at' => 'datetime',
             'succeeded_at' => 'datetime',
             'failed_at' => 'datetime',
+            'payment_date' => 'date',
             'payment_method_details' => 'array',
             'metadata' => 'array',
         ];
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 
     public function invoice(): BelongsTo

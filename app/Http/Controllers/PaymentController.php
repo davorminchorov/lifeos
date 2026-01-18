@@ -38,12 +38,17 @@ class PaymentController extends Controller
                 ->withInput();
         }
 
-        $validated['user_id'] = auth()->id();
-        $validated['invoice_id'] = $invoice->id;
-
         try {
             // Record payment via InvoicingService
-            $payment = $this->invoicingService->recordPayment($invoice, $validated);
+            $this->invoicingService->recordPayment($invoice, $validated['amount'], [
+                'payment_date' => $validated['payment_date'],
+                'payment_method' => $validated['payment_method'],
+                'reference' => $validated['reference'] ?? null,
+                'notes' => $validated['notes'] ?? null,
+            ]);
+
+            // Get the created payment
+            $payment = $invoice->payments()->latest()->first();
 
             if ($request->expectsJson()) {
                 return response()->json([

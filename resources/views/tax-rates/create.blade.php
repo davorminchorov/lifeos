@@ -91,7 +91,7 @@
                         <!-- Valid Until -->
                         <x-form.input
                             type="date"
-                            name="valid_until"
+                            name="valid_to"
                             label="Valid Until"
                         />
                     </div>

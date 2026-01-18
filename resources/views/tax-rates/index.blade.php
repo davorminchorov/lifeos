@@ -149,10 +149,10 @@
                                         {{ $taxRate->country ?? '—' }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)]">
-                                        @if($taxRate->valid_from || $taxRate->valid_until)
+                                        @if($taxRate->valid_from || $taxRate->valid_to)
                                             {{ $taxRate->valid_from ? $taxRate->valid_from->format('M d, Y') : '—' }}
                                             to
-                                            {{ $taxRate->valid_until ? $taxRate->valid_until->format('M d, Y') : '—' }}
+                                            {{ $taxRate->valid_to ? $taxRate->valid_to->format('M d, Y') : '—' }}
                                         @else
                                             No limits
                                         @endif

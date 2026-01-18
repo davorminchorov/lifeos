@@ -50,8 +50,8 @@ class CreditNoteController extends Controller
             'total_credit_notes' => CreditNote::where('user_id', auth()->id())->count(),
             'total_amount' => CreditNote::where('user_id', auth()->id())->sum('total'),
             'available_credit' => CreditNote::where('user_id', auth()->id())
-                ->where('status', CreditNoteStatus::AVAILABLE)
-                ->sum('remaining_amount'),
+                ->where('status', CreditNoteStatus::ISSUED)
+                ->sum('amount_remaining'),
         ];
 
         // Get customers for filter
@@ -118,9 +118,9 @@ class CreditNoteController extends Controller
         }
 
         $validated['user_id'] = auth()->id();
-        $validated['status'] = CreditNoteStatus::AVAILABLE;
+        $validated['status'] = CreditNoteStatus::ISSUED;
         $validated['total'] = $validated['amount'];
-        $validated['remaining_amount'] = $validated['amount'];
+        $validated['amount_remaining'] = $validated['amount'];
 
         $creditNote = CreditNote::create($validated);
 
@@ -200,7 +200,7 @@ class CreditNoteController extends Controller
         }
 
         // Validate amount
-        if ($validated['amount'] > $creditNote->remaining_amount) {
+        if ($validated['amount'] > $creditNote->amount_remaining) {
             return redirect()->back()
                 ->with('error', 'Credit amount cannot exceed remaining credit note amount.')
                 ->withInput();
@@ -221,17 +221,14 @@ class CreditNoteController extends Controller
             ]);
 
             // Update credit note remaining amount
-            $creditNote->remaining_amount -= $validated['amount'];
-            if ($creditNote->remaining_amount <= 0) {
+            $creditNote->amount_remaining -= $validated['amount'];
+            if ($creditNote->amount_remaining <= 0) {
                 $creditNote->status = CreditNoteStatus::APPLIED;
             }
             $creditNote->save();
 
             // Record as payment on invoice
-            $this->invoicingService->recordPayment($invoice, [
-                'user_id' => auth()->id(),
-                'invoice_id' => $invoice->id,
-                'amount' => $validated['amount'],
+            $this->invoicingService->recordPayment($invoice, $validated['amount'], [
                 'payment_date' => now()->toDateString(),
                 'payment_method' => 'credit_note',
                 'reference' => 'Credit Note: ' . $creditNote->number,

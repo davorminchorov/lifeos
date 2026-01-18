@@ -59,7 +59,7 @@ class TaxRateController extends Controller
             'country' => ['nullable', 'string', 'max:2'],
             'active' => ['boolean'],
             'valid_from' => ['nullable', 'date'],
-            'valid_until' => ['nullable', 'date', 'after_or_equal:valid_from'],
+            'valid_to' => ['nullable', 'date', 'after_or_equal:valid_from'],
             'description' => ['nullable', 'string', 'max:1000'],
         ]);
 
@@ -101,7 +101,7 @@ class TaxRateController extends Controller
             'country' => ['nullable', 'string', 'max:2'],
             'active' => ['boolean'],
             'valid_from' => ['nullable', 'date'],
-            'valid_until' => ['nullable', 'date', 'after_or_equal:valid_from'],
+            'valid_to' => ['nullable', 'date', 'after_or_equal:valid_from'],
             'description' => ['nullable', 'string', 'max:1000'],
         ]);
 

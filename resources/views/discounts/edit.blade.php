@@ -85,17 +85,17 @@
                         <!-- Valid From -->
                         <x-form.input
                             type="date"
-                            name="valid_from"
+                            name="starts_at"
                             label="Valid From"
-                            :value="old('valid_from', $discount->valid_from?->format('Y-m-d'))"
+                            :value="old('starts_at', $discount->starts_at?->format('Y-m-d'))"
                         />
 
                         <!-- Valid Until -->
                         <x-form.input
                             type="date"
-                            name="valid_until"
+                            name="ends_at"
                             label="Valid Until"
-                            :value="old('valid_until', $discount->valid_until?->format('Y-m-d'))"
+                            :value="old('ends_at', $discount->ends_at?->format('Y-m-d'))"
                         />
                     </div>
                 </div>
@@ -116,7 +116,7 @@
                     />
 
                     <p class="mt-2 text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)]">
-                        Current redemptions: {{ $discount->redemptions_count }}
+                        Current redemptions: {{ $discount->current_redemptions }}
                     </p>
                 </div>
 

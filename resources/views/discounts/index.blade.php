@@ -196,16 +196,16 @@
                                         @endif
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)]">
-                                        @if($discount->valid_from || $discount->valid_until)
-                                            {{ $discount->valid_from ? $discount->valid_from->format('M d, Y') : '—' }}
+                                        @if($discount->starts_at || $discount->ends_at)
+                                            {{ $discount->starts_at ? $discount->starts_at->format('M d, Y') : '—' }}
                                             to
-                                            {{ $discount->valid_until ? $discount->valid_until->format('M d, Y') : '—' }}
+                                            {{ $discount->ends_at ? $discount->ends_at->format('M d, Y') : '—' }}
                                         @else
                                             No limits
                                         @endif
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-center text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)]">
-                                        {{ $discount->redemptions_count }}{{ $discount->max_redemptions ? ' / ' . $discount->max_redemptions : '' }}
+                                        {{ $discount->current_redemptions }}{{ $discount->max_redemptions ? ' / ' . $discount->max_redemptions : '' }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm">
                                         <span class="inline-flex px-2 py-1 text-xs rounded-full {{ $discount->active ? 'bg-green-50 text-green-600' : 'bg-gray-50 text-gray-600' }}">

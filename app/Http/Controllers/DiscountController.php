@@ -65,8 +65,8 @@ class DiscountController extends Controller
             'type' => ['required', 'string', 'in:percent,fixed'],
             'value' => ['required', 'integer', 'min:0'],
             'active' => ['boolean'],
-            'valid_from' => ['nullable', 'date'],
-            'valid_until' => ['nullable', 'date', 'after_or_equal:valid_from'],
+            'starts_at' => ['nullable', 'date'],
+            'ends_at' => ['nullable', 'date', 'after_or_equal:starts_at'],
             'max_redemptions' => ['nullable', 'integer', 'min:1'],
             'description' => ['nullable', 'string', 'max:1000'],
         ]);
@@ -80,7 +80,7 @@ class DiscountController extends Controller
 
         $validated['user_id'] = auth()->id();
         $validated['active'] = $request->has('active');
-        $validated['redemptions_count'] = 0;
+        $validated['current_redemptions'] = 0;
 
         $discount = Discount::create($validated);
 
@@ -116,8 +116,8 @@ class DiscountController extends Controller
             'type' => ['required', 'string', 'in:percent,fixed'],
             'value' => ['required', 'integer', 'min:0'],
             'active' => ['boolean'],
-            'valid_from' => ['nullable', 'date'],
-            'valid_until' => ['nullable', 'date', 'after_or_equal:valid_from'],
+            'starts_at' => ['nullable', 'date'],
+            'ends_at' => ['nullable', 'date', 'after_or_equal:starts_at'],
             'max_redemptions' => ['nullable', 'integer', 'min:1'],
             'description' => ['nullable', 'string', 'max:1000'],
         ]);

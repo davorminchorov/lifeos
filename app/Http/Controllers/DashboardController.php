@@ -104,7 +104,7 @@ class DashboardController extends Controller
                 ->where('month', $current->month)
                 ->first();
 
-            $monthlyAmount = $monthExpense ? $this->currencyService->convertToDefault((float) $monthExpense->total, 'MKD') : 0;
+            $monthlyAmount = $monthExpense ? $this->currencyService->convertToDefault((float) $monthExpense->total, config('currency.default', 'MKD')) : 0;
             $spending[] = $monthlyAmount;
             $budget[] = 50000; // Default budget line
 
@@ -127,7 +127,7 @@ class DashboardController extends Controller
         $subscriptionCost = Subscription::active()
             ->get()
             ->sum(function ($sub) {
-                $currency = $sub->currency ?: 'MKD';
+                $currency = $sub->currency ?: config('currency.default', 'MKD');
 
                 return $this->currencyService->convertToDefault($sub->cost, $currency);
             });
@@ -136,7 +136,7 @@ class DashboardController extends Controller
         $utilityBills = UtilityBill::whereBetween('due_date', [$startDate, $endDate])
             ->get()
             ->sum(function ($bill) {
-                $currency = $bill->currency ?: 'MKD';
+                $currency = $bill->currency ?: config('currency.default', 'MKD');
 
                 return $this->currencyService->convertToDefault($bill->bill_amount, $currency);
             });
@@ -153,7 +153,7 @@ class DashboardController extends Controller
         // Add expense categories
         foreach ($expenses as $expense) {
             $labels[] = ucfirst($expense->category ?? 'Other');
-            $values[] = $this->currencyService->convertToDefault($expense->total, 'MKD');
+            $values[] = $this->currencyService->convertToDefault($expense->total, config('currency.default', 'MKD'));
         }
 
         return [
@@ -224,14 +224,14 @@ class DashboardController extends Controller
         $subscriptionCost = Subscription::active()
             ->get()
             ->sum(function ($sub) {
-                return $this->currencyService->convertToDefault($sub->cost, $sub->currency ?? 'MKD');
+                return $this->currencyService->convertToDefault($sub->cost, $sub->currency ?? config('currency.default', 'MKD'));
             });
 
         $utilityBills = UtilityBill::whereYear('due_date', $month->year)
             ->whereMonth('due_date', $month->month)
             ->get()
             ->sum(function ($bill) {
-                return $this->currencyService->convertToDefault($bill->bill_amount, $bill->currency ?? 'MKD');
+                return $this->currencyService->convertToDefault($bill->bill_amount, $bill->currency ?? config('currency.default', 'MKD'));
             });
 
         return [
