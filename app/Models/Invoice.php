@@ -89,9 +89,9 @@ class Invoice extends Model
         return $this->hasMany(CreditNote::class);
     }
 
-    public function subscription(): BelongsTo
+    public function recurringInvoice(): BelongsTo
     {
-        return $this->belongsTo(Subscription::class);
+        return $this->belongsTo(RecurringInvoice::class, 'subscription_id');
     }
 
     public function scopeDraft($query)
