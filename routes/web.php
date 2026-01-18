@@ -29,6 +29,7 @@ use App\Http\Controllers\WarrantyController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\InvoiceItemController;
+use App\Http\Controllers\PaymentController;
 use Illuminate\Support\Facades\Route;
 
 // Authentication Routes
@@ -230,5 +231,13 @@ Route::middleware('auth')->group(function () {
             ->name('invoices.issue');
         Route::post('invoices/{invoice}/void', [InvoiceController::class, 'void'])
             ->name('invoices.void');
+
+        // Payments
+        Route::post('invoices/{invoice}/payments', [PaymentController::class, 'store'])
+            ->name('invoices.payments.store');
+        Route::get('invoices/{invoice}/payments/{payment}', [PaymentController::class, 'show'])
+            ->name('invoices.payments.show');
+        Route::delete('invoices/{invoice}/payments/{payment}', [PaymentController::class, 'destroy'])
+            ->name('invoices.payments.destroy');
     });
 });

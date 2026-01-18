@@ -38,7 +38,12 @@
                     @endif
                 @endif
 
-                @if(in_array($invoice->status, [\App\Enums\InvoiceStatus::ISSUED, \App\Enums\InvoiceStatus::PARTIALLY_PAID]))
+                @if(in_array($invoice->status, [\App\Enums\InvoiceStatus::ISSUED, \App\Enums\InvoiceStatus::PARTIALLY_PAID, \App\Enums\InvoiceStatus::PAST_DUE]))
+                    @if($invoice->amount_due > 0)
+                        <x-button @click="showRecordPaymentForm = true" variant="primary">
+                            Record Payment
+                        </x-button>
+                    @endif
                     <form method="POST" action="{{ route('invoicing.invoices.void', $invoice) }}"
                           onsubmit="return prompt('Please provide a reason for voiding this invoice:');">
                         @csrf
@@ -333,6 +338,170 @@
             </div>
         </div>
 
+        <!-- Record Payment Form Modal -->
+        <div x-show="showRecordPaymentForm"
+             x-cloak
+             class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+             @click.self="showRecordPaymentForm = false">
+            <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+                <div class="px-6 py-4 border-b border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)] flex justify-between items-center">
+                    <h3 class="text-lg font-semibold text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
+                        Record Payment
+                    </h3>
+                    <button @click="showRecordPaymentForm = false" class="text-[color:var(--color-primary-500)] hover:text-[color:var(--color-primary-700)]">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <form method="POST" action="{{ route('invoicing.invoices.payments.store', $invoice) }}" class="px-6 py-4">
+                    @csrf
+
+                    <div class="space-y-4">
+                        <!-- Amount Due Display -->
+                        <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm font-medium text-blue-700 dark:text-blue-300">Amount Due:</span>
+                                <span class="text-lg font-bold text-blue-700 dark:text-blue-300">
+                                    {{ app(\App\Services\CurrencyService::class)->format($invoice->amount_due / 100, $invoice->currency) }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <x-form.input
+                                type="number"
+                                name="amount"
+                                label="Payment Amount (in cents)"
+                                :required="true"
+                                min="1"
+                                :max="$invoice->amount_due"
+                                placeholder="e.g., 10000 for $100.00"
+                                helpText="Enter amount in cents"
+                            />
+
+                            <x-form.input
+                                type="date"
+                                name="payment_date"
+                                label="Payment Date"
+                                :required="true"
+                                :value="date('Y-m-d')"
+                            />
+                        </div>
+
+                        <x-form.select name="payment_method" label="Payment Method" :required="true">
+                            <option value="">Select payment method</option>
+                            <option value="bank_transfer">Bank Transfer</option>
+                            <option value="cash">Cash</option>
+                            <option value="check">Check</option>
+                            <option value="credit_card">Credit Card</option>
+                            <option value="debit_card">Debit Card</option>
+                            <option value="other">Other</option>
+                        </x-form.select>
+
+                        <x-form.input
+                            name="reference"
+                            label="Reference Number"
+                            placeholder="Transaction ID, check number, etc."
+                        />
+
+                        <x-form.input
+                            type="textarea"
+                            name="notes"
+                            label="Notes"
+                            placeholder="Additional payment notes..."
+                            rows="3"
+                        />
+
+                        <div class="flex gap-3 pt-4">
+                            <x-button type="submit" variant="primary" class="flex-1">
+                                Record Payment
+                            </x-button>
+                            <x-button type="button" variant="secondary" @click="showRecordPaymentForm = false">
+                                Cancel
+                            </x-button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Payment History -->
+        @if($invoice->status !== \App\Enums\InvoiceStatus::DRAFT)
+            <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] shadow rounded-lg border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] mb-8">
+                <div class="px-6 py-4 border-b border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)] flex justify-between items-center">
+                    <h2 class="text-lg font-semibold text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
+                        Payment History
+                    </h2>
+                    @if(in_array($invoice->status, [\App\Enums\InvoiceStatus::ISSUED, \App\Enums\InvoiceStatus::PARTIALLY_PAID, \App\Enums\InvoiceStatus::PAST_DUE]) && $invoice->amount_due > 0)
+                        <x-button @click="showRecordPaymentForm = true" variant="primary" size="sm">
+                            Record Payment
+                        </x-button>
+                    @endif
+                </div>
+                <div class="px-6 py-4">
+                    @if($invoice->payments->count() > 0)
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-[color:var(--color-primary-200)] dark:divide-[color:var(--color-dark-300)]">
+                                <thead>
+                                    <tr>
+                                        <th class="px-3 py-2 text-left text-xs font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] uppercase">
+                                            Date
+                                        </th>
+                                        <th class="px-3 py-2 text-left text-xs font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] uppercase">
+                                            Method
+                                        </th>
+                                        <th class="px-3 py-2 text-left text-xs font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] uppercase">
+                                            Reference
+                                        </th>
+                                        <th class="px-3 py-2 text-right text-xs font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] uppercase">
+                                            Amount
+                                        </th>
+                                        <th class="px-3 py-2 text-right text-xs font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] uppercase">
+                                            Actions
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-[color:var(--color-primary-200)] dark:divide-[color:var(--color-dark-300)]">
+                                    @foreach($invoice->payments as $payment)
+                                        <tr>
+                                            <td class="px-3 py-3 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
+                                                {{ \Carbon\Carbon::parse($payment->payment_date)->format('M d, Y') }}
+                                            </td>
+                                            <td class="px-3 py-3 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
+                                                {{ ucwords(str_replace('_', ' ', $payment->payment_method)) }}
+                                            </td>
+                                            <td class="px-3 py-3 text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)]">
+                                                {{ $payment->reference ?? '—' }}
+                                            </td>
+                                            <td class="px-3 py-3 text-sm text-right font-medium text-green-600">
+                                                {{ app(\App\Services\CurrencyService::class)->format($payment->amount / 100, $invoice->currency) }}
+                                            </td>
+                                            <td class="px-3 py-3 text-sm text-right">
+                                                <form method="POST" action="{{ route('invoicing.invoices.payments.destroy', [$invoice, $payment]) }}"
+                                                      onsubmit="return confirm('Are you sure you want to delete this payment?');">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="text-red-600 hover:text-red-700 text-xs">
+                                                        Delete
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @else
+                        <p class="text-center py-8 text-sm text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">
+                            No payments recorded yet
+                        </p>
+                    @endif
+                </div>
+            </div>
+        @endif
+
         <!-- Notes -->
         @if($invoice->notes)
             <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] shadow rounded-lg border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] mb-8">
@@ -380,6 +549,7 @@
 function invoiceManager() {
     return {
         showAddItemForm: false,
+        showRecordPaymentForm: false,
         voidReason: ''
     }
 }
