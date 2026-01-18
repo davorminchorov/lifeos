@@ -31,6 +31,8 @@ use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\InvoiceItemController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\CreditNoteController;
+use App\Http\Controllers\TaxRateController;
+use App\Http\Controllers\DiscountController;
 use Illuminate\Support\Facades\Route;
 
 // Authentication Routes
@@ -245,5 +247,11 @@ Route::middleware('auth')->group(function () {
         Route::resource('credit-notes', CreditNoteController::class);
         Route::post('credit-notes/{credit_note}/apply', [CreditNoteController::class, 'apply'])
             ->name('credit-notes.apply');
+
+        // Tax Rates
+        Route::resource('tax-rates', TaxRateController::class)->except(['show']);
+
+        // Discounts
+        Route::resource('discounts', DiscountController::class)->except(['show']);
     });
 });

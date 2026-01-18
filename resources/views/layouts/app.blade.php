@@ -87,6 +87,14 @@
                                             <div class="font-medium">Credit Notes</div>
                                             <div class="text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)]">Manage credit notes</div>
                                         </a>
+                                        <a href="{{ route('invoicing.tax-rates.index') }}" role="menuitem" class="block px-4 py-2 text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] hover:bg-[color:var(--color-primary-100)] dark:hover:bg-[color:var(--color-dark-200)] transition-colors duration-200 {{ request()->routeIs('invoicing.tax-rates.*') ? 'bg-[color:var(--color-accent-50)] text-[color:var(--color-accent-600)]' : '' }}">
+                                            <div class="font-medium">Tax Rates</div>
+                                            <div class="text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)]">Manage tax rates</div>
+                                        </a>
+                                        <a href="{{ route('invoicing.discounts.index') }}" role="menuitem" class="block px-4 py-2 text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] hover:bg-[color:var(--color-primary-100)] dark:hover:bg-[color:var(--color-dark-200)] transition-colors duration-200 {{ request()->routeIs('invoicing.discounts.*') ? 'bg-[color:var(--color-accent-50)] text-[color:var(--color-accent-600)]' : '' }}">
+                                            <div class="font-medium">Discounts</div>
+                                            <div class="text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)]">Manage discount codes</div>
+                                        </a>
                                     </div>
                                 </div>
                             </div>
