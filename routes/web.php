@@ -33,6 +33,7 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\CreditNoteController;
 use App\Http\Controllers\TaxRateController;
 use App\Http\Controllers\DiscountController;
+use App\Http\Controllers\InvoicingDashboardController;
 use Illuminate\Support\Facades\Route;
 
 // Authentication Routes
@@ -215,6 +216,11 @@ Route::middleware('auth')->group(function () {
 
     // Invoicing Routes
     Route::prefix('invoicing')->name('invoicing.')->group(function () {
+        // Dashboard
+        Route::get('/dashboard', [InvoicingDashboardController::class, 'index'])->name('dashboard');
+        Route::get('/export/invoices', [InvoicingDashboardController::class, 'exportInvoices'])->name('export.invoices');
+        Route::get('/export/payments', [InvoicingDashboardController::class, 'exportPayments'])->name('export.payments');
+
         // Customers
         Route::resource('customers', CustomerController::class);
 

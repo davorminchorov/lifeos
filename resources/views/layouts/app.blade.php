@@ -75,6 +75,10 @@
                                 </button>
                                 <div id="menu-invoicing" class="dropdown-menu hidden absolute top-full left-0 mt-2 w-56 rounded-lg shadow-lg bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] ring-1 ring-black/50 z-50" role="menu">
                                     <div class="py-1">
+                                        <a href="{{ route('invoicing.dashboard') }}" role="menuitem" class="block px-4 py-2 text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] hover:bg-[color:var(--color-primary-100)] dark:hover:bg-[color:var(--color-dark-200)] transition-colors duration-200 {{ request()->routeIs('invoicing.dashboard') ? 'bg-[color:var(--color-accent-50)] text-[color:var(--color-accent-600)]' : '' }}">
+                                            <div class="font-medium">Dashboard</div>
+                                            <div class="text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)]">Analytics & reports</div>
+                                        </a>
                                         <a href="{{ route('invoicing.customers.index') }}" role="menuitem" class="block px-4 py-2 text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] hover:bg-[color:var(--color-primary-100)] dark:hover:bg-[color:var(--color-dark-200)] transition-colors duration-200 {{ request()->routeIs('invoicing.customers.*') ? 'bg-[color:var(--color-accent-50)] text-[color:var(--color-accent-600)]' : '' }}">
                                             <div class="font-medium">Customers</div>
                                             <div class="text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)]">Manage customers</div>
