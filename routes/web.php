@@ -28,6 +28,7 @@ use App\Http\Controllers\UtilityBillController;
 use App\Http\Controllers\WarrantyController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\InvoiceItemController;
 use Illuminate\Support\Facades\Route;
 
 // Authentication Routes
@@ -215,5 +216,19 @@ Route::middleware('auth')->group(function () {
 
         // Invoices
         Route::resource('invoices', InvoiceController::class);
+
+        // Invoice Items (nested resource)
+        Route::post('invoices/{invoice}/items', [InvoiceItemController::class, 'store'])
+            ->name('invoices.items.store');
+        Route::put('invoices/{invoice}/items/{item}', [InvoiceItemController::class, 'update'])
+            ->name('invoices.items.update');
+        Route::delete('invoices/{invoice}/items/{item}', [InvoiceItemController::class, 'destroy'])
+            ->name('invoices.items.destroy');
+
+        // Invoice Actions
+        Route::post('invoices/{invoice}/issue', [InvoiceController::class, 'issue'])
+            ->name('invoices.issue');
+        Route::post('invoices/{invoice}/void', [InvoiceController::class, 'void'])
+            ->name('invoices.void');
     });
 });

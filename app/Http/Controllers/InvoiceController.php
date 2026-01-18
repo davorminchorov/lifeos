@@ -7,10 +7,14 @@ use App\Http\Requests\StoreInvoiceRequest;
 use App\Http\Requests\UpdateInvoiceRequest;
 use App\Models\Customer;
 use App\Models\Invoice;
+use App\Services\InvoicingService;
 use Illuminate\Http\Request;
 
 class InvoiceController extends Controller
 {
+    public function __construct(
+        protected InvoicingService $invoicingService
+    ) {}
     /**
      * Display a listing of the resource.
      */
@@ -173,5 +177,49 @@ class InvoiceController extends Controller
 
         return redirect()->route('invoicing.invoices.index')
             ->with('success', 'Invoice deleted successfully!');
+    }
+
+    /**
+     * Issue an invoice (draft → issued).
+     */
+    public function issue(Invoice $invoice)
+    {
+        // Ensure user owns this invoice
+        if ($invoice->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        try {
+            $this->invoicingService->issue($invoice);
+
+            return redirect()->route('invoicing.invoices.show', $invoice)
+                ->with('success', 'Invoice issued successfully!');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', $e->getMessage());
+        }
+    }
+
+    /**
+     * Void an invoice.
+     */
+    public function void(Request $request, Invoice $invoice)
+    {
+        // Ensure user owns this invoice
+        if ($invoice->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $reason = $request->input('reason');
+
+        try {
+            $this->invoicingService->void($invoice, $reason);
+
+            return redirect()->route('invoicing.invoices.show', $invoice)
+                ->with('success', 'Invoice voided successfully!');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', $e->getMessage());
+        }
     }
 }
