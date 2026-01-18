@@ -37,11 +37,14 @@ class UtilityBillPaidCreatesExpenseTest extends TestCase
             'amount' => 345.67,
             'currency' => 'MKD',
             'category' => 'utilities',
-            'expense_date' => now()->toDateString(),
             'status' => 'confirmed',
         ]);
 
-        $expense = Expense::first();
+        $expense = Expense::where('user_id', $user->id)
+            ->where('amount', 345.67)
+            ->first();
+        $this->assertNotNull($expense);
+        $this->assertEquals(now()->toDateString(), $expense->expense_date->toDateString());
         $this->assertTrue(in_array('utility-bill:'.$bill->id, $expense->tags ?? []));
     }
 

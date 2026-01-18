@@ -13,10 +13,22 @@ class SubscriptionRenewalAlert extends Notification implements ShouldQueue
     use Queueable;
 
     public function __construct(
-        private Subscription $subscription,
-        private int $daysUntilRenewal
+        public Subscription $subscription,
+        public int $daysUntilRenewal
     ) {
         //
+    }
+
+    /**
+     * Magic getter for backward compatibility.
+     */
+    public function __get(string $name): mixed
+    {
+        if ($name === 'days') {
+            return $this->daysUntilRenewal;
+        }
+
+        throw new \InvalidArgumentException("Property {$name} does not exist");
     }
 
     /**

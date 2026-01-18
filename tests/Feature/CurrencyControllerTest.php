@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Services\CurrencyService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
 use Mockery;
 use Tests\TestCase;
 
@@ -59,6 +60,12 @@ class CurrencyControllerTest extends TestCase
 
     public function test_refresh_rate_succeeds_with_valid_currencies(): void
     {
+        Http::fake([
+            'v6.exchangerate-api.com/*' => Http::response([
+                'conversion_rates' => ['EUR' => 0.92],
+            ], 200),
+        ]);
+
         $response = $this->post(route('currency.refresh-rate'), [
             'from_currency' => 'USD',
             'to_currency' => 'EUR',
@@ -133,6 +140,12 @@ class CurrencyControllerTest extends TestCase
 
     public function test_refresh_rate_handles_lowercase_currencies(): void
     {
+        Http::fake([
+            'v6.exchangerate-api.com/*' => Http::response([
+                'conversion_rates' => ['EUR' => 0.92],
+            ], 200),
+        ]);
+
         $response = $this->post(route('currency.refresh-rate'), [
             'from_currency' => 'usd',
             'to_currency' => 'eur',
@@ -242,6 +255,12 @@ class CurrencyControllerTest extends TestCase
 
     public function test_get_freshness_info_returns_freshness_status(): void
     {
+        Http::fake([
+            'v6.exchangerate-api.com/*' => Http::response([
+                'conversion_rates' => ['EUR' => 0.92],
+            ], 200),
+        ]);
+
         $response = $this->get(route('currency.freshness-info', [
             'from_currency' => 'USD',
             'to_currency' => 'EUR',
@@ -283,6 +302,12 @@ class CurrencyControllerTest extends TestCase
 
     public function test_refresh_rate_updates_cached_exchange_rate(): void
     {
+        Http::fake([
+            'v6.exchangerate-api.com/*' => Http::response([
+                'conversion_rates' => ['EUR' => 0.92],
+            ], 200),
+        ]);
+
         // Clear any existing cache
         Cache::flush();
 
