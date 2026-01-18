@@ -34,6 +34,8 @@ use App\Http\Controllers\CreditNoteController;
 use App\Http\Controllers\TaxRateController;
 use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\InvoicingDashboardController;
+use App\Http\Controllers\RecurringInvoiceController;
+use App\Http\Controllers\RecurringInvoiceItemController;
 use Illuminate\Support\Facades\Route;
 
 // Authentication Routes
@@ -271,5 +273,24 @@ Route::middleware('auth')->group(function () {
 
         // Discounts
         Route::resource('discounts', DiscountController::class)->except(['show']);
+
+        // Recurring Invoices
+        Route::resource('recurring-invoices', RecurringInvoiceController::class);
+        Route::post('recurring-invoices/{recurring_invoice}/pause', [RecurringInvoiceController::class, 'pause'])
+            ->name('recurring-invoices.pause');
+        Route::post('recurring-invoices/{recurring_invoice}/resume', [RecurringInvoiceController::class, 'resume'])
+            ->name('recurring-invoices.resume');
+        Route::post('recurring-invoices/{recurring_invoice}/cancel', [RecurringInvoiceController::class, 'cancel'])
+            ->name('recurring-invoices.cancel');
+        Route::post('recurring-invoices/{recurring_invoice}/generate-now', [RecurringInvoiceController::class, 'generateNow'])
+            ->name('recurring-invoices.generate-now');
+
+        // Recurring Invoice Items
+        Route::post('recurring-invoices/{recurring_invoice}/items', [RecurringInvoiceItemController::class, 'store'])
+            ->name('recurring-invoices.items.store');
+        Route::put('recurring-invoices/{recurring_invoice}/items/{item}', [RecurringInvoiceItemController::class, 'update'])
+            ->name('recurring-invoices.items.update');
+        Route::delete('recurring-invoices/{recurring_invoice}/items/{item}', [RecurringInvoiceItemController::class, 'destroy'])
+            ->name('recurring-invoices.items.destroy');
     });
 });

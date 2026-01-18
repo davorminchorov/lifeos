@@ -87,6 +87,10 @@
                                             <div class="font-medium">Invoices</div>
                                             <div class="text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)]">Create & manage invoices</div>
                                         </a>
+                                        <a href="{{ route('invoicing.recurring-invoices.index') }}" role="menuitem" class="block px-4 py-2 text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] hover:bg-[color:var(--color-primary-100)] dark:hover:bg-[color:var(--color-dark-200)] transition-colors duration-200 {{ request()->routeIs('invoicing.recurring-invoices.*') ? 'bg-[color:var(--color-accent-50)] text-[color:var(--color-accent-600)]' : '' }}">
+                                            <div class="font-medium">Recurring Invoices</div>
+                                            <div class="text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)]">Subscription billing</div>
+                                        </a>
                                         <a href="{{ route('invoicing.credit-notes.index') }}" role="menuitem" class="block px-4 py-2 text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] hover:bg-[color:var(--color-primary-100)] dark:hover:bg-[color:var(--color-dark-200)] transition-colors duration-200 {{ request()->routeIs('invoicing.credit-notes.*') ? 'bg-[color:var(--color-accent-50)] text-[color:var(--color-accent-600)]' : '' }}">
                                             <div class="font-medium">Credit Notes</div>
                                             <div class="text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)]">Manage credit notes</div>
