@@ -84,7 +84,16 @@
 
         <!-- Status Badge -->
         <div class="mb-6">
-            <span class="inline-flex px-3 py-1 text-sm rounded-full bg-[color:var(--color-{{ $invoice->status->color() }}-50)] text-[color:var(--color-{{ $invoice->status->color() }}-600)]">
+            @php
+                $statusColor = $invoice->status->color();
+                $bgClass = "bg-{$statusColor}-50";
+                $textClass = "text-{$statusColor}-600";
+                if ($statusColor === 'slate') {
+                    $bgClass = 'bg-slate-100';
+                    $textClass = 'text-slate-600';
+                }
+            @endphp
+            <span class="inline-flex px-3 py-1 text-sm rounded-full {{ $bgClass }} {{ $textClass }}">
                 {{ $invoice->status->label() }}
             </span>
         </div>

@@ -197,7 +197,16 @@
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="inline-flex px-2 py-1 text-xs rounded-full bg-[color:var(--color-{{ $invoice->status->color() }}-50)] text-[color:var(--color-{{ $invoice->status->color() }}-600)]">
+                                    @php
+                                        $statusColor = $invoice->status->color();
+                                        $bgClass = "bg-{$statusColor}-50";
+                                        $textClass = "text-{$statusColor}-600";
+                                        if ($statusColor === 'slate') {
+                                            $bgClass = 'bg-slate-100';
+                                            $textClass = 'text-slate-600';
+                                        }
+                                    @endphp
+                                    <span class="inline-flex px-2 py-1 text-xs rounded-full {{ $bgClass }} {{ $textClass }}">
                                         {{ $invoice->status->label() }}
                                     </span>
                                 </td>
