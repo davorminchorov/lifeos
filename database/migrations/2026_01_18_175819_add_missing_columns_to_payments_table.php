@@ -1,0 +1,31 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::table('payments', function (Blueprint $table) {
+            $table->foreignId('user_id')->after('id')->constrained()->cascadeOnDelete();
+            $table->date('payment_date')->nullable()->after('payment_method_details');
+            $table->string('reference')->nullable()->after('payment_date');
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::table('payments', function (Blueprint $table) {
+            $table->dropForeign(['user_id']);
+            $table->dropColumn(['user_id', 'payment_date', 'reference']);
+        });
+    }
+};
