@@ -22,8 +22,13 @@ class IouControllerTest extends TestCase
 
     public function test_index_displays_ious_for_authenticated_user(): void
     {
-        $iou = Iou::factory()->create(['user_id' => $this->user->id]);
-        $otherUserIou = Iou::factory()->create();
+        $iou = Iou::factory()->create([
+            'user_id' => $this->user->id,
+            'person_name' => 'Current User Person Name',
+        ]);
+        $otherUserIou = Iou::factory()->create([
+            'person_name' => 'Other User Person Name - Should Not Be Visible',
+        ]);
 
         $response = $this->actingAs($this->user)->get(route('ious.index'));
 

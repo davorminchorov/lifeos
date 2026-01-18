@@ -30,7 +30,7 @@ class UpdateWarrantyRequest extends FormRequest
             'purchase_price' => 'required|numeric|min:1|max:99999999',
             'retailer' => 'nullable|string|max:255',
             'warranty_duration_months' => 'required|integer|min:1|max:120',
-            'warranty_type' => 'required|in:manufacturer,extended,store',
+            'warranty_type' => 'required|in:manufacturer,extended,both',
             'warranty_terms' => 'nullable|string|max:2000',
             'warranty_expiration_date' => 'required|date|after:purchase_date',
             'current_status' => 'nullable|in:active,claimed,transferred,expired',

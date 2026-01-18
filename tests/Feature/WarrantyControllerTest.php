@@ -137,7 +137,10 @@ class WarrantyControllerTest extends TestCase
 
     public function test_can_update_warranty(): void
     {
-        $warranty = Warranty::factory()->create(['user_id' => $this->user->id]);
+        $warranty = Warranty::factory()->create([
+            'user_id' => $this->user->id,
+            'warranty_type' => 'manufacturer',
+        ]);
 
         $updateData = [
             'product_name' => 'Updated Product Name',
@@ -147,7 +150,7 @@ class WarrantyControllerTest extends TestCase
             'warranty_duration_months' => $warranty->warranty_duration_months,
             'purchase_price' => $warranty->purchase_price,
             'retailer' => $warranty->retailer,
-            'warranty_type' => $warranty->warranty_type,
+            'warranty_type' => 'manufacturer',
             'current_status' => 'active',
         ];
 

@@ -27,12 +27,24 @@ class JobApplicationTest extends TestCase
 
     public function test_index_displays_user_job_applications()
     {
-        $applications = JobApplication::factory()->count(3)->create([
-            'user_id' => $this->user->id,
+        $applications = collect([
+            JobApplication::factory()->create([
+                'user_id' => $this->user->id,
+                'company_name' => 'User Company Alpha',
+            ]),
+            JobApplication::factory()->create([
+                'user_id' => $this->user->id,
+                'company_name' => 'User Company Beta',
+            ]),
+            JobApplication::factory()->create([
+                'user_id' => $this->user->id,
+                'company_name' => 'User Company Gamma',
+            ]),
         ]);
 
         $otherApplication = JobApplication::factory()->create([
             'user_id' => $this->otherUser->id,
+            'company_name' => 'Other User Company - Should Not Be Visible',
         ]);
 
         $response = $this->actingAs($this->user)->get('/job-applications');
