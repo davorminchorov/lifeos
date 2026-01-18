@@ -94,6 +94,11 @@ class Invoice extends Model
         return $this->belongsTo(RecurringInvoice::class, 'subscription_id');
     }
 
+    public function reminders(): HasMany
+    {
+        return $this->hasMany(InvoiceReminder::class)->orderBy('sent_at', 'desc');
+    }
+
     public function scopeDraft($query)
     {
         return $query->where('status', InvoiceStatus::DRAFT);
