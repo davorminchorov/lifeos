@@ -35,10 +35,10 @@
                                 Dashboard
                             </a>
 
-                            <!-- Finance Dropdown -->
+                            <!-- Personal Finance Dropdown -->
                             <div class="relative inline-flex items-center nav-dropdown">
                                 <button type="button" class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs(['budgets.*', 'expenses.*', 'subscriptions.*', 'utility-bills.*']) ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]' : 'border-transparent text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] hover:text-[color:var(--color-primary-600)] dark:hover:text-[color:var(--color-dark-400)] hover:border-[color:var(--color-primary-400)]' }} text-sm font-medium transition-colors duration-200" aria-haspopup="true" aria-expanded="false" aria-controls="menu-finance">
-                                    Finance
+                                    Personal Finance
                                     <svg class="ml-1 h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
                                     </svg>
@@ -65,18 +65,18 @@
                                 </div>
                             </div>
 
-                            <!-- Invoicing Dropdown -->
+                            <!-- Business Dropdown -->
                             <div class="relative inline-flex items-center nav-dropdown">
-                                <button type="button" class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('invoicing.*') ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]' : 'border-transparent text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] hover:text-[color:var(--color-primary-600)] dark:hover:text-[color:var(--color-dark-400)] hover:border-[color:var(--color-primary-400)]' }} text-sm font-medium transition-colors duration-200" aria-haspopup="true" aria-expanded="false" aria-controls="menu-invoicing">
-                                    Invoicing
+                                <button type="button" class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs(['invoicing.*', 'job-applications.*']) ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]' : 'border-transparent text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] hover:text-[color:var(--color-primary-600)] dark:hover:text-[color:var(--color-dark-400)] hover:border-[color:var(--color-primary-400)]' }} text-sm font-medium transition-colors duration-200" aria-haspopup="true" aria-expanded="false" aria-controls="menu-business">
+                                    Business
                                     <svg class="ml-1 h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
                                     </svg>
                                 </button>
-                                <div id="menu-invoicing" class="dropdown-menu hidden absolute top-full left-0 mt-2 w-56 rounded-lg shadow-lg bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] ring-1 ring-black/50 z-50" role="menu">
+                                <div id="menu-business" class="dropdown-menu hidden absolute top-full left-0 mt-2 w-56 rounded-lg shadow-lg bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] ring-1 ring-black/50 z-50" role="menu">
                                     <div class="py-1">
                                         <a href="{{ route('invoicing.dashboard') }}" role="menuitem" class="block px-4 py-2 text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] hover:bg-[color:var(--color-primary-100)] dark:hover:bg-[color:var(--color-dark-200)] transition-colors duration-200 {{ request()->routeIs('invoicing.dashboard') ? 'bg-[color:var(--color-accent-50)] text-[color:var(--color-accent-600)]' : '' }}">
-                                            <div class="font-medium">Dashboard</div>
+                                            <div class="font-medium">Invoicing Overview</div>
                                             <div class="text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)]">Analytics & reports</div>
                                         </a>
                                         <a href="{{ route('invoicing.customers.index') }}" role="menuitem" class="block px-4 py-2 text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] hover:bg-[color:var(--color-primary-100)] dark:hover:bg-[color:var(--color-dark-200)] transition-colors duration-200 {{ request()->routeIs('invoicing.customers.*') ? 'bg-[color:var(--color-accent-50)] text-[color:var(--color-accent-600)]' : '' }}">
@@ -103,14 +103,19 @@
                                             <div class="font-medium">Discounts</div>
                                             <div class="text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)]">Manage discount codes</div>
                                         </a>
+                                        <div class="border-t border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)] my-1"></div>
+                                        <a href="{{ route('job-applications.index') }}" role="menuitem" class="block px-4 py-2 text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] hover:bg-[color:var(--color-primary-100)] dark:hover:bg-[color:var(--color-dark-200)] transition-colors duration-200 {{ request()->routeIs('job-applications.*') ? 'bg-[color:var(--color-accent-50)] text-[color:var(--color-accent-600)]' : '' }}">
+                                            <div class="font-medium">Job Applications</div>
+                                            <div class="text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)]">Career tracking</div>
+                                        </a>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Assets & Liabilities Dropdown -->
+                            <!-- Assets Dropdown -->
                             <div class="relative inline-flex items-center nav-dropdown">
                                 <button type="button" class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs(['investments.*', 'project-investments.*', 'contracts.*', 'warranties.*', 'ious.*']) ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]' : 'border-transparent text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] hover:text-[color:var(--color-primary-600)] dark:hover:text-[color:var(--color-dark-400)] hover:border-[color:var(--color-primary-400)]' }} text-sm font-medium transition-colors duration-200" aria-haspopup="true" aria-expanded="false" aria-controls="menu-assets">
-                                    Assets & Liabilities
+                                    Assets
                                     <svg class="ml-1 h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
                                     </svg>
@@ -141,20 +146,36 @@
                                 </div>
                             </div>
 
-                            <!-- Job Applications -->
-                            <a href="{{ route('job-applications.index') }}" class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('job-applications.*') ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]' : 'border-transparent text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] hover:text-[color:var(--color-primary-600)] dark:hover:text-[color:var(--color-dark-400)] hover:border-[color:var(--color-primary-400)]' }} text-sm font-medium transition-colors duration-200">
-                                Job Applications
-                            </a>
-
-                            <!-- Cycle Menu -->
-                            <a href="{{ route('cycle-menus.index') }}" class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('cycle-menus.*') ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]' : 'border-transparent text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] hover:text-[color:var(--color-primary-600)] dark:hover:text-[color:var(--color-dark-400)] hover:border-[color:var(--color-primary-400)]' }} text-sm font-medium transition-colors duration-200">
-                                Cycle Menu
-                            </a>
-
-                            <!-- Holidays -->
-                            <a href="{{ route('holidays.index') }}" class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('holidays.*') ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]' : 'border-transparent text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] hover:text-[color:var(--color-primary-600)] dark:hover:text-[color:var(--color-dark-400)] hover:border-[color:var(--color-primary-400)]' }} text-sm font-medium transition-colors duration-200">
-                                Holidays
-                            </a>
+                            <!-- Lifestyle Dropdown -->
+                            <div class="relative inline-flex items-center nav-dropdown">
+                                <button type="button" class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs(['cycle-menus.*', 'holidays.*', 'currency.*']) ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]' : 'border-transparent text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] hover:text-[color:var(--color-primary-600)] dark:hover:text-[color:var(--color-dark-400)] hover:border-[color:var(--color-primary-400)]' }} text-sm font-medium transition-colors duration-200" aria-haspopup="true" aria-expanded="false" aria-controls="menu-lifestyle">
+                                    Lifestyle
+                                    <svg class="ml-1 h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                                    </svg>
+                                </button>
+                                <div id="menu-lifestyle" class="dropdown-menu hidden absolute top-full left-0 mt-2 w-56 rounded-lg shadow-lg bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] ring-1 ring-black/50 z-50" role="menu">
+                                    <div class="py-1">
+                                        <a href="{{ route('cycle-menus.index') }}" role="menuitem" class="block px-4 py-2 text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] hover:bg-[color:var(--color-primary-100)] dark:hover:bg-[color:var(--color-dark-200)] transition-colors duration-200 {{ request()->routeIs('cycle-menus.*') ? 'bg-[color:var(--color-accent-50)] text-[color:var(--color-accent-600)]' : '' }}">
+                                            <div class="font-medium">Cycle Menu</div>
+                                            <div class="text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)]">Meal planning</div>
+                                        </a>
+                                        <a href="{{ route('holidays.index') }}" role="menuitem" class="block px-4 py-2 text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] hover:bg-[color:var(--color-primary-100)] dark:hover:bg-[color:var(--color-dark-200)] transition-colors duration-200 {{ request()->routeIs('holidays.*') ? 'bg-[color:var(--color-accent-50)] text-[color:var(--color-accent-600)]' : '' }}">
+                                            <div class="font-medium">Holidays</div>
+                                            <div class="text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)]">Travel planning</div>
+                                        </a>
+                                        <div class="border-t border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)] my-1"></div>
+                                        <a href="{{ route('currency.index') }}" role="menuitem" class="block px-4 py-2 text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] hover:bg-[color:var(--color-primary-100)] dark:hover:bg-[color:var(--color-dark-200)] transition-colors duration-200 {{ request()->routeIs('currency.index') ? 'bg-[color:var(--color-accent-50)] text-[color:var(--color-accent-600)]' : '' }}">
+                                            <div class="font-medium">Currency Rates</div>
+                                            <div class="text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)]">Exchange rates</div>
+                                        </a>
+                                        <a href="{{ route('currency.freelance-rate-calculator') }}" role="menuitem" class="block px-4 py-2 text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] hover:bg-[color:var(--color-primary-100)] dark:hover:bg-[color:var(--color-dark-200)] transition-colors duration-200 {{ request()->routeIs('currency.freelance-rate-calculator') ? 'bg-[color:var(--color-accent-50)] text-[color:var(--color-accent-600)]' : '' }}">
+                                            <div class="font-medium">Freelance Rate Calculator</div>
+                                            <div class="text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)]">Calculate rates</div>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         @endauth
                     </div>
@@ -197,8 +218,6 @@
                                     <div class="py-1">
                                         <a href="{{ route('profile.show') }}" class="block px-4 py-2 text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] hover:bg-[color:var(--color-primary-100)] dark:hover:bg-[color:var(--color-dark-200)] transition-colors duration-200">Profile</a>
                                         <a href="{{ route('settings.index') }}" class="block px-4 py-2 text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] hover:bg-[color:var(--color-primary-100)] dark:hover:bg-[color:var(--color-dark-200)] transition-colors duration-200">Settings</a>
-                                        <a href="{{ route('currency.index') }}" class="block px-4 py-2 text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] hover:bg-[color:var(--color-primary-100)] dark:hover:bg-[color:var(--color-dark-200)] transition-colors duration-200">Currency Rates</a>
-                                        <a href="{{ route('currency.freelance-rate-calculator') }}" class="block px-4 py-2 text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] hover:bg-[color:var(--color-primary-100)] dark:hover:bg-[color:var(--color-dark-200)] transition-colors duration-200">Freelance Rate Calculator</a>
                                     </div>
                                     <div class="py-1">
                                         <form method="POST" action="{{ route('logout') }}">
@@ -230,17 +249,18 @@
             @auth
             @php
                 $financeOpen = request()->routeIs(['budgets.*', 'expenses.*', 'subscriptions.*', 'utility-bills.*']);
-                $invoicingOpen = request()->routeIs('invoicing.*');
+                $businessOpen = request()->routeIs(['invoicing.*', 'job-applications.*']);
                 $assetsOpen = request()->routeIs(['investments.*', 'project-investments.*', 'contracts.*', 'warranties.*', 'ious.*']);
+                $lifestyleOpen = request()->routeIs(['cycle-menus.*', 'holidays.*', 'currency.*']);
             @endphp
             <div id="mobile-menu" class="sm:hidden hidden">
                 <div class="pt-2 pb-3 space-y-1">
                     <a href="{{ route('dashboard') }}" class="block pl-3 pr-4 py-2 border-l-4 {{ request()->routeIs('dashboard') ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-accent-600)] bg-[color:var(--color-accent-50)]' : 'border-transparent text-[color:var(--color-primary-600)] hover:text-[color:var(--color-primary-700)] hover:bg-[color:var(--color-primary-200)] hover:border-[color:var(--color-primary-400)]' }} text-base font-medium transition-colors duration-200">Dashboard</a>
 
-                    <!-- Finance Group -->
+                    <!-- Personal Finance Group -->
                     <div class="mobile-nav-group">
                         <button type="button" class="mobile-group-toggle w-full flex justify-between items-center pl-3 pr-4 py-2 border-l-4 border-transparent text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-base font-semibold">
-                            Finance
+                            Personal Finance
                             <svg class="h-5 w-5 transform transition-transform duration-200 {{ $financeOpen ? 'rotate-180' : '' }}" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
                             </svg>
@@ -253,29 +273,30 @@
                         </div>
                     </div>
 
-                    <!-- Invoicing Group -->
+                    <!-- Business Group -->
                     <div class="mobile-nav-group">
                         <button type="button" class="mobile-group-toggle w-full flex justify-between items-center pl-3 pr-4 py-2 border-l-4 border-transparent text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-base font-semibold">
-                            Invoicing
-                            <svg class="h-5 w-5 transform transition-transform duration-200 {{ $invoicingOpen ? 'rotate-180' : '' }}" fill="currentColor" viewBox="0 0 20 20">
+                            Business
+                            <svg class="h-5 w-5 transform transition-transform duration-200 {{ $businessOpen ? 'rotate-180' : '' }}" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
                             </svg>
                         </button>
-                        <div class="mobile-group-items {{ $invoicingOpen ? '' : 'hidden' }}">
-                            <a href="{{ route('invoicing.dashboard') }}" class="block pl-8 pr-4 py-2 border-l-4 {{ request()->routeIs('invoicing.dashboard') ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-accent-600)] bg-[color:var(--color-accent-50)]' : 'border-transparent text-[color:var(--color-primary-600)] hover:text-[color:var(--color-primary-700)] hover:bg-[color:var(--color-primary-200)] hover:border-[color:var(--color-primary-400)]' }} text-sm font-medium transition-colors duration-200">Dashboard</a>
+                        <div class="mobile-group-items {{ $businessOpen ? '' : 'hidden' }}">
+                            <a href="{{ route('invoicing.dashboard') }}" class="block pl-8 pr-4 py-2 border-l-4 {{ request()->routeIs('invoicing.dashboard') ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-accent-600)] bg-[color:var(--color-accent-50)]' : 'border-transparent text-[color:var(--color-primary-600)] hover:text-[color:var(--color-primary-700)] hover:bg-[color:var(--color-primary-200)] hover:border-[color:var(--color-primary-400)]' }} text-sm font-medium transition-colors duration-200">Invoicing Overview</a>
                             <a href="{{ route('invoicing.customers.index') }}" class="block pl-8 pr-4 py-2 border-l-4 {{ request()->routeIs('invoicing.customers.*') ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-accent-600)] bg-[color:var(--color-accent-50)]' : 'border-transparent text-[color:var(--color-primary-600)] hover:text-[color:var(--color-primary-700)] hover:bg-[color:var(--color-primary-200)] hover:border-[color:var(--color-primary-400)]' }} text-sm font-medium transition-colors duration-200">Customers</a>
                             <a href="{{ route('invoicing.invoices.index') }}" class="block pl-8 pr-4 py-2 border-l-4 {{ request()->routeIs('invoicing.invoices.*') ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-accent-600)] bg-[color:var(--color-accent-50)]' : 'border-transparent text-[color:var(--color-primary-600)] hover:text-[color:var(--color-primary-700)] hover:bg-[color:var(--color-primary-200)] hover:border-[color:var(--color-primary-400)]' }} text-sm font-medium transition-colors duration-200">Invoices</a>
                             <a href="{{ route('invoicing.recurring-invoices.index') }}" class="block pl-8 pr-4 py-2 border-l-4 {{ request()->routeIs('invoicing.recurring-invoices.*') ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-accent-600)] bg-[color:var(--color-accent-50)]' : 'border-transparent text-[color:var(--color-primary-600)] hover:text-[color:var(--color-primary-700)] hover:bg-[color:var(--color-primary-200)] hover:border-[color:var(--color-primary-400)]' }} text-sm font-medium transition-colors duration-200">Recurring Invoices</a>
                             <a href="{{ route('invoicing.credit-notes.index') }}" class="block pl-8 pr-4 py-2 border-l-4 {{ request()->routeIs('invoicing.credit-notes.*') ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-accent-600)] bg-[color:var(--color-accent-50)]' : 'border-transparent text-[color:var(--color-primary-600)] hover:text-[color:var(--color-primary-700)] hover:bg-[color:var(--color-primary-200)] hover:border-[color:var(--color-primary-400)]' }} text-sm font-medium transition-colors duration-200">Credit Notes</a>
                             <a href="{{ route('invoicing.tax-rates.index') }}" class="block pl-8 pr-4 py-2 border-l-4 {{ request()->routeIs('invoicing.tax-rates.*') ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-accent-600)] bg-[color:var(--color-accent-50)]' : 'border-transparent text-[color:var(--color-primary-600)] hover:text-[color:var(--color-primary-700)] hover:bg-[color:var(--color-primary-200)] hover:border-[color:var(--color-primary-400)]' }} text-sm font-medium transition-colors duration-200">Tax Rates</a>
                             <a href="{{ route('invoicing.discounts.index') }}" class="block pl-8 pr-4 py-2 border-l-4 {{ request()->routeIs('invoicing.discounts.*') ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-accent-600)] bg-[color:var(--color-accent-50)]' : 'border-transparent text-[color:var(--color-primary-600)] hover:text-[color:var(--color-primary-700)] hover:bg-[color:var(--color-primary-200)] hover:border-[color:var(--color-primary-400)]' }} text-sm font-medium transition-colors duration-200">Discounts</a>
+                            <a href="{{ route('job-applications.index') }}" class="block pl-8 pr-4 py-2 border-l-4 {{ request()->routeIs('job-applications.*') ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-accent-600)] bg-[color:var(--color-accent-50)]' : 'border-transparent text-[color:var(--color-primary-600)] hover:text-[color:var(--color-primary-700)] hover:bg-[color:var(--color-primary-200)] hover:border-[color:var(--color-primary-400)]' }} text-sm font-medium transition-colors duration-200">Job Applications</a>
                         </div>
                     </div>
 
-                    <!-- Assets & Liabilities Group -->
+                    <!-- Assets Group -->
                     <div class="mobile-nav-group">
                         <button type="button" class="mobile-group-toggle w-full flex justify-between items-center pl-3 pr-4 py-2 border-l-4 border-transparent text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-base font-semibold">
-                            Assets & Liabilities
+                            Assets
                             <svg class="h-5 w-5 transform transition-transform duration-200 {{ $assetsOpen ? 'rotate-180' : '' }}" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
                             </svg>
@@ -289,11 +310,21 @@
                         </div>
                     </div>
 
-                    <a href="{{ route('job-applications.index') }}" class="block pl-3 pr-4 py-2 border-l-4 {{ request()->routeIs('job-applications.*') ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-accent-600)] bg-[color:var(--color-accent-50)]' : 'border-transparent text-[color:var(--color-primary-600)] hover:text-[color:var(--color-primary-700)] hover:bg-[color:var(--color-primary-200)] hover:border-[color:var(--color-primary-400)]' }} text-base font-medium transition-colors duration-200">Job Applications</a>
-
-                    <a href="{{ route('cycle-menus.index') }}" class="block pl-3 pr-4 py-2 border-l-4 {{ request()->routeIs('cycle-menus.*') ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-accent-600)] bg-[color:var(--color-accent-50)]' : 'border-transparent text-[color:var(--color-primary-600)] hover:text-[color:var(--color-primary-700)] hover:bg-[color:var(--color-primary-200)] hover:border-[color:var(--color-primary-400)]' }} text-base font-medium transition-colors duration-200">Cycle Menu</a>
-
-                    <a href="{{ route('holidays.index') }}" class="block pl-3 pr-4 py-2 border-l-4 {{ request()->routeIs('holidays.*') ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-accent-600)] bg-[color:var(--color-accent-50)]' : 'border-transparent text-[color:var(--color-primary-600)] hover:text-[color:var(--color-primary-700)] hover:bg-[color:var(--color-primary-200)] hover:border-[color:var(--color-primary-400)]' }} text-base font-medium transition-colors duration-200">Holidays</a>
+                    <!-- Lifestyle Group -->
+                    <div class="mobile-nav-group">
+                        <button type="button" class="mobile-group-toggle w-full flex justify-between items-center pl-3 pr-4 py-2 border-l-4 border-transparent text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-base font-semibold">
+                            Lifestyle
+                            <svg class="h-5 w-5 transform transition-transform duration-200 {{ $lifestyleOpen ? 'rotate-180' : '' }}" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                            </svg>
+                        </button>
+                        <div class="mobile-group-items {{ $lifestyleOpen ? '' : 'hidden' }}">
+                            <a href="{{ route('cycle-menus.index') }}" class="block pl-8 pr-4 py-2 border-l-4 {{ request()->routeIs('cycle-menus.*') ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-accent-600)] bg-[color:var(--color-accent-50)]' : 'border-transparent text-[color:var(--color-primary-600)] hover:text-[color:var(--color-primary-700)] hover:bg-[color:var(--color-primary-200)] hover:border-[color:var(--color-primary-400)]' }} text-sm font-medium transition-colors duration-200">Cycle Menu</a>
+                            <a href="{{ route('holidays.index') }}" class="block pl-8 pr-4 py-2 border-l-4 {{ request()->routeIs('holidays.*') ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-accent-600)] bg-[color:var(--color-accent-50)]' : 'border-transparent text-[color:var(--color-primary-600)] hover:text-[color:var(--color-primary-700)] hover:bg-[color:var(--color-primary-200)] hover:border-[color:var(--color-primary-400)]' }} text-sm font-medium transition-colors duration-200">Holidays</a>
+                            <a href="{{ route('currency.index') }}" class="block pl-8 pr-4 py-2 border-l-4 {{ request()->routeIs('currency.index') ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-accent-600)] bg-[color:var(--color-accent-50)]' : 'border-transparent text-[color:var(--color-primary-600)] hover:text-[color:var(--color-primary-700)] hover:bg-[color:var(--color-primary-200)] hover:border-[color:var(--color-primary-400)]' }} text-sm font-medium transition-colors duration-200">Currency Rates</a>
+                            <a href="{{ route('currency.freelance-rate-calculator') }}" class="block pl-8 pr-4 py-2 border-l-4 {{ request()->routeIs('currency.freelance-rate-calculator') ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-accent-600)] bg-[color:var(--color-accent-50)]' : 'border-transparent text-[color:var(--color-primary-600)] hover:text-[color:var(--color-primary-700)] hover:bg-[color:var(--color-primary-200)] hover:border-[color:var(--color-primary-400)]' }} text-sm font-medium transition-colors duration-200">Freelance Rate Calculator</a>
+                        </div>
+                    </div>
                 </div>
             </div>
             @endauth
