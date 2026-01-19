@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\BelongsToTenant;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
@@ -12,12 +13,15 @@ use Illuminate\Support\Facades\Log;
 
 class GmailConnection extends Model
 {
+    use BelongsToTenant;
+
     /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
      */
     protected $fillable = [
+        'tenant_id',
         'user_id',
         'email_address',
         'access_token',

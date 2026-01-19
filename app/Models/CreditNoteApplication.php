@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Services\CurrencyService;
+use App\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -10,9 +11,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class CreditNoteApplication extends Model
 {
     /** @use HasFactory<\Database\Factories\CreditNoteApplicationFactory> */
-    use HasFactory;
+    use BelongsToTenant, HasFactory;
 
     protected $fillable = [
+        'tenant_id',
         'credit_note_id',
         'invoice_id',
         'amount_applied',

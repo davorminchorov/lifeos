@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\ApplicationSource;
 use App\Enums\ApplicationStatus;
+use App\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -14,9 +15,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class JobApplication extends Model
 {
     /** @use HasFactory<\Database\Factories\JobApplicationFactory> */
-    use HasFactory, SoftDeletes;
+    use BelongsToTenant, HasFactory, SoftDeletes;
 
     protected $fillable = [
+        'tenant_id',
         'user_id',
         'company_name',
         'company_website',
