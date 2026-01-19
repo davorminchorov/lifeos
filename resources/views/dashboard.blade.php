@@ -43,6 +43,15 @@
                             <option value="2years">2 Years</option>
                         </x-form.select>
 
+                        <!-- Refresh Button -->
+                        <button @click="refreshData()" :disabled="isRefreshing"
+                                class="bg-[color:var(--color-primary-600)] hover:bg-[color:var(--color-primary-700)] disabled:bg-[color:var(--color-primary-400)] text-white text-sm px-4 py-2 rounded-md transition-colors flex items-center">
+                            <svg class="h-4 w-4" :class="{ 'animate-spin': isRefreshing }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                            </svg>
+                            <span class="ml-2" x-text="isRefreshing ? 'Refreshing...' : 'Refresh'"></span>
+                        </button>
+
                         <!-- Export Dropdown -->
                         <div class="ml-4 relative" x-data="{ open: false }" @click.away="open = false">
                             <button @click="open = !open" :disabled="isExporting"
@@ -163,9 +172,9 @@
     @endif
 
     <!-- Quick Stats -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-8">
         <!-- Subscriptions Stats -->
-        <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] overflow-hidden shadow rounded-lg border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)]">
+        <a href="{{ route('subscriptions.index') }}" class="block bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] overflow-hidden shadow rounded-lg border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] hover:shadow-lg hover:border-[color:var(--color-accent-500)] transition-all duration-200">
             <div class="p-5">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
@@ -180,7 +189,9 @@
                         </dl>
                     </div>
                     <div class="ml-5">
-                        <a href="{{ route('subscriptions.index') }}" class="text-[color:var(--color-accent-600)] hover:text-[color:var(--color-accent-700)] text-sm font-medium">View all</a>
+                        <svg class="h-5 w-5 text-[color:var(--color-accent-600)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
                     </div>
                 </div>
             </div>
@@ -190,10 +201,10 @@
                     <span class="font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">{{ $stats['monthly_subscription_cost_formatted'] ?? 'MKD 0.00' }}</span>
                 </div>
             </div>
-        </div>
+        </a>
 
         <!-- Contracts Stats -->
-        <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] overflow-hidden shadow rounded-lg border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)]">
+        <a href="{{ route('contracts.index') }}" class="block bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] overflow-hidden shadow rounded-lg border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] hover:shadow-lg hover:border-[color:var(--color-accent-500)] transition-all duration-200">
             <div class="p-5">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
@@ -208,7 +219,9 @@
                         </dl>
                     </div>
                     <div class="ml-5">
-                        <a href="{{ route('contracts.index') }}" class="text-[color:var(--color-accent-600)] hover:text-[color:var(--color-accent-700)] text-sm font-medium">View all</a>
+                        <svg class="h-5 w-5 text-[color:var(--color-accent-600)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
                     </div>
                 </div>
             </div>
@@ -218,10 +231,10 @@
                     <span class="font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">{{ $stats['contracts_expiring_soon'] ?? 0 }}</span>
                 </div>
             </div>
-        </div>
+        </a>
 
         <!-- Investments Stats -->
-        <div class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] overflow-hidden shadow rounded-lg border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)]">
+        <a href="{{ route('investments.index') }}" class="block bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] overflow-hidden shadow rounded-lg border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] hover:shadow-lg hover:border-[color:var(--color-accent-500)] transition-all duration-200">
             <div class="p-5">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
@@ -236,7 +249,9 @@
                         </dl>
                     </div>
                     <div class="ml-5">
-                        <a href="{{ route('investments.index') }}" class="text-[color:var(--color-accent-600)] hover:text-[color:var(--color-accent-700)] text-sm font-medium">View all</a>
+                        <svg class="h-5 w-5 text-[color:var(--color-accent-600)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
                     </div>
                 </div>
             </div>
@@ -248,7 +263,67 @@
                     </span>
                 </div>
             </div>
-        </div>
+        </a>
+
+        <!-- Expenses Stats -->
+        <a href="{{ route('expenses.index') }}" class="block bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] overflow-hidden shadow rounded-lg border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] hover:shadow-lg hover:border-[color:var(--color-accent-500)] transition-all duration-200">
+            <div class="p-5">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <svg class="h-6 w-6 text-[color:var(--color-danger-500)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                        </svg>
+                    </div>
+                    <div class="ml-5 w-0 flex-1">
+                        <dl>
+                            <dt class="text-sm font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] truncate">This Month</dt>
+                            <dd class="text-lg font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">{{ $stats['total_expenses_formatted'] ?? 'MKD 0.00' }}</dd>
+                        </dl>
+                    </div>
+                    <div class="ml-5">
+                        <svg class="h-5 w-5 text-[color:var(--color-accent-600)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-[color:var(--color-primary-200)] dark:bg-[color:var(--color-dark-300)] px-5 py-3">
+                <div class="text-sm">
+                    <span class="text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">Total expenses:</span>
+                    <span class="font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">{{ $stats['total_expenses'] ?? 0 }}</span>
+                </div>
+            </div>
+        </a>
+
+        <!-- Utility Bills Stats -->
+        <a href="{{ route('utility-bills.index') }}" class="block bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] overflow-hidden shadow rounded-lg border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] hover:shadow-lg hover:border-[color:var(--color-accent-500)] transition-all duration-200">
+            <div class="p-5">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <svg class="h-6 w-6 text-[color:var(--color-info-500)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                    </div>
+                    <div class="ml-5 w-0 flex-1">
+                        <dl>
+                            <dt class="text-sm font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] truncate">Pending Bills</dt>
+                            <dd class="text-lg font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">{{ $stats['pending_bills_formatted'] ?? 'MKD 0.00' }}</dd>
+                        </dl>
+                    </div>
+                    <div class="ml-5">
+                        <svg class="h-5 w-5 text-[color:var(--color-accent-600)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-[color:var(--color-primary-200)] dark:bg-[color:var(--color-dark-300)] px-5 py-3">
+                <div class="text-sm">
+                    <span class="text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">Number of bills:</span>
+                    <span class="font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">{{ $stats['pending_bills'] ?? 0 }}</span>
+                </div>
+            </div>
+        </a>
     </div>
 
     <!-- Alerts & Notifications -->

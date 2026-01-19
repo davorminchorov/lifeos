@@ -10,6 +10,8 @@ class DashboardManager {
     constructor() {
         this.charts = {};
         this.apiEndpoint = '/dashboard/chart-data';
+        this.currentPeriod = '6months';
+        this.isLoading = false;
         this.init();
     }
 
@@ -18,9 +20,19 @@ class DashboardManager {
         this.initializeCharts();
     }
 
-    async loadChartData() {
+    async loadChartData(period = null) {
+        if (period) {
+            this.currentPeriod = period;
+        }
+
+        this.isLoading = true;
+        this.showLoadingState();
+
         try {
-            const response = await fetch(this.apiEndpoint, {
+            const url = new URL(this.apiEndpoint, window.location.origin);
+            url.searchParams.append('period', this.currentPeriod);
+
+            const response = await fetch(url, {
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest',
                     'Accept': 'application/json',
@@ -35,7 +47,48 @@ class DashboardManager {
             this.chartData = await response.json();
         } catch (error) {
             console.error('Failed to load chart data:', error);
+            this.showErrorState(error.message);
             this.chartData = this.getDefaultChartData();
+        } finally {
+            this.isLoading = false;
+            this.hideLoadingState();
+        }
+    }
+
+    showLoadingState() {
+        document.querySelectorAll('.chart-container').forEach(container => {
+            container.classList.add('loading');
+            const canvas = container.querySelector('canvas');
+            if (canvas) {
+                canvas.style.opacity = '0.3';
+            }
+        });
+    }
+
+    hideLoadingState() {
+        document.querySelectorAll('.chart-container').forEach(container => {
+            container.classList.remove('loading');
+            const canvas = container.querySelector('canvas');
+            if (canvas) {
+                canvas.style.opacity = '1';
+            }
+        });
+    }
+
+    showErrorState(message) {
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'dashboard-error bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4';
+        errorDiv.textContent = `Failed to load dashboard data: ${message}`;
+
+        const dashboard = document.querySelector('[x-data="chartControls()"]');
+        if (dashboard) {
+            const existing = dashboard.querySelector('.dashboard-error');
+            if (existing) {
+                existing.remove();
+            }
+            dashboard.insertBefore(errorDiv, dashboard.firstChild);
+
+            setTimeout(() => errorDiv.remove(), 5000);
         }
     }
 
@@ -245,11 +298,43 @@ class DashboardManager {
         });
     }
 
-    async refreshCharts() {
-        await this.loadChartData();
+    async refreshCharts(period = null) {
+        await this.loadChartData(period);
         Object.values(this.charts).forEach(chart => chart.destroy());
         this.charts = {};
         this.initializeCharts();
+    }
+
+    async updateChartData() {
+        if (this.isLoading) return;
+
+        Object.keys(this.charts).forEach(chartKey => {
+            const chart = this.charts[chartKey];
+            if (!chart) return;
+
+            switch (chartKey) {
+                case 'spendingTrends':
+                    chart.data.labels = this.chartData.spendingTrends.labels;
+                    chart.data.datasets[0].data = this.chartData.spendingTrends.spending;
+                    chart.data.datasets[1].data = this.chartData.spendingTrends.budget;
+                    break;
+                case 'categoryBreakdown':
+                    chart.data.labels = this.chartData.categoryBreakdown.labels;
+                    chart.data.datasets[0].data = this.chartData.categoryBreakdown.values;
+                    break;
+                case 'portfolioPerformance':
+                    chart.data.labels = this.chartData.portfolioPerformance.labels;
+                    chart.data.datasets[0].data = this.chartData.portfolioPerformance.values;
+                    chart.data.datasets[1].data = this.chartData.portfolioPerformance.returns;
+                    break;
+                case 'monthlyComparison':
+                    chart.data.labels = this.chartData.monthlyComparison.categories;
+                    chart.data.datasets[0].data = this.chartData.monthlyComparison.current;
+                    chart.data.datasets[1].data = this.chartData.monthlyComparison.previous;
+                    break;
+            }
+            chart.update();
+        });
     }
 }
 
@@ -258,25 +343,96 @@ document.addEventListener('alpine:init', () => {
     Alpine.data('chartControls', () => ({
         selectedPeriod: '6months',
         isExporting: false,
+        isRefreshing: false,
 
         async changePeriod(period) {
             this.selectedPeriod = period;
             if (window.dashboardManager) {
-                await window.dashboardManager.refreshCharts();
+                await window.dashboardManager.refreshCharts(period);
+            }
+        },
+
+        async refreshData() {
+            if (this.isRefreshing) return;
+
+            this.isRefreshing = true;
+            try {
+                if (window.dashboardManager) {
+                    await window.dashboardManager.loadChartData(this.selectedPeriod);
+                    await window.dashboardManager.updateChartData();
+                }
+            } catch (error) {
+                console.error('Refresh failed:', error);
+            } finally {
+                this.isRefreshing = false;
             }
         },
 
         async exportData(format) {
             this.isExporting = true;
             try {
-                // Export logic would go here
-                console.log(`Exporting dashboard data as ${format}`);
-                await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate export
+                if (!window.dashboardManager || !window.dashboardManager.chartData) {
+                    throw new Error('No data available to export');
+                }
+
+                if (format === 'excel') {
+                    this.exportToCSV();
+                } else if (format === 'pdf') {
+                    alert('PDF export coming soon! For now, please use CSV export.');
+                }
             } catch (error) {
                 console.error('Export failed:', error);
+                alert(`Export failed: ${error.message}`);
             } finally {
                 this.isExporting = false;
             }
+        },
+
+        exportToCSV() {
+            const data = window.dashboardManager.chartData;
+            let csv = 'Dashboard Data Export\n\n';
+
+            // Spending Trends
+            csv += 'Spending Trends\n';
+            csv += 'Month,Spending,Budget\n';
+            data.spendingTrends.labels.forEach((label, i) => {
+                csv += `${label},${data.spendingTrends.spending[i]},${data.spendingTrends.budget[i]}\n`;
+            });
+            csv += '\n';
+
+            // Category Breakdown
+            csv += 'Category Breakdown\n';
+            csv += 'Category,Amount\n';
+            data.categoryBreakdown.labels.forEach((label, i) => {
+                csv += `${label},${data.categoryBreakdown.values[i]}\n`;
+            });
+            csv += '\n';
+
+            // Portfolio Performance
+            csv += 'Portfolio Performance\n';
+            csv += 'Month,Value,Returns\n';
+            data.portfolioPerformance.labels.forEach((label, i) => {
+                csv += `${label},${data.portfolioPerformance.values[i]},${data.portfolioPerformance.returns[i]}\n`;
+            });
+            csv += '\n';
+
+            // Monthly Comparison
+            csv += 'Monthly Comparison\n';
+            csv += 'Category,Current Month,Previous Month\n';
+            data.monthlyComparison.categories.forEach((label, i) => {
+                csv += `${label},${data.monthlyComparison.current[i]},${data.monthlyComparison.previous[i]}\n`;
+            });
+
+            // Download
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', `dashboard-export-${new Date().toISOString().split('T')[0]}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
     }));
 });
