@@ -30,6 +30,7 @@ class RecurringInvoiceService
         // Create invoice
         $invoice = Invoice::create([
             'user_id' => $recurringInvoice->user_id,
+            'tenant_id' => $recurringInvoice->tenant_id, // Explicit tenant_id for console commands
             'customer_id' => $recurringInvoice->customer_id,
             'subscription_id' => $recurringInvoice->id,
             'status' => InvoiceStatus::DRAFT,
