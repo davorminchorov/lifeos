@@ -195,6 +195,107 @@
         @endif
     </div>
 
+    <!-- Investment History -->
+    <div class="mt-8 bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] shadow overflow-hidden sm:rounded-lg">
+        <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
+            <div>
+                <h3 class="text-lg leading-6 font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
+                    Investment History
+                </h3>
+                <p class="mt-1 max-w-2xl text-sm text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">
+                    Track all investments made in this project over time.
+                </p>
+            </div>
+            <x-button href="{{ route('project-investment-transactions.create', $projectInvestment) }}" variant="primary">
+                Add Investment
+            </x-button>
+        </div>
+        <div class="border-t border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)]">
+            @if($projectInvestment->transactions->count() > 0)
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-[color:var(--color-primary-200)] dark:divide-[color:var(--color-dark-300)]">
+                        <thead class="bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)]">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] uppercase tracking-wider">
+                                    Date
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] uppercase tracking-wider">
+                                    Amount
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] uppercase tracking-wider">
+                                    Currency
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] uppercase tracking-wider">
+                                    Notes
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] uppercase tracking-wider">
+                                    Actions
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] divide-y divide-[color:var(--color-primary-200)] dark:divide-[color:var(--color-dark-300)]">
+                            @foreach($projectInvestment->transactions as $transaction)
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
+                                        {{ $transaction->transaction_date->format('M j, Y') }}
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
+                                        {{ $transaction->formatted_amount }}
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
+                                        {{ $transaction->currency }}
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
+                                        {{ $transaction->notes ?? '-' }}
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                        <div class="flex justify-end gap-2">
+                                            <a href="{{ route('project-investment-transactions.edit', $transaction) }}"
+                                               class="text-[color:var(--color-info-600)] hover:text-[color:var(--color-info-700)] dark:text-blue-400 dark:hover:text-blue-300">
+                                                Edit
+                                            </a>
+                                            <form method="POST" action="{{ route('project-investment-transactions.destroy', $transaction) }}"
+                                                  onsubmit="return confirm('Are you sure you want to delete this transaction?');"
+                                                  class="inline">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit"
+                                                        class="text-[color:var(--color-danger-600)] hover:text-[color:var(--color-danger-700)] dark:text-[color:var(--color-danger-400)] dark:hover:text-[color:var(--color-danger-300)]">
+                                                    Delete
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                        <tfoot class="bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)]">
+                            <tr>
+                                <td colspan="1" class="px-6 py-4 text-sm font-bold text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
+                                    Total Invested
+                                </td>
+                                <td colspan="4" class="px-6 py-4 text-sm font-bold text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
+                                    {{ $projectInvestment->formatted_investment_amount }}
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            @else
+                <div class="px-4 py-8 text-center">
+                    <p class="text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">
+                        No investment transactions recorded yet.
+                    </p>
+                    <div class="mt-4">
+                        <x-button href="{{ route('project-investment-transactions.create', $projectInvestment) }}" variant="primary">
+                            Add First Investment
+                        </x-button>
+                    </div>
+                </div>
+            @endif
+        </div>
+    </div>
+
     <!-- Quick Actions -->
     <div class="mt-8 flex flex-wrap gap-4" x-data="{}">
         <button type="button"
@@ -209,13 +310,13 @@
         <form method="POST" action="{{ route('project-investments.update-value', $projectInvestment) }}">
             @csrf
             <div class="mb-4">
-                <label for="current_value" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Current Value ({{ $projectInvestment->currency }})</label>
+                <label for="current_value" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Current Value ({{ $projectInvestment->primary_currency }})</label>
                 <div class="mt-1 relative rounded-md shadow-sm">
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <span class="text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] sm:text-sm">{{ $projectInvestment->currency }}</span>
+                        <span class="text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] sm:text-sm">{{ $projectInvestment->primary_currency }}</span>
                     </div>
                     <input type="number" step="0.01" name="current_value" id="current_value" required min="0"
-                           value="{{ $projectInvestment->current_value ?? $projectInvestment->investment_amount }}"
+                           value="{{ $projectInvestment->current_value ?? $projectInvestment->total_invested }}"
                            class="block w-full pl-12 pr-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
                 </div>
             </div>

@@ -29,8 +29,6 @@ class UpdateProjectInvestmentRequest extends FormRequest
             'website_url' => ['nullable', 'url:http,https', 'max:255'],
             'repository_url' => ['nullable', 'url:http,https', 'max:255'],
             'equity_percentage' => 'nullable|numeric|min:0|max:100',
-            'investment_amount' => 'sometimes|required|numeric|min:0|max:999999999',
-            'currency' => 'nullable|string|in:MKD,USD,EUR,GBP,CAD,AUD,JPY,CHF,RSD,BGN',
             'current_value' => 'nullable|numeric|min:0|max:999999999',
             'start_date' => 'nullable|date',
             'end_date' => 'nullable|date|after_or_equal:start_date',
@@ -47,8 +45,6 @@ class UpdateProjectInvestmentRequest extends FormRequest
         return [
             'name.required' => 'Project name is required.',
             'name.max' => 'Project name cannot exceed 255 characters.',
-            'investment_amount.required' => 'Investment amount is required.',
-            'investment_amount.min' => 'Investment amount must be at least 0.',
             'equity_percentage.max' => 'Equity percentage cannot exceed 100%.',
             'website_url.url' => 'Please enter a valid URL for the website.',
             'repository_url.url' => 'Please enter a valid URL for the repository.',

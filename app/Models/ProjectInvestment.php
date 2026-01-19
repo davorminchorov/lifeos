@@ -6,6 +6,7 @@ use App\Services\CurrencyService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ProjectInvestment extends Model
 {
@@ -37,8 +38,6 @@ class ProjectInvestment extends Model
         'website_url',
         'repository_url',
         'equity_percentage',
-        'investment_amount',
-        'currency',
         'current_value',
         'start_date',
         'end_date',
@@ -50,7 +49,6 @@ class ProjectInvestment extends Model
     {
         return [
             'equity_percentage' => 'decimal:2',
-            'investment_amount' => 'decimal:2',
             'current_value' => 'decimal:2',
             'start_date' => 'date',
             'end_date' => 'date',
@@ -60,6 +58,11 @@ class ProjectInvestment extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function transactions(): HasMany
+    {
+        return $this->hasMany(ProjectInvestmentTransaction::class);
     }
 
     // Scope for active projects
@@ -80,6 +83,27 @@ class ProjectInvestment extends Model
         return $query->where('business_model', $model);
     }
 
+    // Get total invested amount from all transactions
+    public function getTotalInvestedAttribute(): float
+    {
+        return (float) $this->transactions->sum('amount');
+    }
+
+    // Get primary currency (most commonly used in transactions, or first transaction's currency)
+    public function getPrimaryCurrencyAttribute(): string
+    {
+        if ($this->transactions->isEmpty()) {
+            return 'USD';
+        }
+
+        // Group by currency and get the one with highest total amount
+        $currencyTotals = $this->transactions->groupBy('currency')->map(function ($transactions) {
+            return $transactions->sum('amount');
+        });
+
+        return $currencyTotals->sortDesc()->keys()->first() ?? 'USD';
+    }
+
     // Calculate gain/loss
     public function getGainLossAttribute()
     {
@@ -87,36 +111,36 @@ class ProjectInvestment extends Model
             return 0;
         }
 
-        return $this->current_value - $this->investment_amount;
+        return $this->current_value - $this->total_invested;
     }
 
     // Calculate gain/loss percentage
     public function getGainLossPercentageAttribute(): float
     {
-        $investmentAmount = (float) $this->investment_amount;
-        if ($investmentAmount === 0.0) {
+        $totalInvested = $this->total_invested;
+        if ($totalInvested === 0.0) {
             return 0.0;
         }
 
-        return ((float) $this->gain_loss / $investmentAmount) * 100;
+        return ((float) $this->gain_loss / $totalInvested) * 100;
     }
 
     // Get formatted investment amount with currency
     public function getFormattedInvestmentAmountAttribute()
     {
-        return $this->getCurrencyService()->format($this->investment_amount, $this->currency);
+        return $this->getCurrencyService()->format($this->total_invested, $this->primary_currency);
     }
 
     // Get formatted current value with currency
     public function getFormattedCurrentValueAttribute()
     {
-        return $this->getCurrencyService()->format($this->current_value ?? $this->investment_amount, $this->currency);
+        return $this->getCurrencyService()->format($this->current_value ?? $this->total_invested, $this->primary_currency);
     }
 
     // Get formatted gain/loss with currency
     public function getFormattedGainLossAttribute()
     {
-        return $this->getCurrencyService()->format($this->gain_loss, $this->currency);
+        return $this->getCurrencyService()->format($this->gain_loss, $this->primary_currency);
     }
 
     // Check if project is active
