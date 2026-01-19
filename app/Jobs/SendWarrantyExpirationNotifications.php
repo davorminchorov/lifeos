@@ -15,6 +15,16 @@ class SendWarrantyExpirationNotifications implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    /**
+     * The number of seconds the job can run before timing out.
+     */
+    public int $timeout = 300;
+
+    /**
+     * The number of times the job may be attempted.
+     */
+    public int $tries = 3;
+
     public function __construct(
         private array $notificationDays = [30, 14, 7, 1, 0]
     ) {
