@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Budget;
 use App\Models\Contract;
 use App\Models\Expense;
 use App\Models\Investment;
@@ -116,7 +117,29 @@ class DashboardController extends Controller
 
             $monthlyAmount = $monthExpense ? $this->currencyService->convertToDefault((float) $monthExpense->total, config('currency.default', 'MKD')) : 0;
             $spending[] = $monthlyAmount;
-            $budget[] = 50000; // Default budget line
+
+            // Calculate budget for this month from active budgets
+            $monthStart = $current->copy()->startOfMonth();
+            $monthEnd = $current->copy()->endOfMonth();
+
+            $monthlyBudgets = Budget::where('user_id', auth()->id())
+                ->active()
+                ->where(function ($query) use ($monthStart, $monthEnd) {
+                    $query->where(function ($q) use ($monthStart, $monthEnd) {
+                        $q->where('start_date', '<=', $monthEnd)
+                          ->where('end_date', '>=', $monthStart);
+                    });
+                })
+                ->get();
+
+            $totalBudget = 0;
+            foreach ($monthlyBudgets as $budgetItem) {
+                $currency = $budgetItem->currency ?? config('currency.default', 'MKD');
+                $totalBudget += $this->currencyService->convertToDefault($budgetItem->amount, $currency);
+            }
+
+            // If no budget set, use 0 or a calculated average
+            $budget[] = $totalBudget > 0 ? $totalBudget : 0;
 
             $current->addMonth();
         }
@@ -177,24 +200,34 @@ class DashboardController extends Controller
      */
     private function getPortfolioPerformanceData($startDate, $endDate)
     {
-        // This would typically come from historical investment data
-        // For now, we'll generate sample data based on current portfolio
-        $currentValue = Investment::active()->sum('current_value');
-        $currentReturn = Investment::active()->sum('realized_gain_loss');
-
+        $userId = auth()->id();
         $labels = [];
         $values = [];
         $returns = [];
 
+        // Get current investment values
+        $currentInvestments = Investment::where('user_id', $userId)->active()->get();
+        $currentTotalValue = $currentInvestments->sum('current_value');
+        $currentTotalCost = $currentInvestments->sum('initial_investment');
+
         $current = $startDate->copy();
         $monthCount = 0;
-        while ($current->lte($endDate) && $monthCount < 12) {
-            $labels[] = $current->format('M');
 
-            // Simulate portfolio growth with some volatility
-            $growthFactor = 1 + ($monthCount * 0.02) + (rand(-10, 10) / 100);
-            $values[] = $currentValue * $growthFactor;
-            $returns[] = $currentReturn * $growthFactor;
+        while ($current->lte($endDate) && $monthCount < 12) {
+            $labels[] = $current->format('M Y');
+
+            // Get investments that existed at this point in time
+            $monthEnd = $current->copy()->endOfMonth();
+            $investmentsAtTime = Investment::where('user_id', $userId)
+                ->where('purchase_date', '<=', $monthEnd)
+                ->get();
+
+            $monthValue = $investmentsAtTime->sum('current_value');
+            $monthCost = $investmentsAtTime->sum('initial_investment');
+            $monthReturn = $monthValue - $monthCost;
+
+            $values[] = (float) $monthValue;
+            $returns[] = (float) $monthReturn;
 
             $current->addMonth();
             $monthCount++;
@@ -231,25 +264,48 @@ class DashboardController extends Controller
      */
     private function getMonthlySpendingByCategory($month)
     {
-        $subscriptionCost = Subscription::active()
+        $userId = auth()->id();
+
+        $subscriptionCost = Subscription::where('user_id', $userId)
+            ->active()
             ->get()
             ->sum(function ($sub) {
                 return $this->currencyService->convertToDefault($sub->cost, $sub->currency ?? config('currency.default', 'MKD'));
             });
 
-        $utilityBills = UtilityBill::whereYear('due_date', $month->year)
+        $utilityBills = UtilityBill::where('user_id', $userId)
+            ->whereYear('due_date', $month->year)
             ->whereMonth('due_date', $month->month)
             ->get()
             ->sum(function ($bill) {
                 return $this->currencyService->convertToDefault($bill->bill_amount, $bill->currency ?? config('currency.default', 'MKD'));
             });
 
+        // Get actual expense data by category for the month
+        $categoryExpenses = Expense::where('user_id', $userId)
+            ->whereYear('expense_date', $month->year)
+            ->whereMonth('expense_date', $month->month)
+            ->selectRaw('category, SUM(amount) as total')
+            ->groupBy('category')
+            ->get()
+            ->mapWithKeys(function ($expense) {
+                $currency = config('currency.default', 'MKD');
+                return [
+                    strtolower($expense->category ?? 'other') =>
+                        $this->currencyService->convertToDefault($expense->total, $currency)
+                ];
+            });
+
+        $foodExpenses = $categoryExpenses->get('food', 0);
+        $transportExpenses = $categoryExpenses->get('transport', 0);
+        $entertainmentExpenses = $categoryExpenses->get('entertainment', 0);
+
         return [
             $subscriptionCost / 1000, // Convert to thousands for better chart readability
             $utilityBills / 1000,
-            15, // Sample food expenses
-            8,  // Sample transport expenses
-            5,   // Sample entertainment expenses
+            $foodExpenses / 1000,
+            $transportExpenses / 1000,
+            $entertainmentExpenses / 1000,
         ];
     }
 
