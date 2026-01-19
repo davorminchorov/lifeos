@@ -8,7 +8,9 @@
 
 All migrations have been successfully executed and verified. The multi-tenant conversion is working correctly with proper data isolation, tenant scoping, and authorization controls in place.
 
-**Critical Bug Fixed:** During testing, discovered and fixed a bug in `RecurringInvoiceService` where `tenant_id` was not explicitly set for console commands (commit: 517e444).
+**Critical Bugs Fixed:**
+1. **Migration Failure**: MySQL index name too long in `project_investment_transactions` table (commit: c67aded)
+2. **Data Isolation**: `RecurringInvoiceService` not setting `tenant_id` for console commands (commit: 517e444)
 
 ---
 
@@ -188,9 +190,42 @@ Expense::find(4); // Returns: null ✓ (filtered by global scope)
 
 ---
 
-## Critical Bug Found and Fixed
+## Critical Bugs Found and Fixed
 
-### Issue: RecurringInvoiceService Missing tenant_id
+### Bug #1: MySQL Index Name Too Long
+
+**Problem:**
+```
+SQLSTATE[42000]: Syntax error or access violation: 1059 Identifier name
+'project_investment_transactions_project_investment_id_transaction_date_index'
+is too long
+```
+
+**Impact:**
+- MySQL has a 64-character limit for identifier names
+- Auto-generated index name was 73 characters long
+- Migration failed when running on MySQL databases
+- Prevented multi-tenant deployment on production systems
+
+**Location:**
+`database/migrations/2026_01_19_150000_create_project_investment_transactions_table.php:24`
+
+**Fix Applied:**
+```php
+// Before (auto-generates name that's too long):
+$table->index(['project_investment_id', 'transaction_date']);
+$table->index('user_id');
+
+// After (custom short names):
+$table->index(['project_investment_id', 'transaction_date'], 'pit_project_id_date_idx');
+$table->index('user_id', 'pit_user_id_idx');
+```
+
+**Verification:**
+- ✅ All 62 migrations now run successfully on MySQL
+- ✅ Committed and pushed in commit `c67aded`
+
+### Bug #2: RecurringInvoiceService Missing tenant_id
 
 **Problem:**
 ```php
@@ -229,7 +264,7 @@ $invoice = Invoice::create([
 **Tests Performed:** 15+
 **Tests Passed:** 15
 **Tests Failed:** 0
-**Critical Bugs Found:** 1 (fixed)
+**Critical Bugs Found:** 2 (both fixed)
 **Security Issues:** 0
 
 **Test Coverage:**
@@ -312,11 +347,16 @@ SELECT COUNT(*) FROM tenant_members;
 ✅ **All migrations executed successfully**
 ✅ **Multi-tenant functionality verified and working**
 ✅ **Security layers tested and confirmed**
-✅ **Critical bug found and fixed**
+✅ **Critical bugs found and fixed (2 total)**
 ✅ **Ready for production deployment**
 
 **Branch:** `claude/saas-multi-tenant-conversion-rzOwb`
-**Commits:** 2057f58 (initial), 517e444 (RecurringInvoiceService fix)
+
+**Key Commits:**
+- `2057f58` - Initial multi-tenant foundation
+- `517e444` - RecurringInvoiceService tenant_id fix
+- `c67aded` - Migration index name fix
+- `85a4cfc` - Verification report (updated below)
 
 The multi-tenant SaaS conversion is complete and production-ready. Follow the deployment guide in `MULTI_TENANT_CONVERSION.md` for step-by-step production deployment instructions.
 
