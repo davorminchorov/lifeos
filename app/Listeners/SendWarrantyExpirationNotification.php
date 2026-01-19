@@ -4,6 +4,7 @@ namespace App\Listeners;
 
 use App\Events\WarrantyExpirationDue;
 use App\Notifications\WarrantyExpirationAlert;
+use App\Support\NotificationDeduplicator;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Log;
 
@@ -20,6 +21,13 @@ class SendWarrantyExpirationNotification implements ShouldQueue
 
             if (empty($enabledChannels)) {
                 Log::info("Skipping notification for warranty {$warranty->id} - user has disabled all channels");
+
+                return;
+            }
+
+            // Prevent duplicate sends across jobs/listeners within the same day
+            if (! NotificationDeduplicator::acquire('warranty_expiration', $user->id, 'warranty', $warranty->id, 'D'.$days)) {
+                Log::info("Skipping duplicate warranty expiration notification for warranty {$warranty->id} (days {$days})");
 
                 return;
             }

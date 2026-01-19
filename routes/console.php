@@ -56,13 +56,6 @@ Schedule::command('subscriptions:update-next-billing --dispatch-job')
     ->name('subscription-update-next-billing')
     ->description('Advance subscription next_billing_date for due or overdue subscriptions');
 
-// Alternative direct execution in debug
-Schedule::command('subscriptions:update-next-billing')
-    ->dailyAt('00:15')
-    ->name('subscription-update-next-billing-direct')
-    ->description('Advance subscription next_billing_date (direct execution)')
-    ->when(config('app.debug', false)); // Only in debug mode
-
 // Schedule Gmail receipt sync to run every hour
 Schedule::command('gmail:sync-receipts --all --queue')
     ->hourly()

@@ -76,18 +76,26 @@ class Warranty extends Model
     // Check if warranty is expired
     public function getIsExpiredAttribute()
     {
-        return $this->warranty_expiration_date->isPast();
+        return $this->warranty_expiration_date && $this->warranty_expiration_date->isPast();
     }
 
     // Get days until warranty expires
     public function getDaysUntilExpirationAttribute()
     {
+        if (! $this->warranty_expiration_date) {
+            return null;
+        }
+
         return (int) round(now()->startOfDay()->diffInDays($this->warranty_expiration_date->startOfDay(), false));
     }
 
     // Get warranty remaining percentage
     public function getWarrantyRemainingPercentageAttribute()
     {
+        if (! $this->warranty_expiration_date || ! $this->purchase_date) {
+            return 0;
+        }
+
         $totalDays = $this->purchase_date->startOfDay()->diffInDays($this->warranty_expiration_date->startOfDay());
         $remainingDays = max(0, now()->startOfDay()->diffInDays($this->warranty_expiration_date->startOfDay(), false));
 
