@@ -21,18 +21,27 @@ class InvoiceItemFactory extends Factory
     public function definition(): array
     {
         $quantity = fake()->numberBetween(1, 10);
-        $unitPrice = fake()->numberBetween(1000, 50000); // $10 to $500
-        $lineTotal = $quantity * $unitPrice;
+        $unitAmount = fake()->numberBetween(1000, 50000); // $10 to $500
+        $amount = (int) round($quantity * $unitAmount);
+        $taxAmount = 0;
+        $discountAmount = 0;
+        $totalAmount = $amount + $taxAmount - $discountAmount;
 
         return [
             'invoice_id' => Invoice::factory(),
+            'name' => fake()->words(3, true),
             'description' => fake()->sentence(),
             'quantity' => $quantity,
-            'unit_price' => $unitPrice,
-            'line_total' => $lineTotal,
+            'unit_amount' => $unitAmount,
+            'currency' => 'USD',
             'tax_rate_id' => null,
+            'tax_amount' => $taxAmount,
             'discount_id' => null,
-            'notes' => fake()->optional()->sentence(),
+            'discount_amount' => $discountAmount,
+            'amount' => $amount,
+            'total_amount' => $totalAmount,
+            'metadata' => null,
+            'sort_order' => 1,
         ];
     }
 }

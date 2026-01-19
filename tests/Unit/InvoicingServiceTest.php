@@ -133,7 +133,7 @@ class InvoicingServiceTest extends TestCase
     public function test_issue_invoice_sets_status_and_date()
     {
         $invoice = Invoice::factory()
-            ->has(InvoiceItem::factory()->count(1))
+            ->has(InvoiceItem::factory()->count(1), 'items')
             ->create([
                 'user_id' => $this->user->id,
                 'customer_id' => $this->customer->id,
@@ -142,13 +142,13 @@ class InvoicingServiceTest extends TestCase
                 'amount_due' => 10000,
             ]);
 
-        $this->service->issueInvoice($invoice);
+        $this->service->issue($invoice);
 
         $invoice->refresh();
 
         $this->assertEquals(InvoiceStatus::ISSUED, $invoice->status);
         $this->assertNotNull($invoice->issued_at);
-        $this->assertNotNull($invoice->due_date);
+        $this->assertNotNull($invoice->due_at);
         $this->assertNotNull($invoice->number);
     }
 
@@ -160,7 +160,7 @@ class InvoicingServiceTest extends TestCase
             'status' => InvoiceStatus::ISSUED,
         ]);
 
-        $this->service->voidInvoice($invoice);
+        $this->service->void($invoice);
 
         $invoice->refresh();
 
@@ -196,10 +196,16 @@ class InvoicingServiceTest extends TestCase
 
         // Add an item manually
         $invoice->items()->create([
-            'description' => 'Test Item',
+            'name' => 'Test Item',
+            'description' => 'Test Item Description',
             'quantity' => 2,
-            'unit_price' => 10000, // $100 each
-            'line_total' => 20000, // $200 total
+            'unit_amount' => 10000, // $100 each
+            'currency' => 'USD',
+            'amount' => 20000, // $200 total
+            'tax_amount' => 0,
+            'discount_amount' => 0,
+            'total_amount' => 20000,
+            'sort_order' => 1,
         ]);
 
         $this->service->recalculateTotals($invoice);
