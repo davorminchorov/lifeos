@@ -11,6 +11,7 @@ use App\Http\Controllers\GmailReceiptController;
 use App\Http\Controllers\HolidayController;
 use App\Http\Controllers\InvestmentController;
 use App\Http\Controllers\ProjectInvestmentController;
+use App\Http\Controllers\ProjectInvestmentTransactionController;
 use App\Http\Controllers\IouController;
 use App\Http\Controllers\JobApplicationAnalyticsController;
 use App\Http\Controllers\JobApplicationController;
@@ -125,6 +126,14 @@ Route::middleware('auth')->group(function () {
     Route::get('project-investments/analytics', [ProjectInvestmentController::class, 'analytics'])->name('project-investments.analytics');
     Route::resource('project-investments', ProjectInvestmentController::class);
     Route::post('project-investments/{project_investment}/update-value', [ProjectInvestmentController::class, 'updateValue'])->name('project-investments.update-value');
+
+    // Project Investment Transaction Routes
+    Route::get('project-investments/{project_investment}/transactions', [ProjectInvestmentTransactionController::class, 'index'])->name('project-investment-transactions.index');
+    Route::get('project-investments/{project_investment}/transactions/create', [ProjectInvestmentTransactionController::class, 'create'])->name('project-investment-transactions.create');
+    Route::post('project-investments/{project_investment}/transactions', [ProjectInvestmentTransactionController::class, 'store'])->name('project-investment-transactions.store');
+    Route::get('project-investment-transactions/{project_investment_transaction}/edit', [ProjectInvestmentTransactionController::class, 'edit'])->name('project-investment-transactions.edit');
+    Route::put('project-investment-transactions/{project_investment_transaction}', [ProjectInvestmentTransactionController::class, 'update'])->name('project-investment-transactions.update');
+    Route::delete('project-investment-transactions/{project_investment_transaction}', [ProjectInvestmentTransactionController::class, 'destroy'])->name('project-investment-transactions.destroy');
 
     Route::resource('expenses', ExpenseController::class);
     Route::get('expenses/analytics', [ExpenseController::class, 'analytics'])->name('expenses.analytics');

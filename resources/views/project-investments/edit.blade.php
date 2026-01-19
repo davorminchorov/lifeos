@@ -114,44 +114,13 @@
                 <!-- Investment Details -->
                 <div class="border-t border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)] pt-6">
                     <h3 class="text-lg font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] mb-4">Investment Details</h3>
+                    <div class="mb-4 p-4 bg-[color:var(--color-info-50)] dark:bg-[color:var(--color-info-900)] border border-[color:var(--color-info-200)] dark:border-[color:var(--color-info-700)] rounded-md">
+                        <p class="text-sm text-[color:var(--color-info-700)] dark:text-[color:var(--color-info-200)]">
+                            Investment amounts are now managed through the Investment History section on the project details page. You can add, edit, or delete individual investments there.
+                        </p>
+                    </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label for="investment_amount" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Investment Amount *</label>
-                            <div class="mt-1 relative rounded-md shadow-sm">
-                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <span class="text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] sm:text-sm">$</span>
-                                </div>
-                                <input type="number" step="0.01" name="investment_amount" id="investment_amount" required min="0"
-                                       value="{{ old('investment_amount', $projectInvestment->investment_amount) }}"
-                                       class="block w-full pl-7 pr-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]"
-                                       placeholder="0.00">
-                            </div>
-                            @error('investment_amount')
-                                <p class="mt-1 text-sm text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <div>
-                            <label for="currency" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Currency</label>
-                            <select name="currency" id="currency"
-                                    class="mt-1 block w-full px-3 py-2 border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] rounded-md shadow-sm focus:outline-none focus:ring-[color:var(--color-accent-500)] focus:border-[color:var(--color-accent-500)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
-                                <option value="MKD" {{ old('currency', $projectInvestment->currency) === 'MKD' ? 'selected' : '' }}>MKD - Macedonian Denar</option>
-                                <option value="USD" {{ old('currency', $projectInvestment->currency) === 'USD' ? 'selected' : '' }}>USD ($) - US Dollar</option>
-                                <option value="EUR" {{ old('currency', $projectInvestment->currency) === 'EUR' ? 'selected' : '' }}>EUR - Euro</option>
-                                <option value="GBP" {{ old('currency', $projectInvestment->currency) === 'GBP' ? 'selected' : '' }}>GBP - British Pound</option>
-                                <option value="CAD" {{ old('currency', $projectInvestment->currency) === 'CAD' ? 'selected' : '' }}>CAD - Canadian Dollar</option>
-                                <option value="AUD" {{ old('currency', $projectInvestment->currency) === 'AUD' ? 'selected' : '' }}>AUD - Australian Dollar</option>
-                                <option value="JPY" {{ old('currency', $projectInvestment->currency) === 'JPY' ? 'selected' : '' }}>JPY - Japanese Yen</option>
-                                <option value="CHF" {{ old('currency', $projectInvestment->currency) === 'CHF' ? 'selected' : '' }}>CHF - Swiss Franc</option>
-                                <option value="RSD" {{ old('currency', $projectInvestment->currency) === 'RSD' ? 'selected' : '' }}>RSD - Serbian Dinar</option>
-                                <option value="BGN" {{ old('currency', $projectInvestment->currency) === 'BGN' ? 'selected' : '' }}>BGN - Bulgarian Lev</option>
-                            </select>
-                            @error('currency')
-                                <p class="mt-1 text-sm text-[color:var(--color-danger-600)] dark:text-[color:var(--color-danger-400)]">{{ $message }}</p>
-                            @enderror
-                        </div>
-
                         <div>
                             <label for="current_value" class="block text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">Current Value</label>
                             <div class="mt-1 relative rounded-md shadow-sm">
