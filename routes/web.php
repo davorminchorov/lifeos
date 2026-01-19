@@ -37,6 +37,7 @@ use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\InvoicingDashboardController;
 use App\Http\Controllers\RecurringInvoiceController;
 use App\Http\Controllers\RecurringInvoiceItemController;
+use App\Http\Controllers\TenantController;
 use Illuminate\Support\Facades\Route;
 
 // Authentication Routes
@@ -49,12 +50,31 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth')->n
 
 // Protected Routes - Require Authentication
 Route::middleware('auth')->group(function () {
-    // Dashboard Routes
-    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
-    Route::get('/dashboard/chart-data', [DashboardController::class, 'getChartData'])->name('dashboard.chart-data');
+    // Tenant Management Routes (without tenant middleware - needed for initial setup)
+    Route::prefix('tenants')->name('tenants.')->group(function () {
+        Route::get('/select', [TenantController::class, 'select'])->name('select');
+        Route::get('/create', [TenantController::class, 'create'])->name('create');
+        Route::post('/', [TenantController::class, 'store'])->name('store');
+    });
 
-    // Profile Routes
+    // Routes requiring tenant context
+    Route::middleware('tenant')->group(function () {
+        // Dashboard Routes
+        Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
+        Route::get('/dashboard/chart-data', [DashboardController::class, 'getChartData'])->name('dashboard.chart-data');
+
+        // Tenant Management Routes (with tenant middleware - require active tenant)
+        Route::prefix('tenants')->name('tenants.')->group(function () {
+            Route::get('/', [TenantController::class, 'index'])->name('index');
+            Route::get('/{tenant}', [TenantController::class, 'show'])->name('show');
+            Route::get('/{tenant}/edit', [TenantController::class, 'edit'])->name('edit');
+            Route::patch('/{tenant}', [TenantController::class, 'update'])->name('update');
+            Route::delete('/{tenant}', [TenantController::class, 'destroy'])->name('destroy');
+            Route::post('/{tenant}/switch', [TenantController::class, 'switch'])->name('switch');
+        });
+
+        // Profile Routes
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -302,4 +322,5 @@ Route::middleware('auth')->group(function () {
         Route::delete('recurring-invoices/{recurring_invoice}/items/{item}', [RecurringInvoiceItemController::class, 'destroy'])
             ->name('recurring-invoices.items.destroy');
     });
-});
+    }); // End of tenant middleware group
+}); // End of auth middleware group

@@ -36,12 +36,12 @@ class DashboardController extends Controller
         $insights = $this->getUserEngagementInsights();
 
         // Get recent activity
-        $recent_expenses = Expense::with('user')
+        $recent_expenses = Expense::where('user_id', auth()->id())
             ->orderBy('expense_date', 'desc')
             ->limit(5)
             ->get();
 
-        $upcoming_bills = UtilityBill::with('user')
+        $upcoming_bills = UtilityBill::where('user_id', auth()->id())
             ->where('payment_status', 'pending')
             ->orderBy('due_date', 'asc')
             ->limit(5)
@@ -95,7 +95,8 @@ class DashboardController extends Controller
             $yearMonth = 'YEAR(expense_date) as year, MONTH(expense_date) as month';
         }
 
-        $expenses = Expense::whereBetween('expense_date', [$startDate, $endDate])
+        $expenses = Expense::where('user_id', auth()->id())
+            ->whereBetween('expense_date', [$startDate, $endDate])
             ->selectRaw("{$yearMonth}, SUM(amount) as total")
             ->groupBy('year', 'month')
             ->orderBy('year')
@@ -156,8 +157,11 @@ class DashboardController extends Controller
      */
     private function getCategoryBreakdownData($startDate, $endDate)
     {
+        $userId = auth()->id();
+
         // Get subscription costs
-        $subscriptionCost = Subscription::active()
+        $subscriptionCost = Subscription::where('user_id', $userId)
+            ->active()
             ->get()
             ->sum(function ($sub) {
                 $currency = $sub->currency ?: config('currency.default', 'MKD');
@@ -166,7 +170,8 @@ class DashboardController extends Controller
             });
 
         // Get utility bills
-        $utilityBills = UtilityBill::whereBetween('due_date', [$startDate, $endDate])
+        $utilityBills = UtilityBill::where('user_id', $userId)
+            ->whereBetween('due_date', [$startDate, $endDate])
             ->get()
             ->sum(function ($bill) {
                 $currency = $bill->currency ?: config('currency.default', 'MKD');
@@ -175,7 +180,8 @@ class DashboardController extends Controller
             });
 
         // Get expenses by category (if you have categories)
-        $expenses = Expense::whereBetween('expense_date', [$startDate, $endDate])
+        $expenses = Expense::where('user_id', $userId)
+            ->whereBetween('expense_date', [$startDate, $endDate])
             ->selectRaw('category, SUM(amount) as total')
             ->groupBy('category')
             ->get();
@@ -314,9 +320,11 @@ class DashboardController extends Controller
      */
     private function getStats(): array
     {
+        $userId = auth()->id();
+
         // Subscription stats with currency conversion to MKD
-        $activeSubscriptions = Subscription::active()->count();
-        $subscriptions = Subscription::active()->get();
+        $activeSubscriptions = Subscription::where('user_id', $userId)->active()->count();
+        $subscriptions = Subscription::where('user_id', $userId)->active()->get();
         $monthlySubscriptionCostMKD = 0;
 
         foreach ($subscriptions as $subscription) {
@@ -326,9 +334,9 @@ class DashboardController extends Controller
         }
 
         // Contract stats with currency conversion to MKD
-        $activeContracts = Contract::active()->count();
-        $contractsExpiringSoon = Contract::expiringSoon(30)->count();
-        $contracts = Contract::active()->whereNotNull('contract_value')->get();
+        $activeContracts = Contract::where('user_id', $userId)->active()->count();
+        $contractsExpiringSoon = Contract::where('user_id', $userId)->expiringSoon(30)->count();
+        $contracts = Contract::where('user_id', $userId)->active()->whereNotNull('contract_value')->get();
         $totalContractValueMKD = 0;
 
         foreach ($contracts as $contract) {
@@ -338,14 +346,14 @@ class DashboardController extends Controller
         }
 
         // Investment stats - assuming these are already in base currency
-        $activeInvestments = Investment::active()->get();
+        $activeInvestments = Investment::where('user_id', $userId)->active()->get();
         $totalInvestments = $activeInvestments->count();
         $portfolioValue = $activeInvestments->sum('current_value');
         $totalReturn = $activeInvestments->sum('realized_gain_loss');
 
         // Utility bills with currency conversion to MKD
-        $pendingBills = UtilityBill::pending()->count();
-        $bills = UtilityBill::pending()->get();
+        $pendingBills = UtilityBill::where('user_id', $userId)->pending()->count();
+        $bills = UtilityBill::where('user_id', $userId)->pending()->get();
         $totalPendingBillsMKD = 0;
 
         foreach ($bills as $bill) {
@@ -355,8 +363,8 @@ class DashboardController extends Controller
         }
 
         // Current month expenses with currency conversion to MKD
-        $totalExpenses = Expense::currentMonth()->count();
-        $expenses = Expense::currentMonth()->get();
+        $totalExpenses = Expense::where('user_id', $userId)->currentMonth()->count();
+        $expenses = Expense::where('user_id', $userId)->currentMonth()->get();
         $totalExpensesMKD = 0;
 
         foreach ($expenses as $expense) {
@@ -366,7 +374,7 @@ class DashboardController extends Controller
         }
 
         // Other stats
-        $totalWarranties = Warranty::active()->count();
+        $totalWarranties = Warranty::where('user_id', $userId)->active()->count();
 
         return [
             'active_subscriptions' => $activeSubscriptions,
@@ -396,10 +404,11 @@ class DashboardController extends Controller
      */
     private function getAlerts(): array
     {
+        $userId = auth()->id();
         $alerts = [];
 
         // Subscription renewals due soon
-        $subscriptionsDueSoon = Subscription::dueSoon(7)->get();
+        $subscriptionsDueSoon = Subscription::where('user_id', $userId)->dueSoon(7)->get();
         foreach ($subscriptionsDueSoon as $subscription) {
             $alerts[] = [
                 'type' => 'warning',
@@ -411,7 +420,7 @@ class DashboardController extends Controller
         }
 
         // Contracts expiring soon
-        $contractsExpiringSoon = Contract::expiringSoon(30)->get();
+        $contractsExpiringSoon = Contract::where('user_id', $userId)->expiringSoon(30)->get();
         foreach ($contractsExpiringSoon as $contract) {
             $alerts[] = [
                 'type' => 'warning',
@@ -423,7 +432,7 @@ class DashboardController extends Controller
         }
 
         // Warranties expiring soon
-        $warrantiesExpiringSoon = Warranty::expiringSoon(30)->get();
+        $warrantiesExpiringSoon = Warranty::where('user_id', $userId)->expiringSoon(30)->get();
         foreach ($warrantiesExpiringSoon as $warranty) {
             $alerts[] = [
                 'type' => 'info',
@@ -435,7 +444,7 @@ class DashboardController extends Controller
         }
 
         // Overdue bills
-        $overdueBills = UtilityBill::overdue()->get();
+        $overdueBills = UtilityBill::where('user_id', $userId)->overdue()->get();
         foreach ($overdueBills as $bill) {
             $currency = $bill->currency ?? config('currency.default', 'MKD');
             $amountInMKD = $this->currencyService->convertToDefault($bill->bill_amount, $currency);
@@ -450,7 +459,7 @@ class DashboardController extends Controller
         }
 
         // Bills due soon
-        $billsDueSoon = UtilityBill::dueSoon(7)->get();
+        $billsDueSoon = UtilityBill::where('user_id', $userId)->dueSoon(7)->get();
         foreach ($billsDueSoon as $bill) {
             $currency = $bill->currency ?? config('currency.default', 'MKD');
             $amountInMKD = $this->currencyService->convertToDefault($bill->bill_amount, $currency);

@@ -20,7 +20,7 @@ class BudgetPolicy
      */
     public function view(User $user, Budget $budget): bool
     {
-        return $budget->user_id === $user->id;
+        return $this->belongsToUserAndTenant($user, $budget);
     }
 
     /**
@@ -28,7 +28,7 @@ class BudgetPolicy
      */
     public function create(User $user): bool
     {
-        return true;
+        return $user->current_tenant_id !== null;
     }
 
     /**
@@ -36,7 +36,7 @@ class BudgetPolicy
      */
     public function update(User $user, Budget $budget): bool
     {
-        return $budget->user_id === $user->id;
+        return $this->belongsToUserAndTenant($user, $budget);
     }
 
     /**
@@ -44,7 +44,7 @@ class BudgetPolicy
      */
     public function delete(User $user, Budget $budget): bool
     {
-        return $budget->user_id === $user->id;
+        return $this->belongsToUserAndTenant($user, $budget);
     }
 
     /**
@@ -52,7 +52,7 @@ class BudgetPolicy
      */
     public function restore(User $user, Budget $budget): bool
     {
-        return $budget->user_id === $user->id;
+        return $this->belongsToUserAndTenant($user, $budget);
     }
 
     /**
@@ -60,6 +60,15 @@ class BudgetPolicy
      */
     public function forceDelete(User $user, Budget $budget): bool
     {
-        return $budget->user_id === $user->id;
+        return $this->belongsToUserAndTenant($user, $budget);
+    }
+
+    /**
+     * Check if the model belongs to the user and their current tenant.
+     */
+    protected function belongsToUserAndTenant(User $user, Budget $budget): bool
+    {
+        return $budget->user_id === $user->id
+            && $budget->tenant_id === $user->current_tenant_id;
     }
 }

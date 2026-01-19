@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Services\CurrencyService;
+use App\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -10,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ProjectInvestment extends Model
 {
-    use HasFactory;
+    use BelongsToTenant, HasFactory;
 
     /**
      * Cached CurrencyService instance.
@@ -30,6 +31,7 @@ class ProjectInvestment extends Model
     }
 
     protected $fillable = [
+        'tenant_id',
         'user_id',
         'name',
         'project_type',

@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\BillingInterval;
 use App\Enums\RecurringStatus;
 use App\Enums\TaxBehavior;
+use App\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -44,9 +45,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class RecurringInvoice extends Model
 {
-    use HasFactory;
+    use BelongsToTenant, HasFactory;
 
     protected $fillable = [
+        'tenant_id',
         'user_id',
         'customer_id',
         'name',
