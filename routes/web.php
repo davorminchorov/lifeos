@@ -37,6 +37,7 @@ use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\InvoicingDashboardController;
 use App\Http\Controllers\RecurringInvoiceController;
 use App\Http\Controllers\RecurringInvoiceItemController;
+use App\Http\Controllers\TenantController;
 use Illuminate\Support\Facades\Route;
 
 // Authentication Routes
@@ -53,6 +54,19 @@ Route::middleware('auth')->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
     Route::get('/dashboard/chart-data', [DashboardController::class, 'getChartData'])->name('dashboard.chart-data');
+
+    // Tenant Management Routes
+    Route::prefix('tenants')->name('tenants.')->group(function () {
+        Route::get('/', [TenantController::class, 'index'])->name('index');
+        Route::get('/select', [TenantController::class, 'select'])->name('select');
+        Route::get('/create', [TenantController::class, 'create'])->name('create');
+        Route::post('/', [TenantController::class, 'store'])->name('store');
+        Route::get('/{tenant}', [TenantController::class, 'show'])->name('show');
+        Route::get('/{tenant}/edit', [TenantController::class, 'edit'])->name('edit');
+        Route::patch('/{tenant}', [TenantController::class, 'update'])->name('update');
+        Route::delete('/{tenant}', [TenantController::class, 'destroy'])->name('destroy');
+        Route::post('/{tenant}/switch', [TenantController::class, 'switch'])->name('switch');
+    });
 
     // Profile Routes
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
