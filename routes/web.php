@@ -26,6 +26,16 @@ use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\UtilityBillController;
 use App\Http\Controllers\WarrantyController;
+use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\InvoiceItemController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\CreditNoteController;
+use App\Http\Controllers\TaxRateController;
+use App\Http\Controllers\DiscountController;
+use App\Http\Controllers\InvoicingDashboardController;
+use App\Http\Controllers\RecurringInvoiceController;
+use App\Http\Controllers\RecurringInvoiceItemController;
 use Illuminate\Support\Facades\Route;
 
 // Authentication Routes
@@ -205,4 +215,82 @@ Route::middleware('auth')->group(function () {
 
     // Holidays Routes
     Route::get('/holidays', [HolidayController::class, 'index'])->name('holidays.index');
+
+    // Invoicing Routes
+    Route::prefix('invoicing')->name('invoicing.')->group(function () {
+        // Dashboard
+        Route::get('/dashboard', [InvoicingDashboardController::class, 'index'])->name('dashboard');
+        Route::get('/export/invoices', [InvoicingDashboardController::class, 'exportInvoices'])->name('export.invoices');
+        Route::get('/export/payments', [InvoicingDashboardController::class, 'exportPayments'])->name('export.payments');
+
+        // Customers
+        Route::resource('customers', CustomerController::class);
+
+        // Invoices
+        Route::resource('invoices', InvoiceController::class);
+
+        // Invoice Items (nested resource)
+        Route::post('invoices/{invoice}/items', [InvoiceItemController::class, 'store'])
+            ->name('invoices.items.store');
+        Route::put('invoices/{invoice}/items/{item}', [InvoiceItemController::class, 'update'])
+            ->name('invoices.items.update');
+        Route::delete('invoices/{invoice}/items/{item}', [InvoiceItemController::class, 'destroy'])
+            ->name('invoices.items.destroy');
+
+        // Invoice Actions
+        Route::post('invoices/{invoice}/issue', [InvoiceController::class, 'issue'])
+            ->name('invoices.issue');
+        Route::post('invoices/{invoice}/void', [InvoiceController::class, 'void'])
+            ->name('invoices.void');
+
+        // Invoice PDF
+        Route::get('invoices/{invoice}/pdf', [InvoiceController::class, 'viewPdf'])
+            ->name('invoices.pdf.view');
+        Route::get('invoices/{invoice}/pdf/download', [InvoiceController::class, 'downloadPdf'])
+            ->name('invoices.pdf.download');
+
+        // Invoice Email
+        Route::post('invoices/{invoice}/send-email', [InvoiceController::class, 'sendEmail'])
+            ->name('invoices.send-email');
+        Route::post('invoices/{invoice}/send-reminder', [InvoiceController::class, 'sendReminder'])
+            ->name('invoices.send-reminder');
+
+        // Payments
+        Route::post('invoices/{invoice}/payments', [PaymentController::class, 'store'])
+            ->name('invoices.payments.store');
+        Route::get('invoices/{invoice}/payments/{payment}', [PaymentController::class, 'show'])
+            ->name('invoices.payments.show');
+        Route::delete('invoices/{invoice}/payments/{payment}', [PaymentController::class, 'destroy'])
+            ->name('invoices.payments.destroy');
+
+        // Credit Notes
+        Route::resource('credit-notes', CreditNoteController::class);
+        Route::post('credit-notes/{credit_note}/apply', [CreditNoteController::class, 'apply'])
+            ->name('credit-notes.apply');
+
+        // Tax Rates
+        Route::resource('tax-rates', TaxRateController::class)->except(['show']);
+
+        // Discounts
+        Route::resource('discounts', DiscountController::class)->except(['show']);
+
+        // Recurring Invoices
+        Route::resource('recurring-invoices', RecurringInvoiceController::class);
+        Route::post('recurring-invoices/{recurring_invoice}/pause', [RecurringInvoiceController::class, 'pause'])
+            ->name('recurring-invoices.pause');
+        Route::post('recurring-invoices/{recurring_invoice}/resume', [RecurringInvoiceController::class, 'resume'])
+            ->name('recurring-invoices.resume');
+        Route::post('recurring-invoices/{recurring_invoice}/cancel', [RecurringInvoiceController::class, 'cancel'])
+            ->name('recurring-invoices.cancel');
+        Route::post('recurring-invoices/{recurring_invoice}/generate-now', [RecurringInvoiceController::class, 'generateNow'])
+            ->name('recurring-invoices.generate-now');
+
+        // Recurring Invoice Items
+        Route::post('recurring-invoices/{recurring_invoice}/items', [RecurringInvoiceItemController::class, 'store'])
+            ->name('recurring-invoices.items.store');
+        Route::put('recurring-invoices/{recurring_invoice}/items/{item}', [RecurringInvoiceItemController::class, 'update'])
+            ->name('recurring-invoices.items.update');
+        Route::delete('recurring-invoices/{recurring_invoice}/items/{item}', [RecurringInvoiceItemController::class, 'destroy'])
+            ->name('recurring-invoices.items.destroy');
+    });
 });

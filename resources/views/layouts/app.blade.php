@@ -65,6 +65,48 @@
                                 </div>
                             </div>
 
+                            <!-- Invoicing Dropdown -->
+                            <div class="relative inline-flex items-center nav-dropdown">
+                                <button type="button" class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('invoicing.*') ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]' : 'border-transparent text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] hover:text-[color:var(--color-primary-600)] dark:hover:text-[color:var(--color-dark-400)] hover:border-[color:var(--color-primary-400)]' }} text-sm font-medium transition-colors duration-200" aria-haspopup="true" aria-expanded="false" aria-controls="menu-invoicing">
+                                    Invoicing
+                                    <svg class="ml-1 h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                                    </svg>
+                                </button>
+                                <div id="menu-invoicing" class="dropdown-menu hidden absolute top-full left-0 mt-2 w-56 rounded-lg shadow-lg bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] ring-1 ring-black/50 z-50" role="menu">
+                                    <div class="py-1">
+                                        <a href="{{ route('invoicing.dashboard') }}" role="menuitem" class="block px-4 py-2 text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] hover:bg-[color:var(--color-primary-100)] dark:hover:bg-[color:var(--color-dark-200)] transition-colors duration-200 {{ request()->routeIs('invoicing.dashboard') ? 'bg-[color:var(--color-accent-50)] text-[color:var(--color-accent-600)]' : '' }}">
+                                            <div class="font-medium">Dashboard</div>
+                                            <div class="text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)]">Analytics & reports</div>
+                                        </a>
+                                        <a href="{{ route('invoicing.customers.index') }}" role="menuitem" class="block px-4 py-2 text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] hover:bg-[color:var(--color-primary-100)] dark:hover:bg-[color:var(--color-dark-200)] transition-colors duration-200 {{ request()->routeIs('invoicing.customers.*') ? 'bg-[color:var(--color-accent-50)] text-[color:var(--color-accent-600)]' : '' }}">
+                                            <div class="font-medium">Customers</div>
+                                            <div class="text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)]">Manage customers</div>
+                                        </a>
+                                        <a href="{{ route('invoicing.invoices.index') }}" role="menuitem" class="block px-4 py-2 text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] hover:bg-[color:var(--color-primary-100)] dark:hover:bg-[color:var(--color-dark-200)] transition-colors duration-200 {{ request()->routeIs('invoicing.invoices.*') ? 'bg-[color:var(--color-accent-50)] text-[color:var(--color-accent-600)]' : '' }}">
+                                            <div class="font-medium">Invoices</div>
+                                            <div class="text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)]">Create & manage invoices</div>
+                                        </a>
+                                        <a href="{{ route('invoicing.recurring-invoices.index') }}" role="menuitem" class="block px-4 py-2 text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] hover:bg-[color:var(--color-primary-100)] dark:hover:bg-[color:var(--color-dark-200)] transition-colors duration-200 {{ request()->routeIs('invoicing.recurring-invoices.*') ? 'bg-[color:var(--color-accent-50)] text-[color:var(--color-accent-600)]' : '' }}">
+                                            <div class="font-medium">Recurring Invoices</div>
+                                            <div class="text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)]">Subscription billing</div>
+                                        </a>
+                                        <a href="{{ route('invoicing.credit-notes.index') }}" role="menuitem" class="block px-4 py-2 text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] hover:bg-[color:var(--color-primary-100)] dark:hover:bg-[color:var(--color-dark-200)] transition-colors duration-200 {{ request()->routeIs('invoicing.credit-notes.*') ? 'bg-[color:var(--color-accent-50)] text-[color:var(--color-accent-600)]' : '' }}">
+                                            <div class="font-medium">Credit Notes</div>
+                                            <div class="text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)]">Manage credit notes</div>
+                                        </a>
+                                        <a href="{{ route('invoicing.tax-rates.index') }}" role="menuitem" class="block px-4 py-2 text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] hover:bg-[color:var(--color-primary-100)] dark:hover:bg-[color:var(--color-dark-200)] transition-colors duration-200 {{ request()->routeIs('invoicing.tax-rates.*') ? 'bg-[color:var(--color-accent-50)] text-[color:var(--color-accent-600)]' : '' }}">
+                                            <div class="font-medium">Tax Rates</div>
+                                            <div class="text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)]">Manage tax rates</div>
+                                        </a>
+                                        <a href="{{ route('invoicing.discounts.index') }}" role="menuitem" class="block px-4 py-2 text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] hover:bg-[color:var(--color-primary-100)] dark:hover:bg-[color:var(--color-dark-200)] transition-colors duration-200 {{ request()->routeIs('invoicing.discounts.*') ? 'bg-[color:var(--color-accent-50)] text-[color:var(--color-accent-600)]' : '' }}">
+                                            <div class="font-medium">Discounts</div>
+                                            <div class="text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)]">Manage discount codes</div>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
                             <!-- Assets & Liabilities Dropdown -->
                             <div class="relative inline-flex items-center nav-dropdown">
                                 <button type="button" class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs(['investments.*', 'project-investments.*', 'contracts.*', 'warranties.*', 'ious.*']) ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]' : 'border-transparent text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)] hover:text-[color:var(--color-primary-600)] dark:hover:text-[color:var(--color-dark-400)] hover:border-[color:var(--color-primary-400)]' }} text-sm font-medium transition-colors duration-200" aria-haspopup="true" aria-expanded="false" aria-controls="menu-assets">
@@ -188,6 +230,7 @@
             @auth
             @php
                 $financeOpen = request()->routeIs(['budgets.*', 'expenses.*', 'subscriptions.*', 'utility-bills.*']);
+                $invoicingOpen = request()->routeIs('invoicing.*');
                 $assetsOpen = request()->routeIs(['investments.*', 'project-investments.*', 'contracts.*', 'warranties.*', 'ious.*']);
             @endphp
             <div id="mobile-menu" class="sm:hidden hidden">
@@ -207,6 +250,25 @@
                             <a href="{{ route('expenses.index') }}" class="block pl-8 pr-4 py-2 border-l-4 {{ request()->routeIs('expenses.*') ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-accent-600)] bg-[color:var(--color-accent-50)]' : 'border-transparent text-[color:var(--color-primary-600)] hover:text-[color:var(--color-primary-700)] hover:bg-[color:var(--color-primary-200)] hover:border-[color:var(--color-primary-400)]' }} text-sm font-medium transition-colors duration-200">Expenses</a>
                             <a href="{{ route('subscriptions.index') }}" class="block pl-8 pr-4 py-2 border-l-4 {{ request()->routeIs('subscriptions.*') ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-accent-600)] bg-[color:var(--color-accent-50)]' : 'border-transparent text-[color:var(--color-primary-600)] hover:text-[color:var(--color-primary-700)] hover:bg-[color:var(--color-primary-200)] hover:border-[color:var(--color-primary-400)]' }} text-sm font-medium transition-colors duration-200">Subscriptions</a>
                             <a href="{{ route('utility-bills.index') }}" class="block pl-8 pr-4 py-2 border-l-4 {{ request()->routeIs('utility-bills.*') ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-accent-600)] bg-[color:var(--color-accent-50)]' : 'border-transparent text-[color:var(--color-primary-600)] hover:text-[color:var(--color-primary-700)] hover:bg-[color:var(--color-primary-200)] hover:border-[color:var(--color-primary-400)]' }} text-sm font-medium transition-colors duration-200">Utility Bills</a>
+                        </div>
+                    </div>
+
+                    <!-- Invoicing Group -->
+                    <div class="mobile-nav-group">
+                        <button type="button" class="mobile-group-toggle w-full flex justify-between items-center pl-3 pr-4 py-2 border-l-4 border-transparent text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] bg-[color:var(--color-primary-100)] dark:bg-[color:var(--color-dark-200)] text-base font-semibold">
+                            Invoicing
+                            <svg class="h-5 w-5 transform transition-transform duration-200 {{ $invoicingOpen ? 'rotate-180' : '' }}" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                            </svg>
+                        </button>
+                        <div class="mobile-group-items {{ $invoicingOpen ? '' : 'hidden' }}">
+                            <a href="{{ route('invoicing.dashboard') }}" class="block pl-8 pr-4 py-2 border-l-4 {{ request()->routeIs('invoicing.dashboard') ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-accent-600)] bg-[color:var(--color-accent-50)]' : 'border-transparent text-[color:var(--color-primary-600)] hover:text-[color:var(--color-primary-700)] hover:bg-[color:var(--color-primary-200)] hover:border-[color:var(--color-primary-400)]' }} text-sm font-medium transition-colors duration-200">Dashboard</a>
+                            <a href="{{ route('invoicing.customers.index') }}" class="block pl-8 pr-4 py-2 border-l-4 {{ request()->routeIs('invoicing.customers.*') ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-accent-600)] bg-[color:var(--color-accent-50)]' : 'border-transparent text-[color:var(--color-primary-600)] hover:text-[color:var(--color-primary-700)] hover:bg-[color:var(--color-primary-200)] hover:border-[color:var(--color-primary-400)]' }} text-sm font-medium transition-colors duration-200">Customers</a>
+                            <a href="{{ route('invoicing.invoices.index') }}" class="block pl-8 pr-4 py-2 border-l-4 {{ request()->routeIs('invoicing.invoices.*') ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-accent-600)] bg-[color:var(--color-accent-50)]' : 'border-transparent text-[color:var(--color-primary-600)] hover:text-[color:var(--color-primary-700)] hover:bg-[color:var(--color-primary-200)] hover:border-[color:var(--color-primary-400)]' }} text-sm font-medium transition-colors duration-200">Invoices</a>
+                            <a href="{{ route('invoicing.recurring-invoices.index') }}" class="block pl-8 pr-4 py-2 border-l-4 {{ request()->routeIs('invoicing.recurring-invoices.*') ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-accent-600)] bg-[color:var(--color-accent-50)]' : 'border-transparent text-[color:var(--color-primary-600)] hover:text-[color:var(--color-primary-700)] hover:bg-[color:var(--color-primary-200)] hover:border-[color:var(--color-primary-400)]' }} text-sm font-medium transition-colors duration-200">Recurring Invoices</a>
+                            <a href="{{ route('invoicing.credit-notes.index') }}" class="block pl-8 pr-4 py-2 border-l-4 {{ request()->routeIs('invoicing.credit-notes.*') ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-accent-600)] bg-[color:var(--color-accent-50)]' : 'border-transparent text-[color:var(--color-primary-600)] hover:text-[color:var(--color-primary-700)] hover:bg-[color:var(--color-primary-200)] hover:border-[color:var(--color-primary-400)]' }} text-sm font-medium transition-colors duration-200">Credit Notes</a>
+                            <a href="{{ route('invoicing.tax-rates.index') }}" class="block pl-8 pr-4 py-2 border-l-4 {{ request()->routeIs('invoicing.tax-rates.*') ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-accent-600)] bg-[color:var(--color-accent-50)]' : 'border-transparent text-[color:var(--color-primary-600)] hover:text-[color:var(--color-primary-700)] hover:bg-[color:var(--color-primary-200)] hover:border-[color:var(--color-primary-400)]' }} text-sm font-medium transition-colors duration-200">Tax Rates</a>
+                            <a href="{{ route('invoicing.discounts.index') }}" class="block pl-8 pr-4 py-2 border-l-4 {{ request()->routeIs('invoicing.discounts.*') ? 'border-[color:var(--color-accent-500)] text-[color:var(--color-accent-600)] bg-[color:var(--color-accent-50)]' : 'border-transparent text-[color:var(--color-primary-600)] hover:text-[color:var(--color-primary-700)] hover:bg-[color:var(--color-primary-200)] hover:border-[color:var(--color-primary-400)]' }} text-sm font-medium transition-colors duration-200">Discounts</a>
                         </div>
                     </div>
 
