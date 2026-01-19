@@ -12,23 +12,32 @@ class CycleMenuPolicy
         return (bool) $user;
     }
 
-    public function view(?User $user, CycleMenu $cycleMenu): bool
+    public function view(User $user, CycleMenu $cycleMenu): bool
     {
-        return $user && $user->id === $cycleMenu->user_id;
+        return $this->belongsToUserAndTenant($user, $cycleMenu);
     }
 
-    public function create(?User $user): bool
+    public function create(User $user): bool
     {
-        return (bool) $user;
+        return $user->current_tenant_id !== null;
     }
 
-    public function update(?User $user, CycleMenu $cycleMenu): bool
+    public function update(User $user, CycleMenu $cycleMenu): bool
     {
-        return $user && $user->id === $cycleMenu->user_id;
+        return $this->belongsToUserAndTenant($user, $cycleMenu);
     }
 
-    public function delete(?User $user, CycleMenu $cycleMenu): bool
+    public function delete(User $user, CycleMenu $cycleMenu): bool
     {
-        return $user && $user->id === $cycleMenu->user_id;
+        return $this->belongsToUserAndTenant($user, $cycleMenu);
+    }
+
+    /**
+     * Check if the model belongs to the user and their current tenant.
+     */
+    protected function belongsToUserAndTenant(User $user, CycleMenu $cycleMenu): bool
+    {
+        return $cycleMenu->user_id === $user->id
+            && $cycleMenu->tenant_id === $user->current_tenant_id;
     }
 }

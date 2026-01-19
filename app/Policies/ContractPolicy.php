@@ -20,7 +20,7 @@ class ContractPolicy
      */
     public function view(User $user, Contract $contract): bool
     {
-        return $contract->user_id === $user->id;
+        return $this->belongsToUserAndTenant($user, $contract);
     }
 
     /**
@@ -28,7 +28,7 @@ class ContractPolicy
      */
     public function create(User $user): bool
     {
-        return true;
+        return $user->current_tenant_id !== null;
     }
 
     /**
@@ -36,7 +36,7 @@ class ContractPolicy
      */
     public function update(User $user, Contract $contract): bool
     {
-        return $contract->user_id === $user->id;
+        return $this->belongsToUserAndTenant($user, $contract);
     }
 
     /**
@@ -44,7 +44,7 @@ class ContractPolicy
      */
     public function delete(User $user, Contract $contract): bool
     {
-        return $contract->user_id === $user->id;
+        return $this->belongsToUserAndTenant($user, $contract);
     }
 
     /**
@@ -52,7 +52,7 @@ class ContractPolicy
      */
     public function restore(User $user, Contract $contract): bool
     {
-        return $contract->user_id === $user->id;
+        return $this->belongsToUserAndTenant($user, $contract);
     }
 
     /**
@@ -60,6 +60,15 @@ class ContractPolicy
      */
     public function forceDelete(User $user, Contract $contract): bool
     {
-        return $contract->user_id === $user->id;
+        return $this->belongsToUserAndTenant($user, $contract);
+    }
+
+    /**
+     * Check if the model belongs to the user and their current tenant.
+     */
+    protected function belongsToUserAndTenant(User $user, Contract $contract): bool
+    {
+        return $contract->user_id === $user->id
+            && $contract->tenant_id === $user->current_tenant_id;
     }
 }

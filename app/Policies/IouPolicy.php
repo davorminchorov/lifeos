@@ -20,7 +20,7 @@ class IouPolicy
      */
     public function view(User $user, Iou $iou): bool
     {
-        return $iou->user_id === $user->id;
+        return $this->belongsToUserAndTenant($user, $iou);
     }
 
     /**
@@ -28,7 +28,7 @@ class IouPolicy
      */
     public function create(User $user): bool
     {
-        return true;
+        return $user->current_tenant_id !== null;
     }
 
     /**
@@ -36,7 +36,7 @@ class IouPolicy
      */
     public function update(User $user, Iou $iou): bool
     {
-        return $iou->user_id === $user->id;
+        return $this->belongsToUserAndTenant($user, $iou);
     }
 
     /**
@@ -44,7 +44,7 @@ class IouPolicy
      */
     public function delete(User $user, Iou $iou): bool
     {
-        return $iou->user_id === $user->id;
+        return $this->belongsToUserAndTenant($user, $iou);
     }
 
     /**
@@ -52,7 +52,7 @@ class IouPolicy
      */
     public function restore(User $user, Iou $iou): bool
     {
-        return $iou->user_id === $user->id;
+        return $this->belongsToUserAndTenant($user, $iou);
     }
 
     /**
@@ -60,6 +60,15 @@ class IouPolicy
      */
     public function forceDelete(User $user, Iou $iou): bool
     {
-        return $iou->user_id === $user->id;
+        return $this->belongsToUserAndTenant($user, $iou);
+    }
+
+    /**
+     * Check if the model belongs to the user and their current tenant.
+     */
+    protected function belongsToUserAndTenant(User $user, Iou $iou): bool
+    {
+        return $iou->user_id === $user->id
+            && $iou->tenant_id === $user->current_tenant_id;
     }
 }

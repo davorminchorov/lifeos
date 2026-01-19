@@ -7,8 +7,17 @@ use App\Models\User;
 
 class CycleMenuDayPolicy
 {
-    public function update(?User $user, CycleMenuDay $day): bool
+    public function update(User $user, CycleMenuDay $day): bool
     {
-        return (bool) $user;
+        return $this->belongsToUserAndTenant($user, $day);
+    }
+
+    /**
+     * Check if the model belongs to the user and their current tenant.
+     */
+    protected function belongsToUserAndTenant(User $user, CycleMenuDay $day): bool
+    {
+        return $day->user_id === $user->id
+            && $day->tenant_id === $user->current_tenant_id;
     }
 }
