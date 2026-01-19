@@ -21,13 +21,7 @@ class TenantController extends Controller
      */
     public function index()
     {
-        $user = auth()->user();
-
-        $tenants = $user->tenants()
-            ->withPivot('role')
-            ->get()
-            ->merge($user->ownedTenants)
-            ->unique('id');
+        $tenants = $this->getUserAccessibleTenants();
 
         return view('tenants.index', compact('tenants'));
     }
@@ -138,14 +132,22 @@ class TenantController extends Controller
      */
     public function select()
     {
+        $tenants = $this->getUserAccessibleTenants();
+
+        return view('tenants.select', compact('tenants'));
+    }
+
+    /**
+     * Get all tenants accessible to the current user.
+     */
+    private function getUserAccessibleTenants()
+    {
         $user = auth()->user();
 
-        $tenants = $user->tenants()
+        return $user->tenants()
             ->withPivot('role')
             ->get()
             ->merge($user->ownedTenants)
             ->unique('id');
-
-        return view('tenants.select', compact('tenants'));
     }
 }

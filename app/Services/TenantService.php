@@ -9,6 +9,11 @@ use Illuminate\Support\Str;
 class TenantService
 {
     /**
+     * Valid tenant member roles.
+     */
+    private const VALID_ROLES = ['admin', 'member'];
+
+    /**
      * Get the current tenant for the authenticated user.
      */
     public function current(): ?Tenant
@@ -33,22 +38,24 @@ class TenantService
      */
     public function createTenant(User $user, string $name): Tenant
     {
-        $tenant = Tenant::create([
-            'name' => $name,
-            'slug' => Str::slug($name).'-'.Str::random(6),
-            'owner_id' => $user->id,
-        ]);
+        return \DB::transaction(function () use ($user, $name) {
+            $tenant = Tenant::create([
+                'name' => $name,
+                'slug' => Str::slug($name).'-'.Str::random(6),
+                'owner_id' => $user->id,
+            ]);
 
-        // Add the owner as a member with admin role
-        $tenant->members()->attach($user->id, ['role' => 'admin']);
+            // Add the owner as a member with admin role
+            $tenant->members()->attach($user->id, ['role' => 'admin']);
 
-        // Set as current tenant if user doesn't have one
-        if (! $user->current_tenant_id) {
-            $user->current_tenant_id = $tenant->id;
-            $user->save();
-        }
+            // Set as current tenant if user doesn't have one
+            if (! $user->current_tenant_id) {
+                $user->current_tenant_id = $tenant->id;
+                $user->save();
+            }
 
-        return $tenant;
+            return $tenant;
+        });
     }
 
     /**
@@ -56,6 +63,12 @@ class TenantService
      */
     public function addMember(Tenant $tenant, User $user, string $role = 'member'): void
     {
+        if (! in_array($role, self::VALID_ROLES, true)) {
+            throw new \InvalidArgumentException(
+                'Invalid role. Must be one of: ' . implode(', ', self::VALID_ROLES)
+            );
+        }
+
         if (! $tenant->members()->where('user_id', $user->id)->exists()) {
             $tenant->members()->attach($user->id, ['role' => $role]);
         }
@@ -66,6 +79,11 @@ class TenantService
      */
     public function removeMember(Tenant $tenant, User $user): void
     {
+        // Prevent removing the tenant owner
+        if ($tenant->owner_id === $user->id) {
+            throw new \InvalidArgumentException('Cannot remove the tenant owner from the tenant.');
+        }
+
         $tenant->members()->detach($user->id);
 
         // If this was the user's current tenant, clear it

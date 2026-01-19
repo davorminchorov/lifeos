@@ -14,7 +14,6 @@ class Refund extends Model
     use BelongsToTenant, HasFactory;
 
     protected $fillable = [
-        'tenant_id',
         'payment_id',
         'amount',
         'currency',

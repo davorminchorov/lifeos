@@ -75,12 +75,12 @@ Route::middleware('auth')->group(function () {
         });
 
         // Profile Routes
-    Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
-    Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::patch('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password.update');
+        Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
+        Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+        Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+        Route::patch('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password.update');
 
-    // Settings Routes
+        // Settings Routes
     Route::prefix('settings')->name('settings.')->group(function () {
         Route::get('/', [SettingsController::class, 'index'])->name('index');
         Route::get('/account', [SettingsController::class, 'account'])->name('account');

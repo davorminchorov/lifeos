@@ -137,7 +137,8 @@ class User extends Authenticatable
      */
     public function switchTenant(Tenant $tenant): bool
     {
-        if ($this->tenants()->where('tenants.id', $tenant->id)->exists()) {
+        if ($this->tenants()->where('tenants.id', $tenant->id)->exists()
+            || $this->ownedTenants()->where('id', $tenant->id)->exists()) {
             $this->current_tenant_id = $tenant->id;
             return $this->save();
         }

@@ -16,7 +16,7 @@ trait BelongsToTenant
         static::addGlobalScope(new TenantScope);
 
         static::creating(function ($model) {
-            if (! $model->tenant_id && auth()->check() && auth()->user()->current_tenant_id) {
+            if (auth()->check() && auth()->user()->current_tenant_id) {
                 $model->tenant_id = auth()->user()->current_tenant_id;
             }
         });

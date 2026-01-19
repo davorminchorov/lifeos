@@ -32,6 +32,10 @@ class TenantMiddleware
                 $firstOwnedTenant = $user->ownedTenants()->first();
                 $user->current_tenant_id = $firstOwnedTenant->id;
                 $user->save();
+            } else {
+                // User has no tenants, redirect to create one
+                return redirect()->route('tenants.create')
+                    ->with('info', 'Please create your first tenant to continue.');
             }
         }
 
@@ -44,7 +48,7 @@ class TenantMiddleware
                 $user->current_tenant_id = null;
                 $user->save();
 
-                return redirect()->route('tenant.select')
+                return redirect()->route('tenants.select')
                     ->with('error', 'You do not have access to the selected tenant.');
             }
         }
