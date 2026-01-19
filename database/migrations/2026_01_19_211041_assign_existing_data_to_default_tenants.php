@@ -14,36 +14,36 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Get all existing users
-        $users = DB::table('users')->get();
+        // Process users in chunks to avoid memory issues
+        DB::table('users')->orderBy('id')->chunk(100, function ($users) {
+            foreach ($users as $user) {
+                // Create a default tenant for this user
+                $tenantId = DB::table('tenants')->insertGetId([
+                    'name' => "{$user->name}'s Personal Account",
+                    'slug' => Str::slug($user->name).'-personal-'.Str::random(6),
+                    'owner_id' => $user->id,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
 
-        foreach ($users as $user) {
-            // Create a default tenant for this user
-            $tenantId = DB::table('tenants')->insertGetId([
-                'name' => "{$user->name}'s Personal Account",
-                'slug' => Str::slug($user->name).'-personal-'.Str::random(6),
-                'owner_id' => $user->id,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+                // Add the user as an admin member of their tenant
+                DB::table('tenant_members')->insert([
+                    'tenant_id' => $tenantId,
+                    'user_id' => $user->id,
+                    'role' => 'admin',
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
 
-            // Add the user as an admin member of their tenant
-            DB::table('tenant_members')->insert([
-                'tenant_id' => $tenantId,
-                'user_id' => $user->id,
-                'role' => 'admin',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+                // Set user's current_tenant_id
+                DB::table('users')
+                    ->where('id', $user->id)
+                    ->update(['current_tenant_id' => $tenantId]);
 
-            // Set user's current_tenant_id
-            DB::table('users')
-                ->where('id', $user->id)
-                ->update(['current_tenant_id' => $tenantId]);
-
-            // Assign all existing data to this tenant
-            $this->assignDataToTenant($user->id, $tenantId);
-        }
+                // Assign all existing data to this tenant
+                $this->assignDataToTenant($user->id, $tenantId);
+            }
+        });
     }
 
     /**
@@ -92,6 +92,7 @@ return new class extends Migration
         foreach ($tables as $table) {
             DB::table($table)
                 ->where('user_id', $userId)
+                ->whereNull('tenant_id')
                 ->update(['tenant_id' => $tenantId]);
         }
     }

@@ -13,8 +13,12 @@ class TenantScope implements Scope
      */
     public function apply(Builder $builder, Model $model): void
     {
-        if (auth()->check() && auth()->user()->current_tenant_id) {
-            $builder->where($model->getTable().'.tenant_id', auth()->user()->current_tenant_id);
+        if (! auth()->check() || ! auth()->user()->current_tenant_id) {
+            // Fail-closed: prevent access to any tenant data when no tenant is set
+            $builder->whereRaw('1 = 0');
+            return;
         }
+
+        $builder->where($model->getTable().'.tenant_id', auth()->user()->current_tenant_id);
     }
 }

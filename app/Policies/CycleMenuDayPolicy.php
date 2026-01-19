@@ -17,7 +17,7 @@ class CycleMenuDayPolicy
      */
     protected function belongsToUserAndTenant(User $user, CycleMenuDay $day): bool
     {
-        return $day->user_id === $user->id
+        return $day->menu->user_id === $user->id
             && $day->tenant_id === $user->current_tenant_id;
     }
 }

@@ -30,7 +30,6 @@ class ProjectInvestmentTransaction extends Model
     }
 
     protected $fillable = [
-        'tenant_id',
         'project_investment_id',
         'user_id',
         'amount',

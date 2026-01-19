@@ -34,7 +34,6 @@ class TaxRate extends Model
     use BelongsToTenant, HasFactory;
 
     protected $fillable = [
-        'tenant_id',
         'user_id',
         'name',
         'code',

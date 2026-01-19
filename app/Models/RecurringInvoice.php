@@ -48,7 +48,6 @@ class RecurringInvoice extends Model
     use BelongsToTenant, HasFactory;
 
     protected $fillable = [
-        'tenant_id',
         'user_id',
         'customer_id',
         'name',
