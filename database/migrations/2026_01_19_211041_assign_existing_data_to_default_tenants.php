@@ -67,8 +67,6 @@ return new class extends Migration
             'job_application_interviews',
             'job_application_offers',
             'cycle_menus',
-            'cycle_menu_days',
-            'cycle_menu_items',
             'project_investments',
             'project_investment_transactions',
             'gmail_connections',
@@ -77,10 +75,8 @@ return new class extends Migration
             'invoices',
             'tax_rates',
             'discounts',
-            'invoice_items',
             'payments',
             'credit_notes',
-            'credit_note_applications',
             'refunds',
             'sequences',
             'recurring_invoices',
@@ -111,6 +107,50 @@ return new class extends Migration
             ->whereIn('investment_id', function ($query) use ($userId) {
                 $query->select('id')
                     ->from('investments')
+                    ->where('user_id', $userId);
+            })
+            ->update(['tenant_id' => $tenantId]);
+
+        // Handle cycle_menu_days - related through cycle_menu_id
+        DB::table('cycle_menu_days')
+            ->whereNull('tenant_id')
+            ->whereIn('cycle_menu_id', function ($query) use ($userId) {
+                $query->select('id')
+                    ->from('cycle_menus')
+                    ->where('user_id', $userId);
+            })
+            ->update(['tenant_id' => $tenantId]);
+
+        // Handle cycle_menu_items - related through cycle_menu_day_id -> cycle_menu_id
+        DB::table('cycle_menu_items')
+            ->whereNull('tenant_id')
+            ->whereIn('cycle_menu_day_id', function ($query) use ($userId) {
+                $query->select('id')
+                    ->from('cycle_menu_days')
+                    ->whereIn('cycle_menu_id', function ($subQuery) use ($userId) {
+                        $subQuery->select('id')
+                            ->from('cycle_menus')
+                            ->where('user_id', $userId);
+                    });
+            })
+            ->update(['tenant_id' => $tenantId]);
+
+        // Handle invoice_items - related through invoice_id
+        DB::table('invoice_items')
+            ->whereNull('tenant_id')
+            ->whereIn('invoice_id', function ($query) use ($userId) {
+                $query->select('id')
+                    ->from('invoices')
+                    ->where('user_id', $userId);
+            })
+            ->update(['tenant_id' => $tenantId]);
+
+        // Handle credit_note_applications - related through credit_note_id
+        DB::table('credit_note_applications')
+            ->whereNull('tenant_id')
+            ->whereIn('credit_note_id', function ($query) use ($userId) {
+                $query->select('id')
+                    ->from('credit_notes')
                     ->where('user_id', $userId);
             })
             ->update(['tenant_id' => $tenantId]);
