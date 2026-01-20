@@ -33,6 +33,15 @@ class AssignMissingTenantIds extends Command
             $this->info('Running in DRY RUN mode - no changes will be made');
         }
 
+        // First, ensure all users have current_tenant_id set
+        $usersWithoutTenant = DB::table('users')->whereNull('current_tenant_id')->count();
+        if ($usersWithoutTenant > 0) {
+            $this->warn("Found {$usersWithoutTenant} users without current_tenant_id set!");
+            $this->warn("These users need a tenant assigned first. Run:");
+            $this->warn("  php artisan tenants:check-status");
+            $this->newLine();
+        }
+
         // Tables with direct user_id column
         $tablesWithUserId = [
             'budgets',
@@ -75,15 +84,31 @@ class AssignMissingTenantIds extends Command
 
                 if (!$isDryRun) {
                     // Get users with their current tenant
+                    // Only update where user has a current_tenant_id set
                     $updated = DB::table($table)
                         ->whereNull('tenant_id')
                         ->whereNotNull('user_id')
+                        ->whereExists(function($query) use ($table) {
+                            $query->select(DB::raw(1))
+                                  ->from('users')
+                                  ->whereColumn('users.id', '=', $table . '.user_id')
+                                  ->whereNotNull('current_tenant_id');
+                        })
                         ->update([
                             'tenant_id' => DB::raw('(SELECT current_tenant_id FROM users WHERE users.id = ' . $table . '.user_id LIMIT 1)')
                         ]);
 
                     $this->info("Updated {$updated} records in {$table}");
                     $totalUpdated += $updated;
+
+                    // Check if there are still records that couldn't be assigned
+                    $remaining = DB::table($table)
+                        ->whereNull('tenant_id')
+                        ->whereNotNull('user_id')
+                        ->count();
+                    if ($remaining > 0) {
+                        $this->warn("  ⚠ {$remaining} records in {$table} still have NULL tenant_id (user doesn't have current_tenant_id)");
+                    }
                 }
             }
         }

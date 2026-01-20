@@ -19,11 +19,7 @@ class TenantScope implements Scope
             return;
         }
 
-        // Include both tenant-assigned data AND legacy data with NULL tenant_id
-        // This is safe because controllers filter by user_id separately
-        $builder->where(function($query) use ($model) {
-            $query->where($model->getTable().'.tenant_id', auth()->user()->current_tenant_id)
-                  ->orWhereNull($model->getTable().'.tenant_id');
-        });
+        // Enforce strict tenant isolation - only show records for current tenant
+        $builder->where($model->getTable().'.tenant_id', auth()->user()->current_tenant_id);
     }
 }
