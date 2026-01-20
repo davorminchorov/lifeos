@@ -51,14 +51,14 @@ return new class extends Migration
      */
     protected function assignDataToTenant(int $userId, int $tenantId): void
     {
-        $tables = [
+        // Tables with direct user_id column
+        $tablesWithUserId = [
             'budgets',
             'subscriptions',
             'contracts',
             'warranties',
             'investments',
             'investment_goals',
-            'investment_dividends',
             'investment_transactions',
             'expenses',
             'utility_bills',
@@ -89,12 +89,22 @@ return new class extends Migration
             'invoice_reminders',
         ];
 
-        foreach ($tables as $table) {
+        foreach ($tablesWithUserId as $table) {
             DB::table($table)
                 ->where('user_id', $userId)
                 ->whereNull('tenant_id')
                 ->update(['tenant_id' => $tenantId]);
         }
+
+        // Handle investment_dividends separately - it's related through investment_id
+        DB::table('investment_dividends')
+            ->whereNull('tenant_id')
+            ->whereIn('investment_id', function ($query) use ($userId) {
+                $query->select('id')
+                    ->from('investments')
+                    ->where('user_id', $userId);
+            })
+            ->update(['tenant_id' => $tenantId]);
     }
 
     /**
