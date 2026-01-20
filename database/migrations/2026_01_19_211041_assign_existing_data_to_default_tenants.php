@@ -77,7 +77,6 @@ return new class extends Migration
             'discounts',
             'payments',
             'credit_notes',
-            'refunds',
             'sequences',
             'recurring_invoices',
             'recurring_invoice_items',
@@ -151,6 +150,16 @@ return new class extends Migration
             ->whereIn('credit_note_id', function ($query) use ($userId) {
                 $query->select('id')
                     ->from('credit_notes')
+                    ->where('user_id', $userId);
+            })
+            ->update(['tenant_id' => $tenantId]);
+
+        // Handle refunds - related through payment_id
+        DB::table('refunds')
+            ->whereNull('tenant_id')
+            ->whereIn('payment_id', function ($query) use ($userId) {
+                $query->select('id')
+                    ->from('payments')
                     ->where('user_id', $userId);
             })
             ->update(['tenant_id' => $tenantId]);
