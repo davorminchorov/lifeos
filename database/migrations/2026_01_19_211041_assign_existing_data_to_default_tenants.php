@@ -59,7 +59,6 @@ return new class extends Migration
             'warranties',
             'investments',
             'investment_goals',
-            'investment_transactions',
             'expenses',
             'utility_bills',
             'ious',
@@ -95,6 +94,16 @@ return new class extends Migration
                 ->whereNull('tenant_id')
                 ->update(['tenant_id' => $tenantId]);
         }
+
+        // Handle investment_transactions separately - it's related through investment_id
+        DB::table('investment_transactions')
+            ->whereNull('tenant_id')
+            ->whereIn('investment_id', function ($query) use ($userId) {
+                $query->select('id')
+                    ->from('investments')
+                    ->where('user_id', $userId);
+            })
+            ->update(['tenant_id' => $tenantId]);
 
         // Handle investment_dividends separately - it's related through investment_id
         DB::table('investment_dividends')
