@@ -40,9 +40,17 @@ return new class extends Migration
     private function indexExists(string $table, string $index): bool
     {
         $connection = Schema::getConnection();
-        $doctrineSchemaManager = $connection->getDoctrineSchemaManager();
-        $doctrineTable = $doctrineSchemaManager->introspectTable($table);
+        $databaseName = $connection->getDatabaseName();
 
-        return $doctrineTable->hasIndex($index);
+        $indexExists = $connection->select(
+            "SELECT COUNT(*) as count
+             FROM information_schema.statistics
+             WHERE table_schema = ?
+             AND table_name = ?
+             AND index_name = ?",
+            [$databaseName, $table, $index]
+        );
+
+        return $indexExists[0]->count > 0;
     }
 };
