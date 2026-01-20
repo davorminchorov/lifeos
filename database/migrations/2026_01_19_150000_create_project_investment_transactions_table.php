@@ -11,19 +11,21 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('project_investment_transactions', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('project_investment_id')->constrained()->onDelete('cascade');
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->decimal('amount', 15, 2);
-            $table->string('currency', 3)->default('USD');
-            $table->date('transaction_date');
-            $table->text('notes')->nullable();
-            $table->timestamps();
+        if (!Schema::hasTable('project_investment_transactions')) {
+            Schema::create('project_investment_transactions', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('project_investment_id')->constrained()->onDelete('cascade');
+                $table->foreignId('user_id')->constrained()->onDelete('cascade');
+                $table->decimal('amount', 15, 2);
+                $table->string('currency', 3)->default('USD');
+                $table->date('transaction_date');
+                $table->text('notes')->nullable();
+                $table->timestamps();
 
-            $table->index(['project_investment_id', 'transaction_date'], 'pit_project_id_date_idx');
-            $table->index('user_id', 'pit_user_id_idx');
-        });
+                $table->index(['project_investment_id', 'transaction_date'], 'pit_project_id_date_idx');
+                $table->index('user_id', 'pit_user_id_idx');
+            });
+        }
     }
 
     /**
