@@ -21,9 +21,6 @@ return new class extends Migration
                 $table->date('transaction_date');
                 $table->text('notes')->nullable();
                 $table->timestamps();
-
-                $table->index(['project_investment_id', 'transaction_date'], 'pit_project_id_date_idx');
-                $table->index('user_id', 'pit_user_id_idx');
             });
         }
     }
