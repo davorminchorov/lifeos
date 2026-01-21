@@ -235,10 +235,35 @@ class FixMultiTenantData extends Command
         $parentTable = $config['parent_table'];
         $parentColumn = $config['parent_column'];
 
-        // Find records where parent has wrong tenant_id
-        $wrongRecords = DB::table($table)
-            ->join($parentTable, "{$table}.{$parentColumn}", '=', "{$parentTable}.id")
-            ->where("{$parentTable}.user_id", $user->id)
+        // Build the query with appropriate joins
+        $query = DB::table($table);
+
+        // Check if parent table has user_id column
+        $parentHasUserId = $this->tableHasColumn($parentTable, 'user_id');
+
+        if ($parentHasUserId) {
+            // Simple case: parent has user_id
+            $query->join($parentTable, "{$table}.{$parentColumn}", '=', "{$parentTable}.id")
+                ->where("{$parentTable}.user_id", $user->id);
+        } else {
+            // Multi-level case: need to join through grandparent
+            // For example: cycle_menu_items -> cycle_menu_days -> cycle_menus
+            if (isset($this->nestedTables[$parentTable])) {
+                $grandparentConfig = $this->nestedTables[$parentTable];
+                $grandparentTable = $grandparentConfig['parent_table'];
+                $grandparentColumn = $grandparentConfig['parent_column'];
+
+                $query->join($parentTable, "{$table}.{$parentColumn}", '=', "{$parentTable}.id")
+                    ->join($grandparentTable, "{$parentTable}.{$grandparentColumn}", '=', "{$grandparentTable}.id")
+                    ->where("{$grandparentTable}.user_id", $user->id);
+            } else {
+                // Parent doesn't have user_id and isn't in nestedTables - skip this table
+                return ['issues' => 0, 'fixed' => 0];
+            }
+        }
+
+        // Find records where tenant_id doesn't match
+        $wrongRecords = $query
             ->where("{$table}.tenant_id", '!=', $user->current_tenant_id)
             ->select("{$table}.*")
             ->get();
@@ -262,5 +287,18 @@ class FixMultiTenantData extends Command
         }
 
         return ['issues' => $count, 'fixed' => $count];
+    }
+
+    /**
+     * Check if a table has a specific column
+     */
+    protected function tableHasColumn(string $table, string $column): bool
+    {
+        try {
+            $columns = DB::getSchemaBuilder()->getColumnListing($table);
+            return in_array($column, $columns);
+        } catch (\Exception $e) {
+            return false;
+        }
     }
 }
