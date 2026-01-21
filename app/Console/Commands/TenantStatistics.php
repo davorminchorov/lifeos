@@ -243,7 +243,8 @@ class TenantStatistics extends Command
         if ($invoices->isNotEmpty()) {
             $this->line('    <fg=cyan>Invoices:</> (Latest 5)');
             foreach ($invoices as $invoice) {
-                $this->line("      - #{$invoice->invoice_number}: {$invoice->status} - Total: " . number_format($invoice->total, 2) . " {$invoice->currency}");
+                $invoiceNumber = $invoice->number ?? 'Draft';
+                $this->line("      - #{$invoiceNumber}: {$invoice->status} - Total: " . number_format($invoice->total / 100, 2) . " {$invoice->currency}");
             }
             $this->newLine();
         }
@@ -263,7 +264,8 @@ class TenantStatistics extends Command
         if ($customers->isNotEmpty()) {
             $this->line('    <fg=cyan>Customers:</> (Latest 5)');
             foreach ($customers as $customer) {
-                $this->line("      - {$customer->name} ({$customer->email})");
+                $email = $customer->email ?? 'No email';
+                $this->line("      - {$customer->name} ({$email})");
             }
             $this->newLine();
         }
@@ -303,7 +305,8 @@ class TenantStatistics extends Command
         if ($contracts->isNotEmpty()) {
             $this->line('    <fg=cyan>Contracts:</> (Latest 5)');
             foreach ($contracts as $contract) {
-                $this->line("      - {$contract->title}: {$contract->status} (${contract->start_date} - {$contract->end_date})");
+                $endDate = $contract->end_date ?? 'Ongoing';
+                $this->line("      - {$contract->title}: {$contract->status} ({$contract->start_date} - {$endDate})");
             }
             $this->newLine();
         }
@@ -323,7 +326,9 @@ class TenantStatistics extends Command
         if ($investments->isNotEmpty()) {
             $this->line('    <fg=cyan>Investments:</> (Latest 5)');
             foreach ($investments as $investment) {
-                $this->line("      - {$investment->name} ({$investment->investment_type}): " . number_format($investment->purchase_price, 2) . " {$investment->currency}");
+                $price = $investment->purchase_price !== null ? number_format($investment->purchase_price, 2) : 'N/A';
+                $currency = $investment->currency ?? 'N/A';
+                $this->line("      - {$investment->name} ({$investment->investment_type}): {$price} {$currency}");
             }
             $this->newLine();
         }
