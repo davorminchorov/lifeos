@@ -236,7 +236,7 @@ class TenantStatistics extends Command
     {
         $invoices = DB::table('invoices')
             ->where('tenant_id', $tenant->id)
-            ->orderBy('invoice_date', 'desc')
+            ->orderBy('issued_at', 'desc')
             ->limit(5)
             ->get();
 
