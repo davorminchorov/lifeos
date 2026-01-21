@@ -21,6 +21,7 @@ class TenantFactory extends Factory
             'name' => fake()->company(),
             'slug' => fake()->unique()->slug(),
             'default_currency' => fake()->randomElement(['MKD', 'USD', 'EUR', 'GBP']),
+            'default_country' => fake()->randomElement(['MK', 'US', 'GB', 'DE', 'FR', 'CA', 'AU', 'RS', 'BG']),
             'owner_id' => User::factory(),
         ];
     }

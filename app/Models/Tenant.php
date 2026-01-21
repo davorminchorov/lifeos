@@ -16,6 +16,7 @@ class Tenant extends Model
         'name',
         'slug',
         'default_currency',
+        'default_country',
         'owner_id',
     ];
 
