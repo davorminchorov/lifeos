@@ -2,11 +2,16 @@
 
 namespace Tests\Unit;
 
+use App\Models\Tenant;
+use App\Models\User;
 use App\Services\CurrencyService;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class CurrencyServiceTest extends TestCase
 {
+    use RefreshDatabase;
+
     private CurrencyService $currencyService;
 
     protected function setUp(): void
@@ -169,5 +174,110 @@ class CurrencyServiceTest extends TestCase
         $rate = $this->currencyService->getExchangeRate('UNKNOWN', 'MKD');
 
         $this->assertNull($rate); // Should return null for unknown currencies
+    }
+
+    public function test_get_tenant_default_currency_returns_tenant_currency(): void
+    {
+        $user = User::factory()->create();
+        $tenant = Tenant::factory()->create([
+            'default_currency' => 'USD',
+            'owner_id' => $user->id,
+        ]);
+
+        $currency = $this->currencyService->getTenantDefaultCurrency($tenant);
+
+        $this->assertEquals('USD', $currency);
+    }
+
+    public function test_get_tenant_default_currency_returns_global_default_when_no_tenant_currency(): void
+    {
+        $user = User::factory()->create();
+        $tenant = Tenant::factory()->create([
+            'default_currency' => null,
+            'owner_id' => $user->id,
+        ]);
+
+        $currency = $this->currencyService->getTenantDefaultCurrency($tenant);
+
+        $this->assertEquals('MKD', $currency);
+    }
+
+    public function test_get_tenant_default_currency_returns_global_default_when_null_tenant(): void
+    {
+        $currency = $this->currencyService->getTenantDefaultCurrency(null);
+
+        $this->assertEquals('MKD', $currency);
+    }
+
+    public function test_convert_to_tenant_currency(): void
+    {
+        $user = User::factory()->create();
+        $tenant = Tenant::factory()->create([
+            'default_currency' => 'USD',
+            'owner_id' => $user->id,
+        ]);
+
+        $amount = 6100.0; // EUR amount
+        $result = $this->currencyService->convertToTenantCurrency($amount, 'EUR', $tenant);
+
+        $this->assertIsFloat($result);
+    }
+
+    public function test_convert_to_tenant_currency_same_currency(): void
+    {
+        $user = User::factory()->create();
+        $tenant = Tenant::factory()->create([
+            'default_currency' => 'USD',
+            'owner_id' => $user->id,
+        ]);
+
+        $amount = 100.0;
+        $result = $this->currencyService->convertToTenantCurrency($amount, 'USD', $tenant);
+
+        $this->assertEquals($amount, $result);
+    }
+
+    public function test_convert_from_tenant_currency(): void
+    {
+        $user = User::factory()->create();
+        $tenant = Tenant::factory()->create([
+            'default_currency' => 'USD',
+            'owner_id' => $user->id,
+        ]);
+
+        $amount = 100.0;
+        $result = $this->currencyService->convertFromTenantCurrency($amount, 'EUR', $tenant);
+
+        $this->assertIsFloat($result);
+    }
+
+    public function test_format_for_tenant(): void
+    {
+        $user = User::factory()->create();
+        $tenant = Tenant::factory()->create([
+            'default_currency' => 'USD',
+            'owner_id' => $user->id,
+        ]);
+
+        $amount = 1234.56;
+        $formatted = $this->currencyService->formatForTenant($amount, $tenant);
+
+        $this->assertStringContainsString('1,234.56', $formatted);
+        $this->assertStringContainsString('$', $formatted);
+    }
+
+    public function test_format_for_tenant_with_different_currency(): void
+    {
+        $user = User::factory()->create();
+        $tenant = Tenant::factory()->create([
+            'default_currency' => 'EUR',
+            'owner_id' => $user->id,
+        ]);
+
+        $amount = 1234.56;
+        $formatted = $this->currencyService->formatForTenant($amount, $tenant);
+
+        $this->assertStringContainsString('1,234.56', $formatted);
+        $this->assertStringContainsString('€', $formatted);
     }
 }

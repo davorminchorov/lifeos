@@ -15,6 +15,7 @@ class Tenant extends Model
     protected $fillable = [
         'name',
         'slug',
+        'default_currency',
         'owner_id',
     ];
 

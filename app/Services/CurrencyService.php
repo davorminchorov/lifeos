@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Tenant;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -14,6 +15,18 @@ class CurrencyService
     public function getDefaultCurrency(): string
     {
         return config('currency.default', 'MKD');
+    }
+
+    /**
+     * Get the default currency for a specific tenant.
+     */
+    public function getTenantDefaultCurrency(?Tenant $tenant): string
+    {
+        if ($tenant && $tenant->default_currency) {
+            return $tenant->default_currency;
+        }
+
+        return $this->getDefaultCurrency();
     }
 
     /**
@@ -410,6 +423,36 @@ class CurrencyService
         $defaultCurrency = $this->getDefaultCurrency();
 
         return $this->convert($amount, $defaultCurrency, $toCurrency);
+    }
+
+    /**
+     * Convert amount to tenant's default currency.
+     */
+    public function convertToTenantCurrency(float $amount, string $fromCurrency, Tenant $tenant): float
+    {
+        $tenantCurrency = $this->getTenantDefaultCurrency($tenant);
+
+        return $this->convert($amount, $fromCurrency, $tenantCurrency);
+    }
+
+    /**
+     * Convert amount from tenant's default currency to target currency.
+     */
+    public function convertFromTenantCurrency(float $amount, string $toCurrency, Tenant $tenant): float
+    {
+        $tenantCurrency = $this->getTenantDefaultCurrency($tenant);
+
+        return $this->convert($amount, $tenantCurrency, $toCurrency);
+    }
+
+    /**
+     * Format amount with tenant's default currency.
+     */
+    public function formatForTenant(float $amount, Tenant $tenant, bool $showSymbol = true): string
+    {
+        $tenantCurrency = $this->getTenantDefaultCurrency($tenant);
+
+        return $this->format($amount, $tenantCurrency, $showSymbol);
     }
 
     /**
