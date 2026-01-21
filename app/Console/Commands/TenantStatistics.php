@@ -283,7 +283,7 @@ class TenantStatistics extends Command
         if ($subscriptions->isNotEmpty()) {
             $this->line('    <fg=cyan>Subscriptions:</> (Latest 5)');
             foreach ($subscriptions as $subscription) {
-                $this->line("      - {$subscription->name}: {$subscription->status} - " . number_format($subscription->amount, 2) . " {$subscription->currency}/{$subscription->billing_cycle}");
+                $this->line("      - {$subscription->service_name}: {$subscription->status} - " . number_format($subscription->cost, 2) . " {$subscription->currency}/{$subscription->billing_cycle}");
             }
             $this->newLine();
         }
@@ -303,7 +303,7 @@ class TenantStatistics extends Command
         if ($contracts->isNotEmpty()) {
             $this->line('    <fg=cyan>Contracts:</> (Latest 5)');
             foreach ($contracts as $contract) {
-                $this->line("      - {$contract->name}: {$contract->status} (${contract->start_date} - {$contract->end_date})");
+                $this->line("      - {$contract->title}: {$contract->status} (${contract->start_date} - {$contract->end_date})");
             }
             $this->newLine();
         }
@@ -323,7 +323,7 @@ class TenantStatistics extends Command
         if ($investments->isNotEmpty()) {
             $this->line('    <fg=cyan>Investments:</> (Latest 5)');
             foreach ($investments as $investment) {
-                $this->line("      - {$investment->name} ({$investment->type}): " . number_format($investment->initial_investment, 2) . " {$investment->currency}");
+                $this->line("      - {$investment->name} ({$investment->investment_type}): " . number_format($investment->purchase_price, 2) . " {$investment->currency}");
             }
             $this->newLine();
         }
@@ -343,7 +343,7 @@ class TenantStatistics extends Command
         if ($applications->isNotEmpty()) {
             $this->line('    <fg=cyan>Job Applications:</> (Latest 5)');
             foreach ($applications as $application) {
-                $this->line("      - {$application->job_title} at {$application->company}: {$application->status}");
+                $this->line("      - {$application->job_title} at {$application->company_name}: {$application->status}");
             }
             $this->newLine();
         }
