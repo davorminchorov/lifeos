@@ -216,14 +216,14 @@ class TenantStatistics extends Command
     {
         $expenses = DB::table('expenses')
             ->where('tenant_id', $tenant->id)
-            ->orderBy('date', 'desc')
+            ->orderBy('expense_date', 'desc')
             ->limit(5)
             ->get();
 
         if ($expenses->isNotEmpty()) {
             $this->line('    <fg=cyan>Expenses:</> (Latest 5)');
             foreach ($expenses as $expense) {
-                $this->line("      - {$expense->date}: {$expense->description} - " . number_format($expense->amount, 2) . " {$expense->currency}");
+                $this->line("      - {$expense->expense_date}: {$expense->description} - " . number_format($expense->amount, 2) . " {$expense->currency}");
             }
             $this->newLine();
         }
