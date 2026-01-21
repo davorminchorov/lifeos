@@ -15,8 +15,7 @@ class TenantStatistics extends Command
      */
     protected $signature = 'tenants:statistics
                             {--tenant-id= : Show statistics for specific tenant ID only}
-                            {--with-data : Include sample data records}
-                            {--verbose : Show detailed information}';
+                            {--with-data : Include sample data records}';
 
     /**
      * The console command description.
@@ -123,7 +122,7 @@ class TenantStatistics extends Command
         $membersCount = $tenant->members()->count();
         $this->line("  <fg=cyan>Members Count:</>  {$membersCount}");
 
-        if ($this->option('verbose') && $membersCount > 0) {
+        if ($this->getOutput()->isVerbose() && $membersCount > 0) {
             $this->line("  <fg=cyan>Members:</>");
             $members = $tenant->members;
             foreach ($members as $member) {

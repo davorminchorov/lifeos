@@ -12,13 +12,17 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('project_investment_transactions', function (Blueprint $table) {
-            // Check if indices don't already exist before adding them
-            if (!$this->indexExists('project_investment_transactions', 'pit_project_id_date_idx')) {
+            // Add indices if they don't exist (Laravel handles duplicate index prevention)
+            try {
                 $table->index(['project_investment_id', 'transaction_date'], 'pit_project_id_date_idx');
+            } catch (\Exception $e) {
+                // Index already exists, skip
             }
 
-            if (!$this->indexExists('project_investment_transactions', 'pit_user_id_idx')) {
+            try {
                 $table->index('user_id', 'pit_user_id_idx');
+            } catch (\Exception $e) {
+                // Index already exists, skip
             }
         });
     }
@@ -32,25 +36,5 @@ return new class extends Migration
             $table->dropIndex('pit_project_id_date_idx');
             $table->dropIndex('pit_user_id_idx');
         });
-    }
-
-    /**
-     * Check if an index exists on a table.
-     */
-    private function indexExists(string $table, string $index): bool
-    {
-        $connection = Schema::getConnection();
-        $databaseName = $connection->getDatabaseName();
-
-        $indexExists = $connection->select(
-            "SELECT COUNT(*) as count
-             FROM information_schema.statistics
-             WHERE table_schema = ?
-             AND table_name = ?
-             AND index_name = ?",
-            [$databaseName, $table, $index]
-        );
-
-        return $indexExists[0]->count > 0;
     }
 };
