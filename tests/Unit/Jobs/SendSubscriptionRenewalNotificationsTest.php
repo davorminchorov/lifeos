@@ -92,12 +92,14 @@ class SendSubscriptionRenewalNotificationsTest extends TestCase
         // Create subscriptions due at different times
         $subDueIn7 = Subscription::factory()->create([
             'user_id' => $this->user->id,
+            'tenant_id' => $this->tenant->id,
             'next_billing_date' => now()->addDays(7),
             'status' => 'active',
         ]);
 
         $subDueIn14 = Subscription::factory()->create([
             'user_id' => $this->user->id,
+            'tenant_id' => $this->tenant->id,
             'next_billing_date' => now()->addDays(14),
             'status' => 'active',
         ]);
@@ -181,6 +183,7 @@ class SendSubscriptionRenewalNotificationsTest extends TestCase
         // Create subscription due today
         $subscription = Subscription::factory()->create([
             'user_id' => $this->user->id,
+            'tenant_id' => $this->tenant->id,
             'next_billing_date' => now(),
             'status' => 'active',
         ]);
@@ -207,6 +210,7 @@ class SendSubscriptionRenewalNotificationsTest extends TestCase
         // Create subscription that was due 3 days ago
         $subscription = Subscription::factory()->create([
             'user_id' => $this->user->id,
+            'tenant_id' => $this->tenant->id,
             'next_billing_date' => now()->subDays(3),
             'status' => 'active',
         ]);
@@ -276,6 +280,7 @@ class SendSubscriptionRenewalNotificationsTest extends TestCase
         // Create subscription due in 7 days
         $subscription = Subscription::factory()->create([
             'user_id' => $this->user->id,
+            'tenant_id' => $this->tenant->id,
             'next_billing_date' => now()->addDays(7),
             'status' => 'active',
         ]);
@@ -299,6 +304,7 @@ class SendSubscriptionRenewalNotificationsTest extends TestCase
         // Create subscription due in 7 days
         $subscription = Subscription::factory()->create([
             'user_id' => $this->user->id,
+            'tenant_id' => $this->tenant->id,
             'next_billing_date' => now()->addDays(7),
             'status' => 'active',
         ]);
