@@ -13,6 +13,7 @@ class InvestmentDividend extends Model
     use BelongsToTenant, HasFactory;
 
     protected $fillable = [
+        'tenant_id',
         'investment_id',
         'amount',
         'record_date',

@@ -12,10 +12,19 @@ class ExpenseModelTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected $user;
+    protected $tenant;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        ['user' => $this->user, 'tenant' => $this->tenant] = $this->setupTenantContext();
+    }
+
     public function test_expense_has_fillable_attributes(): void
     {
         $fillable = [
-            'user_id', 'amount', 'currency', 'category', 'subcategory', 'expense_date',
+            'tenant_id', 'user_id', 'amount', 'currency', 'category', 'subcategory', 'expense_date',
             'description', 'merchant', 'payment_method', 'receipt_attachments', 'tags',
             'location', 'is_tax_deductible', 'expense_type', 'is_recurring',
             'recurring_schedule', 'budget_allocated', 'notes', 'status', 'unique_key',
@@ -58,13 +67,12 @@ class ExpenseModelTest extends TestCase
 
     public function test_scope_in_date_range(): void
     {
-        $user = User::factory()->create();
         $startDate = now()->subDays(10);
         $endDate = now()->subDays(1);
 
-        Expense::factory()->create(['user_id' => $user->id, 'expense_date' => now()->subDays(8)]);
-        Expense::factory()->create(['user_id' => $user->id, 'expense_date' => now()->subDays(20)]);
-        Expense::factory()->create(['user_id' => $user->id, 'expense_date' => now()]);
+        Expense::factory()->create(['user_id' => $this->user->id, 'expense_date' => now()->subDays(8), 'tenant_id' => $this->tenant->id]);
+        Expense::factory()->create(['user_id' => $this->user->id, 'expense_date' => now()->subDays(20), 'tenant_id' => $this->tenant->id]);
+        Expense::factory()->create(['user_id' => $this->user->id, 'expense_date' => now(), 'tenant_id' => $this->tenant->id]);
 
         $expenses = Expense::inDateRange($startDate, $endDate)->get();
 
@@ -73,10 +81,9 @@ class ExpenseModelTest extends TestCase
 
     public function test_scope_by_category(): void
     {
-        $user = User::factory()->create();
-        Expense::factory()->create(['user_id' => $user->id, 'category' => 'food']);
-        Expense::factory()->create(['user_id' => $user->id, 'category' => 'transport']);
-        Expense::factory()->create(['user_id' => $user->id, 'category' => 'food']);
+        Expense::factory()->create(['user_id' => $this->user->id, 'category' => 'food', 'tenant_id' => $this->tenant->id]);
+        Expense::factory()->create(['user_id' => $this->user->id, 'category' => 'transport', 'tenant_id' => $this->tenant->id]);
+        Expense::factory()->create(['user_id' => $this->user->id, 'category' => 'food', 'tenant_id' => $this->tenant->id]);
 
         $expenses = Expense::byCategory('food')->get();
 
@@ -88,9 +95,8 @@ class ExpenseModelTest extends TestCase
 
     public function test_scope_business(): void
     {
-        $user = User::factory()->create();
-        Expense::factory()->create(['user_id' => $user->id, 'expense_type' => 'business']);
-        Expense::factory()->create(['user_id' => $user->id, 'expense_type' => 'personal']);
+        Expense::factory()->create(['user_id' => $this->user->id, 'expense_type' => 'business', 'tenant_id' => $this->tenant->id]);
+        Expense::factory()->create(['user_id' => $this->user->id, 'expense_type' => 'personal', 'tenant_id' => $this->tenant->id]);
 
         $expenses = Expense::business()->get();
 
@@ -100,9 +106,8 @@ class ExpenseModelTest extends TestCase
 
     public function test_scope_personal(): void
     {
-        $user = User::factory()->create();
-        Expense::factory()->create(['user_id' => $user->id, 'expense_type' => 'business']);
-        Expense::factory()->create(['user_id' => $user->id, 'expense_type' => 'personal']);
+        Expense::factory()->create(['user_id' => $this->user->id, 'expense_type' => 'business', 'tenant_id' => $this->tenant->id]);
+        Expense::factory()->create(['user_id' => $this->user->id, 'expense_type' => 'personal', 'tenant_id' => $this->tenant->id]);
 
         $expenses = Expense::personal()->get();
 
@@ -112,9 +117,8 @@ class ExpenseModelTest extends TestCase
 
     public function test_scope_tax_deductible(): void
     {
-        $user = User::factory()->create();
-        Expense::factory()->create(['user_id' => $user->id, 'is_tax_deductible' => true]);
-        Expense::factory()->create(['user_id' => $user->id, 'is_tax_deductible' => false]);
+        Expense::factory()->create(['user_id' => $this->user->id, 'is_tax_deductible' => true, 'tenant_id' => $this->tenant->id]);
+        Expense::factory()->create(['user_id' => $this->user->id, 'is_tax_deductible' => false, 'tenant_id' => $this->tenant->id]);
 
         $expenses = Expense::taxDeductible()->get();
 
@@ -124,9 +128,8 @@ class ExpenseModelTest extends TestCase
 
     public function test_scope_recurring(): void
     {
-        $user = User::factory()->create();
-        Expense::factory()->create(['user_id' => $user->id, 'is_recurring' => true]);
-        Expense::factory()->create(['user_id' => $user->id, 'is_recurring' => false]);
+        Expense::factory()->create(['user_id' => $this->user->id, 'is_recurring' => true, 'tenant_id' => $this->tenant->id]);
+        Expense::factory()->create(['user_id' => $this->user->id, 'is_recurring' => false, 'tenant_id' => $this->tenant->id]);
 
         $expenses = Expense::recurring()->get();
 
@@ -136,9 +139,8 @@ class ExpenseModelTest extends TestCase
 
     public function test_scope_current_month(): void
     {
-        $user = User::factory()->create();
-        Expense::factory()->create(['user_id' => $user->id, 'expense_date' => now()]);
-        Expense::factory()->create(['user_id' => $user->id, 'expense_date' => now()->subMonth()]);
+        Expense::factory()->create(['user_id' => $this->user->id, 'expense_date' => now(), 'tenant_id' => $this->tenant->id]);
+        Expense::factory()->create(['user_id' => $this->user->id, 'expense_date' => now()->subMonth(), 'tenant_id' => $this->tenant->id]);
 
         $expenses = Expense::currentMonth()->get();
 
@@ -147,9 +149,8 @@ class ExpenseModelTest extends TestCase
 
     public function test_scope_current_year(): void
     {
-        $user = User::factory()->create();
-        Expense::factory()->create(['user_id' => $user->id, 'expense_date' => now()]);
-        Expense::factory()->create(['user_id' => $user->id, 'expense_date' => now()->subYear()]);
+        Expense::factory()->create(['user_id' => $this->user->id, 'expense_date' => now(), 'tenant_id' => $this->tenant->id]);
+        Expense::factory()->create(['user_id' => $this->user->id, 'expense_date' => now()->subYear(), 'tenant_id' => $this->tenant->id]);
 
         $expenses = Expense::currentYear()->get();
 
@@ -158,14 +159,15 @@ class ExpenseModelTest extends TestCase
 
     public function test_has_receipts_attribute(): void
     {
-        $user = User::factory()->create();
         $expenseWithReceipts = Expense::factory()->create([
-            'user_id' => $user->id,
+            'user_id' => $this->user->id,
             'receipt_attachments' => ['receipt1.jpg', 'receipt2.pdf'],
+            'tenant_id' => $this->tenant->id,
         ]);
         $expenseWithoutReceipts = Expense::factory()->create([
-            'user_id' => $user->id,
+            'user_id' => $this->user->id,
             'receipt_attachments' => [],
+            'tenant_id' => $this->tenant->id,
         ]);
 
         $this->assertTrue($expenseWithReceipts->has_receipts);
@@ -174,11 +176,11 @@ class ExpenseModelTest extends TestCase
 
     public function test_formatted_amount_attribute(): void
     {
-        $user = User::factory()->create();
         $expense = Expense::factory()->create([
-            'user_id' => $user->id,
+            'user_id' => $this->user->id,
             'amount' => 123.45,
             'currency' => 'USD',
+            'tenant_id' => $this->tenant->id,
         ]);
 
         $this->assertEquals('$ 123.45 (USD)', $expense->formatted_amount);
@@ -186,21 +188,23 @@ class ExpenseModelTest extends TestCase
 
     public function test_is_over_budget_attribute(): void
     {
-        $user = User::factory()->create();
         $overBudgetExpense = Expense::factory()->create([
-            'user_id' => $user->id,
+            'user_id' => $this->user->id,
             'amount' => 150.00,
             'budget_allocated' => 100.00,
+            'tenant_id' => $this->tenant->id,
         ]);
         $underBudgetExpense = Expense::factory()->create([
-            'user_id' => $user->id,
+            'user_id' => $this->user->id,
             'amount' => 80.00,
             'budget_allocated' => 100.00,
+            'tenant_id' => $this->tenant->id,
         ]);
         $noBudgetExpense = Expense::factory()->create([
-            'user_id' => $user->id,
+            'user_id' => $this->user->id,
             'amount' => 50.00,
             'budget_allocated' => null,
+            'tenant_id' => $this->tenant->id,
         ]);
 
         $this->assertTrue($overBudgetExpense->is_over_budget);
@@ -210,16 +214,17 @@ class ExpenseModelTest extends TestCase
 
     public function test_budget_variance_attribute(): void
     {
-        $user = User::factory()->create();
         $expense = Expense::factory()->create([
-            'user_id' => $user->id,
+            'user_id' => $this->user->id,
             'amount' => 120.00,
             'budget_allocated' => 100.00,
+            'tenant_id' => $this->tenant->id,
         ]);
         $noBudgetExpense = Expense::factory()->create([
-            'user_id' => $user->id,
+            'user_id' => $this->user->id,
             'amount' => 50.00,
             'budget_allocated' => null,
+            'tenant_id' => $this->tenant->id,
         ]);
 
         $this->assertEquals(20.00, $expense->budget_variance);
@@ -228,10 +233,10 @@ class ExpenseModelTest extends TestCase
 
     public function test_age_days_attribute(): void
     {
-        $user = User::factory()->create();
         $expense = Expense::factory()->create([
-            'user_id' => $user->id,
+            'user_id' => $this->user->id,
             'expense_date' => now()->subDays(5),
+            'tenant_id' => $this->tenant->id,
         ]);
 
         $this->assertEquals(5, $expense->age_days);
@@ -239,7 +244,7 @@ class ExpenseModelTest extends TestCase
 
     public function test_expense_factory_creates_valid_expense(): void
     {
-        $expense = Expense::factory()->create();
+        $expense = Expense::factory()->create(['tenant_id' => $this->tenant->id]);
 
         $this->assertInstanceOf(Expense::class, $expense);
         $this->assertNotNull($expense->user_id);

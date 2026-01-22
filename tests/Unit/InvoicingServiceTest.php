@@ -19,7 +19,8 @@ class InvoicingServiceTest extends TestCase
     use RefreshDatabase;
 
     private InvoicingService $service;
-    private User $user;
+    protected $user;
+    protected $tenant;
     private Customer $customer;
 
     protected function setUp(): void
@@ -32,8 +33,8 @@ class InvoicingServiceTest extends TestCase
             app(DiscountService::class)
         );
 
-        $this->user = User::factory()->create();
-        $this->customer = Customer::factory()->create(['user_id' => $this->user->id]);
+        ['user' => $this->user, 'tenant' => $this->tenant] = $this->setupTenantContext();
+        $this->customer = Customer::factory()->create(['user_id' => $this->user->id, 'tenant_id' => $this->tenant->id]);
     }
 
     public function test_create_draft_creates_invoice_with_zero_totals()
@@ -59,6 +60,7 @@ class InvoicingServiceTest extends TestCase
         $invoice = Invoice::factory()->create([
             'user_id' => $this->user->id,
             'customer_id' => $this->customer->id,
+            'tenant_id' => $this->tenant->id,
             'status' => InvoiceStatus::ISSUED,
             'total' => 100000,
             'amount_due' => 100000,
@@ -84,6 +86,7 @@ class InvoicingServiceTest extends TestCase
         $invoice = Invoice::factory()->create([
             'user_id' => $this->user->id,
             'customer_id' => $this->customer->id,
+            'tenant_id' => $this->tenant->id,
             'status' => InvoiceStatus::ISSUED,
             'total' => 100000,
             'amount_due' => 100000,
@@ -108,6 +111,7 @@ class InvoicingServiceTest extends TestCase
         $invoice = Invoice::factory()->create([
             'user_id' => $this->user->id,
             'customer_id' => $this->customer->id,
+            'tenant_id' => $this->tenant->id,
             'status' => InvoiceStatus::ISSUED,
             'total' => 100000,
             'amount_due' => 100000,
@@ -140,6 +144,7 @@ class InvoicingServiceTest extends TestCase
                 'status' => InvoiceStatus::DRAFT,
                 'total' => 10000,
                 'amount_due' => 10000,
+                'tenant_id' => $this->tenant->id,
             ]);
 
         $this->service->issue($invoice);
@@ -157,6 +162,7 @@ class InvoicingServiceTest extends TestCase
         $invoice = Invoice::factory()->create([
             'user_id' => $this->user->id,
             'customer_id' => $this->customer->id,
+            'tenant_id' => $this->tenant->id,
             'status' => InvoiceStatus::ISSUED,
         ]);
 
@@ -172,6 +178,7 @@ class InvoicingServiceTest extends TestCase
         $invoice = Invoice::factory()->create([
             'user_id' => $this->user->id,
             'customer_id' => $this->customer->id,
+            'tenant_id' => $this->tenant->id,
             'status' => InvoiceStatus::ISSUED,
         ]);
 
@@ -190,6 +197,7 @@ class InvoicingServiceTest extends TestCase
         $invoice = Invoice::factory()->create([
             'user_id' => $this->user->id,
             'customer_id' => $this->customer->id,
+            'tenant_id' => $this->tenant->id,
             'status' => InvoiceStatus::DRAFT,
             'tax_behavior' => 'exclusive',
         ]);

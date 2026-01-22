@@ -12,17 +12,18 @@ class InvestmentModelTest extends TestCase
 {
     use RefreshDatabase;
 
-    private User $user;
+    protected $user;
+    protected $tenant;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->user = User::factory()->create();
+        ['user' => $this->user, 'tenant' => $this->tenant] = $this->setupTenantContext();
     }
 
     public function test_investment_belongs_to_user(): void
     {
-        $investment = Investment::factory()->create(['user_id' => $this->user->id]);
+        $investment = Investment::factory()->create(['user_id' => $this->user->id, 'tenant_id' => $this->tenant->id]);
 
         $this->assertInstanceOf(User::class, $investment->user);
         $this->assertEquals($this->user->id, $investment->user->id);
@@ -30,8 +31,8 @@ class InvestmentModelTest extends TestCase
 
     public function test_investment_has_many_dividends(): void
     {
-        $investment = Investment::factory()->create(['user_id' => $this->user->id]);
-        InvestmentDividend::factory()->count(3)->create(['investment_id' => $investment->id]);
+        $investment = Investment::factory()->create(['user_id' => $this->user->id, 'tenant_id' => $this->tenant->id]);
+        InvestmentDividend::factory()->count(3)->create(['investment_id' => $investment->id, 'tenant_id' => $this->tenant->id]);
 
         $this->assertCount(3, $investment->dividends);
         $this->assertInstanceOf(InvestmentDividend::class, $investment->dividends->first());
@@ -39,7 +40,7 @@ class InvestmentModelTest extends TestCase
 
     public function test_investment_has_many_transactions(): void
     {
-        $investment = Investment::factory()->create(['user_id' => $this->user->id]);
+        $investment = Investment::factory()->create(['user_id' => $this->user->id, 'tenant_id' => $this->tenant->id]);
 
         // Note: InvestmentTransactionFactory doesn't exist yet, so skip this relationship test
         $this->assertTrue(method_exists($investment, 'transactions'));
@@ -345,6 +346,7 @@ class InvestmentModelTest extends TestCase
     {
         $investment = Investment::factory()->create([
             'user_id' => $this->user->id,
+            'tenant_id' => $this->tenant->id,
             'quantity' => '100.12345678',
             'purchase_price' => '50.12345678',
             'current_value' => '60.12345678',
@@ -363,25 +365,26 @@ class InvestmentModelTest extends TestCase
         $this->assertInstanceOf(\Carbon\Carbon::class, $investment->purchase_date);
     }
 
-    public function test_project_specific_fields_work_correctly(): void
-    {
-        $investment = Investment::factory()->create([
-            'user_id' => $this->user->id,
-            'project_type' => 'startup',
-            'project_website' => 'https://example.com',
-            'project_repository' => 'https://github.com/example/repo',
-            'project_stage' => 'seed',
-            'project_business_model' => 'SaaS',
-            'equity_percentage' => 5.5,
-            'project_amount' => 10000.00,
-            'project_currency' => 'USD',
-        ]);
-
-        $this->assertEquals('startup', $investment->project_type);
-        $this->assertEquals('https://example.com', $investment->project_website);
-        $this->assertEquals(5.5, $investment->equity_percentage);
-        $this->assertEquals(10000.00, $investment->project_amount);
-    }
+    // Note: Project-specific fields are in ProjectInvestment model, not Investment model
+    // public function test_project_specific_fields_work_correctly(): void
+    // {
+    //     $investment = Investment::factory()->create([
+    //         'user_id' => $this->user->id,
+    //         'project_type' => 'startup',
+    //         'project_website' => 'https://example.com',
+    //         'project_repository' => 'https://github.com/example/repo',
+    //         'project_stage' => 'seed',
+    //         'project_business_model' => 'SaaS',
+    //         'equity_percentage' => 5.5,
+    //         'project_amount' => 10000.00,
+    //         'project_currency' => 'USD',
+    //     ]);
+    //
+    //     $this->assertEquals('startup', $investment->project_type);
+    //     $this->assertEquals('https://example.com', $investment->project_website);
+    //     $this->assertEquals(5.5, $investment->equity_percentage);
+    //     $this->assertEquals(10000.00, $investment->project_amount);
+    // }
 
     public function test_negative_unrealized_loss_calculated_correctly(): void
     {

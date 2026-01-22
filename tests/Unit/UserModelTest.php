@@ -13,9 +13,18 @@ class UserModelTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected $user;
+    protected $tenant;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        ['user' => $this->user, 'tenant' => $this->tenant] = $this->setupTenantContext();
+    }
+
     public function test_user_has_fillable_attributes(): void
     {
-        $fillable = ['name', 'email', 'password'];
+        $fillable = ['name', 'email', 'password', 'current_tenant_id'];
         $user = new User;
 
         $this->assertEquals($fillable, $user->getFillable());
@@ -42,12 +51,12 @@ class UserModelTest extends TestCase
 
     public function test_password_is_hashed_when_set(): void
     {
-        $user = User::factory()->create([
+        $testUser = User::factory()->create([
             'password' => 'plain-text-password',
         ]);
 
-        $this->assertNotEquals('plain-text-password', $user->password);
-        $this->assertTrue(Hash::check('plain-text-password', $user->password));
+        $this->assertNotEquals('plain-text-password', $testUser->password);
+        $this->assertTrue(Hash::check('plain-text-password', $testUser->password));
     }
 
     public function test_user_has_subscriptions_relationship(): void
@@ -61,25 +70,24 @@ class UserModelTest extends TestCase
 
     public function test_user_can_have_multiple_subscriptions(): void
     {
-        $user = User::factory()->create();
-        $subscriptions = Subscription::factory()->count(3)->create(['user_id' => $user->id]);
+        $subscriptions = Subscription::factory()->count(3)->create(['user_id' => $this->user->id, 'tenant_id' => $this->tenant->id]);
 
-        $this->assertCount(3, $user->subscriptions);
-        $subscriptions->each(function ($subscription) use ($user) {
-            $this->assertTrue($user->subscriptions->contains($subscription));
+        $this->assertCount(3, $this->user->subscriptions);
+        $subscriptions->each(function ($subscription) {
+            $this->assertTrue($this->user->subscriptions->contains($subscription));
         });
     }
 
     public function test_user_factory_creates_valid_user(): void
     {
-        $user = User::factory()->create();
+        $testUser = User::factory()->create();
 
-        $this->assertInstanceOf(User::class, $user);
-        $this->assertNotNull($user->name);
-        $this->assertNotNull($user->email);
-        $this->assertNotNull($user->password);
-        $this->assertNotNull($user->created_at);
-        $this->assertNotNull($user->updated_at);
+        $this->assertInstanceOf(User::class, $testUser);
+        $this->assertNotNull($testUser->name);
+        $this->assertNotNull($testUser->email);
+        $this->assertNotNull($testUser->password);
+        $this->assertNotNull($testUser->created_at);
+        $this->assertNotNull($testUser->updated_at);
     }
 
     public function test_user_factory_can_create_with_custom_attributes(): void
@@ -89,10 +97,10 @@ class UserModelTest extends TestCase
             'email' => 'john@example.com',
         ];
 
-        $user = User::factory()->create($userData);
+        $testUser = User::factory()->create($userData);
 
-        $this->assertEquals('John Doe', $user->name);
-        $this->assertEquals('john@example.com', $user->email);
+        $this->assertEquals('John Doe', $testUser->name);
+        $this->assertEquals('john@example.com', $testUser->email);
     }
 
     public function test_user_email_is_unique(): void

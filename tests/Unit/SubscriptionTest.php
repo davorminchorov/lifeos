@@ -11,13 +11,21 @@ class SubscriptionTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected $user;
+    protected $tenant;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        ['user' => $this->user, 'tenant' => $this->tenant] = $this->setupTenantContext();
+    }
+
     public function test_subscription_belongs_to_user()
     {
-        $user = User::factory()->create();
-        $subscription = Subscription::factory()->create(['user_id' => $user->id]);
+        $subscription = Subscription::factory()->create(['user_id' => $this->user->id, 'tenant_id' => $this->tenant->id]);
 
         $this->assertInstanceOf(User::class, $subscription->user);
-        $this->assertEquals($user->id, $subscription->user->id);
+        $this->assertEquals($this->user->id, $subscription->user->id);
     }
 
     public function test_subscription_has_correct_fillable_fields()
@@ -25,6 +33,7 @@ class SubscriptionTest extends TestCase
         $subscription = new Subscription;
 
         $expectedFillable = [
+            'tenant_id',
             'user_id',
             'service_name',
             'description',
@@ -58,6 +67,7 @@ class SubscriptionTest extends TestCase
             'cancellation_difficulty' => 3,
             'price_history' => [['date' => '2023-01-01', 'price' => 9.99]],
             'tags' => ['work', 'essential'],
+            'tenant_id' => $this->tenant->id,
         ]);
 
         $this->assertIsFloat($subscription->cost);
@@ -70,9 +80,9 @@ class SubscriptionTest extends TestCase
 
     public function test_active_scope_returns_only_active_subscriptions()
     {
-        $activeSubscription = Subscription::factory()->create(['status' => 'active']);
-        $cancelledSubscription = Subscription::factory()->create(['status' => 'cancelled']);
-        $pausedSubscription = Subscription::factory()->create(['status' => 'paused']);
+        $activeSubscription = Subscription::factory()->create(['status' => 'active', 'tenant_id' => $this->tenant->id]);
+        $cancelledSubscription = Subscription::factory()->create(['status' => 'cancelled', 'tenant_id' => $this->tenant->id]);
+        $pausedSubscription = Subscription::factory()->create(['status' => 'paused', 'tenant_id' => $this->tenant->id]);
 
         $activeSubscriptions = Subscription::active()->get();
 
@@ -87,11 +97,13 @@ class SubscriptionTest extends TestCase
         $dueTomorrow = Subscription::factory()->create([
             'status' => 'active',
             'next_billing_date' => now()->addDay(),
+            'tenant_id' => $this->tenant->id,
         ]);
 
         $dueNextWeek = Subscription::factory()->create([
             'status' => 'active',
             'next_billing_date' => now()->addDays(8),
+            'tenant_id' => $this->tenant->id,
         ]);
 
         $dueSoonSubscriptions = Subscription::dueSoon(7)->get();
@@ -106,11 +118,13 @@ class SubscriptionTest extends TestCase
         $activeDueSoon = Subscription::factory()->create([
             'status' => 'active',
             'next_billing_date' => now()->addDay(),
+            'tenant_id' => $this->tenant->id,
         ]);
 
         $cancelledDueSoon = Subscription::factory()->create([
             'status' => 'cancelled',
             'next_billing_date' => now()->addDay(),
+            'tenant_id' => $this->tenant->id,
         ]);
 
         $dueSoonSubscriptions = Subscription::dueSoon(7)->get();
@@ -125,6 +139,7 @@ class SubscriptionTest extends TestCase
         $subscription = Subscription::factory()->create([
             'billing_cycle' => 'monthly',
             'cost' => 10.00,
+            'tenant_id' => $this->tenant->id,
         ]);
 
         $this->assertEquals(10.00, $subscription->monthly_cost);
@@ -135,6 +150,7 @@ class SubscriptionTest extends TestCase
         $subscription = Subscription::factory()->create([
             'billing_cycle' => 'yearly',
             'cost' => 120.00,
+            'tenant_id' => $this->tenant->id,
         ]);
 
         $this->assertEquals(10.00, $subscription->monthly_cost);
@@ -145,6 +161,7 @@ class SubscriptionTest extends TestCase
         $subscription = Subscription::factory()->create([
             'billing_cycle' => 'weekly',
             'cost' => 10.00,
+            'tenant_id' => $this->tenant->id,
         ]);
 
         $this->assertEquals(43.3, $subscription->monthly_cost);
@@ -156,6 +173,7 @@ class SubscriptionTest extends TestCase
             'billing_cycle' => 'custom',
             'billing_cycle_days' => 15,
             'cost' => 10.00,
+            'tenant_id' => $this->tenant->id,
         ]);
 
         $expectedMonthlyCost = (10.00 * 30.44) / 15;
@@ -168,6 +186,7 @@ class SubscriptionTest extends TestCase
             'billing_cycle' => 'custom',
             'billing_cycle_days' => null,
             'cost' => 10.00,
+            'tenant_id' => $this->tenant->id,
         ]);
 
         $this->assertEquals(0, $subscription->monthly_cost);
@@ -188,6 +207,7 @@ class SubscriptionTest extends TestCase
         $subscription = Subscription::factory()->create([
             'billing_cycle' => 'monthly',
             'cost' => 10.00,
+            'tenant_id' => $this->tenant->id,
         ]);
 
         $this->assertEquals(120.00, $subscription->yearly_cost);

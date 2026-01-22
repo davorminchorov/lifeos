@@ -13,6 +13,7 @@ class Warranty extends Model
     use BelongsToTenant, HasFactory;
 
     protected $fillable = [
+        'tenant_id',
         'user_id',
         'product_name',
         'brand',
