@@ -11,13 +11,26 @@ class IouModelTest extends TestCase
 {
     use RefreshDatabase;
 
-    private User $user;
+    protected $user;
+    protected $tenant;
 
     protected function setUp(): void
     {
         parent::setUp();
+        ['user' => $this->user, 'tenant' => $this->tenant] = $this->setupTenantContext();
+    }
 
-        $this->user = User::factory()->create();
+    public function test_iou_has_fillable_attributes(): void
+    {
+        $fillable = [
+            'tenant_id', 'user_id', 'type', 'person_name', 'amount', 'currency',
+            'transaction_date', 'due_date', 'description', 'notes', 'status',
+            'amount_paid', 'payment_method', 'category', 'attachments',
+            'is_recurring', 'recurring_schedule',
+        ];
+        $iou = new Iou;
+
+        $this->assertEquals($fillable, $iou->getFillable());
     }
 
     public function test_iou_belongs_to_user(): void
@@ -30,8 +43,8 @@ class IouModelTest extends TestCase
 
     public function test_scope_owe_filters_owe_type(): void
     {
-        Iou::factory()->create(['user_id' => $this->user->id, 'type' => 'owe']);
-        Iou::factory()->create(['user_id' => $this->user->id, 'type' => 'owed']);
+        Iou::factory()->create(['user_id' => $this->user->id, 'tenant_id' => $this->tenant->id, 'type' => 'owe']);
+        Iou::factory()->create(['user_id' => $this->user->id, 'tenant_id' => $this->tenant->id, 'type' => 'owed']);
 
         $oweIous = Iou::owe()->get();
 
@@ -41,8 +54,8 @@ class IouModelTest extends TestCase
 
     public function test_scope_owed_filters_owed_type(): void
     {
-        Iou::factory()->create(['user_id' => $this->user->id, 'type' => 'owe']);
-        Iou::factory()->create(['user_id' => $this->user->id, 'type' => 'owed']);
+        Iou::factory()->create(['user_id' => $this->user->id, 'tenant_id' => $this->tenant->id, 'type' => 'owe']);
+        Iou::factory()->create(['user_id' => $this->user->id, 'tenant_id' => $this->tenant->id, 'type' => 'owed']);
 
         $owedIous = Iou::owed()->get();
 
@@ -52,8 +65,8 @@ class IouModelTest extends TestCase
 
     public function test_scope_pending_filters_pending_status(): void
     {
-        Iou::factory()->create(['user_id' => $this->user->id, 'status' => 'pending']);
-        Iou::factory()->create(['user_id' => $this->user->id, 'status' => 'paid']);
+        Iou::factory()->create(['user_id' => $this->user->id, 'tenant_id' => $this->tenant->id, 'status' => 'pending']);
+        Iou::factory()->create(['user_id' => $this->user->id, 'tenant_id' => $this->tenant->id, 'status' => 'paid']);
 
         $pendingIous = Iou::pending()->get();
 
@@ -63,8 +76,8 @@ class IouModelTest extends TestCase
 
     public function test_scope_paid_filters_paid_status(): void
     {
-        Iou::factory()->create(['user_id' => $this->user->id, 'status' => 'pending']);
-        Iou::factory()->create(['user_id' => $this->user->id, 'status' => 'paid']);
+        Iou::factory()->create(['user_id' => $this->user->id, 'tenant_id' => $this->tenant->id, 'status' => 'pending']);
+        Iou::factory()->create(['user_id' => $this->user->id, 'tenant_id' => $this->tenant->id, 'status' => 'paid']);
 
         $paidIous = Iou::paid()->get();
 
@@ -109,8 +122,8 @@ class IouModelTest extends TestCase
 
     public function test_scope_by_person_filters_by_person_name(): void
     {
-        Iou::factory()->create(['user_id' => $this->user->id, 'person_name' => 'John Doe']);
-        Iou::factory()->create(['user_id' => $this->user->id, 'person_name' => 'Jane Smith']);
+        Iou::factory()->create(['user_id' => $this->user->id, 'tenant_id' => $this->tenant->id, 'person_name' => 'John Doe']);
+        Iou::factory()->create(['user_id' => $this->user->id, 'tenant_id' => $this->tenant->id, 'person_name' => 'Jane Smith']);
 
         $johnIous = Iou::byPerson('John Doe')->get();
 

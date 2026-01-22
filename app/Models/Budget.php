@@ -48,8 +48,9 @@ class Budget extends Model
      */
     public function getCurrentSpending()
     {
-        return $this->user
-            ->expenses()
+        return Expense::withoutGlobalScope(\App\Scopes\TenantScope::class)
+            ->where('user_id', $this->user_id)
+            ->where('tenant_id', $this->tenant_id)
             ->where('category', $this->category)
             ->whereBetween('expense_date', [$this->start_date, $this->end_date])
             ->sum('amount');

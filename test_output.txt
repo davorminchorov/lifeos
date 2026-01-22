@@ -1,0 +1,549 @@
+
+   WARN  Metadata found in doc-comment for method Tests\Unit\Jobs\SendSubscriptionRenewalNotificationsTest::it_respects_user_notification_preferences_for_days(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Unit\Jobs\SendSubscriptionRenewalNotificationsTest::it_skips_users_with_disabled_channels(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Unit\Jobs\SendSubscriptionRenewalNotificationsTest::it_finds_subscriptions_due_in_specific_days_for_user(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Unit\Jobs\SendSubscriptionRenewalNotificationsTest::it_processes_multiple_users_with_different_preferences(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Unit\Jobs\SendSubscriptionRenewalNotificationsTest::it_finds_subscriptions_due_today(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Unit\Jobs\SendSubscriptionRenewalNotificationsTest::it_finds_overdue_subscriptions(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Unit\Jobs\SendSubscriptionRenewalNotificationsTest::it_ignores_cancelled_subscriptions(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Unit\Jobs\SendSubscriptionRenewalNotificationsTest::it_ignores_paused_subscriptions(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Unit\Jobs\SendSubscriptionRenewalNotificationsTest::it_supports_legacy_mode_with_specific_days(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Unit\Jobs\SendSubscriptionRenewalNotificationsTest::it_uses_default_preferences_if_user_has_none(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Unit\Jobs\SendSubscriptionRenewalNotificationsTest::it_handles_users_with_no_subscriptions(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Feature\SubscriptionNotificationFlowTest::full_notification_flow_works_end_to_end(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Feature\SubscriptionNotificationFlowTest::notifications_respect_multiple_users_preferences(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Feature\SubscriptionNotificationFlowTest::users_with_disabled_channels_dont_receive_notifications(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Feature\SubscriptionNotificationFlowTest::command_with_specific_days_uses_legacy_mode(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Feature\SubscriptionNotificationFlowTest::multiple_subscriptions_for_same_user_all_get_notifications(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Feature\SubscriptionNotificationFlowTest::notifications_sent_for_different_notification_days(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Feature\SubscriptionNotificationFlowTest::cancelled_and_paused_subscriptions_are_ignored(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Feature\SubscriptionNotificationFlowTest::overdue_subscriptions_are_notified_on_day_zero(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Feature\SubscriptionNotificationFlowTest::new_users_get_default_notification_preferences(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   FAIL  Tests\Unit\BudgetModelTest
+  ✓ budget belongs to user                                               0.93s  
+  ✓ get current spending returns zero when no expenses                   0.04s  
+  ⨯ get current spending calculates category expenses within period      0.05s  
+  ⨯ get remaining amount returns correct value                           0.04s  
+  ⨯ get remaining amount returns zero when over budget                   0.03s  
+  ⨯ get utilization percentage returns correct value                     0.03s  
+  ✓ get utilization percentage returns zero when budget is zero          0.03s  
+  ✓ is over threshold returns false when below threshold                 0.03s  
+  ⨯ is over threshold returns true when above threshold                  0.04s  
+  ✓ is exceeded returns false when within budget                         0.03s  
+  ⨯ is exceeded returns true when over budget                            0.04s  
+  ✓ get status returns on track when below threshold                     0.03s  
+  ⨯ get status returns warning when over threshold                       0.03s  
+  ⨯ get status returns exceeded when over budget                         0.03s  
+  ⨯ scope active filters active budgets                                  0.03s  
+  ⨯ scope current filters budgets in current period                      0.03s  
+  ⨯ scope for category filters by category                               0.03s  
+  ✓ budget casts attributes correctly                                    0.03s  
+
+   FAIL  Tests\Unit\ContractModelTest
+  ✓ contract belongs to user                                             0.04s  
+  ⨯ active scope filters active contracts                                0.03s  
+  ⨯ expiring soon scope filters correctly                                0.03s  
+  ⨯ requiring notice scope filters correctly                             0.03s  
+  ✓ is expired attribute works correctly                                 0.03s  
+  ✓ days until expiration attribute works correctly                      0.03s  
+  ✓ notice deadline attribute works correctly                            0.03s  
+  ✓ contract casts work correctly                                        0.03s  
+  ⨯ fillable attributes are correct                                      0.03s  
+  ✓ contract factory creates valid contracts                             0.03s  
+
+   PASS  Tests\Unit\CurrencyFreshnessTest
+  ✓ calculates fresh rate correctly                                      0.03s  
+  ✓ calculates stale rate correctly                                      0.02s  
+  ✓ calculates warning rate correctly                                    0.02s  
+  ✓ calculates unknown for very old rate                                 0.03s  
+  ✓ calculates unknown for null timestamp                                0.03s  
+  ✓ stores timestamp when fetching rate                                  0.06s  
+  ✓ get exchange rate with freshness                                     0.03s  
+  ✓ same currency returns fresh rate                                     0.03s  
+  ✓ is rate fresh                                                        0.03s  
+  ✓ is rate stale                                                        0.03s  
+  ✓ refresh exchange rate clears cache                                   0.03s  
+  ✓ get formatted age                                                    0.02s  
+  ✓ get freshness label                                                  0.02s  
+  ✓ get freshness color                                                  0.03s  
+
+   PASS  Tests\Unit\CurrencyServiceTest
+  ✓ can convert mkd to default currency                                  0.03s  
+  ✓ can convert usd to default currency                                  0.05s  
+  ✓ can convert eur to default currency                                  0.03s  
+  ✓ can convert default to usd                                           0.03s  
+  ✓ can convert default to eur                                           0.03s  
+  ✓ can convert default to mkd                                           0.03s  
+  ✓ handles unknown currency gracefully                                  0.03s  
+  ✓ handles empty currency                                               0.03s  
+  ✓ handles zero amount                                                  0.03s  
+  ✓ handles negative amount                                              0.03s  
+  ✓ conversion rates are consistent                                      0.04s  
+  ✓ get supported currencies                                             0.03s  
+  ✓ format currency with mkd                                             0.02s  
+  ✓ format currency with usd                                             0.03s  
+  ✓ format currency with eur                                             0.02s  
+  ✓ get exchange rate                                                    0.03s  
+  ✓ get exchange rate for mkd                                            0.02s  
+  ✓ get exchange rate for unknown currency                               0.03s  
+  ✓ get tenant default currency returns tenant currency                  0.03s  
+  ✓ get tenant default currency returns global default when no tenant c… 0.04s  
+  ✓ get tenant default currency returns global default when null tenant  0.03s  
+  ✓ convert to tenant currency                                           0.04s  
+  ✓ convert to tenant currency same currency                             0.03s  
+  ✓ convert from tenant currency                                         0.04s  
+  ✓ format for tenant                                                    0.03s  
+  ✓ format for tenant with different currency                            0.04s  
+
+   FAIL  Tests\Unit\CycleMenuRelationshipsTest
+  ⨯ defines relationships between menu days and items with ordered item… 0.06s  
+
+   PASS  Tests\Unit\DiscountServiceTest
+  ✓ example
+
+   PASS  Tests\Unit\ExampleTest
+  ✓ that true is true
+
+   FAIL  Tests\Unit\ExpenseModelTest
+  ⨯ expense has fillable attributes                                      0.03s  
+  ✓ expense casts attributes correctly                                   0.03s  
+  ✓ expense belongs to user                                              0.03s  
+  ⨯ scope in date range                                                  0.05s  
+  ⨯ scope by category                                                    0.04s  
+  ⨯ scope business                                                       0.04s  
+  ⨯ scope personal                                                       0.04s  
+  ⨯ scope tax deductible                                                 0.04s  
+  ⨯ scope recurring                                                      0.03s  
+  ⨯ scope current month                                                  0.04s  
+  ⨯ scope current year                                                   0.04s  
+  ✓ has receipts attribute                                               0.04s  
+  ✓ formatted amount attribute                                           0.03s  
+  ✓ is over budget attribute                                             0.04s  
+  ✓ budget variance attribute                                            0.04s  
+  ✓ age days attribute                                                   0.04s  
+  ✓ expense factory creates valid expense                                0.03s  
+
+   FAIL  Tests\Unit\InvestmentDividendModelTest
+  ✓ investment dividend has fillable attributes                          0.03s  
+  ✓ investment dividend casts attributes correctly                       0.02s  
+  ✓ investment dividend belongs to investment                            0.02s  
+  ✓ can create investment dividend with investment                       0.03s  
+  ✓ investment dividend factory creates valid dividend                   0.03s  
+  ✓ investment dividend factory can create with custom attributes        0.03s  
+  ✓ dividend amount is required                                          0.04s  
+  ✓ investment id is required                                            0.02s  
+  ⨯ can access related investment                                        0.03s  
+  ✓ dividend type can be set                                             0.03s  
+  ✓ tax withheld can be zero                                             0.03s  
+  ✓ payment date can be different from record date                       0.03s  
+
+   FAIL  Tests\Unit\InvestmentGoalModelTest
+  ⨯ investment goal has fillable attributes                              0.03s  
+  ✓ investment goal casts attributes correctly                           0.03s  
+  ✓ investment goal belongs to user                                      0.03s  
+  ✓ progress percentage attribute                                        0.03s  
+  ✓ is achieved attribute                                                0.03s  
+  ✓ remaining amount attribute                                           0.03s  
+  ⨯ scope active                                                         0.03s  
+  ⨯ scope achieved                                                       0.03s  
+  ✓ investment goal factory creates valid goal                           0.04s  
+  ✓ investment goal factory can create with custom attributes            0.03s  
+
+   FAIL  Tests\Unit\InvestmentModelTest
+  ✓ investment belongs to user                                           0.04s  
+  ⨯ investment has many dividends                                        0.03s  
+  ✓ investment has many transactions                                     0.03s  
+  ⨯ active scope returns only active investments                         0.03s  
+  ⨯ by type scope filters by investment type                             0.03s  
+  ⨯ by risk tolerance scope filters by risk                              0.03s  
+  ✓ total cost basis calculated correctly                                0.03s  
+  ✓ total cost basis handles zero fees                                   0.03s  
+  ✓ current market value calculated correctly                            0.04s  
+  ✓ current market value handles zero current value                      0.03s  
+  ✓ unrealized gain loss calculated correctly                            0.03s  
+  ✓ unrealized gain loss percentage calculated correctly                 0.03s  
+  ✓ unrealized gain loss percentage returns zero when cost basis is zer… 0.03s  
+  ✓ total return includes dividends                                      0.03s  
+  ✓ total return handles zero dividends                                  0.03s  
+  ✓ total return percentage calculated correctly                         0.03s  
+  ✓ total return percentage returns zero when cost basis is zero         0.03s  
+  ✓ holding period days calculated correctly                             0.04s  
+  ⨯ annualized return calculated correctly for one year                  0.03s  
+  ⨯ formatted purchase price returns formatted string                    0.03s  
+  ✓ formatted current value returns formatted string                     0.03s  
+  ✓ formatted current market value returns formatted string              0.03s  
+  ✓ formatted unrealized gain loss returns formatted string              0.03s  
+  ✓ formatted total return returns formatted string                      0.03s  
+  ✓ casts applied correctly                                              0.03s  
+  ⨯ project specific fields work correctly                               0.03s  
+  ✓ negative unrealized loss calculated correctly                        0.04s  
+  ✓ negative unrealized loss percentage calculated correctly             0.03s  
+
+   FAIL  Tests\Unit\InvoicingServiceTest
+  ✓ create draft creates invoice with zero totals                        0.04s  
+  ⨯ record payment updates invoice to partially paid                     0.03s  
+  ✓ record payment updates invoice to paid when fully paid               0.03s  
+  ⨯ record payment creates payment record                                0.03s  
+  ⨯ issue invoice sets status and date                                   0.03s  
+  ✓ void invoice sets status                                             0.04s  
+  ✓ cannot add item to non draft invoice                                 0.03s  
+  ⨯ recalculate totals with tax exclusive                                0.03s  
+
+   FAIL  Tests\Unit\IouModelTest
+  ✓ iou belongs to user                                                  0.03s  
+  ⨯ scope owe filters owe type                                           0.03s  
+  ⨯ scope owed filters owed type                                         0.03s  
+  ⨯ scope pending filters pending status                                 0.03s  
+  ⨯ scope paid filters paid status                                       0.04s  
+  ⨯ scope overdue filters overdue ious                                   0.04s  
+  ⨯ scope by person filters by person name                               0.03s  
+  ✓ remaining balance calculates correctly                               0.03s  
+  ✓ remaining balance handles zero amount paid                           0.03s  
+  ✓ remaining amount is alias for remaining balance                      0.03s  
+  ✓ is overdue returns true for past due pending                         0.03s  
+  ✓ is overdue returns true for past due partially paid                  0.03s  
+  ✓ is overdue returns false for future date                             0.03s  
+  ✓ is overdue returns false for paid status                             0.04s  
+  ✓ is fully paid returns true when paid equals amount                   0.03s  
+  ✓ is fully paid returns true when paid exceeds amount                  0.04s  
+  ✓ is fully paid returns false when partially paid                      0.03s  
+  ✓ payment progress calculates percentage correctly                     0.03s  
+  ✓ payment progress returns zero when amount is zero                    0.03s  
+  ✓ payment progress caps at 100 percent                                 0.03s  
+  ✓ payment percentage is alias for payment progress                     0.03s  
+  ✓ days until due calculates positive days for future date              0.03s  
+  ✓ days until due calculates negative days for past date                0.04s  
+  ✓ days until due returns null when no due date                         0.03s  
+  ✓ status color returns correct color for pending                       0.03s  
+  ✓ status color returns red for overdue pending                         0.03s  
+  ✓ status color returns blue for partially paid                         0.03s  
+  ✓ status color returns green for paid                                  0.03s  
+  ✓ status color returns gray for cancelled                              0.03s  
+  ✓ type label returns correct label for owe                             0.03s  
+  ✓ type label returns correct label for owed                            0.03s  
+  ✓ iou casts attributes correctly                                       0.04s  
+
+   FAIL  Tests\Unit\Jobs\SendSubscriptionRenewalNotificationsTest
+  ⨯ it respects user notification preferences for days                   0.05s  
+  ✓ it skips users with disabled channels                                0.03s  
+  ⨯ it finds subscriptions due in specific days for user                 0.03s  
+  ⨯ it processes multiple users with different preferences               0.04s  
+  ⨯ it finds subscriptions due today                                     0.03s  
+  ⨯ it finds overdue subscriptions                                       0.04s  
+  ✓ it ignores cancelled subscriptions                                   0.03s  
+  ✓ it ignores paused subscriptions                                      0.03s  
+  ⨯ it supports legacy mode with specific days                           0.03s  
+  ⨯ it uses default preferences if user has none                         0.03s  
+  ✓ it handles users with no subscriptions                               0.03s  
+
+   FAIL  Tests\Unit\SubscriptionTest
+  ✓ subscription belongs to user                                         0.04s  
+  ⨯ subscription has correct fillable fields                             0.03s  
+  ✓ subscription casts attributes correctly                              0.03s  
+  ⨯ active scope returns only active subscriptions                       0.04s  
+  ⨯ due soon scope returns subscriptions due within specified days       0.03s  
+  ⨯ due soon scope only returns active subscriptions                     0.03s  
+  ✓ monthly cost attribute calculates correctly for monthly billing      0.03s  
+  ✓ monthly cost attribute calculates correctly for yearly billing       0.03s  
+  ✓ monthly cost attribute calculates correctly for weekly billing       0.03s  
+  ✓ monthly cost attribute calculates correctly for custom billing       0.03s  
+  ✓ monthly cost attribute returns zero for custom billing without days  0.04s  
+  ✓ monthly cost attribute returns zero for unknown billing cycle        0.03s  
+  ✓ yearly cost attribute calculates correctly                           0.03s  
+
+   PASS  Tests\Unit\TaxServiceTest
+  ✓ example                                                              0.01s  
+
+   FAIL  Tests\Unit\UserModelTest
+  ⨯ user has fillable attributes                                         0.03s  
+  ✓ user has hidden attributes                                           0.03s  
+  ✓ user casts attributes correctly                                      0.02s  
+  ✓ password is hashed when set                                          0.03s  
+  ✓ user has subscriptions relationship                                  0.03s  
+  ⨯ user can have multiple subscriptions                                 0.04s  
+  ✓ user factory creates valid user                                      0.03s  
+  ✓ user factory can create with custom attributes                       0.03s  
+  ✓ user email is unique                                                 0.03s  
+
+   PASS  Tests\Unit\UserNotificationPreferenceTest
+  ✓ belongs to user                                                      0.03s  
+  ✓ can get notification days                                            0.03s  
+  ✓ returns default notification days when not set                       0.03s  
+  ✓ can set notification days                                            0.02s  
+  ✓ can check if channel is enabled                                      0.03s  
+  ✓ can get enabled channels                                             0.03s  
+  ✓ can get default preferences                                          0.02s  
+  ✓ fillable attributes                                                  0.02s  
+  ✓ casts boolean attributes                                             0.03s  
+  ✓ unique constraint on user and notification type                      0.03s  
+  ✓ preserves existing settings when updating days                       0.03s  
+  ✓ handles null settings when setting days                              0.02s  
+
+   FAIL  Tests\Unit\UtilityBillModelTest
+  ⨯ utility bill has fillable attributes                                 0.04s  
+  ✓ utility bill casts attributes correctly                              0.02s  
+  ✓ utility bill belongs to user                                         0.02s  
+  ⨯ scope by type                                                        0.03s  
+  ⨯ scope pending                                                        0.03s  
+  ⨯ scope paid                                                           0.03s  
+  ⨯ scope overdue                                                        0.03s  
+  ⨯ scope due soon                                                       0.03s  
+  ⨯ scope current month                                                  0.03s  
+  ✓ is overdue attribute                                                 0.04s  
+  ✓ days until due attribute                                             0.03s  
+  ✓ is over budget attribute                                             0.03s  
+  ✓ cost per day attribute                                               0.03s  
+  ✓ usage efficiency attribute                                           0.03s  
+  ✓ usage comparison attribute                                           0.03s  
+  ✓ billing period days attribute                                        0.03s  
+  ✓ utility bill factory creates valid bill                              0.03s  
+
+   FAIL  Tests\Unit\WarrantyModelTest
+  ✓ warranty has fillable attributes                                     0.05s  
+  ✓ warranty casts attributes correctly                                  0.02s  
+  ✓ warranty belongs to user                                             0.03s  
+  ⨯ scope active                                                         0.03s  
+  ⨯ scope expiring soon                                                  0.03s  
+  ⨯ scope expired                                                        0.03s  
+  ✓ is expired attribute                                                 0.03s  
+  ✓ days until expiration attribute                                      0.03s  
+  ✓ warranty remaining percentage attribute                              0.03s  
+  ✓ has claims attribute                                                 0.04s  
+  ✓ total claims attribute                                               0.03s  
+  ✓ warranty factory creates valid warranty                              0.03s  
+  ✓ warranty factory can create with custom attributes                   0.03s  
+
+   FAIL  Tests\Feature\AuthControllerTest
+  ⨯ can display login form                                              10.07s  
+  ✓ can login with valid credentials                                     0.06s  
+  ✓ can login with remember me                                           0.05s  
+  ✓ cannot login with invalid credentials                                0.24s  
+  ✓ login requires email                                                 0.04s  
+  ✓ login requires password                                              0.04s  
+  ✓ login requires valid email format                                    0.04s  
+  ✓ can logout                                                           0.05s  
+  ✓ logout invalidates session                                           0.04s  
+  ✓ redirects to intended url after login                                0.05s  
+
+   FAIL  Tests\Feature\AuthenticationTest
+  ⨯ login page can be rendered                                           7.88s  
+  ✓ authenticated users cannot access login page                         0.04s  
+  ✓ users can authenticate with valid credentials                        0.04s  
+  ✓ users can authenticate with remember me                              0.04s  
+  ✓ users cannot authenticate with invalid password                      0.24s  
+  ✓ users cannot authenticate with invalid email                         0.24s  
+  ✓ login requires email                                                 0.04s  
+  ✓ login requires valid email format                                    0.03s  
+  ✓ login requires password                                              0.05s  
+  ✓ authenticated users can logout                                       0.03s  
+  ✓ guests cannot access logout route                                    0.03s  
+  ✓ guests cannot access protected dashboard route                       0.03s  
+  ✓ guests cannot access protected profile routes                        0.04s  
+  ✓ guests cannot access protected settings routes                       0.04s  
+  ⨯ authenticated users can access protected routes                      0.04s  
+  ✓ login redirects to intended url after authentication                 0.03s  
+  ✓ session is regenerated on login                                      0.04s  
+  ✓ session is invalidated on logout                                     0.03s  
+  ✓ custom validation messages are displayed                             0.04s  
+  ✓ invalid email format shows custom message                            0.04s  
+
+   FAIL  Tests\Feature\BudgetControllerTest
+  ⨯ index displays budgets for authenticated user                        0.05s  
+  ⨯ index filters by active status                                       0.04s  
+  ⨯ index filters by period                                              0.04s  
+  ⨯ index filters by category                                            0.03s  
+  ✓ index requires authentication                                        0.03s  
+  ⨯ create displays form                                                 0.03s  
+  ✓ create requires authentication                                       0.03s  
+  ⨯ store creates new budget                                             0.04s  
+  ⨯ store sets dates for non custom period                               0.04s  
+  ✓ store requires authentication                                        0.05s  
+  ⨯ show displays budget details                                         7.47s  
+  ⨯ show cannot view other users budget                                  7.78s  
+  ✓ show requires authentication                                         0.04s  
+  ⨯ edit displays form with budget data                                  8.24s  
+  ⨯ edit cannot edit other users budget                                  7.82s  
+  ✓ edit requires authentication                                         0.04s  
+  ⨯ update modifies budget                                               8.00s  
+  ⨯ update cannot modify other users budget                              7.84s  
+  ✓ update requires authentication                                       0.04s  
+  ⨯ destroy deletes budget                                               7.65s  
+  ⨯ destroy cannot delete other users budget                             7.79s  
+  ✓ destroy requires authentication                                      0.04s  
+  ⨯ analytics displays budget analytics                                  0.04s  
+  ⨯ analytics filters by period                                          0.06s  
+  ✓ analytics requires authentication                                    0.04s  
+
+   FAIL  Tests\Feature\ContractTest
+  ⨯ user can view contracts index                                        0.05s  
+  ⨯ user can create contract                                             0.04s  
+  ⨯ user can view contract details                                       7.81s  
+  ⨯ user can update contract                                             8.03s  
+  ⨯ user can delete contract                                             7.82s  
+  ⨯ user can terminate contract                                          7.41s  
+  ⨯ user can renew contract                                              6.25s  
+  ⨯ contracts can be filtered by type                                    0.06s  
+  ⨯ contracts can be searched                                            0.05s  
+  ⨯ user can view expiring contracts                                     0.05s  
+  ⨯ user cannot view other users contracts                               5.53s  
+  ⨯ contract validation rules                                            0.06s  
+  ⨯ contract scopes work correctly                                       0.06s  
+  ✓ contract attributes work correctly                                   0.05s  
+
+   FAIL  Tests\Feature\CreditNoteControllerTest
+  ⨯ example                                                              0.05s  
+
+   FAIL  Tests\Feature\CurrencyControllerTest
+  ⨯ freelance rate calculator page loads successfully                    0.06s  
+  ⨯ index page loads successfully                                        0.05s  
+  ⨯ index page displays currency rates                                   0.06s  
+  ⨯ refresh rate succeeds with valid currencies                          0.06s  
+  ⨯ refresh rate validates required fields                               0.06s  
+  ⨯ refresh rate validates currency code length                          0.05s  
+  ⨯ refresh rate rejects unsupported from currency                       0.05s  
+  ⨯ refresh rate rejects unsupported to currency                         0.06s  
+  ⨯ refresh rate handles lowercase currencies                            0.06s  
+  ⨯ refresh rate returns error when service fails                        0.07s  
+  ⨯ get freshness info succeeds with valid currencies                    0.06s  
+  ⨯ get freshness info validates required fields                         0.06s  
+  ⨯ get freshness info validates currency code length                    0.06s  
+  ⨯ get freshness info rejects unsupported currencies                    0.05s  
+  ⨯ get freshness info handles lowercase currencies                      0.05s  
+  ⨯ get freshness info returns freshness status                          0.06s  
+  ✓ unauthenticated users cannot access currency pages                   0.06s  
+  ⨯ refresh rate updates cached exchange rate                            0.05s  
+
+   FAIL  Tests\Feature\CustomerControllerTest
+  ⨯ index shows only user customers                                      0.07s  
+  ⨯ store creates customer with valid data                               0.06s  
+  ⨯ show prevents access to other users customer                         7.31s  
+  ⨯ update prevents idor attack                                          7.47s  
+  ⨯ destroy prevents deletion of other users customer                    7.04s  
+  ⨯ validates required fields                                            0.06s  
+  ⨯ validates email format                                               0.06s  
+
+   FAIL  Tests\Feature\CycleMenuFeatureTest
+  ⨯ creates a cycle menu and auto creates days then adds multiple items… 0.06s  
+  ⨯ adds missing days when cycle length increases without deleting exis… 7.06s  
+
+   FAIL  Tests\Feature\CycleMenuNotifyCommandTest
+  ⨯ cycle menus notify today dry run outputs payload and does not send…  0.06s  
+  ⨯ cycle menus notify today sends daily menu notification to all users… 0.06s  
+  ⨯ cycle menus notify today dispatch job dispatches job to queue        0.05s  
+  ⨯ send cycle menu daily notifications job sends notifications to all…  0.06s  
+
+   FAIL  Tests\Feature\DashboardControllerTest
+  ⨯ can display dashboard index                                          0.06s  
+  ⨯ dashboard includes recent expenses                                   0.07s  
+  ⨯ dashboard includes upcoming bills                                    0.07s  
+  ✓ unauthenticated users cannot access dashboard                        0.07s  
+  ⨯ can get chart data with default period                               0.08s  
+  ⨯ can get chart data with 3months period                               0.08s  
+  ⨯ can get chart data with 1year period                                 0.07s  
+  ⨯ can get chart data with 2years period                                0.05s  
+  ⨯ spending trends data includes monthly breakdown                      0.06s  
+  ⨯ category breakdown includes subscriptions and utilities              0.06s  
+  ⨯ dashboard stats are calculated                                       0.08s  
+  ⨯ dashboard alerts are generated                                       0.05s  
+
+   PASS  Tests\Feature\ExampleTest
+  ✓ the application returns a successful response                        0.05s  
+
+   PASS  Tests\Feature\ExpenseControllerTest
+  ✓ example                                                              0.05s  
+
+   FAIL  Tests\Feature\InvestmentCsvImportTest
+  ⨯ it imports investment transactions from csv                          0.08s  
+
+   FAIL  Tests\Feature\InvestmentDividendTest
+  ⨯ user can record dividend
+  ⨯ dividend validation rules are enforced                              12.15s  
+  ⨯ dividend amount calculation validation
+  ⨯ user cannot record dividend for other users investment
+  ⨯ api dividend recording returns json                                  0.04s  
+  ⨯ multiple dividends update investment total                           9.54s  
+
+   FAIL  Tests\Feature\InvestmentTransactionTest
+  ⨯ user can record buy transaction                                      9.59s  
+  ⨯ user can record sell transaction                                     9.36s  
+  ⨯ selling all shares updates investment status                         9.58s  
+  ⨯ transaction validation rules are enforced                            9.52s  
+  ⨯ transaction amount calculation validation                            9.92s  
+  ⨯ limit order requires limit price                                     9.65s  
+  ⨯ stop order requires stop price                                       9.49s  
+  ⨯ user cannot record transaction for other users investment
+  ⨯ api transaction recording returns json                               0.03s  
+  ⨯ legacy record buy still works                                        9.78s  
+  ⨯ legacy record sell still works                                       9.60s  
+
+   FAIL  Tests\Feature\InvoiceControllerTest
+  ⨯ index shows only user invoices                                       0.06s  
+  ⨯ index filters by status                                              0.04s  
+  ⨯ create shows form with user customers                                0.03s  
+  ⨯ store creates invoice with valid data                                0.05s  
+  ⨯ store prevents idor with other users customer                        0.04s  
+  ⨯ store validates required fields                                      0.03s  
+  ⨯ show displays invoice                                                9.54s  
+  ⨯ show prevents access to other users invoice                          5.88s  
+  ⨯ edit shows form for draft invoice                                    7.63s  
+  ⨯ update modifies invoice with valid data                              6.72s  
+  ⨯ update prevents idor attack                                          6.93s  
+  ⨯ update prevents customer switching to other users customer           7.04s  
+  ⨯ destroy deletes draft invoice                                        6.84s  
+  ⨯ destroy prevents deletion of other users invoice                     6.81s  
+  ⨯ issue changes status to issued                                       0.04s  
+  ⨯ void changes status to void                                          6.67s  
+  ⨯ mark as sent updates sent at                                         6.45s  
+  ✓ unauthenticated access is denied                                     0.04s  
+
+   FAIL  Tests\Feature\IouControllerTest
+  ⨯ index displays ious for authenticated user                           0.05s  
+  ⨯ index filters by type                                                0.03s  
+  ⨯ index filters by status                                              0.05s  
+  ⨯ index filters by person                                              0.03s  
+  ✓ index requires authentication                                        0.03s  
+  ⨯ create displays form                                                 0.03s  
+  ✓ create requires authentication                                       0.03s  
+  ⨯ store creates new iou                                                0.03s  
+  ✓ store requires authentication                                        0.04s  
+  ⨯ show displays iou details                                            6.83s  
+  ⨯ show cannot view other users iou                                     6.83s  
+  ✓ show requires authentication                                         0.04s  
+  ⨯ edit displays form with iou data                                     6.73s  
+  ⨯ edit cannot edit other users iou                                     6.88s  
+  ✓ edit requires authentication                                         0.04s  
+  ⨯ update modifies iou                                                  6.99s  
+  ⨯ update cannot modify other users iou                                 6.96s  
+  ✓ update requires authentication                                       0.04s  
+  ⨯ destroy deletes iou                                                  7.03s  
+  ⨯ destroy cannot delete other users iou                                6.93s  
+  ✓ destroy requires authentication                                      0.04s  
+  ⨯ record payment updates amount paid                                   6.88s  
+  ⨯ record payment marks as paid when full amount paid                  10.37s  
+  ✓ record payment requires authentication                               0.09s  
+  ⨯ mark paid sets iou as fully paid                                    10.18s  
+  ⨯ mark paid cannot mark other users iou                               10.51s  
+  ✓ mark paid requires authentication                                    0.08s  
+  ⨯ cancel sets iou status to cancelled                                 10.39s  
+  ⨯ cancel cannot cancel other users iou                                10.31s  
+  ✓ cancel requires authentication                                       0.08s  

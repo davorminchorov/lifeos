@@ -11,21 +11,28 @@ class ContractModelTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected $user;
+    protected $tenant;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        ['user' => $this->user, 'tenant' => $this->tenant] = $this->setupTenantContext();
+    }
+
     public function test_contract_belongs_to_user()
     {
-        $user = User::factory()->create();
-        $contract = Contract::factory()->for($user)->create();
+        $contract = Contract::factory()->for($this->user)->create(['tenant_id' => $this->tenant->id]);
 
         $this->assertInstanceOf(User::class, $contract->user);
-        $this->assertEquals($user->id, $contract->user->id);
+        $this->assertEquals($this->user->id, $contract->user->id);
     }
 
     public function test_active_scope_filters_active_contracts()
     {
-        $user = User::factory()->create();
-        $activeContract = Contract::factory()->for($user)->create(['status' => 'active']);
-        $expiredContract = Contract::factory()->for($user)->create(['status' => 'expired']);
-        $terminatedContract = Contract::factory()->for($user)->create(['status' => 'terminated']);
+        $activeContract = Contract::factory()->for($this->user)->create(['status' => 'active', 'tenant_id' => $this->tenant->id]);
+        $expiredContract = Contract::factory()->for($this->user)->create(['status' => 'expired', 'tenant_id' => $this->tenant->id]);
+        $terminatedContract = Contract::factory()->for($this->user)->create(['status' => 'terminated', 'tenant_id' => $this->tenant->id]);
 
         $activeContracts = Contract::active()->get();
 
@@ -36,24 +43,26 @@ class ContractModelTest extends TestCase
 
     public function test_expiring_soon_scope_filters_correctly()
     {
-        $user = User::factory()->create();
 
         // Contract expiring in 15 days
-        $expiringSoon = Contract::factory()->for($user)->create([
+        $expiringSoon = Contract::factory()->for($this->user)->create([
             'end_date' => now()->addDays(15),
             'status' => 'active',
+            'tenant_id' => $this->tenant->id,
         ]);
 
         // Contract expiring in 45 days
-        $expiringLater = Contract::factory()->for($user)->create([
+        $expiringLater = Contract::factory()->for($this->user)->create([
             'end_date' => now()->addDays(45),
             'status' => 'active',
+            'tenant_id' => $this->tenant->id,
         ]);
 
         // Contract without end date
-        $noEndDate = Contract::factory()->for($user)->create([
+        $noEndDate = Contract::factory()->for($this->user)->create([
             'end_date' => null,
             'status' => 'active',
+            'tenant_id' => $this->tenant->id,
         ]);
 
         $expiringContracts = Contract::expiringSoon(30)->get();
@@ -65,27 +74,29 @@ class ContractModelTest extends TestCase
 
     public function test_requiring_notice_scope_filters_correctly()
     {
-        $user = User::factory()->create();
 
         // Contract requiring notice (30 days before end date)
-        $requiresNotice = Contract::factory()->for($user)->create([
+        $requiresNotice = Contract::factory()->for($this->user)->create([
             'end_date' => now()->addDays(25),
             'notice_period_days' => 30,
             'status' => 'active',
+            'tenant_id' => $this->tenant->id,
         ]);
 
         // Contract not requiring notice yet
-        $noNoticeYet = Contract::factory()->for($user)->create([
+        $noNoticeYet = Contract::factory()->for($this->user)->create([
             'end_date' => now()->addDays(60),
             'notice_period_days' => 30,
             'status' => 'active',
+            'tenant_id' => $this->tenant->id,
         ]);
 
         // Contract without notice period
-        $noNoticePeriod = Contract::factory()->for($user)->create([
+        $noNoticePeriod = Contract::factory()->for($this->user)->create([
             'end_date' => now()->addDays(25),
             'notice_period_days' => null,
             'status' => 'active',
+            'tenant_id' => $this->tenant->id,
         ]);
 
         $contractsRequiringNotice = Contract::requiringNotice()->get();
@@ -97,18 +108,20 @@ class ContractModelTest extends TestCase
 
     public function test_is_expired_attribute_works_correctly()
     {
-        $user = User::factory()->create();
 
-        $expiredContract = Contract::factory()->for($user)->create([
+        $expiredContract = Contract::factory()->for($this->user)->create([
             'end_date' => now()->subDays(10),
+            'tenant_id' => $this->tenant->id,
         ]);
 
-        $activeContract = Contract::factory()->for($user)->create([
+        $activeContract = Contract::factory()->for($this->user)->create([
             'end_date' => now()->addDays(30),
+            'tenant_id' => $this->tenant->id,
         ]);
 
-        $noEndDateContract = Contract::factory()->for($user)->create([
+        $noEndDateContract = Contract::factory()->for($this->user)->create([
             'end_date' => null,
+            'tenant_id' => $this->tenant->id,
         ]);
 
         $this->assertTrue($expiredContract->is_expired);
@@ -118,19 +131,21 @@ class ContractModelTest extends TestCase
 
     public function test_days_until_expiration_attribute_works_correctly()
     {
-        $user = User::factory()->create();
 
         $today = now()->startOfDay();
-        $contractExpiringSoon = Contract::factory()->for($user)->create([
+        $contractExpiringSoon = Contract::factory()->for($this->user)->create([
             'end_date' => $today->copy()->addDays(15),
+            'tenant_id' => $this->tenant->id,
         ]);
 
-        $expiredContract = Contract::factory()->for($user)->create([
+        $expiredContract = Contract::factory()->for($this->user)->create([
             'end_date' => $today->copy()->subDays(5),
+            'tenant_id' => $this->tenant->id,
         ]);
 
-        $noEndDateContract = Contract::factory()->for($user)->create([
+        $noEndDateContract = Contract::factory()->for($this->user)->create([
             'end_date' => null,
+            'tenant_id' => $this->tenant->id,
         ]);
 
         $this->assertEquals(15, $contractExpiringSoon->days_until_expiration);
@@ -140,22 +155,24 @@ class ContractModelTest extends TestCase
 
     public function test_notice_deadline_attribute_works_correctly()
     {
-        $user = User::factory()->create();
         $endDate = now()->addDays(60);
 
-        $contractWithNotice = Contract::factory()->for($user)->create([
+        $contractWithNotice = Contract::factory()->for($this->user)->create([
             'end_date' => $endDate,
             'notice_period_days' => 30,
+            'tenant_id' => $this->tenant->id,
         ]);
 
-        $contractWithoutNotice = Contract::factory()->for($user)->create([
+        $contractWithoutNotice = Contract::factory()->for($this->user)->create([
             'end_date' => $endDate,
             'notice_period_days' => null,
+            'tenant_id' => $this->tenant->id,
         ]);
 
-        $contractWithoutEndDate = Contract::factory()->for($user)->create([
+        $contractWithoutEndDate = Contract::factory()->for($this->user)->create([
             'end_date' => null,
             'notice_period_days' => 30,
+            'tenant_id' => $this->tenant->id,
         ]);
 
         $expectedDeadline = $endDate->copy()->subDays(30);
@@ -166,8 +183,7 @@ class ContractModelTest extends TestCase
 
     public function test_contract_casts_work_correctly()
     {
-        $user = User::factory()->create();
-        $contract = Contract::factory()->for($user)->create([
+        $contract = Contract::factory()->for($this->user)->create([
             'start_date' => '2024-01-01',
             'end_date' => '2024-12-31',
             'notice_period_days' => 30,
@@ -177,6 +193,7 @@ class ContractModelTest extends TestCase
             'document_attachments' => ['contract.pdf', 'terms.pdf'],
             'renewal_history' => [['date' => '2024-01-01', 'action' => 'renewed']],
             'amendments' => [['date' => '2024-06-01', 'change' => 'Price increase']],
+            'tenant_id' => $this->tenant->id,
         ]);
 
         $this->assertInstanceOf(\Carbon\Carbon::class, $contract->start_date);
@@ -193,6 +210,7 @@ class ContractModelTest extends TestCase
     public function test_fillable_attributes_are_correct()
     {
         $fillable = [
+            'tenant_id',
             'user_id',
             'contract_type',
             'title',
@@ -220,14 +238,13 @@ class ContractModelTest extends TestCase
 
     public function test_contract_factory_creates_valid_contracts()
     {
-        $user = User::factory()->create();
-        $contract = Contract::factory()->for($user)->create();
+        $contract = Contract::factory()->for($this->user)->create(['tenant_id' => $this->tenant->id]);
 
         $this->assertNotNull($contract->contract_type);
         $this->assertNotNull($contract->title);
         $this->assertNotNull($contract->counterparty);
         $this->assertNotNull($contract->start_date);
         $this->assertNotNull($contract->status);
-        $this->assertEquals($user->id, $contract->user_id);
+        $this->assertEquals($this->user->id, $contract->user_id);
     }
 }

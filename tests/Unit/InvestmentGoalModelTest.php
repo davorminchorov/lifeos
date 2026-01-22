@@ -12,10 +12,19 @@ class InvestmentGoalModelTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected $user;
+    protected $tenant;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        ['user' => $this->user, 'tenant' => $this->tenant] = $this->setupTenantContext();
+    }
+
     public function test_investment_goal_has_fillable_attributes(): void
     {
         $fillable = [
-            'user_id', 'title', 'description', 'target_amount', 'current_progress',
+            'tenant_id', 'user_id', 'title', 'description', 'target_amount', 'current_progress',
             'target_date', 'status', 'created_at', 'updated_at',
         ];
         $goal = new InvestmentGoal;
@@ -48,7 +57,6 @@ class InvestmentGoalModelTest extends TestCase
 
     public function test_progress_percentage_attribute(): void
     {
-        $user = User::factory()->create();
 
         // Test 50% progress
         $goal = InvestmentGoal::factory()->create([
@@ -85,7 +93,6 @@ class InvestmentGoalModelTest extends TestCase
 
     public function test_is_achieved_attribute(): void
     {
-        $user = User::factory()->create();
 
         $achievedGoal = InvestmentGoal::factory()->create([
             'user_id' => $user->id,
@@ -111,7 +118,6 @@ class InvestmentGoalModelTest extends TestCase
 
     public function test_remaining_amount_attribute(): void
     {
-        $user = User::factory()->create();
 
         $goal = InvestmentGoal::factory()->create([
             'user_id' => $user->id,
@@ -137,10 +143,9 @@ class InvestmentGoalModelTest extends TestCase
 
     public function test_scope_active(): void
     {
-        $user = User::factory()->create();
-        InvestmentGoal::factory()->create(['user_id' => $user->id, 'status' => 'active']);
-        InvestmentGoal::factory()->create(['user_id' => $user->id, 'status' => 'achieved']);
-        InvestmentGoal::factory()->create(['user_id' => $user->id, 'status' => 'active']);
+        InvestmentGoal::factory()->create(['user_id' => $this->user->id, 'tenant_id' => $this->tenant->id, 'status' => 'active']);
+        InvestmentGoal::factory()->create(['user_id' => $this->user->id, 'tenant_id' => $this->tenant->id, 'status' => 'achieved']);
+        InvestmentGoal::factory()->create(['user_id' => $this->user->id, 'tenant_id' => $this->tenant->id, 'status' => 'active']);
 
         $activeGoals = InvestmentGoal::active()->get();
 
@@ -152,7 +157,6 @@ class InvestmentGoalModelTest extends TestCase
 
     public function test_scope_achieved(): void
     {
-        $user = User::factory()->create();
         InvestmentGoal::factory()->create([
             'user_id' => $user->id,
             'target_amount' => 1000.00,
@@ -179,7 +183,7 @@ class InvestmentGoalModelTest extends TestCase
 
     public function test_investment_goal_factory_creates_valid_goal(): void
     {
-        $goal = InvestmentGoal::factory()->create();
+        $goal = InvestmentGoal::factory()->create(['tenant_id' => $this->tenant->id]);
 
         $this->assertInstanceOf(InvestmentGoal::class, $goal);
         $this->assertNotNull($goal->user_id);
@@ -196,6 +200,7 @@ class InvestmentGoalModelTest extends TestCase
             'title' => 'Emergency Fund',
             'target_amount' => 10000.00,
             'current_progress' => 2500.00,
+            'tenant_id' => $this->tenant->id,
         ];
 
         $goal = InvestmentGoal::factory()->create($goalData);

@@ -12,10 +12,19 @@ class WarrantyModelTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected $user;
+    protected $tenant;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        ['user' => $this->user, 'tenant' => $this->tenant] = $this->setupTenantContext();
+    }
+
     public function test_warranty_has_fillable_attributes(): void
     {
         $fillable = [
-            'user_id', 'product_name', 'brand', 'model', 'serial_number', 'purchase_date',
+            'tenant_id', 'user_id', 'product_name', 'brand', 'model', 'serial_number', 'purchase_date',
             'purchase_price', 'retailer', 'warranty_duration_months', 'warranty_type',
             'warranty_terms', 'warranty_expiration_date', 'claim_history', 'receipt_attachments',
             'proof_of_purchase_attachments', 'current_status', 'transfer_history',
@@ -63,10 +72,9 @@ class WarrantyModelTest extends TestCase
 
     public function test_scope_active(): void
     {
-        $user = User::factory()->create();
-        Warranty::factory()->create(['user_id' => $user->id, 'current_status' => 'active']);
-        Warranty::factory()->create(['user_id' => $user->id, 'current_status' => 'expired']);
-        Warranty::factory()->create(['user_id' => $user->id, 'current_status' => 'active']);
+        Warranty::factory()->create(['user_id' => $this->user->id, 'tenant_id' => $this->tenant->id, 'current_status' => 'active']);
+        Warranty::factory()->create(['user_id' => $this->user->id, 'tenant_id' => $this->tenant->id, 'current_status' => 'expired']);
+        Warranty::factory()->create(['user_id' => $this->user->id, 'tenant_id' => $this->tenant->id, 'current_status' => 'active']);
 
         $activeWarranties = Warranty::active()->get();
 
@@ -78,19 +86,21 @@ class WarrantyModelTest extends TestCase
 
     public function test_scope_expiring_soon(): void
     {
-        $user = User::factory()->create();
         Warranty::factory()->create([
-            'user_id' => $user->id,
+            'user_id' => $this->user->id,
+            'tenant_id' => $this->tenant->id,
             'current_status' => 'active',
             'warranty_expiration_date' => now()->addDays(15),
         ]);
         Warranty::factory()->create([
-            'user_id' => $user->id,
+            'user_id' => $this->user->id,
+            'tenant_id' => $this->tenant->id,
             'current_status' => 'active',
             'warranty_expiration_date' => now()->addDays(45),
         ]);
         Warranty::factory()->create([
-            'user_id' => $user->id,
+            'user_id' => $this->user->id,
+            'tenant_id' => $this->tenant->id,
             'current_status' => 'expired',
             'warranty_expiration_date' => now()->addDays(15),
         ]);
@@ -104,13 +114,14 @@ class WarrantyModelTest extends TestCase
 
     public function test_scope_expired(): void
     {
-        $user = User::factory()->create();
         Warranty::factory()->create([
-            'user_id' => $user->id,
+            'user_id' => $this->user->id,
+            'tenant_id' => $this->tenant->id,
             'warranty_expiration_date' => now()->subDays(10),
         ]);
         Warranty::factory()->create([
-            'user_id' => $user->id,
+            'user_id' => $this->user->id,
+            'tenant_id' => $this->tenant->id,
             'warranty_expiration_date' => now()->addDays(10),
         ]);
 
@@ -122,13 +133,14 @@ class WarrantyModelTest extends TestCase
 
     public function test_is_expired_attribute(): void
     {
-        $user = User::factory()->create();
         $expiredWarranty = Warranty::factory()->create([
-            'user_id' => $user->id,
+            'user_id' => $this->user->id,
+            'tenant_id' => $this->tenant->id,
             'warranty_expiration_date' => now()->subDays(1),
         ]);
         $activeWarranty = Warranty::factory()->create([
-            'user_id' => $user->id,
+            'user_id' => $this->user->id,
+            'tenant_id' => $this->tenant->id,
             'warranty_expiration_date' => now()->addDays(1),
         ]);
 
@@ -138,9 +150,9 @@ class WarrantyModelTest extends TestCase
 
     public function test_days_until_expiration_attribute(): void
     {
-        $user = User::factory()->create();
         $warranty = Warranty::factory()->create([
-            'user_id' => $user->id,
+            'user_id' => $this->user->id,
+            'tenant_id' => $this->tenant->id,
             'warranty_expiration_date' => now()->addDays(30),
         ]);
 
@@ -149,11 +161,11 @@ class WarrantyModelTest extends TestCase
 
     public function test_warranty_remaining_percentage_attribute(): void
     {
-        $user = User::factory()->create();
 
         // Test warranty that's 50% through its life
         $warranty = Warranty::factory()->create([
-            'user_id' => $user->id,
+            'user_id' => $this->user->id,
+            'tenant_id' => $this->tenant->id,
             'purchase_date' => now()->subDays(60),
             'warranty_expiration_date' => now()->addDays(60),
         ]);
@@ -162,7 +174,8 @@ class WarrantyModelTest extends TestCase
 
         // Test expired warranty (should be 0)
         $expiredWarranty = Warranty::factory()->create([
-            'user_id' => $user->id,
+            'user_id' => $this->user->id,
+            'tenant_id' => $this->tenant->id,
             'purchase_date' => now()->subDays(120),
             'warranty_expiration_date' => now()->subDays(60),
         ]);
@@ -172,16 +185,17 @@ class WarrantyModelTest extends TestCase
 
     public function test_has_claims_attribute(): void
     {
-        $user = User::factory()->create();
         $warrantyWithClaims = Warranty::factory()->create([
-            'user_id' => $user->id,
+            'user_id' => $this->user->id,
+            'tenant_id' => $this->tenant->id,
             'claim_history' => [
                 ['date' => '2023-01-15', 'description' => 'Battery replacement'],
                 ['date' => '2023-03-20', 'description' => 'Screen repair'],
             ],
         ]);
         $warrantyWithoutClaims = Warranty::factory()->create([
-            'user_id' => $user->id,
+            'user_id' => $this->user->id,
+            'tenant_id' => $this->tenant->id,
             'claim_history' => [],
         ]);
 
@@ -191,9 +205,9 @@ class WarrantyModelTest extends TestCase
 
     public function test_total_claims_attribute(): void
     {
-        $user = User::factory()->create();
         $warrantyWithClaims = Warranty::factory()->create([
-            'user_id' => $user->id,
+            'user_id' => $this->user->id,
+            'tenant_id' => $this->tenant->id,
             'claim_history' => [
                 ['date' => '2023-01-15', 'description' => 'Battery replacement'],
                 ['date' => '2023-03-20', 'description' => 'Screen repair'],
@@ -201,11 +215,13 @@ class WarrantyModelTest extends TestCase
             ],
         ]);
         $warrantyWithoutClaims = Warranty::factory()->create([
-            'user_id' => $user->id,
+            'user_id' => $this->user->id,
+            'tenant_id' => $this->tenant->id,
             'claim_history' => [],
         ]);
         $warrantyWithNullClaims = Warranty::factory()->create([
-            'user_id' => $user->id,
+            'user_id' => $this->user->id,
+            'tenant_id' => $this->tenant->id,
             'claim_history' => null,
         ]);
 
@@ -216,7 +232,7 @@ class WarrantyModelTest extends TestCase
 
     public function test_warranty_factory_creates_valid_warranty(): void
     {
-        $warranty = Warranty::factory()->create();
+        $warranty = Warranty::factory()->create(['tenant_id' => $this->tenant->id]);
 
         $this->assertInstanceOf(Warranty::class, $warranty);
         $this->assertNotNull($warranty->user_id);
@@ -234,6 +250,7 @@ class WarrantyModelTest extends TestCase
             'brand' => 'Apple',
             'warranty_duration_months' => 24,
             'purchase_price' => 999.99,
+            'tenant_id' => $this->tenant->id,
         ];
 
         $warranty = Warranty::factory()->create($warrantyData);

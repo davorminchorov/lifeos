@@ -13,9 +13,19 @@ class InvestmentDividendModelTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected $user;
+    protected $tenant;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        ['user' => $this->user, 'tenant' => $this->tenant] = $this->setupTenantContext();
+    }
+
     public function test_investment_dividend_has_fillable_attributes(): void
     {
         $fillable = [
+            'tenant_id',
             'investment_id',
             'amount',
             'record_date',
@@ -69,13 +79,13 @@ class InvestmentDividendModelTest extends TestCase
 
     public function test_can_create_investment_dividend_with_investment(): void
     {
-        $user = User::factory()->create();
-        $investment = Investment::factory()->create(['user_id' => $user->id]);
+        $investment = Investment::factory()->create(['user_id' => $this->user->id, 'tenant_id' => $this->tenant->id]);
 
         $dividend = InvestmentDividend::factory()->create([
             'investment_id' => $investment->id,
             'amount' => 100.50,
             'currency' => 'USD',
+            'tenant_id' => $this->tenant->id,
         ]);
 
         $this->assertInstanceOf(InvestmentDividend::class, $dividend);
@@ -86,9 +96,8 @@ class InvestmentDividendModelTest extends TestCase
 
     public function test_investment_dividend_factory_creates_valid_dividend(): void
     {
-        $user = User::factory()->create();
-        $investment = Investment::factory()->create(['user_id' => $user->id]);
-        $dividend = InvestmentDividend::factory()->create(['investment_id' => $investment->id]);
+        $investment = Investment::factory()->create(['user_id' => $this->user->id, 'tenant_id' => $this->tenant->id]);
+        $dividend = InvestmentDividend::factory()->create(['investment_id' => $investment->id, 'tenant_id' => $this->tenant->id]);
 
         $this->assertInstanceOf(InvestmentDividend::class, $dividend);
         $this->assertNotNull($dividend->investment_id);
@@ -101,14 +110,14 @@ class InvestmentDividendModelTest extends TestCase
 
     public function test_investment_dividend_factory_can_create_with_custom_attributes(): void
     {
-        $user = User::factory()->create();
-        $investment = Investment::factory()->create(['user_id' => $user->id]);
+        $investment = Investment::factory()->create(['user_id' => $this->user->id, 'tenant_id' => $this->tenant->id]);
 
         $dividendData = [
             'investment_id' => $investment->id,
             'amount' => 250.75,
             'currency' => 'EUR',
             'dividend_type' => 'ordinary',
+            'tenant_id' => $this->tenant->id,
         ];
 
         $dividend = InvestmentDividend::factory()->create($dividendData);
@@ -121,14 +130,14 @@ class InvestmentDividendModelTest extends TestCase
 
     public function test_dividend_amount_is_required(): void
     {
-        $user = User::factory()->create();
-        $investment = Investment::factory()->create(['user_id' => $user->id]);
+        $investment = Investment::factory()->create(['user_id' => $this->user->id, 'tenant_id' => $this->tenant->id]);
 
         $this->expectException(\Illuminate\Database\QueryException::class);
         InvestmentDividend::create([
             'investment_id' => $investment->id,
             'record_date' => now(),
             'dividend_type' => 'ordinary',
+            'tenant_id' => $this->tenant->id,
             // missing amount
         ]);
     }
@@ -146,9 +155,8 @@ class InvestmentDividendModelTest extends TestCase
 
     public function test_can_access_related_investment(): void
     {
-        $user = User::factory()->create();
-        $investment = Investment::factory()->create(['user_id' => $user->id]);
-        $dividend = InvestmentDividend::factory()->create(['investment_id' => $investment->id]);
+        $investment = Investment::factory()->create(['user_id' => $this->user->id, 'tenant_id' => $this->tenant->id]);
+        $dividend = InvestmentDividend::factory()->create(['investment_id' => $investment->id, 'tenant_id' => $this->tenant->id]);
 
         $this->assertInstanceOf(Investment::class, $dividend->investment);
         $this->assertEquals($investment->id, $dividend->investment->id);
@@ -157,12 +165,12 @@ class InvestmentDividendModelTest extends TestCase
 
     public function test_dividend_type_can_be_set(): void
     {
-        $user = User::factory()->create();
-        $investment = Investment::factory()->create(['user_id' => $user->id]);
+        $investment = Investment::factory()->create(['user_id' => $this->user->id, 'tenant_id' => $this->tenant->id]);
 
         $dividend = InvestmentDividend::factory()->create([
             'investment_id' => $investment->id,
             'dividend_type' => 'special',
+            'tenant_id' => $this->tenant->id,
         ]);
 
         $this->assertEquals('special', $dividend->dividend_type);
@@ -170,12 +178,12 @@ class InvestmentDividendModelTest extends TestCase
 
     public function test_tax_withheld_can_be_zero(): void
     {
-        $user = User::factory()->create();
-        $investment = Investment::factory()->create(['user_id' => $user->id]);
+        $investment = Investment::factory()->create(['user_id' => $this->user->id, 'tenant_id' => $this->tenant->id]);
 
         $dividend = InvestmentDividend::factory()->create([
             'investment_id' => $investment->id,
             'tax_withheld' => 0.00,
+            'tenant_id' => $this->tenant->id,
         ]);
 
         $this->assertEquals(0.00, $dividend->tax_withheld);
@@ -183,8 +191,7 @@ class InvestmentDividendModelTest extends TestCase
 
     public function test_payment_date_can_be_different_from_record_date(): void
     {
-        $user = User::factory()->create();
-        $investment = Investment::factory()->create(['user_id' => $user->id]);
+        $investment = Investment::factory()->create(['user_id' => $this->user->id, 'tenant_id' => $this->tenant->id]);
 
         $recordDate = now()->subDays(5);
         $paymentDate = now()->addDays(2);
@@ -193,6 +200,7 @@ class InvestmentDividendModelTest extends TestCase
             'investment_id' => $investment->id,
             'record_date' => $recordDate,
             'payment_date' => $paymentDate,
+            'tenant_id' => $this->tenant->id,
         ]);
 
         $this->assertEquals($recordDate->format('Y-m-d'), $dividend->record_date->format('Y-m-d'));
