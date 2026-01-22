@@ -12,9 +12,18 @@ class CycleMenuRelationshipsTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected $user;
+    protected $tenant;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        ['user' => $this->user, 'tenant' => $this->tenant] = $this->setupTenantContext();
+    }
+
     public function test_defines_relationships_between_menu_days_and_items_with_ordered_items(): void
     {
-        $menu = CycleMenu::factory()->create();
+        $menu = CycleMenu::factory()->create(['tenant_id' => $this->tenant->id]);
         $day = CycleMenuDay::factory()->create([
             'cycle_menu_id' => $menu->id,
             'day_index' => 0,

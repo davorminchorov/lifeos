@@ -14,26 +14,30 @@ class SendSubscriptionRenewalNotificationsTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected $user;
+    protected $tenant;
+
     protected function setUp(): void
     {
         parent::setUp();
         Event::fake();
+        ['user' => $this->user, 'tenant' => $this->tenant] = $this->setupTenantContext();
     }
 
     /** @test */
     public function it_respects_user_notification_preferences_for_days()
     {
         // Create user with custom notification days
-        $user = User::factory()->create();
-        $user->createDefaultNotificationPreferences();
+        $this->user->createDefaultNotificationPreferences();
 
-        $preference = $user->getNotificationPreference('subscription_renewal');
+        $preference = $this->user->getNotificationPreference('subscription_renewal');
         $preference->setNotificationDays([14, 7, 1]);
         $preference->save();
 
         // Create subscription due in 14 days
         $subscription = Subscription::factory()->create([
-            'user_id' => $user->id,
+            'user_id' => $this->user->id,
+            'tenant_id' => $this->tenant->id,
             'next_billing_date' => now()->addDays(14),
             'status' => 'active',
         ]);
@@ -51,11 +55,10 @@ class SendSubscriptionRenewalNotificationsTest extends TestCase
     /** @test */
     public function it_skips_users_with_disabled_channels()
     {
-        $user = User::factory()->create();
-        $user->createDefaultNotificationPreferences();
+        $this->user->createDefaultNotificationPreferences();
 
         // Disable all channels
-        $preference = $user->getNotificationPreference('subscription_renewal');
+        $preference = $this->user->getNotificationPreference('subscription_renewal');
         $preference->email_enabled = false;
         $preference->database_enabled = false;
         $preference->push_enabled = false;
@@ -63,7 +66,8 @@ class SendSubscriptionRenewalNotificationsTest extends TestCase
 
         // Create subscription
         Subscription::factory()->create([
-            'user_id' => $user->id,
+            'user_id' => $this->user->id,
+            'tenant_id' => $this->tenant->id,
             'next_billing_date' => now()->addDays(7),
             'status' => 'active',
         ]);
@@ -79,22 +83,21 @@ class SendSubscriptionRenewalNotificationsTest extends TestCase
     /** @test */
     public function it_finds_subscriptions_due_in_specific_days_for_user()
     {
-        $user = User::factory()->create();
-        $user->createDefaultNotificationPreferences();
+        $this->user->createDefaultNotificationPreferences();
 
-        $preference = $user->getNotificationPreference('subscription_renewal');
+        $preference = $this->user->getNotificationPreference('subscription_renewal');
         $preference->setNotificationDays([7]);
         $preference->save();
 
         // Create subscriptions due at different times
         $subDueIn7 = Subscription::factory()->create([
-            'user_id' => $user->id,
+            'user_id' => $this->user->id,
             'next_billing_date' => now()->addDays(7),
             'status' => 'active',
         ]);
 
         $subDueIn14 = Subscription::factory()->create([
-            'user_id' => $user->id,
+            'user_id' => $this->user->id,
             'next_billing_date' => now()->addDays(14),
             'status' => 'active',
         ]);
@@ -118,28 +121,35 @@ class SendSubscriptionRenewalNotificationsTest extends TestCase
     public function it_processes_multiple_users_with_different_preferences()
     {
         // User A: Wants notifications at 14, 7 days
-        $userA = User::factory()->create();
+        $userA = User::factory()->create(['current_tenant_id' => $this->tenant->id]);
+        $this->actingAs($userA); // Set as authenticated user for a moment
         $userA->createDefaultNotificationPreferences();
         $prefA = $userA->getNotificationPreference('subscription_renewal');
         $prefA->setNotificationDays([14, 7]);
         $prefA->save();
 
         // User B: Only wants notifications at 1 day
-        $userB = User::factory()->create();
+        $userB = User::factory()->create(['current_tenant_id' => $this->tenant->id]);
+        $this->actingAs($userB); // Set as authenticated user for a moment
         $userB->createDefaultNotificationPreferences();
         $prefB = $userB->getNotificationPreference('subscription_renewal');
         $prefB->setNotificationDays([1]);
         $prefB->save();
 
+        // Switch back to original test user
+        $this->actingAs($this->user);
+
         // Create subscriptions for both users, due in 7 days
         $subA = Subscription::factory()->create([
             'user_id' => $userA->id,
+            'tenant_id' => $this->tenant->id,
             'next_billing_date' => now()->addDays(7),
             'status' => 'active',
         ]);
 
         $subB = Subscription::factory()->create([
             'user_id' => $userB->id,
+            'tenant_id' => $this->tenant->id,
             'next_billing_date' => now()->addDays(7),
             'status' => 'active',
         ]);
@@ -162,16 +172,15 @@ class SendSubscriptionRenewalNotificationsTest extends TestCase
     /** @test */
     public function it_finds_subscriptions_due_today()
     {
-        $user = User::factory()->create();
-        $user->createDefaultNotificationPreferences();
+        $this->user->createDefaultNotificationPreferences();
 
-        $preference = $user->getNotificationPreference('subscription_renewal');
+        $preference = $this->user->getNotificationPreference('subscription_renewal');
         $preference->setNotificationDays([0]);
         $preference->save();
 
         // Create subscription due today
         $subscription = Subscription::factory()->create([
-            'user_id' => $user->id,
+            'user_id' => $this->user->id,
             'next_billing_date' => now(),
             'status' => 'active',
         ]);
@@ -189,16 +198,15 @@ class SendSubscriptionRenewalNotificationsTest extends TestCase
     /** @test */
     public function it_finds_overdue_subscriptions()
     {
-        $user = User::factory()->create();
-        $user->createDefaultNotificationPreferences();
+        $this->user->createDefaultNotificationPreferences();
 
-        $preference = $user->getNotificationPreference('subscription_renewal');
+        $preference = $this->user->getNotificationPreference('subscription_renewal');
         $preference->setNotificationDays([0]);
         $preference->save();
 
         // Create subscription that was due 3 days ago
         $subscription = Subscription::factory()->create([
-            'user_id' => $user->id,
+            'user_id' => $this->user->id,
             'next_billing_date' => now()->subDays(3),
             'status' => 'active',
         ]);
@@ -216,12 +224,12 @@ class SendSubscriptionRenewalNotificationsTest extends TestCase
     /** @test */
     public function it_ignores_cancelled_subscriptions()
     {
-        $user = User::factory()->create();
-        $user->createDefaultNotificationPreferences();
+        $this->user->createDefaultNotificationPreferences();
 
         // Create cancelled subscription
         Subscription::factory()->create([
-            'user_id' => $user->id,
+            'user_id' => $this->user->id,
+            'tenant_id' => $this->tenant->id,
             'next_billing_date' => now()->addDays(7),
             'status' => 'cancelled',
         ]);
@@ -237,12 +245,12 @@ class SendSubscriptionRenewalNotificationsTest extends TestCase
     /** @test */
     public function it_ignores_paused_subscriptions()
     {
-        $user = User::factory()->create();
-        $user->createDefaultNotificationPreferences();
+        $this->user->createDefaultNotificationPreferences();
 
         // Create paused subscription
         Subscription::factory()->create([
-            'user_id' => $user->id,
+            'user_id' => $this->user->id,
+            'tenant_id' => $this->tenant->id,
             'next_billing_date' => now()->addDays(7),
             'status' => 'paused',
         ]);
@@ -258,17 +266,16 @@ class SendSubscriptionRenewalNotificationsTest extends TestCase
     /** @test */
     public function it_supports_legacy_mode_with_specific_days()
     {
-        $user = User::factory()->create();
-        $user->createDefaultNotificationPreferences();
+        $this->user->createDefaultNotificationPreferences();
 
         // Set user preference to different days
-        $preference = $user->getNotificationPreference('subscription_renewal');
+        $preference = $this->user->getNotificationPreference('subscription_renewal');
         $preference->setNotificationDays([30, 14]);
         $preference->save();
 
         // Create subscription due in 7 days
         $subscription = Subscription::factory()->create([
-            'user_id' => $user->id,
+            'user_id' => $this->user->id,
             'next_billing_date' => now()->addDays(7),
             'status' => 'active',
         ]);
@@ -291,7 +298,7 @@ class SendSubscriptionRenewalNotificationsTest extends TestCase
 
         // Create subscription due in 7 days
         $subscription = Subscription::factory()->create([
-            'user_id' => $user->id,
+            'user_id' => $this->user->id,
             'next_billing_date' => now()->addDays(7),
             'status' => 'active',
         ]);
@@ -310,8 +317,7 @@ class SendSubscriptionRenewalNotificationsTest extends TestCase
     public function it_handles_users_with_no_subscriptions()
     {
         // Create user with no subscriptions
-        $user = User::factory()->create();
-        $user->createDefaultNotificationPreferences();
+        $this->user->createDefaultNotificationPreferences();
 
         // Run job - should not crash
         $job = new SendSubscriptionRenewalNotifications();
