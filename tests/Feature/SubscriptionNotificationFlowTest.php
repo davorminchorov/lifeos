@@ -8,13 +8,14 @@ use App\Notifications\SubscriptionRenewalAlert;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Notification;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class SubscriptionNotificationFlowTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
+    #[Test]
     public function full_notification_flow_works_end_to_end()
     {
         Notification::fake();
@@ -45,7 +46,7 @@ class SubscriptionNotificationFlowTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function notifications_respect_multiple_users_preferences()
     {
         Notification::fake();
@@ -89,7 +90,7 @@ class SubscriptionNotificationFlowTest extends TestCase
         Notification::assertNotSentTo($userB, SubscriptionRenewalAlert::class);
     }
 
-    /** @test */
+    #[Test]
     public function users_with_disabled_channels_dont_receive_notifications()
     {
         Notification::fake();
@@ -117,7 +118,7 @@ class SubscriptionNotificationFlowTest extends TestCase
         Notification::assertNothingSent();
     }
 
-    /** @test */
+    #[Test]
     public function command_with_specific_days_uses_legacy_mode()
     {
         Notification::fake();
@@ -144,7 +145,7 @@ class SubscriptionNotificationFlowTest extends TestCase
         Notification::assertSentTo($user, SubscriptionRenewalAlert::class);
     }
 
-    /** @test */
+    #[Test]
     public function multiple_subscriptions_for_same_user_all_get_notifications()
     {
         Notification::fake();
@@ -181,7 +182,7 @@ class SubscriptionNotificationFlowTest extends TestCase
         Notification::assertSentTo($user, SubscriptionRenewalAlert::class, 3);
     }
 
-    /** @test */
+    #[Test]
     public function notifications_sent_for_different_notification_days()
     {
         Notification::fake();
@@ -247,7 +248,7 @@ class SubscriptionNotificationFlowTest extends TestCase
         });
     }
 
-    /** @test */
+    #[Test]
     public function cancelled_and_paused_subscriptions_are_ignored()
     {
         Notification::fake();
@@ -286,7 +287,7 @@ class SubscriptionNotificationFlowTest extends TestCase
         Notification::assertSentTo($user, SubscriptionRenewalAlert::class, 1);
     }
 
-    /** @test */
+    #[Test]
     public function overdue_subscriptions_are_notified_on_day_zero()
     {
         Notification::fake();
@@ -315,7 +316,7 @@ class SubscriptionNotificationFlowTest extends TestCase
         });
     }
 
-    /** @test */
+    #[Test]
     public function new_users_get_default_notification_preferences()
     {
         Notification::fake();

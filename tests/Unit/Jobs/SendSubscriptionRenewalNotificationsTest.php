@@ -8,6 +8,7 @@ use App\Models\Subscription;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class SendSubscriptionRenewalNotificationsTest extends TestCase
@@ -24,7 +25,7 @@ class SendSubscriptionRenewalNotificationsTest extends TestCase
         ['user' => $this->user, 'tenant' => $this->tenant] = $this->setupTenantContext();
     }
 
-    /** @test */
+    #[Test]
     public function it_respects_user_notification_preferences_for_days()
     {
         // Create user with custom notification days
@@ -52,7 +53,7 @@ class SendSubscriptionRenewalNotificationsTest extends TestCase
         });
     }
 
-    /** @test */
+    #[Test]
     public function it_skips_users_with_disabled_channels()
     {
         $this->user->createDefaultNotificationPreferences();
@@ -80,7 +81,7 @@ class SendSubscriptionRenewalNotificationsTest extends TestCase
         Event::assertNotDispatched(SubscriptionRenewalDue::class);
     }
 
-    /** @test */
+    #[Test]
     public function it_finds_subscriptions_due_in_specific_days_for_user()
     {
         $this->user->createDefaultNotificationPreferences();
@@ -119,7 +120,7 @@ class SendSubscriptionRenewalNotificationsTest extends TestCase
         });
     }
 
-    /** @test */
+    #[Test]
     public function it_processes_multiple_users_with_different_preferences()
     {
         // User A: Wants notifications at 14, 7 days
@@ -171,7 +172,7 @@ class SendSubscriptionRenewalNotificationsTest extends TestCase
         });
     }
 
-    /** @test */
+    #[Test]
     public function it_finds_subscriptions_due_today()
     {
         $this->user->createDefaultNotificationPreferences();
@@ -198,7 +199,7 @@ class SendSubscriptionRenewalNotificationsTest extends TestCase
         });
     }
 
-    /** @test */
+    #[Test]
     public function it_finds_overdue_subscriptions()
     {
         $this->user->createDefaultNotificationPreferences();
@@ -225,7 +226,7 @@ class SendSubscriptionRenewalNotificationsTest extends TestCase
         });
     }
 
-    /** @test */
+    #[Test]
     public function it_ignores_cancelled_subscriptions()
     {
         $this->user->createDefaultNotificationPreferences();
@@ -246,7 +247,7 @@ class SendSubscriptionRenewalNotificationsTest extends TestCase
         Event::assertNotDispatched(SubscriptionRenewalDue::class);
     }
 
-    /** @test */
+    #[Test]
     public function it_ignores_paused_subscriptions()
     {
         $this->user->createDefaultNotificationPreferences();
@@ -267,7 +268,7 @@ class SendSubscriptionRenewalNotificationsTest extends TestCase
         Event::assertNotDispatched(SubscriptionRenewalDue::class);
     }
 
-    /** @test */
+    #[Test]
     public function it_supports_legacy_mode_with_specific_days()
     {
         $this->user->createDefaultNotificationPreferences();
@@ -295,7 +296,7 @@ class SendSubscriptionRenewalNotificationsTest extends TestCase
         });
     }
 
-    /** @test */
+    #[Test]
     public function it_uses_default_preferences_if_user_has_none()
     {
         $user = User::factory()->create();
@@ -319,7 +320,7 @@ class SendSubscriptionRenewalNotificationsTest extends TestCase
         });
     }
 
-    /** @test */
+    #[Test]
     public function it_handles_users_with_no_subscriptions()
     {
         // Create user with no subscriptions
