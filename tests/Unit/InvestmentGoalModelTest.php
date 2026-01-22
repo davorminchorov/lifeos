@@ -60,7 +60,8 @@ class InvestmentGoalModelTest extends TestCase
 
         // Test 50% progress
         $goal = InvestmentGoal::factory()->create([
-            'user_id' => $user->id,
+            'user_id' => $this->user->id,
+            'tenant_id' => $this->tenant->id,
             'target_amount' => 1000.00,
             'current_progress' => 500.00,
         ]);
@@ -68,7 +69,8 @@ class InvestmentGoalModelTest extends TestCase
 
         // Test 100% progress
         $goalComplete = InvestmentGoal::factory()->create([
-            'user_id' => $user->id,
+            'user_id' => $this->user->id,
+            'tenant_id' => $this->tenant->id,
             'target_amount' => 1000.00,
             'current_progress' => 1000.00,
         ]);
@@ -76,7 +78,8 @@ class InvestmentGoalModelTest extends TestCase
 
         // Test over 100% progress (should cap at 100)
         $goalOver = InvestmentGoal::factory()->create([
-            'user_id' => $user->id,
+            'user_id' => $this->user->id,
+            'tenant_id' => $this->tenant->id,
             'target_amount' => 1000.00,
             'current_progress' => 1200.00,
         ]);
@@ -84,7 +87,8 @@ class InvestmentGoalModelTest extends TestCase
 
         // Test zero target (should return 0)
         $goalZero = InvestmentGoal::factory()->create([
-            'user_id' => $user->id,
+            'user_id' => $this->user->id,
+            'tenant_id' => $this->tenant->id,
             'target_amount' => 0.00,
             'current_progress' => 100.00,
         ]);
@@ -95,21 +99,24 @@ class InvestmentGoalModelTest extends TestCase
     {
 
         $achievedGoal = InvestmentGoal::factory()->create([
-            'user_id' => $user->id,
+            'user_id' => $this->user->id,
+            'tenant_id' => $this->tenant->id,
             'target_amount' => 1000.00,
             'current_progress' => 1000.00,
         ]);
         $this->assertTrue($achievedGoal->is_achieved);
 
         $overAchievedGoal = InvestmentGoal::factory()->create([
-            'user_id' => $user->id,
+            'user_id' => $this->user->id,
+            'tenant_id' => $this->tenant->id,
             'target_amount' => 1000.00,
             'current_progress' => 1200.00,
         ]);
         $this->assertTrue($overAchievedGoal->is_achieved);
 
         $notAchievedGoal = InvestmentGoal::factory()->create([
-            'user_id' => $user->id,
+            'user_id' => $this->user->id,
+            'tenant_id' => $this->tenant->id,
             'target_amount' => 1000.00,
             'current_progress' => 800.00,
         ]);
@@ -120,21 +127,24 @@ class InvestmentGoalModelTest extends TestCase
     {
 
         $goal = InvestmentGoal::factory()->create([
-            'user_id' => $user->id,
+            'user_id' => $this->user->id,
+            'tenant_id' => $this->tenant->id,
             'target_amount' => 1000.00,
             'current_progress' => 300.00,
         ]);
         $this->assertEquals(700.00, $goal->remaining_amount);
 
         $completedGoal = InvestmentGoal::factory()->create([
-            'user_id' => $user->id,
+            'user_id' => $this->user->id,
+            'tenant_id' => $this->tenant->id,
             'target_amount' => 1000.00,
             'current_progress' => 1000.00,
         ]);
         $this->assertEquals(0, $completedGoal->remaining_amount);
 
         $overAchievedGoal = InvestmentGoal::factory()->create([
-            'user_id' => $user->id,
+            'user_id' => $this->user->id,
+            'tenant_id' => $this->tenant->id,
             'target_amount' => 1000.00,
             'current_progress' => 1200.00,
         ]);
@@ -158,17 +168,20 @@ class InvestmentGoalModelTest extends TestCase
     public function test_scope_achieved(): void
     {
         InvestmentGoal::factory()->create([
-            'user_id' => $user->id,
+            'user_id' => $this->user->id,
+            'tenant_id' => $this->tenant->id,
             'target_amount' => 1000.00,
             'current_progress' => 1000.00,
         ]);
         InvestmentGoal::factory()->create([
-            'user_id' => $user->id,
+            'user_id' => $this->user->id,
+            'tenant_id' => $this->tenant->id,
             'target_amount' => 1000.00,
             'current_progress' => 500.00,
         ]);
         InvestmentGoal::factory()->create([
-            'user_id' => $user->id,
+            'user_id' => $this->user->id,
+            'tenant_id' => $this->tenant->id,
             'target_amount' => 1000.00,
             'current_progress' => 1200.00,
         ]);

@@ -16,7 +16,7 @@ class InvestmentFactory extends Factory
      */
     public function definition(): array
     {
-        $investmentTypes = ['stock', 'bond', 'etf', 'mutual_fund', 'crypto', 'real_estate', 'commodities', 'cash', 'project'];
+        $investmentTypes = ['stock', 'bond', 'etf', 'mutual_fund', 'crypto', 'real_estate', 'commodities', 'cash'];
         $stockSymbols = ['AAPL', 'GOOGL', 'MSFT', 'AMZN', 'TSLA', 'NVDA', 'META', 'NFLX', 'AMD', 'UBER'];
         $cryptoSymbols = ['BTC', 'ETH', 'ADA', 'SOL', 'DOT', 'MATIC', 'AVAX', 'LINK'];
         $etfSymbols = ['SPY', 'QQQ', 'VTI', 'VOO', 'IWM', 'EFA', 'VEA', 'BND'];
@@ -45,9 +45,6 @@ class InvestmentFactory extends Factory
             case 'real_estate':
                 $name = $this->faker->randomElement($realEstateNames);
                 break;
-            case 'project':
-                $name = $this->faker->company().' Project';
-                break;
             default:
                 $name = $this->faker->words(2, true).' Investment';
         }
@@ -56,7 +53,7 @@ class InvestmentFactory extends Factory
         $quantity = $this->faker->randomFloat(8, 0.1, 1000);
         $currentValue = $purchasePrice * $this->faker->randomFloat(2, 0.5, 3.0); // -50% to +200% change
 
-        $data = [
+        return [
             'user_id' => 1, // Will be overridden when creating with relationships
             'investment_type' => $investmentType,
             'symbol_identifier' => $symbol,
@@ -96,24 +93,5 @@ class InvestmentFactory extends Factory
             'notes' => $this->faker->optional()->sentence(),
             'status' => $this->faker->randomElement(['active', 'sold', 'pending']),
         ];
-
-        if ($investmentType === 'project') {
-            $projectStartDate = $this->faker->optional()->dateTimeBetween('-3 years', 'now');
-            $data = array_merge($data, [
-                'project_type' => $this->faker->randomElement(['SaaS', 'Marketplace', 'Mobile App', 'Open Source']),
-                'project_website' => $this->faker->optional()->url(),
-                'project_repository' => $this->faker->optional()->url(),
-                'project_stage' => $this->faker->randomElement(['idea', 'prototype', 'mvp', 'growth', 'mature']),
-                'project_business_model' => $this->faker->randomElement(['subscription', 'ads', 'one-time', 'freemium']),
-                'equity_percentage' => $this->faker->optional()->randomFloat(2, 1, 50),
-                'project_start_date' => $projectStartDate,
-                'project_end_date' => $projectStartDate ? $this->faker->optional()->dateTimeBetween($projectStartDate, '+3 years') : null,
-                'project_notes' => $this->faker->optional()->paragraph(),
-                'project_amount' => $this->faker->optional()->randomFloat(2, 100, 100000),
-                'project_currency' => $this->faker->optional()->randomElement(['USD', 'EUR', 'MKD']),
-            ]);
-        }
-
-        return $data;
     }
 }
