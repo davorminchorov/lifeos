@@ -7,8 +7,10 @@ use App\Jobs\SendCycleMenuDailyNotifications;
 use App\Models\CycleMenu;
 use App\Models\CycleMenuDay;
 use App\Models\CycleMenuItem;
+use App\Models\Tenant;
 use App\Models\User;
 use App\Notifications\DailyMenuNotification;
+use App\Scopes\TenantScope;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Notification;
@@ -19,17 +21,31 @@ class CycleMenuNotifyCommandTest extends TestCase
 {
     use RefreshDatabase;
 
+    private User $user;
+    private Tenant $tenant;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        ['user' => $this->user, 'tenant' => $this->tenant] = $this->setupTenantContext();
+        // Add the user as a member of the tenant
+        $this->tenant->members()->attach($this->user->id, ['role' => 'owner']);
+    }
+
     private function seedActiveMenuForToday(): CycleMenu
     {
         $menu = CycleMenu::factory()->active()->create([
+            'user_id' => $this->user->id,
+            'tenant_id' => $this->tenant->id,
             'cycle_length_days' => 7,
             'starts_on' => now()->toDateString(),
             'name' => 'Test Active Menu',
         ]);
 
         for ($i = 0; $i < 7; $i++) {
-            CycleMenuDay::firstOrCreate([
+            CycleMenuDay::create([
                 'cycle_menu_id' => $menu->id,
+                'tenant_id' => $this->tenant->id,
                 'day_index' => $i,
             ]);
         }
@@ -38,6 +54,7 @@ class CycleMenuNotifyCommandTest extends TestCase
 
         CycleMenuItem::create([
             'cycle_menu_day_id' => $todayDay->id,
+            'tenant_id' => $this->tenant->id,
             'title' => 'Oatmeal with berries',
             'meal_type' => MealType::Breakfast->value,
             'time_of_day' => '08:00:00',
@@ -47,6 +64,7 @@ class CycleMenuNotifyCommandTest extends TestCase
 
         CycleMenuItem::create([
             'cycle_menu_day_id' => $todayDay->id,
+            'tenant_id' => $this->tenant->id,
             'title' => 'Chicken salad wrap',
             'meal_type' => MealType::Lunch->value,
             'time_of_day' => '12:30:00',
@@ -60,7 +78,6 @@ class CycleMenuNotifyCommandTest extends TestCase
     public function test_cycle_menus_notify_today_dry_run_outputs_payload_and_does_not_send_notifications(): void
     {
         // Given an active menu and at least one user
-        User::factory()->create();
         $menu = $this->seedActiveMenuForToday();
 
         // When
@@ -75,9 +92,10 @@ class CycleMenuNotifyCommandTest extends TestCase
 
     public function test_cycle_menus_notify_today_sends_daily_menu_notification_to_all_users_when_not_dry_run(): void
     {
-        // Given two users
-        $u1 = User::factory()->create();
-        $u2 = User::factory()->create();
+        // Given a second user in the same tenant
+        $u2 = User::factory()->create(['current_tenant_id' => $this->tenant->id]);
+        $this->tenant->members()->attach($u2->id, ['role' => 'member']);
+
         $menu = $this->seedActiveMenuForToday();
 
         Notification::fake();
@@ -87,9 +105,9 @@ class CycleMenuNotifyCommandTest extends TestCase
             ->expectsOutputToContain('✅ Cycle menu daily notifications processed')
             ->assertExitCode(0);
 
-        // Then
-        Notification::assertSentTo([$u1, $u2], DailyMenuNotification::class, function (DailyMenuNotification $notification, array $channels) use ($menu, $u1) {
-            $data = $notification->toArray($u1);
+        // Then - only users in the tenant should receive notifications
+        Notification::assertSentTo([$this->user, $u2], DailyMenuNotification::class, function (DailyMenuNotification $notification, array $channels) use ($menu) {
+            $data = $notification->toArray($this->user);
             return ($channels === ['database'])
                 && ($data['type'] ?? null) === 'cycle_menu_daily'
                 && ($data['menu_id'] ?? null) === $menu->id
@@ -101,7 +119,6 @@ class CycleMenuNotifyCommandTest extends TestCase
     public function test_cycle_menus_notify_today_dispatch_job_dispatches_job_to_queue(): void
     {
         // Given
-        User::factory()->create();
         $this->seedActiveMenuForToday();
 
         Bus::fake();
@@ -117,9 +134,10 @@ class CycleMenuNotifyCommandTest extends TestCase
 
     public function test_send_cycle_menu_daily_notifications_job_sends_notifications_to_all_users(): void
     {
-        // Given two users and an active menu
-        $u1 = User::factory()->create();
-        $u2 = User::factory()->create();
+        // Given a second user in the same tenant and an active menu
+        $u2 = User::factory()->create(['current_tenant_id' => $this->tenant->id]);
+        $this->tenant->members()->attach($u2->id, ['role' => 'member']);
+
         $menu = $this->seedActiveMenuForToday();
 
         Notification::fake();
@@ -128,14 +146,34 @@ class CycleMenuNotifyCommandTest extends TestCase
         $job = new SendCycleMenuDailyNotifications();
         $job->handle();
 
-        // Then
-        Notification::assertSentTo([$u1, $u2], DailyMenuNotification::class, function (DailyMenuNotification $notification, array $channels) use ($menu, $u1) {
-            $data = $notification->toArray($u1);
+        // Then - only users in the menu's tenant should receive notifications
+        Notification::assertSentTo([$this->user, $u2], DailyMenuNotification::class, function (DailyMenuNotification $notification, array $channels) use ($menu) {
+            $data = $notification->toArray($this->user);
             return ($channels === ['database'])
                 && ($data['type'] ?? null) === 'cycle_menu_daily'
                 && ($data['menu_id'] ?? null) === $menu->id
                 && is_array($data['items'] ?? null)
                 && Str::contains($data['message'] ?? '', 'Today\'s menu');
         });
+    }
+
+    public function test_notifications_only_sent_to_tenant_members(): void
+    {
+        // Given a user in a different tenant
+        $otherTenant = Tenant::factory()->create();
+        $otherUser = User::factory()->create(['current_tenant_id' => $otherTenant->id]);
+        $otherTenant->members()->attach($otherUser->id, ['role' => 'owner']);
+
+        $menu = $this->seedActiveMenuForToday();
+
+        Notification::fake();
+
+        // When
+        $job = new SendCycleMenuDailyNotifications();
+        $job->handle();
+
+        // Then - user in different tenant should NOT receive notification
+        Notification::assertSentTo([$this->user], DailyMenuNotification::class);
+        Notification::assertNotSentTo([$otherUser], DailyMenuNotification::class);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Tenant;
 use App\Models\User;
 use App\Notifications\SubscriptionRenewalAlert;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -14,11 +15,12 @@ class NotificationControllerTest extends TestCase
     use RefreshDatabase, WithFaker;
 
     private User $user;
+    private Tenant $tenant;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->user = User::factory()->create();
+        ['user' => $this->user, 'tenant' => $this->tenant] = $this->setupTenantContext();
     }
 
     public function test_can_view_notifications_index()
@@ -34,7 +36,10 @@ class NotificationControllerTest extends TestCase
     {
         // Create a test notification
         $this->user->notify(new SubscriptionRenewalAlert(
-            \App\Models\Subscription::factory()->create(['user_id' => $this->user->id]),
+            \App\Models\Subscription::factory()->create([
+                'user_id' => $this->user->id,
+                'tenant_id' => $this->tenant->id,
+            ]),
             7
         ));
 
@@ -61,7 +66,10 @@ class NotificationControllerTest extends TestCase
     {
         // Create a test notification
         $this->user->notify(new SubscriptionRenewalAlert(
-            \App\Models\Subscription::factory()->create(['user_id' => $this->user->id]),
+            \App\Models\Subscription::factory()->create([
+                'user_id' => $this->user->id,
+                'tenant_id' => $this->tenant->id,
+            ]),
             7
         ));
 
@@ -80,7 +88,10 @@ class NotificationControllerTest extends TestCase
 
     public function test_can_mark_all_notifications_as_read()
     {
-        $subscription = \App\Models\Subscription::factory()->create(['user_id' => $this->user->id]);
+        $subscription = \App\Models\Subscription::factory()->create([
+            'user_id' => $this->user->id,
+            'tenant_id' => $this->tenant->id,
+        ]);
 
         // Create multiple test notifications
         $this->user->notify(new SubscriptionRenewalAlert($subscription, 7));
@@ -103,7 +114,10 @@ class NotificationControllerTest extends TestCase
     {
         // Create a test notification
         $this->user->notify(new SubscriptionRenewalAlert(
-            \App\Models\Subscription::factory()->create(['user_id' => $this->user->id]),
+            \App\Models\Subscription::factory()->create([
+                'user_id' => $this->user->id,
+                'tenant_id' => $this->tenant->id,
+            ]),
             7
         ));
 
@@ -173,7 +187,10 @@ class NotificationControllerTest extends TestCase
 
     public function test_can_get_notification_stats()
     {
-        $subscription = \App\Models\Subscription::factory()->create(['user_id' => $this->user->id]);
+        $subscription = \App\Models\Subscription::factory()->create([
+            'user_id' => $this->user->id,
+            'tenant_id' => $this->tenant->id,
+        ]);
 
         // Create some notifications
         $this->user->notify(new SubscriptionRenewalAlert($subscription, 7));
@@ -200,9 +217,14 @@ class NotificationControllerTest extends TestCase
 
     public function test_cannot_access_other_users_notifications()
     {
-        $otherUser = User::factory()->create();
+        $otherTenant = Tenant::factory()->create();
+        $otherUser = User::factory()->create(['current_tenant_id' => $otherTenant->id]);
+        $otherTenant->update(['owner_id' => $otherUser->id]);
         $otherUser->notify(new SubscriptionRenewalAlert(
-            \App\Models\Subscription::factory()->create(['user_id' => $otherUser->id]),
+            \App\Models\Subscription::factory()->create([
+                'user_id' => $otherUser->id,
+                'tenant_id' => $otherTenant->id,
+            ]),
             7
         ));
 
