@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Events\WarrantyExpirationDue;
 use App\Models\Warranty;
+use App\Scopes\TenantScope;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -53,7 +54,9 @@ class SendWarrantyExpirationNotifications implements ShouldQueue
         $targetDate = now()->addDays($days)->toDateString();
         $today = now()->toDateString();
 
-        $query = Warranty::with('user')
+        // Note: withoutGlobalScope is needed because this job runs in queue context without auth
+        $query = Warranty::withoutGlobalScope(TenantScope::class)
+            ->with('user')
             ->where('current_status', 'active');
 
         if ($days === 0) {

@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Events\UtilityBillDueSoon;
 use App\Models\UtilityBill;
+use App\Scopes\TenantScope;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -53,7 +54,9 @@ class SendUtilityBillDueNotifications implements ShouldQueue
         $targetDate = now()->addDays($days)->toDateString();
         $today = now()->toDateString();
 
-        $query = UtilityBill::with('user')
+        // Note: withoutGlobalScope is needed because this job runs in queue context without auth
+        $query = UtilityBill::withoutGlobalScope(TenantScope::class)
+            ->with('user')
             ->where('payment_status', 'pending');
 
         if ($days === 0) {

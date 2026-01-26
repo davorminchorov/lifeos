@@ -3,7 +3,9 @@
 namespace App\Jobs;
 
 use App\Events\SubscriptionRenewalDue;
+use App\Models\Subscription;
 use App\Models\User;
+use App\Scopes\TenantScope;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -64,9 +66,13 @@ class SendSubscriptionRenewalNotifications implements ShouldQueue
     private function handleUserCentricMode(): void
     {
         // Get all users who have active subscriptions
-        $users = User::whereHas('subscriptions', function ($query) {
-            $query->where('status', 'active');
-        })->get();
+        // Note: withoutGlobalScope is needed because this job runs in queue context without auth
+        $userIds = Subscription::withoutGlobalScope(TenantScope::class)
+            ->where('status', 'active')
+            ->distinct()
+            ->pluck('user_id');
+
+        $users = User::whereIn('id', $userIds)->get();
 
         Log::info("Processing notifications for {$users->count()} users with active subscriptions");
 
@@ -122,7 +128,9 @@ class SendSubscriptionRenewalNotifications implements ShouldQueue
         $today = now()->toDateString();
 
         // Query subscriptions for this specific user
-        $query = $user->subscriptions()
+        // Note: withoutGlobalScope is needed because this job runs in queue context without auth
+        $query = Subscription::withoutGlobalScope(TenantScope::class)
+            ->where('user_id', $user->id)
             ->where('status', 'active');
 
         if ($days === 0) {
@@ -158,7 +166,9 @@ class SendSubscriptionRenewalNotifications implements ShouldQueue
         $targetDate = now()->addDays($days)->toDateString();
         $today = now()->toDateString();
 
-        $query = \App\Models\Subscription::with('user')
+        // Note: withoutGlobalScope is needed because this job runs in queue context without auth
+        $query = Subscription::withoutGlobalScope(TenantScope::class)
+            ->with('user')
             ->where('status', 'active');
 
         if ($days === 0) {

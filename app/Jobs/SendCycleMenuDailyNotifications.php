@@ -4,8 +4,8 @@ namespace App\Jobs;
 
 use App\Models\CycleMenu;
 use App\Models\CycleMenuDay;
-use App\Models\User;
 use App\Notifications\DailyMenuNotification;
+use App\Scopes\TenantScope;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -28,15 +28,14 @@ class SendCycleMenuDailyNotifications implements ShouldQueue
         $tz = config('app.timezone');
         $today = Carbon::now($tz)->startOfDay();
 
-        $menus = CycleMenu::query()->active()->get();
+        // Note: withoutGlobalScope is needed because this job runs in queue context without auth
+        $menus = CycleMenu::withoutGlobalScope(TenantScope::class)
+            ->with('tenant.members')
+            ->active()
+            ->get();
+
         if ($menus->isEmpty()) {
             Log::info('No active cycle menus found');
-            return;
-        }
-
-        $users = User::query()->get();
-        if ($users->isEmpty()) {
-            Log::info('No users to notify');
             return;
         }
 
@@ -47,6 +46,13 @@ class SendCycleMenuDailyNotifications implements ShouldQueue
                 continue;
             }
 
+            // Get users who are members of this menu's tenant
+            $tenantUsers = $menu->tenant?->members ?? collect();
+            if ($tenantUsers->isEmpty()) {
+                Log::info("No users to notify for menu '{$menu->name}' (tenant has no members)");
+                continue;
+            }
+
             $startsOn = $menu->starts_on ? Carbon::parse($menu->starts_on, $tz)->startOfDay() : $today;
             $daysDiff = $startsOn->diffInDays($today, false);
             $index = $daysDiff >= 0
@@ -54,7 +60,7 @@ class SendCycleMenuDailyNotifications implements ShouldQueue
                 : (($menu->cycle_length_days + ($daysDiff % $menu->cycle_length_days)) % $menu->cycle_length_days);
 
             /** @var CycleMenuDay|null $day */
-            $day = CycleMenuDay::query()
+            $day = CycleMenuDay::withoutGlobalScope(TenantScope::class)
                 ->where('cycle_menu_id', $menu->id)
                 ->where('day_index', $index)
                 ->with(['items' => function ($q) {
@@ -99,7 +105,8 @@ class SendCycleMenuDailyNotifications implements ShouldQueue
                 'message' => 'Today\'s menu (' . $menu->name . ')',
             ];
 
-            foreach ($users as $user) {
+            // Only notify users who are members of this menu's tenant
+            foreach ($tenantUsers as $user) {
                 try {
                     $user->notify(new DailyMenuNotification($payload));
                     $notificationCount++;
@@ -108,7 +115,7 @@ class SendCycleMenuDailyNotifications implements ShouldQueue
                 }
             }
 
-            Log::info("Notified users for menu '{$menu->name}' (day index {$index})");
+            Log::info("Notified {$tenantUsers->count()} users for menu '{$menu->name}' (day index {$index})");
         }
 
         Log::info("Completed cycle menu daily notification job. Sent {$notificationCount} notifications.");

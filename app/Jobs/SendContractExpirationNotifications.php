@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Events\ContractNotificationDue;
 use App\Models\Contract;
+use App\Scopes\TenantScope;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -54,7 +55,9 @@ class SendContractExpirationNotifications implements ShouldQueue
         $today = now()->toDateString();
 
         // Get contracts expiring on target date (or today/overdue when days === 0)
-        $baseQuery = Contract::with('user')
+        // Note: withoutGlobalScope is needed because this job runs in queue context without auth
+        $baseQuery = Contract::withoutGlobalScope(TenantScope::class)
+            ->with('user')
             ->where('status', 'active');
 
         if ($days === 0) {
@@ -67,7 +70,8 @@ class SendContractExpirationNotifications implements ShouldQueue
 
         // Also get contracts that need notice period alerts
         if ($days > 0) {
-            $noticeContracts = Contract::with('user')
+            $noticeContracts = Contract::withoutGlobalScope(TenantScope::class)
+                ->with('user')
                 ->where('status', 'active')
                 ->whereNotNull('notice_period_days')
                 ->whereNotNull('end_date')
