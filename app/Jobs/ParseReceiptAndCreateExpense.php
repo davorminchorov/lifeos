@@ -6,6 +6,7 @@ use App\Events\ReceiptExpenseCreated;
 use App\Models\Expense;
 use App\Models\GmailConnection;
 use App\Models\ProcessedEmail;
+use App\Scopes\TenantScope;
 use App\Services\GmailService;
 use App\Services\ReceiptParserService;
 use Exception;
@@ -128,7 +129,8 @@ class ParseReceiptAndCreateExpense implements ShouldQueue
             ];
 
             // Create expense (or get existing if unique_key already exists)
-            $expense = Expense::firstOrCreate(
+            // Note: withoutGlobalScope is needed because this job runs in queue context without auth
+            $expense = Expense::withoutGlobalScope(TenantScope::class)->firstOrCreate(
                 ['unique_key' => $expenseData['unique_key']],
                 $expenseData
             );

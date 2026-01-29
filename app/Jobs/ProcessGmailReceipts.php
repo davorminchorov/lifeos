@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Models\GmailConnection;
 use App\Models\ProcessedEmail;
+use App\Scopes\TenantScope;
 use App\Services\GmailService;
 use Carbon\Carbon;
 use Exception;
@@ -102,7 +103,10 @@ class ProcessGmailReceipts implements ShouldQueue
             foreach ($emails as $emailData) {
                 try {
                     // Check if email was already processed
-                    $existingEmail = ProcessedEmail::where('gmail_message_id', $emailData['id'])->first();
+                    // Note: withoutGlobalScope is needed because this job runs in queue context without auth
+                    $existingEmail = ProcessedEmail::withoutGlobalScope(TenantScope::class)
+                        ->where('gmail_message_id', $emailData['id'])
+                        ->first();
 
                     if ($existingEmail) {
                         $skipped++;
