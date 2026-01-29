@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\Subscription;
+use App\Scopes\TenantScope;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -24,7 +25,8 @@ class UpdateSubscriptionNextBillingDates implements ShouldQueue
 
         $today = Carbon::today();
 
-        $query = Subscription::query()
+        // Note: withoutGlobalScope is needed because this job runs in queue context without auth
+        $query = Subscription::withoutGlobalScope(TenantScope::class)
             ->where('status', 'active')
             ->whereDate('next_billing_date', '<=', $today);
 

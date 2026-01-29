@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Models\Investment;
 use App\Models\InvestmentTransaction;
+use App\Scopes\TenantScope;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -146,7 +147,8 @@ class ImportInvestmentsCsv implements ShouldQueue
                 $transactionType = self::TYPE_MAP[$action] ?? 'buy';
 
                 // Find or create the Investment for this user/symbol (do not include name in the lookup to avoid duplicates)
-                $investment = Investment::firstOrCreate(
+                // Note: withoutGlobalScope is needed because this job runs in queue context without auth
+                $investment = Investment::withoutGlobalScope(TenantScope::class)->firstOrCreate(
                     [
                         'user_id' => $this->userId,
                         'symbol_identifier' => $ticker,

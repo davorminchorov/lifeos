@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Models\Expense;
 use App\Models\Subscription;
+use App\Scopes\TenantScope;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -25,7 +26,8 @@ class CreateSubscriptionAutoRenewExpenses implements ShouldQueue
 
         $today = Carbon::today()->toDateString();
 
-        $subscriptions = Subscription::query()
+        // Note: withoutGlobalScope is needed because this job runs in queue context without auth
+        $subscriptions = Subscription::withoutGlobalScope(TenantScope::class)
             ->with('user')
             ->where('status', 'active')
             ->where('auto_renewal', true)
