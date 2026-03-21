@@ -529,6 +529,9 @@
             </a>
         </div>
     </div>
+
+    {{-- AI Life Assistant --}}
+    <x-ai-assistant />
 @endsection
 
 @vite(['resources/js/dashboard.js'])

@@ -37,6 +37,7 @@ use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\InvoicingDashboardController;
 use App\Http\Controllers\RecurringInvoiceController;
 use App\Http\Controllers\RecurringInvoiceItemController;
+use App\Http\Controllers\AssistantController;
 use App\Http\Controllers\TenantController;
 use Illuminate\Support\Facades\Route;
 
@@ -63,6 +64,10 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
         Route::get('/dashboard/chart-data', [DashboardController::class, 'getChartData'])->name('dashboard.chart-data');
+
+        // AI Life Assistant
+        Route::post('/assistant/chat', [AssistantController::class, 'chat'])->name('assistant.chat');
+        Route::delete('/assistant/history', [AssistantController::class, 'clearHistory'])->name('assistant.clear');
 
         // Tenant Management Routes (with tenant middleware - require active tenant)
         Route::prefix('tenants')->name('tenants.')->group(function () {
