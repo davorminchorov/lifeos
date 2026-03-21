@@ -22,11 +22,11 @@ class SyncAllTool implements Tool
     public function handle(Request $request): string
     {
         $commands = [
-            'app:check-subscription-renewals' => 'Check subscription renewals',
-            'app:check-utility-bill-due' => 'Check utility bills due',
-            'app:check-warranty-expiration' => 'Check warranty expirations',
-            'app:check-contract-expiration' => 'Check contract expirations',
-            'app:update-subscription-next-billing' => 'Update subscription billing dates',
+            'subscriptions:check-renewals' => 'Check subscription renewals',
+            'utility-bills:check-due' => 'Check utility bills due',
+            'warranties:check-expiration' => 'Check warranty expirations',
+            'contracts:check-expiration' => 'Check contract expirations',
+            'subscriptions:update-next-billing' => 'Update subscription billing dates',
         ];
 
         $results = [];
