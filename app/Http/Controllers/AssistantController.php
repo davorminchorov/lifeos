@@ -2,35 +2,36 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\LifeAssistantService;
+use App\Ai\Agents\LifeAssistant;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class AssistantController extends Controller
 {
-    public function __construct(
-        private readonly LifeAssistantService $assistant,
-    ) {}
-
     /**
-     * Send a message and get a response.
+     * Send a message to the Life Assistant and get a response.
+     * Uses DB-backed conversation history via RemembersConversations.
      */
     public function chat(Request $request): JsonResponse
     {
         $request->validate([
             'message' => ['required', 'string', 'max:2000'],
+            'conversation_id' => ['nullable', 'string', 'uuid'],
         ]);
 
-        if (! config('prism.providers.anthropic.api_key')) {
+        if (! config('ai.providers.anthropic.key')) {
             return response()->json([
-                'error' => 'AI assistant is not configured. Please add your ANTHROPIC_API_KEY to get started.',
+                'error' => 'AI assistant is not configured. Add ANTHROPIC_API_KEY to your .env to get started.',
             ], 503);
         }
 
-        $history = $request->session()->get('assistant_history', []);
-
         try {
-            $reply = $this->assistant->chat($request->string('message')->toString(), $history);
+            $agent = new LifeAssistant;
+            $conversationId = $request->input('conversation_id');
+
+            $response = $conversationId
+                ? $agent->continue($conversationId, as: $request->user())->prompt($request->string('message')->toString())
+                : $agent->forUser($request->user())->prompt($request->string('message')->toString());
         } catch (\Exception $e) {
             report($e);
 
@@ -39,21 +40,19 @@ class AssistantController extends Controller
             ], 500);
         }
 
-        // Persist history (cap at last 20 messages to avoid session bloat)
-        $history[] = ['role' => 'user', 'content' => $request->string('message')->toString()];
-        $history[] = ['role' => 'assistant', 'content' => $reply];
-        $request->session()->put('assistant_history', array_slice($history, -20));
-
-        return response()->json(['reply' => $reply]);
+        return response()->json([
+            'reply' => $response->text,
+            'conversation_id' => $response->conversationId,
+        ]);
     }
 
     /**
-     * Clear conversation history.
+     * Delete the conversation history for the given conversation.
      */
     public function clearHistory(Request $request): JsonResponse
     {
-        $request->session()->forget('assistant_history');
-
+        // Conversation history is managed by laravel/ai in the DB.
+        // The frontend simply drops its conversation_id to start fresh.
         return response()->json(['status' => 'cleared']);
     }
 }

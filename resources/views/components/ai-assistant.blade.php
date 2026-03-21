@@ -141,6 +141,7 @@ function aiAssistant() {
         loading: false,
         input: '',
         messages: [],
+        conversationId: null,
         suggestedPrompts: [
             'What\'s my financial health this month?',
             'Any subscriptions I should reconsider?',
@@ -176,7 +177,10 @@ function aiAssistant() {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
                         'Accept': 'application/json',
                     },
-                    body: JSON.stringify({ message }),
+                    body: JSON.stringify({
+                        message,
+                        conversation_id: this.conversationId,
+                    }),
                 });
 
                 const data = await response.json();
@@ -185,6 +189,9 @@ function aiAssistant() {
                     this.messages.push({ role: 'assistant', content: '⚠️ ' + data.error });
                 } else {
                     this.messages.push({ role: 'assistant', content: data.reply });
+                    if (data.conversation_id) {
+                        this.conversationId = data.conversation_id;
+                    }
                 }
             } catch (e) {
                 this.messages.push({ role: 'assistant', content: '⚠️ Could not reach the assistant. Please try again.' });
@@ -207,6 +214,7 @@ function aiAssistant() {
                 },
             });
             this.messages = [];
+            this.conversationId = null;
         },
 
         scrollToBottom() {
