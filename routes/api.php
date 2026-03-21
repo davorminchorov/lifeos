@@ -8,4 +8,6 @@ use Illuminate\Support\Facades\Route;
 Route::get('/currency/exchange-rate', [CurrencyController::class, 'getExchangeRate'])->name('api.currency.exchange-rate');
 
 // Telegram Bot Webhook
-Route::post('/telegram/webhook', [TelegramBotController::class, 'handle'])->name('telegram.webhook');
+Route::post('/telegram/webhook', [TelegramBotController::class, 'handle'])
+    ->middleware('telegram.auth')
+    ->name('telegram.webhook');

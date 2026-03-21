@@ -14,6 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'tenant' => \App\Http\Middleware\TenantMiddleware::class,
+            'telegram.auth' => \App\Telegram\Middleware\AuthorizeTelegramUser::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

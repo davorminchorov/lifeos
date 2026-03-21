@@ -11,6 +11,14 @@ class AuthorizeTelegramUser
 {
     public function handle(Request $request, Closure $next): Response
     {
+        $secret = config('telegram.webhook_secret');
+
+        if ($secret && $request->header('X-Telegram-Bot-Api-Secret-Token') !== $secret) {
+            Log::warning('Telegram: invalid webhook secret token');
+
+            return response()->json(['ok' => true], 200);
+        }
+
         $chatId = $request->input('message.chat.id');
         $allowedChatId = config('telegram.allowed_chat_id');
 

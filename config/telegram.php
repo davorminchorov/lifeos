@@ -16,6 +16,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Webhook Secret Token
+    |--------------------------------------------------------------------------
+    |
+    | Secret token to verify incoming webhook requests are from Telegram.
+    | Set this when registering the webhook via setWebhook API.
+    |
+    */
+
+    'webhook_secret' => env('TELEGRAM_WEBHOOK_SECRET'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Default Tenant ID
     |--------------------------------------------------------------------------
     |

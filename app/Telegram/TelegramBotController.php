@@ -4,8 +4,10 @@ namespace App\Telegram;
 
 use App\Ai\Agents\LifeOsAgent;
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -21,13 +23,14 @@ class TelegramBotController extends Controller
             return response()->json(['ok' => true]);
         }
 
-        // Only respond to the allowed chat ID
-        $allowedChatId = config('telegram.allowed_chat_id');
-        if ($allowedChatId && (string) $chatId !== (string) $allowedChatId) {
-            Log::warning('Telegram: unauthorized chat ID', ['chat_id' => $chatId]);
+        // Authenticate the configured user so TenantScope works
+        $user = User::find(config('telegram.user_id', 1));
+        if (! $user) {
+            Log::error('Telegram: configured user not found', ['user_id' => config('telegram.user_id')]);
 
             return response()->json(['ok' => true]);
         }
+        Auth::login($user);
 
         try {
             $response = (new LifeOsAgent)->prompt($text);
@@ -39,6 +42,8 @@ class TelegramBotController extends Controller
                 'text' => $text,
             ]);
             $this->sendMessage($chatId, "Something went wrong. Please try again.\n\nError: ".$e->getMessage());
+        } finally {
+            Auth::logout();
         }
 
         return response()->json(['ok' => true]);
