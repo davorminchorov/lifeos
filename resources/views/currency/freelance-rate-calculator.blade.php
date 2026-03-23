@@ -281,6 +281,109 @@
         </div>
     </div>
 
+    <!-- Monthly Earnings Calculator -->
+    <div class="mt-6" x-data="earningsCalculator({{ $working_days }})">
+        <div class="bg-[color:var(--color-primary-50)] dark:bg-[color:var(--color-dark-100)] shadow-sm rounded-lg p-6">
+            <h2 class="text-lg font-semibold text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] mb-4">
+                Monthly Earnings Calculator
+            </h2>
+            <p class="text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] mb-4">
+                Estimate how much you'll earn this month based on your hourly rate.
+            </p>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Inputs -->
+                <div class="space-y-4">
+                    <!-- Work Type Toggle -->
+                    <div>
+                        <label class="block text-sm font-medium text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] mb-3">
+                            Work Type
+                        </label>
+                        <div class="flex gap-3">
+                            <x-button
+                                type="button"
+                                variant="secondary"
+                                @click="setEarningsWorkType('full-time')"
+                                x-bind:class="earningsWorkType === 'full-time' ? 'bg-[color:var(--color-accent-500)] border-[color:var(--color-accent-500)] text-white hover:bg-[color:var(--color-accent-600)]' : ''"
+                                class="flex-1 py-3"
+                            >
+                                <div class="text-center">
+                                    <div class="font-semibold">Full-Time</div>
+                                    <div class="text-xs mt-1">8 hours/day</div>
+                                </div>
+                            </x-button>
+                            <x-button
+                                type="button"
+                                variant="secondary"
+                                @click="setEarningsWorkType('part-time')"
+                                x-bind:class="earningsWorkType === 'part-time' ? 'bg-[color:var(--color-accent-500)] border-[color:var(--color-accent-500)] text-white hover:bg-[color:var(--color-accent-600)]' : ''"
+                                class="flex-1 py-3"
+                            >
+                                <div class="text-center">
+                                    <div class="font-semibold">Part-Time</div>
+                                    <div class="text-xs mt-1">4 hours/day</div>
+                                </div>
+                            </x-button>
+                        </div>
+                    </div>
+
+                    <!-- Hourly Rate Input -->
+                    <div>
+                        <label for="earnings-hourly-rate" class="block text-sm font-medium text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] mb-1">
+                            Hourly Rate (USD)
+                        </label>
+                        <input
+                            type="number"
+                            id="earnings-hourly-rate"
+                            x-model.number="hourlyRate"
+                            @input="calculate()"
+                            min="0"
+                            step="1"
+                            placeholder="e.g. 50"
+                            class="w-full rounded-md border border-[color:var(--color-primary-300)] dark:border-[color:var(--color-dark-300)] bg-white dark:bg-[color:var(--color-dark-200)] px-3 py-2 text-sm text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)] focus:outline-none focus:ring-2 focus:ring-[color:var(--color-accent-500)]"
+                        />
+                    </div>
+
+                    <!-- Working Days Info -->
+                    <div class="text-sm text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)]">
+                        <span class="font-medium">{{ $month_name }}:</span> {{ $working_days }} working days
+                    </div>
+                </div>
+
+                <!-- Results -->
+                <div class="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <!-- Total Hours -->
+                    <div class="bg-white dark:bg-[color:var(--color-dark-200)] rounded-lg p-4 border border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)]">
+                        <h3 class="text-sm font-medium text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] mb-1">Total Hours</h3>
+                        <div class="text-2xl font-bold text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]" x-text="totalHours"></div>
+                        <p class="text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)] mt-1" x-text="hoursPerDay + 'h/day × ' + workingDays + ' days'"></p>
+                    </div>
+
+                    <!-- Daily Earnings -->
+                    <div class="bg-white dark:bg-[color:var(--color-dark-200)] rounded-lg p-4 border border-[color:var(--color-primary-200)] dark:border-[color:var(--color-dark-300)]">
+                        <h3 class="text-sm font-medium text-[color:var(--color-primary-600)] dark:text-[color:var(--color-dark-500)] mb-1">Daily Earnings</h3>
+                        <div class="text-2xl font-bold text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]" x-text="'$ ' + dailyEarnings"></div>
+                        <p class="text-xs text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-400)] mt-1">USD per working day</p>
+                    </div>
+
+                    <!-- Monthly Earnings USD -->
+                    <div class="bg-gradient-to-br from-[color:var(--color-accent-500)] to-[color:var(--color-accent-600)] shadow-lg rounded-lg p-4 text-white">
+                        <h3 class="text-sm font-medium opacity-90 mb-1">Monthly Earnings (USD)</h3>
+                        <div class="text-3xl font-bold" x-text="'$ ' + monthlyEarnings"></div>
+                        <p class="text-xs opacity-90 mt-1" x-text="'For ' + '{{ $month_name }}'"></p>
+                    </div>
+
+                    <!-- Monthly Earnings MKD -->
+                    <div class="bg-[color:var(--color-success-50)] dark:bg-[color:var(--color-success-900)] border border-[color:var(--color-success-200)] dark:border-[color:var(--color-success-800)] rounded-lg p-4">
+                        <h3 class="text-sm font-medium text-[color:var(--color-success-700)] dark:text-[color:var(--color-success-300)] mb-1">Monthly Earnings (MKD)</h3>
+                        <div class="text-3xl font-bold text-[color:var(--color-success-800)] dark:text-[color:var(--color-success-200)]" x-text="'MKD ' + monthlyEarningsMKD"></div>
+                        <p class="text-xs text-[color:var(--color-success-600)] dark:text-[color:var(--color-success-400)] mt-1">1 USD = 56.50 MKD</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Information Box -->
     <div class="mt-6 bg-[color:var(--color-info-50)] dark:bg-[color:var(--color-info-900)] border border-[color:var(--color-info-200)] dark:border-[color:var(--color-info-800)] rounded-lg p-6">
         <div class="flex">
@@ -474,6 +577,37 @@
 
         // Hide MKD card
         document.getElementById('mkd-conversion-card').style.display = 'none';
+    }
+
+    function earningsCalculator(workingDays) {
+        return {
+            earningsWorkType: 'full-time',
+            hourlyRate: 0,
+            workingDays: workingDays,
+            hoursPerDay: 8,
+            totalHours: 0,
+            dailyEarnings: '0.00',
+            monthlyEarnings: '0.00',
+            monthlyEarningsMKD: '0.00',
+
+            setEarningsWorkType(type) {
+                this.earningsWorkType = type;
+                this.hoursPerDay = type === 'full-time' ? 8 : 4;
+                this.calculate();
+            },
+
+            calculate() {
+                const rate = parseFloat(this.hourlyRate) || 0;
+                this.totalHours = this.hoursPerDay * this.workingDays;
+                const daily = rate * this.hoursPerDay;
+                const monthly = rate * this.totalHours;
+                const monthlyMKD = monthly * 56.50;
+
+                this.dailyEarnings = daily.toFixed(2);
+                this.monthlyEarnings = monthly.toFixed(2);
+                this.monthlyEarningsMKD = monthlyMKD.toFixed(2);
+            }
+        };
     }
 
     // Calculate on page load
