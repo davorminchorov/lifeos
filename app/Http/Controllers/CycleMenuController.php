@@ -8,7 +8,8 @@ use App\Models\CycleMenu;
 use App\Models\CycleMenuDay;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\View\View;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class CycleMenuController extends Controller
 {
@@ -18,7 +19,7 @@ class CycleMenuController extends Controller
         $this->authorizeResource(CycleMenu::class, 'cycle_menu');
     }
 
-    public function index(Request $request): View
+    public function index(Request $request): Response
     {
         $menus = CycleMenu::query()
             ->where('user_id', auth()->id())
@@ -29,14 +30,14 @@ class CycleMenuController extends Controller
             ->orderBy('name')
             ->paginate(10);
 
-        return view('cycle-menus.index', [
+        return Inertia::render('CycleMenus/Index', [
             'menus' => $menus,
         ]);
     }
 
-    public function create(): View
+    public function create(): Response
     {
-        return view('cycle-menus.create');
+        return Inertia::render('CycleMenus/Create');
     }
 
     public function store(StoreCycleMenuRequest $request): RedirectResponse
@@ -58,21 +59,21 @@ class CycleMenuController extends Controller
         return redirect()->route('cycle-menus.show', $menu)->with('status', 'Cycle menu created.');
     }
 
-    public function show(CycleMenu $cycle_menu): View
+    public function show(CycleMenu $cycle_menu): Response
     {
         $cycle_menu->load(['days.items']);
         // Map days by index for rendering grid easily
         $daysByIndex = $cycle_menu->days->keyBy('day_index');
 
-        return view('cycle-menus.show', [
+        return Inertia::render('CycleMenus/Show', [
             'menu' => $cycle_menu,
             'daysByIndex' => $daysByIndex,
         ]);
     }
 
-    public function edit(CycleMenu $cycle_menu): View
+    public function edit(CycleMenu $cycle_menu): Response
     {
-        return view('cycle-menus.edit', ['menu' => $cycle_menu]);
+        return Inertia::render('CycleMenus/Edit', ['menu' => $cycle_menu]);
     }
 
     public function update(UpdateCycleMenuRequest $request, CycleMenu $cycle_menu): RedirectResponse

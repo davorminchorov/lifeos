@@ -4,12 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Jobs\ParseReceiptAndCreateExpense;
 use App\Jobs\ProcessGmailReceipts;
-use App\Models\GmailConnection;
 use App\Models\ProcessedEmail;
 use App\Services\GmailService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Inertia\Inertia;
 
 class GmailReceiptController extends Controller
 {
@@ -27,7 +27,7 @@ class GmailReceiptController extends Controller
     {
         // Validate Gmail credentials are configured
         if (! config('gmail_receipts.client_id') || ! config('gmail_receipts.client_secret')) {
-            return view('settings.gmail-receipts', [
+            return Inertia::render('Settings/GmailReceipts', [
                 'connection' => null,
                 'stats' => null,
                 'error' => 'Gmail API credentials are not configured. Please set GMAIL_CLIENT_ID and GMAIL_CLIENT_SECRET in your .env file.',
@@ -52,7 +52,7 @@ class GmailReceiptController extends Controller
             ];
         }
 
-        return view('settings.gmail-receipts', [
+        return Inertia::render('Settings/GmailReceipts', [
             'connection' => $connection,
             'stats' => $stats,
         ]);
