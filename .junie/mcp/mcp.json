@@ -6,6 +6,14 @@
                 "/var/www/html/artisan",
                 "boost:mcp"
             ]
+        },
+        "nightwatch": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "mcp-remote",
+                "https://nightwatch.laravel.com/mcp"
+            ]
         }
     }
 }
