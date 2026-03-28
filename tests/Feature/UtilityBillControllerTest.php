@@ -17,7 +17,7 @@ class UtilityBillControllerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->user = User::factory()->create();
+        ['user' => $this->user] = $this->setupTenantContext();
     }
 
     public function test_can_display_utility_bills_index(): void
@@ -255,6 +255,8 @@ class UtilityBillControllerTest extends TestCase
 
     public function test_unauthenticated_users_cannot_access_utility_bills(): void
     {
+        $this->app['auth']->forgetGuards();
+
         $response = $this->get(route('utility-bills.index'));
 
         $response->assertRedirect(route('login'));

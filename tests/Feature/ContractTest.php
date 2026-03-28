@@ -17,8 +17,7 @@ class ContractTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->user = User::factory()->create();
-        $this->actingAs($this->user);
+        ['user' => $this->user] = $this->setupTenantContext();
     }
 
     public function test_user_can_view_contracts_index()

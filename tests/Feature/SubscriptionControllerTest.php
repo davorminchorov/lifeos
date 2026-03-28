@@ -19,7 +19,7 @@ class SubscriptionControllerTest extends TestCase
     {
         parent::setUp();
 
-        $this->user = User::factory()->create();
+        ['user' => $this->user] = $this->setupTenantContext();
         $this->otherUser = User::factory()->create();
     }
 
@@ -28,7 +28,7 @@ class SubscriptionControllerTest extends TestCase
         $userSubscription = Subscription::factory()->create(['user_id' => $this->user->id]);
         $otherUserSubscription = Subscription::factory()->create(['user_id' => $this->otherUser->id]);
 
-        $response = $this->actingAs($this->user)->get('/subscriptions');
+        $response = $this->get('/subscriptions');
 
         $response->assertStatus(200);
         // This test will reveal the authorization issue - users should only see their own subscriptions
@@ -45,8 +45,7 @@ class SubscriptionControllerTest extends TestCase
             'status' => 'cancelled',
         ]);
 
-        $response = $this->actingAs($this->user)
-            ->get('/subscriptions?status=active');
+        $response = $this->get('/subscriptions?status=active');
 
         $response->assertStatus(200);
     }
@@ -62,8 +61,7 @@ class SubscriptionControllerTest extends TestCase
             'category' => 'Software',
         ]);
 
-        $response = $this->actingAs($this->user)
-            ->get('/subscriptions?category=Entertainment');
+        $response = $this->get('/subscriptions?category=Entertainment');
 
         $response->assertStatus(200);
     }
@@ -81,8 +79,7 @@ class SubscriptionControllerTest extends TestCase
             'next_billing_date' => now()->addDays(10),
         ]);
 
-        $response = $this->actingAs($this->user)
-            ->get('/subscriptions?due_soon=7');
+        $response = $this->get('/subscriptions?due_soon=7');
 
         $response->assertStatus(200);
     }
@@ -98,15 +95,14 @@ class SubscriptionControllerTest extends TestCase
             'service_name' => 'Spotify',
         ]);
 
-        $response = $this->actingAs($this->user)
-            ->get('/subscriptions?search=Netflix');
+        $response = $this->get('/subscriptions?search=Netflix');
 
         $response->assertStatus(200);
     }
 
     public function test_create_shows_create_form()
     {
-        $response = $this->actingAs($this->user)->get('/subscriptions/create');
+        $response = $this->get('/subscriptions/create');
 
         $response->assertStatus(200);
     }
@@ -124,8 +120,7 @@ class SubscriptionControllerTest extends TestCase
             'status' => 'active',
         ];
 
-        $response = $this->actingAs($this->user)
-            ->post('/subscriptions', $subscriptionData);
+        $response = $this->post('/subscriptions', $subscriptionData);
 
         $response->assertRedirect();
         $this->assertDatabaseHas('subscriptions', [
@@ -138,8 +133,7 @@ class SubscriptionControllerTest extends TestCase
 
     public function test_store_validates_required_fields()
     {
-        $response = $this->actingAs($this->user)
-            ->post('/subscriptions', []);
+        $response = $this->post('/subscriptions', []);
 
         $response->assertSessionHasErrors([
             'service_name',
@@ -164,8 +158,7 @@ class SubscriptionControllerTest extends TestCase
             'next_billing_date' => '2024-01-15',
         ];
 
-        $response = $this->actingAs($this->user)
-            ->post('/subscriptions', $subscriptionData);
+        $response = $this->post('/subscriptions', $subscriptionData);
 
         $response->assertSessionHasErrors(['billing_cycle_days']);
     }
@@ -182,8 +175,7 @@ class SubscriptionControllerTest extends TestCase
             'next_billing_date' => now()->addMonth()->format('Y-m-d'),
         ];
 
-        $response = $this->actingAs($this->user)
-            ->post('/subscriptions', $subscriptionData);
+        $response = $this->post('/subscriptions', $subscriptionData);
 
         $response->assertSessionHasErrors(['start_date']);
     }
@@ -200,8 +192,7 @@ class SubscriptionControllerTest extends TestCase
             'next_billing_date' => '2024-01-01',
         ];
 
-        $response = $this->actingAs($this->user)
-            ->post('/subscriptions', $subscriptionData);
+        $response = $this->post('/subscriptions', $subscriptionData);
 
         $response->assertSessionHasErrors(['next_billing_date']);
     }
@@ -210,8 +201,7 @@ class SubscriptionControllerTest extends TestCase
     {
         $subscription = Subscription::factory()->create(['user_id' => $this->user->id]);
 
-        $response = $this->actingAs($this->user)
-            ->get("/subscriptions/{$subscription->id}");
+        $response = $this->get("/subscriptions/{$subscription->id}");
 
         $response->assertStatus(200);
     }
@@ -221,8 +211,7 @@ class SubscriptionControllerTest extends TestCase
         // This test verifies that authorization is working properly
         $otherUserSubscription = Subscription::factory()->create(['user_id' => $this->otherUser->id]);
 
-        $response = $this->actingAs($this->user)
-            ->get("/subscriptions/{$otherUserSubscription->id}");
+        $response = $this->get("/subscriptions/{$otherUserSubscription->id}");
 
         // Should fail with 403 due to proper authorization
         $response->assertStatus(403);
@@ -232,8 +221,7 @@ class SubscriptionControllerTest extends TestCase
     {
         $subscription = Subscription::factory()->create(['user_id' => $this->user->id]);
 
-        $response = $this->actingAs($this->user)
-            ->get("/subscriptions/{$subscription->id}/edit");
+        $response = $this->get("/subscriptions/{$subscription->id}/edit");
 
         $response->assertStatus(200);
     }
@@ -252,8 +240,7 @@ class SubscriptionControllerTest extends TestCase
             'next_billing_date' => $subscription->next_billing_date->format('Y-m-d'),
         ];
 
-        $response = $this->actingAs($this->user)
-            ->put("/subscriptions/{$subscription->id}", $updateData);
+        $response = $this->put("/subscriptions/{$subscription->id}", $updateData);
 
         $response->assertRedirect();
         $this->assertDatabaseHas('subscriptions', [
@@ -278,8 +265,7 @@ class SubscriptionControllerTest extends TestCase
             'next_billing_date' => $otherUserSubscription->next_billing_date->format('Y-m-d'),
         ];
 
-        $response = $this->actingAs($this->user)
-            ->put("/subscriptions/{$otherUserSubscription->id}", $updateData);
+        $response = $this->put("/subscriptions/{$otherUserSubscription->id}", $updateData);
 
         // Should fail with 403 due to proper authorization
         $response->assertStatus(403);
@@ -289,8 +275,7 @@ class SubscriptionControllerTest extends TestCase
     {
         $subscription = Subscription::factory()->create(['user_id' => $this->user->id]);
 
-        $response = $this->actingAs($this->user)
-            ->delete("/subscriptions/{$subscription->id}");
+        $response = $this->delete("/subscriptions/{$subscription->id}");
 
         $response->assertRedirect();
         $this->assertDatabaseMissing('subscriptions', ['id' => $subscription->id]);
@@ -301,8 +286,7 @@ class SubscriptionControllerTest extends TestCase
         // This test verifies that authorization is working properly
         $otherUserSubscription = Subscription::factory()->create(['user_id' => $this->otherUser->id]);
 
-        $response = $this->actingAs($this->user)
-            ->delete("/subscriptions/{$otherUserSubscription->id}");
+        $response = $this->delete("/subscriptions/{$otherUserSubscription->id}");
 
         // Should fail with 403 due to proper authorization
         $response->assertStatus(403);
@@ -315,8 +299,7 @@ class SubscriptionControllerTest extends TestCase
             'status' => 'active',
         ]);
 
-        $response = $this->actingAs($this->user)
-            ->patch("/subscriptions/{$subscription->id}/cancel");
+        $response = $this->patch("/subscriptions/{$subscription->id}/cancel");
 
         $response->assertRedirect();
         $subscription->refresh();
@@ -331,8 +314,7 @@ class SubscriptionControllerTest extends TestCase
             'status' => 'active',
         ]);
 
-        $response = $this->actingAs($this->user)
-            ->patch("/subscriptions/{$subscription->id}/pause");
+        $response = $this->patch("/subscriptions/{$subscription->id}/pause");
 
         $response->assertRedirect();
         $subscription->refresh();
@@ -346,8 +328,7 @@ class SubscriptionControllerTest extends TestCase
             'status' => 'paused',
         ]);
 
-        $response = $this->actingAs($this->user)
-            ->patch("/subscriptions/{$subscription->id}/resume");
+        $response = $this->patch("/subscriptions/{$subscription->id}/resume");
 
         $response->assertRedirect();
         $subscription->refresh();
@@ -372,8 +353,7 @@ class SubscriptionControllerTest extends TestCase
             'status' => 'active',
         ]);
 
-        $response = $this->actingAs($this->user)
-            ->get('/subscriptions/analytics/summary');
+        $response = $this->get('/subscriptions/analytics/summary');
 
         $response->assertStatus(200);
         $data = $response->json('data');
@@ -399,8 +379,7 @@ class SubscriptionControllerTest extends TestCase
             'cost' => 50.00,
         ]);
 
-        $response = $this->actingAs($this->user)
-            ->get('/subscriptions/analytics/spending');
+        $response = $this->get('/subscriptions/analytics/spending');
 
         $response->assertStatus(200);
         $data = $response->json('data');
@@ -422,8 +401,7 @@ class SubscriptionControllerTest extends TestCase
             'category' => 'Entertainment',
         ]);
 
-        $response = $this->actingAs($this->user)
-            ->get('/subscriptions/analytics/category-breakdown');
+        $response = $this->get('/subscriptions/analytics/category-breakdown');
 
         $response->assertStatus(200);
         $data = $response->json('data');
@@ -437,6 +415,8 @@ class SubscriptionControllerTest extends TestCase
     public function test_unauthenticated_access_is_denied()
     {
         $subscription = Subscription::factory()->create();
+
+        $this->app['auth']->forgetGuards();
 
         $this->get('/subscriptions')->assertRedirect();
         $this->get("/subscriptions/{$subscription->id}")->assertRedirect();

@@ -24,7 +24,7 @@ class JobApplicationInterviewTest extends TestCase
     {
         parent::setUp();
 
-        $this->user = User::factory()->create();
+        ['user' => $this->user] = $this->setupTenantContext();
         $this->otherUser = User::factory()->create();
         $this->application = JobApplication::factory()->create([
             'user_id' => $this->user->id,
@@ -51,6 +51,8 @@ class JobApplicationInterviewTest extends TestCase
 
     public function test_index_requires_authentication()
     {
+        $this->app['auth']->forgetGuards();
+
         $response = $this->get("/job-applications/{$this->application->id}/interviews");
 
         $response->assertRedirect('/login');
@@ -78,6 +80,8 @@ class JobApplicationInterviewTest extends TestCase
 
     public function test_create_requires_authentication()
     {
+        $this->app['auth']->forgetGuards();
+
         $response = $this->get("/job-applications/{$this->application->id}/interviews/create");
 
         $response->assertRedirect('/login');
@@ -122,6 +126,8 @@ class JobApplicationInterviewTest extends TestCase
 
     public function test_store_requires_authentication()
     {
+        $this->app['auth']->forgetGuards();
+
         $data = [
             'type' => InterviewType::PHONE->value,
             'scheduled_at' => now()->addDays(1)->format('Y-m-d H:i:s'),
@@ -185,6 +191,8 @@ class JobApplicationInterviewTest extends TestCase
 
     public function test_show_requires_authentication()
     {
+        $this->app['auth']->forgetGuards();
+
         $interview = JobApplicationInterview::factory()->create([
             'user_id' => $this->user->id,
             'job_application_id' => $this->application->id,
@@ -243,6 +251,8 @@ class JobApplicationInterviewTest extends TestCase
 
     public function test_edit_requires_authentication()
     {
+        $this->app['auth']->forgetGuards();
+
         $interview = JobApplicationInterview::factory()->create([
             'user_id' => $this->user->id,
             'job_application_id' => $this->application->id,
@@ -298,6 +308,8 @@ class JobApplicationInterviewTest extends TestCase
 
     public function test_update_requires_authentication()
     {
+        $this->app['auth']->forgetGuards();
+
         $interview = JobApplicationInterview::factory()->create([
             'user_id' => $this->user->id,
             'job_application_id' => $this->application->id,
@@ -347,6 +359,8 @@ class JobApplicationInterviewTest extends TestCase
 
     public function test_destroy_requires_authentication()
     {
+        $this->app['auth']->forgetGuards();
+
         $interview = JobApplicationInterview::factory()->create([
             'user_id' => $this->user->id,
             'job_application_id' => $this->application->id,
@@ -397,6 +411,8 @@ class JobApplicationInterviewTest extends TestCase
 
     public function test_complete_requires_authentication()
     {
+        $this->app['auth']->forgetGuards();
+
         $interview = JobApplicationInterview::factory()->create([
             'user_id' => $this->user->id,
             'job_application_id' => $this->application->id,

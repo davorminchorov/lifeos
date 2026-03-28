@@ -24,7 +24,7 @@ class JobApplicationOfferTest extends TestCase
     {
         parent::setUp();
 
-        $this->user = User::factory()->create();
+        ['user' => $this->user] = $this->setupTenantContext();
         $this->otherUser = User::factory()->create();
         $this->application = JobApplication::factory()->create([
             'user_id' => $this->user->id,
@@ -55,6 +55,8 @@ class JobApplicationOfferTest extends TestCase
 
     public function test_create_requires_authentication()
     {
+        $this->app['auth']->forgetGuards();
+
         $response = $this->get("/job-applications/{$this->application->id}/offers/create");
 
         $response->assertRedirect('/login');
@@ -122,6 +124,8 @@ class JobApplicationOfferTest extends TestCase
 
     public function test_store_requires_authentication()
     {
+        $this->app['auth']->forgetGuards();
+
         $data = [
             'base_salary' => 100000,
             'currency' => 'USD',
@@ -187,6 +191,8 @@ class JobApplicationOfferTest extends TestCase
 
     public function test_show_requires_authentication()
     {
+        $this->app['auth']->forgetGuards();
+
         $offer = JobApplicationOffer::factory()->create([
             'user_id' => $this->user->id,
             'job_application_id' => $this->application->id,
@@ -245,6 +251,8 @@ class JobApplicationOfferTest extends TestCase
 
     public function test_edit_requires_authentication()
     {
+        $this->app['auth']->forgetGuards();
+
         $offer = JobApplicationOffer::factory()->create([
             'user_id' => $this->user->id,
             'job_application_id' => $this->application->id,
@@ -299,6 +307,8 @@ class JobApplicationOfferTest extends TestCase
 
     public function test_update_requires_authentication()
     {
+        $this->app['auth']->forgetGuards();
+
         $offer = JobApplicationOffer::factory()->create([
             'user_id' => $this->user->id,
             'job_application_id' => $this->application->id,
@@ -348,6 +358,8 @@ class JobApplicationOfferTest extends TestCase
 
     public function test_destroy_requires_authentication()
     {
+        $this->app['auth']->forgetGuards();
+
         $offer = JobApplicationOffer::factory()->create([
             'user_id' => $this->user->id,
             'job_application_id' => $this->application->id,
@@ -400,6 +412,8 @@ class JobApplicationOfferTest extends TestCase
 
     public function test_accept_requires_authentication()
     {
+        $this->app['auth']->forgetGuards();
+
         $offer = JobApplicationOffer::factory()->create([
             'user_id' => $this->user->id,
             'job_application_id' => $this->application->id,
@@ -450,6 +464,8 @@ class JobApplicationOfferTest extends TestCase
 
     public function test_decline_requires_authentication()
     {
+        $this->app['auth']->forgetGuards();
+
         $offer = JobApplicationOffer::factory()->create([
             'user_id' => $this->user->id,
             'job_application_id' => $this->application->id,

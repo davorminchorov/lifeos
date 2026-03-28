@@ -19,8 +19,7 @@ class CurrencyControllerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->user = User::factory()->create();
-        $this->actingAs($this->user);
+        ['user' => $this->user] = $this->setupTenantContext();
     }
 
     public function test_freelance_rate_calculator_page_loads_successfully(): void

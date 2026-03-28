@@ -5,10 +5,7 @@ namespace Tests\Feature;
 use App\Jobs\ImportInvestmentsCsv;
 use App\Models\Investment;
 use App\Models\InvestmentTransaction;
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
@@ -18,8 +15,7 @@ class InvestmentCsvImportTest extends TestCase
 
     public function test_it_imports_investment_transactions_from_csv()
     {
-        $user = User::factory()->create();
-        $this->actingAs($user);
+        ['user' => $user] = $this->setupTenantContext();
 
         $csv = implode("\n", [
             'Action,Time,ISIN,Ticker,Name,Notes,ID,No. of shares,Price / share,Currency (Price / share),Exchange rate,Currency (Result),Total,Currency (Total) Deposit',
@@ -41,7 +37,7 @@ class InvestmentCsvImportTest extends TestCase
         try {
             $job->handle();
         } catch (\Exception $e) {
-            $this->fail('Job failed with exception: ' . $e->getMessage() . "\n" . $e->getTraceAsString());
+            $this->fail('Job failed with exception: '.$e->getMessage()."\n".$e->getTraceAsString());
         }
 
         // Check if any investments were created

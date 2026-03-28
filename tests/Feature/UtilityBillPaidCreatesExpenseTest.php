@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use App\Models\Expense;
-use App\Models\User;
 use App\Models\UtilityBill;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -14,7 +13,7 @@ class UtilityBillPaidCreatesExpenseTest extends TestCase
 
     public function test_creates_expense_when_bill_marked_paid(): void
     {
-        $user = User::factory()->create();
+        ['user' => $user] = $this->setupTenantContext();
 
         $bill = UtilityBill::factory()->create([
             'user_id' => $user->id,
@@ -50,7 +49,7 @@ class UtilityBillPaidCreatesExpenseTest extends TestCase
 
     public function test_observer_is_idempotent_for_repeated_updates(): void
     {
-        $user = User::factory()->create();
+        ['user' => $user] = $this->setupTenantContext();
 
         $bill = UtilityBill::factory()->create([
             'user_id' => $user->id,

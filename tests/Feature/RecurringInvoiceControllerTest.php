@@ -3,16 +3,19 @@
 namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class RecurringInvoiceControllerTest extends TestCase
 {
+    use RefreshDatabase;
+
     /**
-     * A basic feature test example.
+     * Verify authenticated users can access the home page.
      */
-    public function test_example(): void
+    public function test_authenticated_user_can_access_home(): void
     {
+        $this->setupTenantContext();
+
         $response = $this->get('/');
 
         $response->assertStatus(200);

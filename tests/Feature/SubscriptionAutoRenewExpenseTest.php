@@ -5,7 +5,6 @@ namespace Tests\Feature;
 use App\Jobs\CreateSubscriptionAutoRenewExpenses;
 use App\Models\Expense;
 use App\Models\Subscription;
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -15,7 +14,7 @@ class SubscriptionAutoRenewExpenseTest extends TestCase
 
     public function test_creates_expense_for_auto_renewed_subscription_due_today(): void
     {
-        $user = User::factory()->create();
+        ['user' => $user] = $this->setupTenantContext();
 
         $subscription = Subscription::factory()->create([
             'user_id' => $user->id,
@@ -49,7 +48,7 @@ class SubscriptionAutoRenewExpenseTest extends TestCase
 
     public function test_job_is_idempotent_on_same_day(): void
     {
-        $user = User::factory()->create();
+        ['user' => $user] = $this->setupTenantContext();
 
         $subscription = Subscription::factory()->create([
             'user_id' => $user->id,

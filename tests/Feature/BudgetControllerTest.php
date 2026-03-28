@@ -17,7 +17,7 @@ class BudgetControllerTest extends TestCase
     {
         parent::setUp();
 
-        $this->user = User::factory()->create();
+        ['user' => $this->user] = $this->setupTenantContext();
     }
 
     public function test_index_displays_budgets_for_authenticated_user(): void
@@ -100,6 +100,8 @@ class BudgetControllerTest extends TestCase
 
     public function test_index_requires_authentication(): void
     {
+        $this->app['auth']->forgetGuards();
+
         $response = $this->get(route('budgets.index'));
 
         $response->assertRedirect(route('login'));
@@ -116,6 +118,8 @@ class BudgetControllerTest extends TestCase
 
     public function test_create_requires_authentication(): void
     {
+        $this->app['auth']->forgetGuards();
+
         $response = $this->get(route('budgets.create'));
 
         $response->assertRedirect(route('login'));
@@ -169,6 +173,8 @@ class BudgetControllerTest extends TestCase
 
     public function test_store_requires_authentication(): void
     {
+        $this->app['auth']->forgetGuards();
+
         $response = $this->post(route('budgets.store'), []);
 
         $response->assertRedirect(route('login'));
@@ -199,6 +205,8 @@ class BudgetControllerTest extends TestCase
 
     public function test_show_requires_authentication(): void
     {
+        $this->app['auth']->forgetGuards();
+
         $budget = Budget::factory()->create();
 
         $response = $this->get(route('budgets.show', $budget));
@@ -229,6 +237,8 @@ class BudgetControllerTest extends TestCase
 
     public function test_edit_requires_authentication(): void
     {
+        $this->app['auth']->forgetGuards();
+
         $budget = Budget::factory()->create();
 
         $response = $this->get(route('budgets.edit', $budget));
@@ -277,6 +287,8 @@ class BudgetControllerTest extends TestCase
 
     public function test_update_requires_authentication(): void
     {
+        $this->app['auth']->forgetGuards();
+
         $budget = Budget::factory()->create();
 
         $response = $this->put(route('budgets.update', $budget), []);
@@ -308,6 +320,8 @@ class BudgetControllerTest extends TestCase
 
     public function test_destroy_requires_authentication(): void
     {
+        $this->app['auth']->forgetGuards();
+
         $budget = Budget::factory()->create();
 
         $response = $this->delete(route('budgets.destroy', $budget));
@@ -340,6 +354,8 @@ class BudgetControllerTest extends TestCase
 
     public function test_analytics_requires_authentication(): void
     {
+        $this->app['auth']->forgetGuards();
+
         $response = $this->get(route('budgets.analytics'));
 
         $response->assertRedirect(route('login'));

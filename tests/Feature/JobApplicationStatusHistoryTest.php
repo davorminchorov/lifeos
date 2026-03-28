@@ -19,7 +19,7 @@ class JobApplicationStatusHistoryTest extends TestCase
     {
         parent::setUp();
 
-        $this->user = User::factory()->create();
+        ['user' => $this->user] = $this->setupTenantContext();
     }
 
     public function test_status_history_is_created_when_application_status_changes()
@@ -181,7 +181,7 @@ class JobApplicationStatusHistoryTest extends TestCase
             'changed_at' => now()->subDays(1),
         ]);
 
-        $response = $this->actingAs($this->user)->get("/job-applications/{$application->id}");
+        $response = $this->get("/job-applications/{$application->id}");
 
         $response->assertStatus(200);
         $response->assertViewHas('application', $application);

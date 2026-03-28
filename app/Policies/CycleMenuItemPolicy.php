@@ -14,20 +14,19 @@ class CycleMenuItemPolicy
 
     public function update(User $user, CycleMenuItem $item): bool
     {
-        return $this->belongsToUserAndTenant($user, $item);
+        return $this->belongsToUserTenant($user, $item);
     }
 
     public function delete(User $user, CycleMenuItem $item): bool
     {
-        return $this->belongsToUserAndTenant($user, $item);
+        return $this->belongsToUserTenant($user, $item);
     }
 
     /**
-     * Check if the model belongs to the user and their current tenant.
+     * Check if the item belongs to the user's current tenant.
      */
-    protected function belongsToUserAndTenant(User $user, CycleMenuItem $item): bool
+    protected function belongsToUserTenant(User $user, CycleMenuItem $item): bool
     {
-        return $item->user_id === $user->id
-            && $item->tenant_id === $user->current_tenant_id;
+        return $item->tenant_id === $user->current_tenant_id;
     }
 }

@@ -2,12 +2,14 @@
 
 namespace Tests\Feature;
 
+use App\Models\Subscription;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Notifications\SubscriptionRenewalAlert;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Queue;
 use Tests\TestCase;
 
 class NotificationControllerTest extends TestCase
@@ -15,18 +17,28 @@ class NotificationControllerTest extends TestCase
     use RefreshDatabase, WithFaker;
 
     private User $user;
+
     private Tenant $tenant;
 
     protected function setUp(): void
     {
         parent::setUp();
         ['user' => $this->user, 'tenant' => $this->tenant] = $this->setupTenantContext();
+        Queue::fake();
+    }
+
+    /**
+     * Send a notification synchronously (bypassing ShouldQueue) so that
+     * the database record is created immediately for test assertions.
+     */
+    private function sendNotificationSync(User $user, SubscriptionRenewalAlert $notification): void
+    {
+        $user->notifyNow($notification);
     }
 
     public function test_can_view_notifications_index()
     {
-        $this->actingAs($this->user)
-            ->get(route('notifications.index'))
+        $this->get(route('notifications.index'))
             ->assertStatus(200)
             ->assertViewIs('notifications.index')
             ->assertViewHas(['notifications', 'unreadCount']);
@@ -35,16 +47,15 @@ class NotificationControllerTest extends TestCase
     public function test_can_get_notifications_data_via_ajax()
     {
         // Create a test notification
-        $this->user->notify(new SubscriptionRenewalAlert(
-            \App\Models\Subscription::factory()->create([
+        $this->sendNotificationSync($this->user, new SubscriptionRenewalAlert(
+            Subscription::factory()->create([
                 'user_id' => $this->user->id,
                 'tenant_id' => $this->tenant->id,
             ]),
             7
         ));
 
-        $response = $this->actingAs($this->user)
-            ->getJson(route('notifications.data'))
+        $response = $this->getJson(route('notifications.data'))
             ->assertStatus(200)
             ->assertJsonStructure([
                 'notifications' => [
@@ -65,8 +76,8 @@ class NotificationControllerTest extends TestCase
     public function test_can_mark_notification_as_read()
     {
         // Create a test notification
-        $this->user->notify(new SubscriptionRenewalAlert(
-            \App\Models\Subscription::factory()->create([
+        $this->sendNotificationSync($this->user, new SubscriptionRenewalAlert(
+            Subscription::factory()->create([
                 'user_id' => $this->user->id,
                 'tenant_id' => $this->tenant->id,
             ]),
@@ -75,8 +86,7 @@ class NotificationControllerTest extends TestCase
 
         $notification = $this->user->unreadNotifications->first();
 
-        $this->actingAs($this->user)
-            ->postJson(route('notifications.mark-as-read', $notification->id))
+        $this->postJson(route('notifications.mark-as-read', $notification->id))
             ->assertStatus(200)
             ->assertJson([
                 'success' => true,
@@ -88,19 +98,18 @@ class NotificationControllerTest extends TestCase
 
     public function test_can_mark_all_notifications_as_read()
     {
-        $subscription = \App\Models\Subscription::factory()->create([
+        $subscription = Subscription::factory()->create([
             'user_id' => $this->user->id,
             'tenant_id' => $this->tenant->id,
         ]);
 
         // Create multiple test notifications
-        $this->user->notify(new SubscriptionRenewalAlert($subscription, 7));
-        $this->user->notify(new SubscriptionRenewalAlert($subscription, 3));
+        $this->sendNotificationSync($this->user, new SubscriptionRenewalAlert($subscription, 7));
+        $this->sendNotificationSync($this->user, new SubscriptionRenewalAlert($subscription, 3));
 
         $this->assertEquals(2, $this->user->unreadNotifications->count());
 
-        $this->actingAs($this->user)
-            ->postJson(route('notifications.mark-all-as-read'))
+        $this->postJson(route('notifications.mark-all-as-read'))
             ->assertStatus(200)
             ->assertJson([
                 'success' => true,
@@ -113,8 +122,8 @@ class NotificationControllerTest extends TestCase
     public function test_can_delete_notification()
     {
         // Create a test notification
-        $this->user->notify(new SubscriptionRenewalAlert(
-            \App\Models\Subscription::factory()->create([
+        $this->sendNotificationSync($this->user, new SubscriptionRenewalAlert(
+            Subscription::factory()->create([
                 'user_id' => $this->user->id,
                 'tenant_id' => $this->tenant->id,
             ]),
@@ -123,8 +132,7 @@ class NotificationControllerTest extends TestCase
 
         $notification = $this->user->notifications->first();
 
-        $this->actingAs($this->user)
-            ->deleteJson(route('notifications.destroy', $notification->id))
+        $this->deleteJson(route('notifications.destroy', $notification->id))
             ->assertStatus(200)
             ->assertJson(['success' => true]);
 
@@ -133,8 +141,7 @@ class NotificationControllerTest extends TestCase
 
     public function test_can_view_notification_preferences()
     {
-        $this->actingAs($this->user)
-            ->get(route('notifications.preferences'))
+        $this->get(route('notifications.preferences'))
             ->assertStatus(200)
             ->assertViewIs('notifications.preferences')
             ->assertViewHas('preferences');
@@ -157,8 +164,7 @@ class NotificationControllerTest extends TestCase
             ],
         ];
 
-        $this->actingAs($this->user)
-            ->postJson(route('notifications.preferences.update'), ['preferences' => $preferences])
+        $this->postJson(route('notifications.preferences.update'), ['preferences' => $preferences])
             ->assertStatus(200)
             ->assertJson([
                 'success' => true,
@@ -187,20 +193,19 @@ class NotificationControllerTest extends TestCase
 
     public function test_can_get_notification_stats()
     {
-        $subscription = \App\Models\Subscription::factory()->create([
+        $subscription = Subscription::factory()->create([
             'user_id' => $this->user->id,
             'tenant_id' => $this->tenant->id,
         ]);
 
         // Create some notifications
-        $this->user->notify(new SubscriptionRenewalAlert($subscription, 7));
-        $this->user->notify(new SubscriptionRenewalAlert($subscription, 3));
+        $this->sendNotificationSync($this->user, new SubscriptionRenewalAlert($subscription, 7));
+        $this->sendNotificationSync($this->user, new SubscriptionRenewalAlert($subscription, 3));
 
         // Mark one as read
         $this->user->notifications->first()->markAsRead();
 
-        $response = $this->actingAs($this->user)
-            ->getJson(route('notifications.stats'))
+        $response = $this->getJson(route('notifications.stats'))
             ->assertStatus(200)
             ->assertJsonStructure([
                 'total',
@@ -220,8 +225,8 @@ class NotificationControllerTest extends TestCase
         $otherTenant = Tenant::factory()->create();
         $otherUser = User::factory()->create(['current_tenant_id' => $otherTenant->id]);
         $otherTenant->update(['owner_id' => $otherUser->id]);
-        $otherUser->notify(new SubscriptionRenewalAlert(
-            \App\Models\Subscription::factory()->create([
+        $otherUser->notifyNow(new SubscriptionRenewalAlert(
+            Subscription::factory()->create([
                 'user_id' => $otherUser->id,
                 'tenant_id' => $otherTenant->id,
             ]),
@@ -231,18 +236,18 @@ class NotificationControllerTest extends TestCase
         $otherNotification = $otherUser->notifications->first();
 
         // Try to mark other user's notification as read
-        $this->actingAs($this->user)
-            ->postJson(route('notifications.mark-as-read', $otherNotification->id))
+        $this->postJson(route('notifications.mark-as-read', $otherNotification->id))
             ->assertStatus(404);
 
         // Try to delete other user's notification
-        $this->actingAs($this->user)
-            ->deleteJson(route('notifications.destroy', $otherNotification->id))
+        $this->deleteJson(route('notifications.destroy', $otherNotification->id))
             ->assertStatus(404);
     }
 
     public function test_guest_cannot_access_notifications()
     {
+        $this->app['auth']->forgetGuards();
+
         $this->get(route('notifications.index'))
             ->assertRedirect(route('login'));
 

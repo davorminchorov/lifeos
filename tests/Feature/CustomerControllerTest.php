@@ -12,13 +12,14 @@ class CustomerControllerTest extends TestCase
     use RefreshDatabase;
 
     private User $user;
+
     private User $otherUser;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->user = User::factory()->create();
+        ['user' => $this->user] = $this->setupTenantContext();
         $this->otherUser = User::factory()->create();
     }
 
@@ -27,8 +28,7 @@ class CustomerControllerTest extends TestCase
         Customer::factory()->count(3)->create(['user_id' => $this->user->id]);
         Customer::factory()->count(2)->create(['user_id' => $this->otherUser->id]);
 
-        $response = $this->actingAs($this->user)
-            ->get('/invoicing/customers');
+        $response = $this->get('/invoicing/customers');
 
         $response->assertStatus(200);
     }
@@ -39,13 +39,10 @@ class CustomerControllerTest extends TestCase
             'name' => 'Test Customer',
             'email' => 'test@example.com',
             'phone' => '+1234567890',
-            'address_line1' => '123 Main St',
-            'city' => 'Test City',
-            'country' => 'US',
+            'currency' => 'USD',
         ];
 
-        $response = $this->actingAs($this->user)
-            ->post('/invoicing/customers', $customerData);
+        $response = $this->post('/invoicing/customers', $customerData);
 
         $response->assertRedirect();
         $this->assertDatabaseHas('customers', [
@@ -59,8 +56,7 @@ class CustomerControllerTest extends TestCase
     {
         $otherCustomer = Customer::factory()->create(['user_id' => $this->otherUser->id]);
 
-        $response = $this->actingAs($this->user)
-            ->get("/invoicing/customers/{$otherCustomer->id}");
+        $response = $this->get("/invoicing/customers/{$otherCustomer->id}");
 
         $response->assertStatus(403);
     }
@@ -72,10 +68,10 @@ class CustomerControllerTest extends TestCase
         $updateData = [
             'name' => 'Hacked Name',
             'email' => 'hacked@example.com',
+            'currency' => 'USD',
         ];
 
-        $response = $this->actingAs($this->user)
-            ->put("/invoicing/customers/{$otherCustomer->id}", $updateData);
+        $response = $this->put("/invoicing/customers/{$otherCustomer->id}", $updateData);
 
         $response->assertStatus(403);
     }
@@ -84,18 +80,16 @@ class CustomerControllerTest extends TestCase
     {
         $otherCustomer = Customer::factory()->create(['user_id' => $this->otherUser->id]);
 
-        $response = $this->actingAs($this->user)
-            ->delete("/invoicing/customers/{$otherCustomer->id}");
+        $response = $this->delete("/invoicing/customers/{$otherCustomer->id}");
 
         $response->assertStatus(403);
     }
 
     public function test_validates_required_fields()
     {
-        $response = $this->actingAs($this->user)
-            ->post('/invoicing/customers', []);
+        $response = $this->post('/invoicing/customers', []);
 
-        $response->assertSessionHasErrors(['name']);
+        $response->assertSessionHasErrors(['name', 'currency']);
     }
 
     public function test_validates_email_format()
@@ -103,10 +97,10 @@ class CustomerControllerTest extends TestCase
         $customerData = [
             'name' => 'Test Customer',
             'email' => 'invalid-email',
+            'currency' => 'USD',
         ];
 
-        $response = $this->actingAs($this->user)
-            ->post('/invoicing/customers', $customerData);
+        $response = $this->post('/invoicing/customers', $customerData);
 
         $response->assertSessionHasErrors(['email']);
     }
