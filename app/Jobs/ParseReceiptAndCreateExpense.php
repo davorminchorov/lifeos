@@ -47,15 +47,15 @@ class ParseReceiptAndCreateExpense implements ShouldQueue
      *
      * @var GmailConnection
      */
-    protected GmailConnection $connection;
+    protected GmailConnection $gmailConnection;
 
     /**
      * Create a new job instance.
      */
-    public function __construct(ProcessedEmail $processedEmail, GmailConnection $connection)
+    public function __construct(ProcessedEmail $processedEmail, GmailConnection $gmailConnection)
     {
         $this->processedEmail = $processedEmail;
-        $this->connection = $connection;
+        $this->gmailConnection = $gmailConnection;
     }
 
     /**
@@ -141,7 +141,7 @@ class ParseReceiptAndCreateExpense implements ShouldQueue
 
                 // Add Gmail label to mark as processed
                 $gmailService->addLabel(
-                    $this->connection,
+                    $this->gmailConnection,
                     $this->processedEmail->gmail_message_id,
                     'LifeOS/Processed'
                 );
@@ -191,7 +191,7 @@ class ParseReceiptAndCreateExpense implements ShouldQueue
         foreach ($emailData['attachments'] as $attachment) {
             try {
                 $path = $gmailService->downloadAttachment(
-                    $this->connection,
+                    $this->gmailConnection,
                     $emailData['id'],
                     $attachment['attachment_id'],
                     $attachment['filename']
