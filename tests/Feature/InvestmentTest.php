@@ -43,7 +43,7 @@ class InvestmentTest extends TestCase
     {
         $investmentData = [
             'name' => 'Apple Inc.',
-            'investment_type' => 'stock',
+            'investment_type' => 'stocks',
             'symbol_identifier' => 'AAPL',
             'quantity' => '100',
             'purchase_date' => '2024-01-01',
@@ -64,7 +64,7 @@ class InvestmentTest extends TestCase
             'user_id' => $this->user->id,
             'name' => 'Apple Inc.',
             'symbol_identifier' => 'AAPL',
-            'investment_type' => 'stock',
+            'investment_type' => 'stocks',
         ]);
     }
 
@@ -145,7 +145,7 @@ class InvestmentTest extends TestCase
     {
         Investment::factory()->create([
             'user_id' => $this->user->id,
-            'investment_type' => 'stock',
+            'investment_type' => 'stocks',
             'name' => 'Stock Investment',
         ]);
 
@@ -155,7 +155,7 @@ class InvestmentTest extends TestCase
             'name' => 'Crypto Investment',
         ]);
 
-        $response = $this->get(route('investments.index', ['investment_type' => 'stock']));
+        $response = $this->get(route('investments.index', ['investment_type' => 'stocks']));
 
         $response->assertStatus(200);
         $response->assertSee('Stock Investment');
@@ -262,7 +262,7 @@ class InvestmentTest extends TestCase
     {
         $invalidData = [
             'name' => 'Test Investment',
-            'investment_type' => 'stock',
+            'investment_type' => 'stocks',
             'quantity' => 'not_numeric',
             'purchase_date' => '2024-01-01',
             'purchase_price' => 'not_numeric',
@@ -279,7 +279,7 @@ class InvestmentTest extends TestCase
     {
         $invalidData = [
             'name' => 'Test Investment',
-            'investment_type' => 'stock',
+            'investment_type' => 'stocks',
             'quantity' => '100',
             'purchase_date' => 'invalid_date',
             'purchase_price' => '50.00',

@@ -2,10 +2,11 @@
 
 namespace Database\Factories;
 
+use App\Models\Investment;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Investment>
+ * @extends Factory<Investment>
  */
 class InvestmentFactory extends Factory
 {
@@ -16,7 +17,7 @@ class InvestmentFactory extends Factory
      */
     public function definition(): array
     {
-        $investmentTypes = ['stock', 'bond', 'etf', 'mutual_fund', 'crypto', 'real_estate', 'commodities', 'cash'];
+        $investmentTypes = ['stocks', 'bonds', 'etf', 'mutual_fund', 'crypto', 'real_estate', 'commodities', 'cash'];
         $stockSymbols = ['AAPL', 'GOOGL', 'MSFT', 'AMZN', 'TSLA', 'NVDA', 'META', 'NFLX', 'AMD', 'UBER'];
         $cryptoSymbols = ['BTC', 'ETH', 'ADA', 'SOL', 'DOT', 'MATIC', 'AVAX', 'LINK'];
         $etfSymbols = ['SPY', 'QQQ', 'VTI', 'VOO', 'IWM', 'EFA', 'VEA', 'BND'];
@@ -30,7 +31,7 @@ class InvestmentFactory extends Factory
         $name = '';
 
         switch ($investmentType) {
-            case 'stock':
+            case 'stocks':
                 $symbol = $this->faker->randomElement($stockSymbols);
                 $name = $symbol.' Stock';
                 break;
