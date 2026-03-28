@@ -4,7 +4,9 @@ export default {
   content: [
     "./resources/**/*.blade.php",
     "./resources/**/*.js",
-    "./resources/**/*.vue",
+    "./resources/**/*.ts",
+    "./resources/**/*.tsx",
+    "./resources/**/*.jsx",
     "./vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php",
     "./storage/framework/views/*.php"
   ]

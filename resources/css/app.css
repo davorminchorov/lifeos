@@ -5,6 +5,8 @@
 @source '../../storage/framework/views/*.php';
 @source '../**/*.blade.php';
 @source '../**/*.js';
+@source '../**/*.ts';
+@source '../**/*.tsx';
 
 @theme {
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
@@ -63,4 +65,78 @@
     --color-info-700: #1D4ED8;
     --color-info-800: #1E40AF;
     --color-info-900: #1E3A8A;
+
+    --radius: 0.5rem;
+}
+
+/* shadcn/ui CSS Variables - Light Mode */
+:root {
+    --background: #FDFDFC;
+    --foreground: #1B1B18;
+    --card: #FFFFFF;
+    --card-foreground: #1B1B18;
+    --popover: #FFFFFF;
+    --popover-foreground: #1B1B18;
+    --primary: #1B1B18;
+    --primary-foreground: #FDFDFC;
+    --secondary: #F8F7F4;
+    --secondary-foreground: #1B1B18;
+    --muted: #F8F7F4;
+    --muted-foreground: #706F6C;
+    --accent: #F8F7F4;
+    --accent-foreground: #1B1B18;
+    --destructive: #EF4444;
+    --destructive-foreground: #FDFDFC;
+    --border: #EEEEEC;
+    --input: #EEEEEC;
+    --ring: #1B1B18;
+    --chart-1: #F53003;
+    --chart-2: #3B82F6;
+    --chart-3: #22C55E;
+    --chart-4: #F59E0B;
+    --chart-5: #8B5CF6;
+    --sidebar-background: #FDFDFC;
+    --sidebar-foreground: #1B1B18;
+    --sidebar-primary: #1B1B18;
+    --sidebar-primary-foreground: #FDFDFC;
+    --sidebar-accent: #F8F7F4;
+    --sidebar-accent-foreground: #1B1B18;
+    --sidebar-border: #EEEEEC;
+    --sidebar-ring: #1B1B18;
+}
+
+/* shadcn/ui CSS Variables - Dark Mode */
+.dark {
+    --background: #0A0A0A;
+    --foreground: #EDEDEC;
+    --card: #161615;
+    --card-foreground: #EDEDEC;
+    --popover: #161615;
+    --popover-foreground: #EDEDEC;
+    --primary: #EDEDEC;
+    --primary-foreground: #0A0A0A;
+    --secondary: #1D1D1C;
+    --secondary-foreground: #EDEDEC;
+    --muted: #1D1D1C;
+    --muted-foreground: #A1A09A;
+    --accent: #1D1D1C;
+    --accent-foreground: #EDEDEC;
+    --destructive: #DC2626;
+    --destructive-foreground: #EDEDEC;
+    --border: #3E3E3A;
+    --input: #3E3E3A;
+    --ring: #EDEDEC;
+    --chart-1: #F53003;
+    --chart-2: #60A5FA;
+    --chart-3: #4ADE80;
+    --chart-4: #FBBF24;
+    --chart-5: #A78BFA;
+    --sidebar-background: #0A0A0A;
+    --sidebar-foreground: #EDEDEC;
+    --sidebar-primary: #EDEDEC;
+    --sidebar-primary-foreground: #0A0A0A;
+    --sidebar-accent: #1D1D1C;
+    --sidebar-accent-foreground: #EDEDEC;
+    --sidebar-border: #3E3E3A;
+    --sidebar-ring: #EDEDEC;
 }

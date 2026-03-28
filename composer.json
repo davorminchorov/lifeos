@@ -9,6 +9,7 @@
         "php": "^8.4",
         "barryvdh/laravel-dompdf": "^3.1",
         "google/apiclient": "^2.19",
+        "inertiajs/inertia-laravel": "^3.0",
         "laravel/framework": "^13.0",
         "laravel/nightwatch": "^1.13",
         "laravel/tinker": "^3.0",
