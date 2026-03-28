@@ -17,7 +17,7 @@ class IouControllerTest extends TestCase
     {
         parent::setUp();
 
-        $this->user = User::factory()->create();
+        ['user' => $this->user] = $this->setupTenantContext();
     }
 
     public function test_index_displays_ious_for_authenticated_user(): void
@@ -101,6 +101,8 @@ class IouControllerTest extends TestCase
 
     public function test_index_requires_authentication(): void
     {
+        $this->app['auth']->forgetGuards();
+
         $response = $this->get(route('ious.index'));
 
         $response->assertRedirect(route('login'));
@@ -115,6 +117,8 @@ class IouControllerTest extends TestCase
 
     public function test_create_requires_authentication(): void
     {
+        $this->app['auth']->forgetGuards();
+
         $response = $this->get(route('ious.create'));
 
         $response->assertRedirect(route('login'));
@@ -148,6 +152,8 @@ class IouControllerTest extends TestCase
 
     public function test_store_requires_authentication(): void
     {
+        $this->app['auth']->forgetGuards();
+
         $response = $this->post(route('ious.store'), []);
 
         $response->assertRedirect(route('login'));
@@ -178,6 +184,8 @@ class IouControllerTest extends TestCase
 
     public function test_show_requires_authentication(): void
     {
+        $this->app['auth']->forgetGuards();
+
         $iou = Iou::factory()->create();
 
         $response = $this->get(route('ious.show', $iou));
@@ -206,6 +214,8 @@ class IouControllerTest extends TestCase
 
     public function test_edit_requires_authentication(): void
     {
+        $this->app['auth']->forgetGuards();
+
         $iou = Iou::factory()->create();
 
         $response = $this->get(route('ious.edit', $iou));
@@ -256,6 +266,8 @@ class IouControllerTest extends TestCase
 
     public function test_update_requires_authentication(): void
     {
+        $this->app['auth']->forgetGuards();
+
         $iou = Iou::factory()->create();
 
         $response = $this->put(route('ious.update', $iou), []);
@@ -287,6 +299,8 @@ class IouControllerTest extends TestCase
 
     public function test_destroy_requires_authentication(): void
     {
+        $this->app['auth']->forgetGuards();
+
         $iou = Iou::factory()->create();
 
         $response = $this->delete(route('ious.destroy', $iou));
@@ -346,6 +360,8 @@ class IouControllerTest extends TestCase
 
     public function test_record_payment_requires_authentication(): void
     {
+        $this->app['auth']->forgetGuards();
+
         $iou = Iou::factory()->create();
 
         $response = $this->post(route('ious.record-payment', $iou), []);
@@ -385,6 +401,8 @@ class IouControllerTest extends TestCase
 
     public function test_mark_paid_requires_authentication(): void
     {
+        $this->app['auth']->forgetGuards();
+
         $iou = Iou::factory()->create();
 
         $response = $this->patch(route('ious.mark-paid', $iou));
@@ -421,6 +439,8 @@ class IouControllerTest extends TestCase
 
     public function test_cancel_requires_authentication(): void
     {
+        $this->app['auth']->forgetGuards();
+
         $iou = Iou::factory()->create();
 
         $response = $this->patch(route('ious.cancel', $iou));

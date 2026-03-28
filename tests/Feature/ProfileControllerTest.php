@@ -19,16 +19,17 @@ class ProfileControllerTest extends TestCase
     {
         parent::setUp();
 
-        $this->user = User::factory()->create([
+        $user = User::factory()->create([
             'name' => 'John Doe',
             'email' => 'john@example.com',
         ]);
+        ['user' => $this->user] = $this->setupTenantContext($user);
         $this->otherUser = User::factory()->create();
     }
 
     public function test_profile_show_displays_user_profile()
     {
-        $response = $this->actingAs($this->user)->get('/profile');
+        $response = $this->get('/profile');
 
         $response->assertStatus(200);
         $response->assertViewIs('profile.show');
@@ -39,6 +40,8 @@ class ProfileControllerTest extends TestCase
 
     public function test_profile_show_requires_authentication()
     {
+        $this->app['auth']->forgetGuards();
+
         $response = $this->get('/profile');
 
         $response->assertRedirect('/login');
@@ -46,7 +49,7 @@ class ProfileControllerTest extends TestCase
 
     public function test_profile_edit_displays_edit_form()
     {
-        $response = $this->actingAs($this->user)->get('/profile/edit');
+        $response = $this->get('/profile/edit');
 
         $response->assertStatus(200);
         $response->assertViewIs('profile.edit');
@@ -57,6 +60,8 @@ class ProfileControllerTest extends TestCase
 
     public function test_profile_edit_requires_authentication()
     {
+        $this->app['auth']->forgetGuards();
+
         $response = $this->get('/profile/edit');
 
         $response->assertRedirect('/login');
@@ -64,7 +69,7 @@ class ProfileControllerTest extends TestCase
 
     public function test_profile_update_modifies_user_data()
     {
-        $response = $this->actingAs($this->user)->patch('/profile', [
+        $response = $this->patch('/profile', [
             'name' => 'Jane Smith',
             'email' => 'jane@example.com',
         ]);
@@ -79,6 +84,8 @@ class ProfileControllerTest extends TestCase
 
     public function test_profile_update_requires_authentication()
     {
+        $this->app['auth']->forgetGuards();
+
         $response = $this->patch('/profile', [
             'name' => 'Jane Smith',
             'email' => 'jane@example.com',
@@ -89,7 +96,7 @@ class ProfileControllerTest extends TestCase
 
     public function test_profile_update_validates_required_fields()
     {
-        $response = $this->actingAs($this->user)->patch('/profile', [
+        $response = $this->patch('/profile', [
             'name' => '',
             'email' => '',
         ]);
@@ -103,7 +110,7 @@ class ProfileControllerTest extends TestCase
 
     public function test_profile_update_validates_email_format()
     {
-        $response = $this->actingAs($this->user)->patch('/profile', [
+        $response = $this->patch('/profile', [
             'name' => 'Jane Smith',
             'email' => 'invalid-email',
         ]);
@@ -116,7 +123,7 @@ class ProfileControllerTest extends TestCase
 
     public function test_profile_update_validates_unique_email()
     {
-        $response = $this->actingAs($this->user)->patch('/profile', [
+        $response = $this->patch('/profile', [
             'name' => 'Jane Smith',
             'email' => $this->otherUser->email,
         ]);
@@ -129,7 +136,7 @@ class ProfileControllerTest extends TestCase
 
     public function test_profile_update_allows_same_email()
     {
-        $response = $this->actingAs($this->user)->patch('/profile', [
+        $response = $this->patch('/profile', [
             'name' => 'Jane Smith',
             'email' => $this->user->email,
         ]);
@@ -146,7 +153,7 @@ class ProfileControllerTest extends TestCase
     {
         $newPassword = 'new-secure-password';
 
-        $response = $this->actingAs($this->user)->patch('/profile/password', [
+        $response = $this->patch('/profile/password', [
             'current_password' => 'password', // Default factory password
             'password' => $newPassword,
             'password_confirmation' => $newPassword,
@@ -161,6 +168,8 @@ class ProfileControllerTest extends TestCase
 
     public function test_password_update_requires_authentication()
     {
+        $this->app['auth']->forgetGuards();
+
         $response = $this->patch('/profile/password', [
             'current_password' => 'password',
             'password' => 'new-password',
@@ -172,7 +181,7 @@ class ProfileControllerTest extends TestCase
 
     public function test_password_update_validates_current_password()
     {
-        $response = $this->actingAs($this->user)->patch('/profile/password', [
+        $response = $this->patch('/profile/password', [
             'current_password' => 'wrong-password',
             'password' => 'new-secure-password',
             'password_confirmation' => 'new-secure-password',
@@ -183,7 +192,7 @@ class ProfileControllerTest extends TestCase
 
     public function test_password_update_validates_required_fields()
     {
-        $response = $this->actingAs($this->user)->patch('/profile/password', [
+        $response = $this->patch('/profile/password', [
             'current_password' => '',
             'password' => '',
             'password_confirmation' => '',
@@ -194,7 +203,7 @@ class ProfileControllerTest extends TestCase
 
     public function test_password_update_validates_password_confirmation()
     {
-        $response = $this->actingAs($this->user)->patch('/profile/password', [
+        $response = $this->patch('/profile/password', [
             'current_password' => 'password',
             'password' => 'new-secure-password',
             'password_confirmation' => 'different-password',
@@ -205,7 +214,7 @@ class ProfileControllerTest extends TestCase
 
     public function test_password_update_validates_password_strength()
     {
-        $response = $this->actingAs($this->user)->patch('/profile/password', [
+        $response = $this->patch('/profile/password', [
             'current_password' => 'password',
             'password' => '123',
             'password_confirmation' => '123',
@@ -216,6 +225,8 @@ class ProfileControllerTest extends TestCase
 
     public function test_profile_routes_are_protected_by_auth_middleware()
     {
+        $this->app['auth']->forgetGuards();
+
         // Test all profile routes require authentication
         $routes = [
             ['GET', '/profile'],

@@ -178,15 +178,15 @@ class AuthenticationTest extends TestCase
 
     public function test_authenticated_users_can_access_protected_routes()
     {
-        $user = $this->user;
+        $this->setupTenantContext($this->user);
 
-        $response = $this->actingAs($user)->get('/dashboard');
+        $response = $this->get('/dashboard');
         $response->assertStatus(200);
 
-        $response = $this->actingAs($user)->get('/profile');
+        $response = $this->get('/profile');
         $response->assertStatus(200);
 
-        $response = $this->actingAs($user)->get('/settings');
+        $response = $this->get('/settings');
         $response->assertStatus(200);
     }
 

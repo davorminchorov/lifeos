@@ -21,7 +21,7 @@ class JobApplicationTest extends TestCase
     {
         parent::setUp();
 
-        $this->user = User::factory()->create();
+        ['user' => $this->user] = $this->setupTenantContext();
         $this->otherUser = User::factory()->create();
     }
 
@@ -62,6 +62,8 @@ class JobApplicationTest extends TestCase
 
     public function test_index_requires_authentication()
     {
+        $this->app['auth']->forgetGuards();
+
         $response = $this->get('/job-applications');
 
         $response->assertRedirect('/login');
@@ -77,6 +79,8 @@ class JobApplicationTest extends TestCase
 
     public function test_create_requires_authentication()
     {
+        $this->app['auth']->forgetGuards();
+
         $response = $this->get('/job-applications/create');
 
         $response->assertRedirect('/login');
@@ -121,6 +125,8 @@ class JobApplicationTest extends TestCase
 
     public function test_store_requires_authentication()
     {
+        $this->app['auth']->forgetGuards();
+
         $data = [
             'company_name' => 'Test Company',
             'job_title' => 'Test Job',
@@ -187,6 +193,8 @@ class JobApplicationTest extends TestCase
 
     public function test_show_requires_authentication()
     {
+        $this->app['auth']->forgetGuards();
+
         $application = JobApplication::factory()->create([
             'user_id' => $this->user->id,
         ]);
@@ -222,6 +230,8 @@ class JobApplicationTest extends TestCase
 
     public function test_edit_requires_authentication()
     {
+        $this->app['auth']->forgetGuards();
+
         $application = JobApplication::factory()->create([
             'user_id' => $this->user->id,
         ]);
@@ -270,6 +280,8 @@ class JobApplicationTest extends TestCase
 
     public function test_update_requires_authentication()
     {
+        $this->app['auth']->forgetGuards();
+
         $application = JobApplication::factory()->create([
             'user_id' => $this->user->id,
         ]);
@@ -318,6 +330,8 @@ class JobApplicationTest extends TestCase
 
     public function test_destroy_requires_authentication()
     {
+        $this->app['auth']->forgetGuards();
+
         $application = JobApplication::factory()->create([
             'user_id' => $this->user->id,
         ]);
@@ -361,6 +375,8 @@ class JobApplicationTest extends TestCase
 
     public function test_archive_requires_authentication()
     {
+        $this->app['auth']->forgetGuards();
+
         $application = JobApplication::factory()->create([
             'user_id' => $this->user->id,
         ]);
@@ -399,6 +415,8 @@ class JobApplicationTest extends TestCase
 
     public function test_unarchive_requires_authentication()
     {
+        $this->app['auth']->forgetGuards();
+
         $application = JobApplication::factory()->create([
             'user_id' => $this->user->id,
             'archived_at' => now(),

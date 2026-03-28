@@ -1,0 +1,14 @@
+{
+    "agents": [
+        "junie",
+        "claude_code"
+    ],
+    "guidelines": true,
+    "mcp": true,
+    "nightwatch_mcp": true,
+    "sail": false,
+    "skills": [
+        "laravel-best-practices",
+        "tailwindcss-development"
+    ]
+}

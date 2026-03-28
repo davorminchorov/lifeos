@@ -60,7 +60,7 @@ class CustomerController extends Controller
 
         $customer = Customer::create($data);
 
-        return redirect()->route('customers.show', $customer)
+        return redirect()->route('invoicing.customers.show', $customer)
             ->with('success', 'Customer created successfully!');
     }
 
@@ -107,7 +107,7 @@ class CustomerController extends Controller
 
         $customer->update($request->validated());
 
-        return redirect()->route('customers.show', $customer)
+        return redirect()->route('invoicing.customers.show', $customer)
             ->with('success', 'Customer updated successfully!');
     }
 
@@ -123,13 +123,13 @@ class CustomerController extends Controller
 
         // Check if customer has invoices
         if ($customer->invoices()->count() > 0) {
-            return redirect()->route('customers.index')
+            return redirect()->route('invoicing.customers.index')
                 ->with('error', 'Cannot delete customer with existing invoices.');
         }
 
         $customer->delete();
 
-        return redirect()->route('customers.index')
+        return redirect()->route('invoicing.customers.index')
             ->with('success', 'Customer deleted successfully!');
     }
 }

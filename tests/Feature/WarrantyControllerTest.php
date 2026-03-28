@@ -17,7 +17,7 @@ class WarrantyControllerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->user = User::factory()->create();
+        ['user' => $this->user] = $this->setupTenantContext();
     }
 
     public function test_can_display_warranties_index(): void
@@ -177,6 +177,8 @@ class WarrantyControllerTest extends TestCase
 
     public function test_unauthenticated_users_cannot_access_warranties(): void
     {
+        $this->app['auth']->forgetGuards();
+
         $response = $this->get(route('warranties.index'));
 
         $response->assertRedirect(route('login'));

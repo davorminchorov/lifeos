@@ -114,7 +114,7 @@
                     </div>
                     <div class="flex justify-between">
                         <span class="text-sm text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">Tax Behavior</span>
-                        <span class="text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">{{ ucfirst($invoice->tax_behavior) }}</span>
+                        <span class="text-sm font-medium text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">{{ $invoice->tax_behavior->label() }}</span>
                     </div>
                     <div class="flex justify-between">
                         <span class="text-sm text-[color:var(--color-primary-500)] dark:text-[color:var(--color-dark-500)]">Payment Terms</span>

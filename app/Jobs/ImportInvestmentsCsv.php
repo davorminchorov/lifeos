@@ -155,7 +155,7 @@ class ImportInvestmentsCsv implements ShouldQueue
                     ],
                     [
                         'name' => $name ?: ($ticker ?: 'Unknown'),
-                        'investment_type' => 'stock',
+                        'investment_type' => 'stocks',
                         'quantity' => 0,
                         'purchase_date' => now()->toDateString(),
                         'purchase_price' => $pricePerShare ?: 0,

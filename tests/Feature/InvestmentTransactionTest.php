@@ -19,7 +19,7 @@ class InvestmentTransactionTest extends TestCase
     {
         parent::setUp();
 
-        $this->user = User::factory()->create();
+        ['user' => $this->user] = $this->setupTenantContext();
         $this->investment = Investment::factory()->create([
             'user_id' => $this->user->id,
             'quantity' => 100.00,

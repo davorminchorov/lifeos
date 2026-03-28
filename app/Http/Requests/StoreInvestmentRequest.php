@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreInvestmentRequest extends FormRequest
@@ -17,7 +18,7 @@ class StoreInvestmentRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
@@ -33,7 +34,7 @@ class StoreInvestmentRequest extends FormRequest
 
         return [
             // Accept singular enum types as stored in DB (project type moved to separate module)
-            'investment_type' => 'required|string|in:stock,bond,etf,mutual_fund,crypto,real_estate,commodities,cash',
+            'investment_type' => 'required|string|in:stocks,bonds,etf,mutual_fund,crypto,real_estate,commodities,cash',
             'symbol_identifier' => 'nullable|string|max:20',
             'name' => 'required|string|max:255',
 

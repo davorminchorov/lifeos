@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\InvoiceStatus;
 use App\Models\Invoice;
 use App\Models\Payment;
 use App\Services\InvoicingService;
@@ -109,11 +110,29 @@ class PaymentController extends Controller
         }
 
         try {
+            $deletedAmount = $payment->amount;
+
             // Delete payment
             $payment->delete();
 
-            // Recalculate invoice totals and status
-            $this->invoicingService->recalculateTotals($invoice);
+            // Update amount_paid and amount_due after removing the payment
+            $newAmountPaid = $invoice->amount_paid - $deletedAmount;
+            $newAmountDue = $invoice->amount_due + $deletedAmount;
+
+            $updateData = [
+                'amount_paid' => max(0, $newAmountPaid),
+                'amount_due' => $newAmountDue,
+            ];
+
+            // Revert status if necessary
+            if ($newAmountPaid <= 0) {
+                $updateData['status'] = InvoiceStatus::ISSUED;
+                $updateData['paid_at'] = null;
+            } else {
+                $updateData['status'] = InvoiceStatus::PARTIALLY_PAID;
+            }
+
+            $invoice->update($updateData);
 
             if ($request->expectsJson()) {
                 return response()->json([

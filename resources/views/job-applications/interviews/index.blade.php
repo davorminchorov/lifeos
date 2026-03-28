@@ -47,7 +47,7 @@
                                 <div class="flex-1">
                                     <div class="flex items-center">
                                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[color:var(--color-primary-200)] dark:bg-[color:var(--color-dark-300)] text-[color:var(--color-primary-700)] dark:text-[color:var(--color-dark-600)]">
-                                            {{ ucfirst(str_replace('_', ' ', $interview->type->value)) }}
+                                            {{ $interview->type->label() }}
                                         </span>
                                         @if($interview->completed)
                                             <span class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[color:var(--color-success-100)] dark:bg-[color:var(--color-success-900)] text-[color:var(--color-success-800)] dark:text-[color:var(--color-success-200)]">
