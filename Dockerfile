@@ -4,7 +4,7 @@
 
 # Learn more about the Server Side Up PHP Docker Images at:
 # https://serversideup.net/open-source/docker-php/
-FROM serversideup/php:8.4-fpm-nginx-alpine AS base
+FROM serversideup/php:8.5-fpm-nginx-alpine AS base
 
 ## Uncomment if you need to install additional PHP extensions
 USER root
@@ -34,7 +34,7 @@ USER www-data
 ############################################
 # Development Image
 ############################################
-FROM serversideup/php:8.4-cli AS development-cli
+FROM serversideup/php:8.5-cli AS development-cli
 
 # Switch to root so we can set the user ID and group ID
 USER root
