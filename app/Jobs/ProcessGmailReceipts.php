@@ -38,7 +38,7 @@ class ProcessGmailReceipts implements ShouldQueue
      *
      * @var GmailConnection
      */
-    protected GmailConnection $connection;
+    protected GmailConnection $gmailConnection;
 
     /**
      * Whether this is the initial sync.
@@ -50,9 +50,9 @@ class ProcessGmailReceipts implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct(GmailConnection $connection, bool $isInitialSync = false)
+    public function __construct(GmailConnection $gmailConnection, bool $isInitialSync = false)
     {
-        $this->connection = $connection;
+        $this->gmailConnection = $gmailConnection;
         $this->isInitialSync = $isInitialSync;
     }
 
@@ -62,16 +62,16 @@ class ProcessGmailReceipts implements ShouldQueue
     public function handle(GmailService $gmailService): void
     {
         Log::info('Starting ProcessGmailReceipts job', [
-            'connection_id' => $this->connection->id,
-            'user_id' => $this->connection->user_id,
-            'email' => $this->connection->email_address,
+            'connection_id' => $this->gmailConnection->id,
+            'user_id' => $this->gmailConnection->user_id,
+            'email' => $this->gmailConnection->email_address,
         ]);
 
         try {
             // Check if connection is still active
-            if (! $this->connection->isActive()) {
+            if (! $this->gmailConnection->isActive()) {
                 Log::warning('Gmail connection is not active', [
-                    'connection_id' => $this->connection->id,
+                    'connection_id' => $this->gmailConnection->id,
                 ]);
 
                 return;
@@ -85,15 +85,15 @@ class ProcessGmailReceipts implements ShouldQueue
 
             // Fetch receipt emails
             Log::info('Fetching receipt emails', [
-                'connection_id' => $this->connection->id,
+                'connection_id' => $this->gmailConnection->id,
                 'since' => $since?->toDateTimeString(),
                 'max_emails' => $maxEmails,
             ]);
 
-            $emails = $gmailService->fetchReceiptEmails($this->connection, $since, $maxEmails);
+            $emails = $gmailService->fetchReceiptEmails($this->gmailConnection, $since, $maxEmails);
 
             Log::info('Fetched receipt emails', [
-                'connection_id' => $this->connection->id,
+                'connection_id' => $this->gmailConnection->id,
                 'count' => count($emails),
             ]);
 
@@ -115,19 +115,19 @@ class ProcessGmailReceipts implements ShouldQueue
 
                     // Create processed email record
                     $processedEmail = ProcessedEmail::create([
-                        'user_id' => $this->connection->user_id,
+                        'user_id' => $this->gmailConnection->user_id,
                         'gmail_message_id' => $emailData['id'],
                         'processing_status' => ProcessedEmail::STATUS_PENDING,
                         'email_data' => $emailData,
                     ]);
 
                     // Dispatch job to parse and create expense
-                    ParseReceiptAndCreateExpense::dispatch($processedEmail, $this->connection);
+                    ParseReceiptAndCreateExpense::dispatch($processedEmail, $this->gmailConnection);
 
                     $processed++;
                 } catch (Exception $e) {
                     Log::error('Failed to queue email for processing', [
-                        'connection_id' => $this->connection->id,
+                        'connection_id' => $this->gmailConnection->id,
                         'message_id' => $emailData['id'] ?? 'unknown',
                         'error' => $e->getMessage(),
                     ]);
@@ -135,18 +135,18 @@ class ProcessGmailReceipts implements ShouldQueue
             }
 
             // Update last synced timestamp
-            $this->connection->update([
+            $this->gmailConnection->update([
                 'last_synced_at' => Carbon::now(),
             ]);
 
             Log::info('Completed ProcessGmailReceipts job', [
-                'connection_id' => $this->connection->id,
+                'connection_id' => $this->gmailConnection->id,
                 'processed' => $processed,
                 'skipped' => $skipped,
             ]);
         } catch (Exception $e) {
             Log::error('ProcessGmailReceipts job failed', [
-                'connection_id' => $this->connection->id,
+                'connection_id' => $this->gmailConnection->id,
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
             ]);
@@ -162,14 +162,14 @@ class ProcessGmailReceipts implements ShouldQueue
     protected function determineSyncPeriod(): ?Carbon
     {
         // If initial sync, use configured initial sync days
-        if ($this->isInitialSync || $this->connection->last_synced_at === null) {
+        if ($this->isInitialSync || $this->gmailConnection->last_synced_at === null) {
             $days = config('gmail_receipts.sync.initial_sync_days', 30);
 
             return Carbon::now()->subDays($days);
         }
 
         // Otherwise, sync from last sync time
-        return $this->connection->last_synced_at;
+        return $this->gmailConnection->last_synced_at;
     }
 
     /**
@@ -178,11 +178,11 @@ class ProcessGmailReceipts implements ShouldQueue
     public function failed(Exception $exception): void
     {
         Log::error('ProcessGmailReceipts job failed permanently', [
-            'connection_id' => $this->connection->id,
+            'connection_id' => $this->gmailConnection->id,
             'error' => $exception->getMessage(),
         ]);
 
         // Optionally notify the user
-        // $this->connection->user->notify(new GmailSyncFailed($exception));
+        // $this->gmailConnection->user->notify(new GmailSyncFailed($exception));
     }
 }
