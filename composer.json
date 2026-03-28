@@ -6,7 +6,7 @@
     "keywords": ["laravel", "framework"],
     "license": "MIT",
     "require": {
-        "php": "^8.4",
+        "php": "^8.5",
         "barryvdh/laravel-dompdf": "^3.1",
         "google/apiclient": "^2.19",
         "inertiajs/inertia-laravel": "^3.0",
