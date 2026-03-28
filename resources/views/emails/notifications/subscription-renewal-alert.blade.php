@@ -1,24 +1,37 @@
 @extends('emails.layouts.base')
 
-@section('content')
-    <div class="greeting">Hello {{ $user->name }}!</div>
+@section('preheader')
+    @if($daysUntilRenewal === 0)
+        Your {{ $subscription->service_name }} subscription renews today
+    @else
+        Your {{ $subscription->service_name }} subscription renews in {{ $daysUntilRenewal }} {{ Str::plural('day', $daysUntilRenewal) }}
+    @endif
+@endsection
 
-    <div class="content-text">
+@section('content')
+    <p style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 600; color: #1B1B18; margin: 0 0 20px;" class="heading">Hello {{ $user->name }},</p>
+
+    <p style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 16px; line-height: 26px; color: #1B1B18; margin: 0 0 24px;" class="body-text">
         @if($daysUntilRenewal === 0)
-            Your subscription is renewing <strong>today</strong>! We wanted to give you a heads up about the upcoming charge.
+            Your subscription is renewing <strong>today</strong>. We wanted to give you a heads up about the upcoming charge.
         @else
             Your subscription is set to renew in <strong>{{ $daysUntilRenewal }} {{ Str::plural('day', $daysUntilRenewal) }}</strong>. Here are the details:
         @endif
-    </div>
+    </p>
 
-    <div class="highlight">
-        <strong>{{ $subscription->service_name }}</strong> subscription
-        @if($daysUntilRenewal === 0)
-            renews today
-        @else
-            renews {{ $subscription->next_billing_date->format('F j, Y') }}
-        @endif
-    </div>
+    <!-- Highlight card -->
+    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: 0 0 24px;">
+        <tr>
+            <td style="background-color: #FEF2F2; border-left: 4px solid #F53003; border-radius: 0 8px 8px 0; padding: 16px 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 15px; line-height: 24px; color: #1B1B18;" class="highlight-bg body-text">
+                <strong>{{ $subscription->service_name }}</strong> subscription
+                @if($daysUntilRenewal === 0)
+                    renews today
+                @else
+                    renews {{ $subscription->next_billing_date->format('F j, Y') }}
+                @endif
+            </td>
+        </tr>
+    </table>
 
     @php
         $currencyService = app(\App\Services\CurrencyService::class);
@@ -42,25 +55,25 @@
     <x-emails.components.detail-list :items="$details" />
 
     @if($subscription->auto_renewal)
-        <div class="content-text">
+        <p style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 16px; line-height: 26px; color: #1B1B18; margin: 0 0 8px;" class="body-text">
             This subscription will automatically renew using your saved payment method. No action is required from you.
-        </div>
+        </p>
     @else
-        <div class="content-text">
+        <p style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 16px; line-height: 26px; color: #1B1B18; margin: 0 0 8px;" class="body-text">
             <strong>Action Required:</strong> This subscription requires manual renewal. Please review and update your subscription settings if you wish to continue.
-        </div>
+        </p>
     @endif
 
     <x-emails.components.button :url="url('/subscriptions/' . $subscription->id)">
         Manage Subscription
     </x-emails.components.button>
 
-    <div class="content-text">
-        You can cancel or modify this subscription anytime from your dashboard. If you have any questions, feel free to reach out to our support team.
-    </div>
+    <p style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 16px; line-height: 26px; color: #1B1B18; margin: 0 0 24px;" class="body-text">
+        You can cancel or modify this subscription anytime from your dashboard.
+    </p>
 
-    <div class="content-text">
+    <p style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 16px; line-height: 26px; color: #1B1B18; margin: 0;" class="body-text">
         <strong>Best regards,</strong><br>
         The LifeOS Team
-    </div>
+    </p>
 @endsection
