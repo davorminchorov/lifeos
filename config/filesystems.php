@@ -54,6 +54,7 @@ return [
             'throw' => false,
             'report' => false,
             'visibility' => 'private',
+            'url' => env('APP_URL').'/documents',
         ],
 
         'receipts' => [
@@ -63,6 +64,7 @@ return [
             'throw' => false,
             'report' => false,
             'visibility' => 'private',
+            'url' => env('APP_URL').'/receipts',
         ],
 
         'contracts' => [
@@ -72,6 +74,7 @@ return [
             'throw' => false,
             'report' => false,
             'visibility' => 'private',
+            'url' => env('APP_URL').'/contracts',
         ],
 
         'warranties' => [
@@ -81,6 +84,7 @@ return [
             'throw' => false,
             'report' => false,
             'visibility' => 'private',
+            'url' => env('APP_URL').'/warranties',
         ],
 
         's3' => [
