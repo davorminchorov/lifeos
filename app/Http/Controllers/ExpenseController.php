@@ -9,6 +9,7 @@ use App\Models\Expense;
 use App\Services\CurrencyService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Inertia\Inertia;
 
 class ExpenseController extends Controller
 {
@@ -82,7 +83,10 @@ class ExpenseController extends Controller
 
         $expenses = $query->paginate($request->get('per_page', 15));
 
-        return view('expenses.index', compact('expenses'));
+        return Inertia::render('Expenses/Index', [
+            'expenses' => $expenses,
+            'filters' => $request->only(['search', 'category', 'expense_type', 'status', 'start_date', 'end_date']),
+        ]);
     }
 
     /**
@@ -90,7 +94,7 @@ class ExpenseController extends Controller
      */
     public function create()
     {
-        return view('expenses.create');
+        return Inertia::render('Expenses/Create');
     }
 
     /**
@@ -119,7 +123,9 @@ class ExpenseController extends Controller
 
         $expense->load('user');
 
-        return view('expenses.show', compact('expense'));
+        return Inertia::render('Expenses/Show', [
+            'expense' => $expense,
+        ]);
     }
 
     /**
@@ -132,7 +138,9 @@ class ExpenseController extends Controller
             abort(403, 'Unauthorized access to expense.');
         }
 
-        return view('expenses.edit', compact('expense'));
+        return Inertia::render('Expenses/Edit', [
+            'expense' => $expense,
+        ]);
     }
 
     /**
@@ -270,7 +278,9 @@ class ExpenseController extends Controller
             'top_merchants' => $topMerchants,
         ];
 
-        return view('expenses.analytics', compact('analytics'));
+        return Inertia::render('Expenses/Analytics', [
+            'analytics' => $analytics,
+        ]);
     }
 
     /**

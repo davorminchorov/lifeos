@@ -8,6 +8,7 @@ use App\Models\UtilityBill;
 use App\Services\CurrencyService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Inertia\Inertia;
 
 class UtilityBillController extends Controller
 {
@@ -84,7 +85,10 @@ class UtilityBillController extends Controller
 
         $utilityBills = $query->paginate($request->get('per_page', 15));
 
-        return view('utility-bills.index', compact('utilityBills'));
+        return Inertia::render('UtilityBills/Index', [
+            'utilityBills' => $utilityBills,
+            'filters' => $request->only(['search', 'utility_type', 'payment_status', 'due_soon']),
+        ]);
     }
 
     /**
@@ -92,7 +96,7 @@ class UtilityBillController extends Controller
      */
     public function create()
     {
-        return view('utility-bills.create');
+        return Inertia::render('UtilityBills/Create');
     }
 
     /**
@@ -121,7 +125,9 @@ class UtilityBillController extends Controller
 
         $utilityBill->load('user');
 
-        return view('utility-bills.show', compact('utilityBill'));
+        return Inertia::render('UtilityBills/Show', [
+            'utilityBill' => $utilityBill,
+        ]);
     }
 
     /**
@@ -129,7 +135,9 @@ class UtilityBillController extends Controller
      */
     public function edit(UtilityBill $utilityBill)
     {
-        return view('utility-bills.edit', compact('utilityBill'));
+        return Inertia::render('UtilityBills/Edit', [
+            'utilityBill' => $utilityBill,
+        ]);
     }
 
     /**
@@ -292,7 +300,9 @@ class UtilityBillController extends Controller
             'over_budget_count' => $overBudget,
         ];
 
-        return view('utility-bills.analytics', compact('analytics'));
+        return Inertia::render('UtilityBills/Analytics', [
+            'analytics' => $analytics,
+        ]);
     }
 
     /**
