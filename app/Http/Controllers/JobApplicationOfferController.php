@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\ApplicationStatus;
 use App\Enums\OfferStatus;
 use App\Http\Requests\StoreOfferRequest;
 use App\Models\JobApplication;
 use App\Models\JobApplicationOffer;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class JobApplicationOfferController extends Controller
 {
@@ -26,11 +28,11 @@ class JobApplicationOfferController extends Controller
                 ->with('info', 'An offer already exists for this application. You can edit it below.');
         }
 
-        $statuses = OfferStatus::cases();
+        $statuses = array_map(fn ($s) => ['value' => $s->value, 'label' => $s->label()], OfferStatus::cases());
         $currencies = ['MKD', 'USD', 'EUR', 'GBP', 'CAD', 'AUD', 'JPY', 'CHF', 'RSD', 'BGN'];
         $application = $job_application;
 
-        return view('job-applications.offers.create', compact('application', 'statuses', 'currencies'));
+        return Inertia::render('JobApplications/Offers/Create', compact('application', 'statuses', 'currencies'));
     }
 
     /**
@@ -70,7 +72,7 @@ class JobApplicationOfferController extends Controller
 
         $application = $job_application;
 
-        return view('job-applications.offers.show', compact('application', 'offer'));
+        return Inertia::render('JobApplications/Offers/Show', compact('application', 'offer'));
     }
 
     /**
@@ -83,11 +85,11 @@ class JobApplicationOfferController extends Controller
             abort(403);
         }
 
-        $statuses = OfferStatus::cases();
+        $statuses = array_map(fn ($s) => ['value' => $s->value, 'label' => $s->label()], OfferStatus::cases());
         $currencies = ['MKD', 'USD', 'EUR', 'GBP', 'CAD', 'AUD', 'JPY', 'CHF', 'RSD', 'BGN'];
         $application = $job_application;
 
-        return view('job-applications.offers.edit', compact('application', 'offer', 'statuses', 'currencies'));
+        return Inertia::render('JobApplications/Offers/Edit', compact('application', 'offer', 'statuses', 'currencies'));
     }
 
     /**
@@ -133,7 +135,7 @@ class JobApplicationOfferController extends Controller
         }
 
         $offer->update(['status' => OfferStatus::ACCEPTED]);
-        $job_application->update(['status' => \App\Enums\ApplicationStatus::ACCEPTED]);
+        $job_application->update(['status' => ApplicationStatus::ACCEPTED]);
 
         return back()->with('success', 'Offer accepted! Congratulations! 🎉');
     }

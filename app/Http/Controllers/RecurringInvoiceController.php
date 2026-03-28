@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\BillingInterval;
 use App\Enums\RecurringStatus;
 use App\Models\Customer;
 use App\Models\Discount;
@@ -10,6 +9,7 @@ use App\Models\RecurringInvoice;
 use App\Models\TaxRate;
 use App\Services\RecurringInvoiceService;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class RecurringInvoiceController extends Controller
 {
@@ -37,7 +37,7 @@ class RecurringInvoiceController extends Controller
 
         // Search by name
         if ($request->filled('search')) {
-            $query->where('name', 'like', '%' . $request->search . '%');
+            $query->where('name', 'like', '%'.$request->search.'%');
         }
 
         // Sort
@@ -59,7 +59,7 @@ class RecurringInvoiceController extends Controller
             ->orderBy('name')
             ->get();
 
-        return view('recurring-invoices.index', compact('recurringInvoices', 'summary', 'customers'));
+        return Inertia::render('Invoicing/RecurringInvoices/Index', compact('recurringInvoices', 'summary', 'customers'));
     }
 
     /**
@@ -84,7 +84,7 @@ class RecurringInvoiceController extends Controller
         // Pre-select customer if provided
         $selectedCustomerId = $request->get('customer_id');
 
-        return view('recurring-invoices.create', compact('customers', 'taxRates', 'discounts', 'selectedCustomerId'));
+        return Inertia::render('Invoicing/RecurringInvoices/Create', compact('customers', 'taxRates', 'discounts', 'selectedCustomerId'));
     }
 
     /**
@@ -131,7 +131,7 @@ class RecurringInvoiceController extends Controller
         }
 
         // Load relationships
-        $recurringInvoice->load(['customer', 'items.taxRate', 'items.discount', 'generatedInvoices' => function($query) {
+        $recurringInvoice->load(['customer', 'items.taxRate', 'items.discount', 'generatedInvoices' => function ($query) {
             $query->orderBy('created_at', 'desc')->limit(10);
         }]);
 
@@ -145,7 +145,7 @@ class RecurringInvoiceController extends Controller
             ->orderBy('code')
             ->get();
 
-        return view('recurring-invoices.show', compact('recurringInvoice', 'taxRates', 'discounts'));
+        return Inertia::render('Invoicing/RecurringInvoices/Show', compact('recurringInvoice', 'taxRates', 'discounts'));
     }
 
     /**
@@ -162,7 +162,7 @@ class RecurringInvoiceController extends Controller
             ->orderBy('name')
             ->get();
 
-        return view('recurring-invoices.edit', compact('recurringInvoice', 'customers'));
+        return Inertia::render('Invoicing/RecurringInvoices/Edit', compact('recurringInvoice', 'customers'));
     }
 
     /**
@@ -271,7 +271,7 @@ class RecurringInvoiceController extends Controller
             abort(403);
         }
 
-        if (!in_array($recurringInvoice->status, [RecurringStatus::ACTIVE, RecurringStatus::PAUSED])) {
+        if (! in_array($recurringInvoice->status, [RecurringStatus::ACTIVE, RecurringStatus::PAUSED])) {
             return redirect()->back()
                 ->with('error', 'Only active or paused recurring invoices can be cancelled.');
         }
@@ -299,7 +299,7 @@ class RecurringInvoiceController extends Controller
                 ->with('success', 'Invoice generated successfully!');
         } catch (\Exception $e) {
             return redirect()->back()
-                ->with('error', 'Failed to generate invoice: ' . $e->getMessage());
+                ->with('error', 'Failed to generate invoice: '.$e->getMessage());
         }
     }
 }

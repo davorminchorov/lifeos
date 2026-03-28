@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\DiscountType;
 use App\Models\Discount;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class DiscountController extends Controller
 {
@@ -27,7 +27,7 @@ class DiscountController extends Controller
 
         // Search by code
         if ($request->filled('search')) {
-            $query->where('code', 'like', '%' . $request->search . '%');
+            $query->where('code', 'like', '%'.$request->search.'%');
         }
 
         // Sort
@@ -44,7 +44,7 @@ class DiscountController extends Controller
             'total_redemptions' => Discount::where('user_id', auth()->id())->sum('redemptions_count'),
         ];
 
-        return view('discounts.index', compact('discounts', 'summary'));
+        return Inertia::render('Invoicing/Discounts/Index', compact('discounts', 'summary'));
     }
 
     /**
@@ -52,7 +52,7 @@ class DiscountController extends Controller
      */
     public function create()
     {
-        return view('discounts.create');
+        return Inertia::render('Invoicing/Discounts/Create');
     }
 
     /**
@@ -61,7 +61,7 @@ class DiscountController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'code' => ['required', 'string', 'max:255', 'unique:discounts,code,NULL,id,user_id,' . auth()->id()],
+            'code' => ['required', 'string', 'max:255', 'unique:discounts,code,NULL,id,user_id,'.auth()->id()],
             'type' => ['required', 'string', 'in:percent,fixed'],
             'value' => ['required', 'integer', 'min:0'],
             'active' => ['boolean'],
@@ -98,7 +98,7 @@ class DiscountController extends Controller
             abort(403);
         }
 
-        return view('discounts.edit', compact('discount'));
+        return Inertia::render('Invoicing/Discounts/Edit', compact('discount'));
     }
 
     /**
@@ -112,7 +112,7 @@ class DiscountController extends Controller
         }
 
         $validated = $request->validate([
-            'code' => ['required', 'string', 'max:255', 'unique:discounts,code,' . $discount->id . ',id,user_id,' . auth()->id()],
+            'code' => ['required', 'string', 'max:255', 'unique:discounts,code,'.$discount->id.',id,user_id,'.auth()->id()],
             'type' => ['required', 'string', 'in:percent,fixed'],
             'value' => ['required', 'integer', 'min:0'],
             'active' => ['boolean'],

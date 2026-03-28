@@ -9,6 +9,7 @@ use App\Models\Invoice;
 use App\Models\Payment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Inertia\Inertia;
 
 class InvoicingDashboardController extends Controller
 {
@@ -89,7 +90,7 @@ class InvoicingDashboardController extends Controller
             ->pluck('count', 'status')
             ->toArray();
 
-        return view('invoicing.dashboard', compact(
+        return Inertia::render('Invoicing/Dashboard', compact(
             'summary',
             'revenueByMonth',
             'topCustomers',
@@ -124,14 +125,14 @@ class InvoicingDashboardController extends Controller
 
         $invoices = $query->orderBy('created_at', 'desc')->get();
 
-        $filename = 'invoices_' . now()->format('Y-m-d_His') . '.csv';
+        $filename = 'invoices_'.now()->format('Y-m-d_His').'.csv';
 
         $headers = [
             'Content-Type' => 'text/csv',
-            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            'Content-Disposition' => 'attachment; filename="'.$filename.'"',
         ];
 
-        $callback = function() use ($invoices) {
+        $callback = function () use ($invoices) {
             $file = fopen('php://output', 'w');
 
             // Headers
@@ -193,14 +194,14 @@ class InvoicingDashboardController extends Controller
 
         $payments = $query->orderBy('payment_date', 'desc')->get();
 
-        $filename = 'payments_' . now()->format('Y-m-d_His') . '.csv';
+        $filename = 'payments_'.now()->format('Y-m-d_His').'.csv';
 
         $headers = [
             'Content-Type' => 'text/csv',
-            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            'Content-Disposition' => 'attachment; filename="'.$filename.'"',
         ];
 
-        $callback = function() use ($payments) {
+        $callback = function () use ($payments) {
             $file = fopen('php://output', 'w');
 
             // Headers

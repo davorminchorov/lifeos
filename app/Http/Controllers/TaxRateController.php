@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\TaxRate;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class TaxRateController extends Controller
 {
@@ -21,7 +22,7 @@ class TaxRateController extends Controller
 
         // Search by name
         if ($request->filled('search')) {
-            $query->where('name', 'like', '%' . $request->search . '%');
+            $query->where('name', 'like', '%'.$request->search.'%');
         }
 
         // Sort
@@ -37,7 +38,7 @@ class TaxRateController extends Controller
             'active_tax_rates' => TaxRate::where('user_id', auth()->id())->where('active', true)->count(),
         ];
 
-        return view('tax-rates.index', compact('taxRates', 'summary'));
+        return Inertia::render('Invoicing/TaxRates/Index', compact('taxRates', 'summary'));
     }
 
     /**
@@ -45,7 +46,7 @@ class TaxRateController extends Controller
      */
     public function create()
     {
-        return view('tax-rates.create');
+        return Inertia::render('Invoicing/TaxRates/Create');
     }
 
     /**
@@ -82,7 +83,7 @@ class TaxRateController extends Controller
             abort(403);
         }
 
-        return view('tax-rates.edit', compact('taxRate'));
+        return Inertia::render('Invoicing/TaxRates/Edit', compact('taxRate'));
     }
 
     /**

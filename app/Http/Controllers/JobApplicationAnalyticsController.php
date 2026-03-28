@@ -6,6 +6,7 @@ use App\Enums\ApplicationSource;
 use App\Enums\ApplicationStatus;
 use App\Models\JobApplication;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class JobApplicationAnalyticsController extends Controller
 {
@@ -130,7 +131,7 @@ class JobApplicationAnalyticsController extends Controller
         }
         $stats['avg_time_to_offer'] = $avgTimeToOffer;
 
-        return view('job-applications.analytics', compact(
+        return Inertia::render('JobApplications/Analytics', compact(
             'funnel',
             'sourceStats',
             'stageMetrics',
