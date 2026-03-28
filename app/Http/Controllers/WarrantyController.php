@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateWarrantyRequest;
 use App\Models\Warranty;
 use App\Services\CurrencyService;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class WarrantyController extends Controller
 {
@@ -67,7 +68,10 @@ class WarrantyController extends Controller
 
         $warranties = $query->paginate($request->get('per_page', 15));
 
-        return view('warranties.index', compact('warranties'));
+        return Inertia::render('Warranties/Index', [
+            'warranties' => $warranties,
+            'filters' => $request->only(['search', 'current_status', 'warranty_type']),
+        ]);
     }
 
     /**
@@ -75,7 +79,7 @@ class WarrantyController extends Controller
      */
     public function create()
     {
-        return view('warranties.create');
+        return Inertia::render('Warranties/Create');
     }
 
     /**
@@ -99,7 +103,7 @@ class WarrantyController extends Controller
     {
         $warranty->load('user');
 
-        return view('warranties.show', compact('warranty'));
+        return Inertia::render('Warranties/Show', compact('warranty'));
     }
 
     /**
@@ -107,7 +111,7 @@ class WarrantyController extends Controller
      */
     public function edit(Warranty $warranty)
     {
-        return view('warranties.edit', compact('warranty'));
+        return Inertia::render('Warranties/Edit', compact('warranty'));
     }
 
     /**

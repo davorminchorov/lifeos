@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateContractRequest;
 use App\Models\Contract;
 use App\Services\CurrencyService;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class ContractController extends Controller
 {
@@ -62,7 +63,10 @@ class ContractController extends Controller
 
         $contracts = $query->paginate($request->get('per_page', 15));
 
-        return view('contracts.index', compact('contracts'));
+        return Inertia::render('Contracts/Index', [
+            'contracts' => $contracts,
+            'filters' => $request->only(['search', 'status', 'contract_type']),
+        ]);
     }
 
     /**
@@ -70,7 +74,7 @@ class ContractController extends Controller
      */
     public function create()
     {
-        return view('contracts.create');
+        return Inertia::render('Contracts/Create');
     }
 
     /**
@@ -99,7 +103,7 @@ class ContractController extends Controller
 
         $contract->load('user');
 
-        return view('contracts.show', compact('contract'));
+        return Inertia::render('Contracts/Show', compact('contract'));
     }
 
     /**
@@ -112,7 +116,7 @@ class ContractController extends Controller
             abort(403, 'Unauthorized access to contract.');
         }
 
-        return view('contracts.edit', compact('contract'));
+        return Inertia::render('Contracts/Edit', compact('contract'));
     }
 
     /**

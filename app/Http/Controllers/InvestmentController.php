@@ -7,13 +7,17 @@ use App\Http\Requests\StoreInvestmentDividendRequest;
 use App\Http\Requests\StoreInvestmentRequest;
 use App\Http\Requests\StoreInvestmentTransactionRequest;
 use App\Http\Requests\UpdateInvestmentRequest;
+use App\Jobs\ImportInvestmentsCsv;
 use App\Models\Investment;
 use App\Models\InvestmentDividend;
 use App\Models\InvestmentGoal;
 use App\Models\InvestmentTransaction;
 use App\Services\CurrencyService;
 use App\Services\InvestmentAnalyticsService;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
+use Inertia\Inertia;
 
 class InvestmentController extends Controller
 {
@@ -72,7 +76,10 @@ class InvestmentController extends Controller
 
         $investments = $query->paginate($request->get('per_page', 15));
 
-        return view('investments.index', compact('investments'));
+        return Inertia::render('Investments/Index', [
+            'investments' => $investments,
+            'filters' => $request->only(['search', 'investment_type', 'risk_tolerance', 'status', 'account_broker', 'sort_by', 'sort_order']),
+        ]);
     }
 
     /**
@@ -80,7 +87,7 @@ class InvestmentController extends Controller
      */
     public function create()
     {
-        return view('investments.create');
+        return Inertia::render('Investments/Create');
     }
 
     /**
@@ -88,7 +95,7 @@ class InvestmentController extends Controller
      */
     public function importForm()
     {
-        return view('investments.import');
+        return Inertia::render('Investments/Import');
     }
 
     /**
@@ -110,9 +117,11 @@ class InvestmentController extends Controller
      */
     public function show(Investment $investment)
     {
-        $investment->load('user');
+        $investment->load(['user', 'transactions', 'dividends']);
 
-        return view('investments.show', compact('investment'));
+        return Inertia::render('Investments/Show', [
+            'investment' => $investment,
+        ]);
     }
 
     /**
@@ -120,7 +129,9 @@ class InvestmentController extends Controller
      */
     public function edit(Investment $investment)
     {
-        return view('investments.edit', compact('investment'));
+        return Inertia::render('Investments/Edit', [
+            'investment' => $investment,
+        ]);
     }
 
     /**
@@ -338,7 +349,10 @@ class InvestmentController extends Controller
             ? ($summary['total_return'] / $summary['total_cost_basis']) * 100
             : 0;
 
-        return view('investments.portfolio', compact('summary', 'investments'));
+        return Inertia::render('Investments/Analytics', [
+            'summary' => $summary,
+            'investments' => $investments,
+        ]);
     }
 
     /**
@@ -510,7 +524,9 @@ class InvestmentController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return view('investments.goals.index', compact('goals'));
+        return Inertia::render('Investments/Goals/Index', [
+            'goals' => $goals,
+        ]);
     }
 
     /**
@@ -599,7 +615,9 @@ class InvestmentController extends Controller
         $taxSummary['total_realized_losses'] = abs($soldInvestments->where('realized_gain_loss', '<', 0)->sum('realized_gain_loss'));
         $taxSummary['total_dividend_income'] = $activeInvestments->sum('total_dividends_received');
 
-        return view('investments.tax-reports.index', compact('taxSummary'));
+        return Inertia::render('Investments/TaxReports/Index', [
+            'taxSummary' => $taxSummary,
+        ]);
     }
 
     /**
@@ -639,7 +657,9 @@ class InvestmentController extends Controller
             'transactions' => $capitalGains,
         ];
 
-        return view('investments.tax-reports.capital-gains', compact('report'));
+        return Inertia::render('Investments/TaxReports/CapitalGains', [
+            'report' => $report,
+        ]);
     }
 
     /**
@@ -673,7 +693,9 @@ class InvestmentController extends Controller
             'dividend_details' => $dividendReport,
         ];
 
-        return view('investments.tax-reports.dividend-income', compact('report'));
+        return Inertia::render('Investments/TaxReports/DividendIncome', [
+            'report' => $report,
+        ]);
     }
 
     /**
@@ -727,7 +749,9 @@ class InvestmentController extends Controller
             ];
         }
 
-        return view('investments.rebalancing.alerts', compact('alerts'));
+        return Inertia::render('Investments/Rebalancing/Alerts', [
+            'alerts' => $alerts,
+        ]);
     }
 
     /**
@@ -736,16 +760,16 @@ class InvestmentController extends Controller
      * Validates that `target_allocation` is an array of objects containing `type` (investment type) and `percentage` (0–100).
      * Only includes recommendations where the absolute difference between current and target value exceeds 5% of the portfolio total.
      *
-     * @param  \Illuminate\Http\Request  $request  Expects `target_allocation` as an array of items with keys `type` (string) and `percentage` (numeric).
-     * @return \Illuminate\View\View View `investments.rebalancing.recommendations` with a `recommendations` array. Each recommendation contains:
-     *                               - `investment_type`: string
-     *                               - `current_percentage`: float
-     *                               - `target_percentage`: float
-     *                               - `current_value`: float
-     *                               - `target_value`: float
-     *                               - `difference`: float (target_value - current_value)
-     *                               - `action`: string (`buy` or `sell`)
-     *                               - `amount`: float (absolute value of `difference`)
+     * @param  Request  $request  Expects `target_allocation` as an array of items with keys `type` (string) and `percentage` (numeric).
+     * @return View View `investments.rebalancing.recommendations` with a `recommendations` array. Each recommendation contains:
+     *              - `investment_type`: string
+     *              - `current_percentage`: float
+     *              - `target_percentage`: float
+     *              - `current_value`: float
+     *              - `target_value`: float
+     *              - `difference`: float (target_value - current_value)
+     *              - `action`: string (`buy` or `sell`)
+     *              - `amount`: float (absolute value of `difference`)
      */
     public function rebalancingRecommendations(Request $request)
     {
@@ -788,7 +812,9 @@ class InvestmentController extends Controller
             }
         }
 
-        return view('investments.rebalancing.recommendations', compact('recommendations'));
+        return Inertia::render('Investments/Rebalancing/Alerts', [
+            'alerts' => $recommendations,
+        ]);
     }
 
     /**
@@ -808,7 +834,10 @@ class InvestmentController extends Controller
                 return $investment->current_market_value;
             });
 
-        return view('investments.analytics', compact('analytics', 'investments'));
+        return Inertia::render('Investments/Analytics', [
+            'analytics' => $analytics,
+            'investments' => $investments,
+        ]);
     }
 
     /**
@@ -817,8 +846,8 @@ class InvestmentController extends Controller
      * Stores the validated CSV in a user-scoped temporary location accessible to queue workers
      * and dispatches an ImportInvestmentsCsv job to process the file on the `imports` queue.
      *
-     * @param  \App\Http\Requests\ImportInvestmentCsvRequest  $request  Validated request containing the uploaded CSV file.
-     * @return \Illuminate\Http\RedirectResponse Redirects to the investments index with a success message indicating the import was queued.
+     * @param  ImportInvestmentCsvRequest  $request  Validated request containing the uploaded CSV file.
+     * @return RedirectResponse Redirects to the investments index with a success message indicating the import was queued.
      */
     public function importCsv(ImportInvestmentCsvRequest $request)
     {
@@ -829,7 +858,7 @@ class InvestmentController extends Controller
         $storedPath = $file->storeAs('imports/'.$userId, uniqid('investments_').'.csv');
 
         // Dispatch queued job on the 'imports' queue
-        \App\Jobs\ImportInvestmentsCsv::dispatch($userId, $storedPath)->onQueue('imports');
+        ImportInvestmentsCsv::dispatch($userId, $storedPath)->onQueue('imports');
 
         return redirect()->route('investments.index')
             ->with('success', 'Your CSV import has been queued and will be processed shortly.');

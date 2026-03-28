@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateIouRequest;
 use App\Models\Iou;
 use App\Services\CurrencyService;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class IouController extends Controller
 {
@@ -89,7 +90,11 @@ class IouController extends Controller
             'overdue_count' => Iou::where('user_id', auth()->id())->overdue()->count(),
         ];
 
-        return view('ious.index', compact('ious', 'summary'));
+        return Inertia::render('Ious/Index', [
+            'ious' => $ious,
+            'summary' => $summary,
+            'filters' => $request->only(['search', 'type', 'status', 'category']),
+        ]);
     }
 
     /**
@@ -97,7 +102,7 @@ class IouController extends Controller
      */
     public function create()
     {
-        return view('ious.create');
+        return Inertia::render('Ious/Create');
     }
 
     /**
@@ -137,7 +142,7 @@ class IouController extends Controller
             abort(403);
         }
 
-        return view('ious.show', compact('iou'));
+        return Inertia::render('Ious/Show', compact('iou'));
     }
 
     /**
@@ -150,7 +155,7 @@ class IouController extends Controller
             abort(403);
         }
 
-        return view('ious.edit', compact('iou'));
+        return Inertia::render('Ious/Edit', compact('iou'));
     }
 
     /**
