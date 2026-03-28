@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateSubscriptionRequest;
 use App\Models\Subscription;
 use App\Services\CurrencyService;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class SubscriptionController extends Controller
 {
@@ -52,7 +53,10 @@ class SubscriptionController extends Controller
 
         $subscriptions = $query->paginate($request->get('per_page', 15));
 
-        return view('subscriptions.index', compact('subscriptions'));
+        return Inertia::render('Subscriptions/Index', [
+            'subscriptions' => $subscriptions,
+            'filters' => $request->only('search', 'status', 'category', 'due_soon'),
+        ]);
     }
 
     /**
@@ -60,7 +64,7 @@ class SubscriptionController extends Controller
      */
     public function create()
     {
-        return view('subscriptions.create');
+        return Inertia::render('Subscriptions/Create');
     }
 
     /**
@@ -89,7 +93,9 @@ class SubscriptionController extends Controller
 
         $subscription->load('user');
 
-        return view('subscriptions.show', compact('subscription'));
+        return Inertia::render('Subscriptions/Show', [
+            'subscription' => $subscription,
+        ]);
     }
 
     /**
@@ -102,7 +108,9 @@ class SubscriptionController extends Controller
             abort(403, 'Unauthorized access to subscription.');
         }
 
-        return view('subscriptions.edit', compact('subscription'));
+        return Inertia::render('Subscriptions/Edit', [
+            'subscription' => $subscription,
+        ]);
     }
 
     /**

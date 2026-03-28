@@ -11,6 +11,8 @@ use App\Models\UtilityBill;
 use App\Models\Warranty;
 use App\Services\CurrencyService;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class DashboardController extends Controller
 {
@@ -24,7 +26,7 @@ class DashboardController extends Controller
     /**
      * Display the dashboard with aggregated data from all modules.
      */
-    public function index()
+    public function index(): Response
     {
         // Aggregate statistics
         $stats = $this->getStats();
@@ -47,13 +49,13 @@ class DashboardController extends Controller
             ->limit(5)
             ->get();
 
-        return view('dashboard', compact(
-            'stats',
-            'alerts',
-            'insights',
-            'recent_expenses',
-            'upcoming_bills'
-        ));
+        return Inertia::render('Dashboard/Index', [
+            'stats' => $stats,
+            'alerts' => $alerts,
+            'insights' => $insights,
+            'recent_expenses' => $recent_expenses,
+            'upcoming_bills' => $upcoming_bills,
+        ]);
     }
 
     /**
@@ -128,7 +130,7 @@ class DashboardController extends Controller
                 ->where(function ($query) use ($monthStart, $monthEnd) {
                     $query->where(function ($q) use ($monthStart, $monthEnd) {
                         $q->where('start_date', '<=', $monthEnd)
-                          ->where('end_date', '>=', $monthStart);
+                            ->where('end_date', '>=', $monthStart);
                     });
                 })
                 ->get();
@@ -296,9 +298,9 @@ class DashboardController extends Controller
             ->get()
             ->mapWithKeys(function ($expense) {
                 $currency = config('currency.default', 'MKD');
+
                 return [
-                    strtolower($expense->category ?? 'other') =>
-                        $this->currencyService->convertToDefault($expense->total, $currency)
+                    strtolower($expense->category ?? 'other') => $this->currencyService->convertToDefault($expense->total, $currency),
                 ];
             });
 
