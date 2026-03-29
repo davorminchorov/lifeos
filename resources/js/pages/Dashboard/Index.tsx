@@ -165,7 +165,7 @@ export default function DashboardIndex({ stats, alerts, recent_expenses, upcomin
 
             {/* Charts Section */}
             <div className="mt-6 grid gap-4 lg:grid-cols-2">
-                <Suspense fallback={<Skeleton className="h-[350px] rounded-lg" />}>
+                <Suspense fallback={<Card><CardHeader className="pb-2"><Skeleton className="h-4 w-32" /></CardHeader><CardContent><Skeleton className="h-[250px] animate-pulse rounded" /></CardContent></Card>}>
                     <ChartContainer
                         title="Spending Trends"
                         period={chartPeriod}
@@ -191,7 +191,7 @@ export default function DashboardIndex({ stats, alerts, recent_expenses, upcomin
                     </ChartContainer>
                 </Suspense>
 
-                <Suspense fallback={<Skeleton className="h-[350px] rounded-lg" />}>
+                <Suspense fallback={<Card><CardHeader className="pb-2"><Skeleton className="h-4 w-32" /></CardHeader><CardContent><Skeleton className="h-[250px] animate-pulse rounded" /></CardContent></Card>}>
                     <ChartContainer title="Category Breakdown">
                         {chartData?.categoryBreakdown ? (
                             <PieChart data={chartData.categoryBreakdown} height={250} />
