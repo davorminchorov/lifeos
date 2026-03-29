@@ -49,12 +49,24 @@ class DashboardController extends Controller
             ->limit(5)
             ->get();
 
+        // Get budget utilization data
+        $budgetUtilization = $this->getBudgetUtilization();
+
+        // Get top subscriptions by cost
+        $topSubscriptions = $this->getTopSubscriptions();
+
+        // Get portfolio allocation by investment type
+        $portfolioAllocation = $this->getPortfolioAllocation();
+
         return Inertia::render('Dashboard/Index', [
             'stats' => $stats,
             'alerts' => $alerts,
             'insights' => $insights,
             'recent_expenses' => $recent_expenses,
             'upcoming_bills' => $upcoming_bills,
+            'budget_utilization' => $budgetUtilization,
+            'top_subscriptions' => $topSubscriptions,
+            'portfolio_allocation' => $portfolioAllocation,
         ]);
     }
 
@@ -580,5 +592,105 @@ class DashboardController extends Controller
         }
 
         return array_slice($suggestions, 0, 3);
+    }
+
+    /**
+     * Get budget utilization data for active budgets.
+     */
+    private function getBudgetUtilization(): array
+    {
+        $userId = auth()->id();
+
+        return Budget::where('user_id', $userId)
+            ->active()
+            ->current()
+            ->orderBy('category')
+            ->limit(6)
+            ->get()
+            ->map(function (Budget $budget) {
+                return [
+                    'id' => $budget->id,
+                    'category' => $budget->category,
+                    'amount' => $budget->amount,
+                    'amount_formatted' => $this->currencyService->format(
+                        $this->currencyService->convertToDefault($budget->amount, $budget->currency ?? config('currency.default', 'MKD'))
+                    ),
+                    'spent' => $budget->getCurrentSpending(),
+                    'spent_formatted' => $this->currencyService->format(
+                        $this->currencyService->convertToDefault($budget->getCurrentSpending(), $budget->currency ?? config('currency.default', 'MKD'))
+                    ),
+                    'remaining_formatted' => $this->currencyService->format(
+                        $this->currencyService->convertToDefault($budget->getRemainingAmount(), $budget->currency ?? config('currency.default', 'MKD'))
+                    ),
+                    'utilization' => $budget->getUtilizationPercentage(),
+                    'status' => $budget->getStatus(),
+                ];
+            })
+            ->toArray();
+    }
+
+    /**
+     * Get top subscriptions by monthly cost.
+     */
+    private function getTopSubscriptions(): array
+    {
+        $userId = auth()->id();
+
+        return Subscription::where('user_id', $userId)
+            ->active()
+            ->get()
+            ->sortByDesc('monthly_cost')
+            ->take(5)
+            ->map(function (Subscription $subscription) {
+                $currency = $subscription->currency ?? config('currency.default', 'MKD');
+                $monthlyCostMKD = $this->currencyService->convertToDefault($subscription->monthly_cost, $currency);
+
+                return [
+                    'id' => $subscription->id,
+                    'service_name' => $subscription->service_name,
+                    'monthly_cost' => $monthlyCostMKD,
+                    'monthly_cost_formatted' => $this->currencyService->format($monthlyCostMKD),
+                    'billing_cycle' => $subscription->billing_cycle,
+                    'next_billing_date' => $subscription->next_billing_date?->format('M j, Y'),
+                    'category' => $subscription->category,
+                ];
+            })
+            ->values()
+            ->toArray();
+    }
+
+    /**
+     * Get portfolio allocation grouped by investment type.
+     */
+    private function getPortfolioAllocation(): array
+    {
+        $userId = auth()->id();
+
+        $investments = Investment::where('user_id', $userId)
+            ->active()
+            ->get();
+
+        if ($investments->isEmpty()) {
+            return [];
+        }
+
+        $totalValue = $investments->sum('current_market_value');
+
+        return $investments
+            ->groupBy('investment_type')
+            ->map(function ($group, $type) use ($totalValue) {
+                $groupValue = $group->sum('current_market_value');
+
+                return [
+                    'type' => ucfirst(str_replace('_', ' ', $type ?? 'Other')),
+                    'value' => $groupValue,
+                    'value_formatted' => $this->currencyService->format($groupValue),
+                    'percentage' => $totalValue > 0 ? round(($groupValue / $totalValue) * 100, 1) : 0,
+                    'count' => $group->count(),
+                ];
+            })
+            ->sortByDesc('value')
+            ->values()
+            ->toArray();
     }
 }

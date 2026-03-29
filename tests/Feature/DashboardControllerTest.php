@@ -36,6 +36,9 @@ class DashboardControllerTest extends TestCase
             ->has('insights')
             ->has('recent_expenses')
             ->has('upcoming_bills')
+            ->has('budget_utilization')
+            ->has('top_subscriptions')
+            ->has('portfolio_allocation')
         );
     }
 
