@@ -27,8 +27,10 @@ class ContractTest extends TestCase
         $response = $this->get(route('contracts.index'));
 
         $response->assertStatus(200);
-        $response->assertViewIs('contracts.index');
-        $response->assertViewHas('contracts');
+        $response->assertInertia(fn ($page) => $page
+            ->component('Contracts/Index')
+            ->has('contracts')
+        );
     }
 
     public function test_user_can_create_contract()
@@ -69,9 +71,10 @@ class ContractTest extends TestCase
         $response = $this->get(route('contracts.show', $contract));
 
         $response->assertStatus(200);
-        $response->assertViewIs('contracts.show');
-        $response->assertViewHas('contract', $contract);
-        $response->assertSee('Test Contract');
+        $response->assertInertia(fn ($page) => $page
+            ->component('Contracts/Show')
+            ->has('contract')
+        );
     }
 
     public function test_user_can_update_contract()

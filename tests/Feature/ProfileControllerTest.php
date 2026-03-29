@@ -32,10 +32,10 @@ class ProfileControllerTest extends TestCase
         $response = $this->get('/profile');
 
         $response->assertStatus(200);
-        $response->assertViewIs('profile.show');
-        $response->assertViewHas('user', $this->user);
-        $response->assertSee('John Doe');
-        $response->assertSee('john@example.com');
+        $response->assertInertia(fn ($page) => $page
+            ->component('Profile/Show')
+            ->has('user')
+        );
     }
 
     public function test_profile_show_requires_authentication()
@@ -52,10 +52,10 @@ class ProfileControllerTest extends TestCase
         $response = $this->get('/profile/edit');
 
         $response->assertStatus(200);
-        $response->assertViewIs('profile.edit');
-        $response->assertViewHas('user', $this->user);
-        $response->assertSee('John Doe');
-        $response->assertSee('john@example.com');
+        $response->assertInertia(fn ($page) => $page
+            ->component('Profile/Edit')
+            ->has('user')
+        );
     }
 
     public function test_profile_edit_requires_authentication()

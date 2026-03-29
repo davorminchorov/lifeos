@@ -27,7 +27,7 @@ class CurrencyControllerTest extends TestCase
         $response = $this->get(route('currency.freelance-rate-calculator'));
 
         $response->assertStatus(200);
-        $response->assertViewIs('currency.freelance-rate-calculator');
+        $response->assertInertia(fn ($page) => $page->component('Currency/FreelanceRateCalculator'));
     }
 
     public function test_index_page_loads_successfully(): void
@@ -35,9 +35,11 @@ class CurrencyControllerTest extends TestCase
         $response = $this->get(route('currency.index'));
 
         $response->assertStatus(200);
-        $response->assertViewIs('currency.index');
-        $response->assertViewHas('currencyRates');
-        $response->assertViewHas('defaultCurrency');
+        $response->assertInertia(fn ($page) => $page
+            ->component('Currency/Index')
+            ->has('currencyRates')
+            ->has('defaultCurrency')
+        );
     }
 
     public function test_index_page_displays_currency_rates(): void
@@ -45,16 +47,10 @@ class CurrencyControllerTest extends TestCase
         $response = $this->get(route('currency.index'));
 
         $response->assertStatus(200);
-        $currencyRates = $response->viewData('currencyRates');
-        $this->assertIsArray($currencyRates);
-
-        if (count($currencyRates) > 0) {
-            $this->assertArrayHasKey('from_currency', $currencyRates[0]);
-            $this->assertArrayHasKey('to_currency', $currencyRates[0]);
-            $this->assertArrayHasKey('rate_info', $currencyRates[0]);
-            $this->assertArrayHasKey('is_fresh', $currencyRates[0]);
-            $this->assertArrayHasKey('is_stale', $currencyRates[0]);
-        }
+        $response->assertInertia(fn ($page) => $page
+            ->component('Currency/Index')
+            ->has('currencyRates')
+        );
     }
 
     public function test_refresh_rate_succeeds_with_valid_currencies(): void

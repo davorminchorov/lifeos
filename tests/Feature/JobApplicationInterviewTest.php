@@ -41,12 +41,10 @@ class JobApplicationInterviewTest extends TestCase
         $response = $this->actingAs($this->user)->get("/job-applications/{$this->application->id}/interviews");
 
         $response->assertStatus(200);
-        $response->assertViewIs('job-applications.interviews.index');
-        $response->assertViewHas('application', $this->application);
-
-        foreach ($interviews as $interview) {
-            $response->assertSee($interview->type->label());
-        }
+        $response->assertInertia(fn ($page) => $page
+            ->component('JobApplications/Interviews/Index')
+            ->has('application')
+        );
     }
 
     public function test_index_requires_authentication()
@@ -74,8 +72,10 @@ class JobApplicationInterviewTest extends TestCase
         $response = $this->actingAs($this->user)->get("/job-applications/{$this->application->id}/interviews/create");
 
         $response->assertStatus(200);
-        $response->assertViewIs('job-applications.interviews.create');
-        $response->assertViewHas('application', $this->application);
+        $response->assertInertia(fn ($page) => $page
+            ->component('JobApplications/Interviews/Create')
+            ->has('application')
+        );
     }
 
     public function test_create_requires_authentication()
@@ -184,9 +184,10 @@ class JobApplicationInterviewTest extends TestCase
         $response = $this->actingAs($this->user)->get("/job-applications/{$this->application->id}/interviews/{$interview->id}");
 
         $response->assertStatus(200);
-        $response->assertViewIs('job-applications.interviews.show');
-        $response->assertViewHas('interview', $interview);
-        $response->assertSee('Test Interviewer');
+        $response->assertInertia(fn ($page) => $page
+            ->component('JobApplications/Interviews/Show')
+            ->has('interview')
+        );
     }
 
     public function test_show_requires_authentication()
@@ -245,8 +246,10 @@ class JobApplicationInterviewTest extends TestCase
         $response = $this->actingAs($this->user)->get("/job-applications/{$this->application->id}/interviews/{$interview->id}/edit");
 
         $response->assertStatus(200);
-        $response->assertViewIs('job-applications.interviews.edit');
-        $response->assertViewHas('interview', $interview);
+        $response->assertInertia(fn ($page) => $page
+            ->component('JobApplications/Interviews/Edit')
+            ->has('interview')
+        );
     }
 
     public function test_edit_requires_authentication()

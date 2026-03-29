@@ -8,6 +8,13 @@ use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 
 abstract class TestCase extends BaseTestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->withoutVite();
+    }
+
     /**
      * Set up tenant context for testing.
      * Creates a tenant, sets it as the user's current tenant, and authenticates the user.

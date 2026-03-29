@@ -40,8 +40,11 @@ class NotificationControllerTest extends TestCase
     {
         $this->get(route('notifications.index'))
             ->assertStatus(200)
-            ->assertViewIs('notifications.index')
-            ->assertViewHas(['notifications', 'unreadCount']);
+            ->assertInertia(fn ($page) => $page
+                ->component('Notifications/Index')
+                ->has('notifications')
+                ->has('unreadCount')
+            );
     }
 
     public function test_can_get_notifications_data_via_ajax()
@@ -143,8 +146,10 @@ class NotificationControllerTest extends TestCase
     {
         $this->get(route('notifications.preferences'))
             ->assertStatus(200)
-            ->assertViewIs('notifications.preferences')
-            ->assertViewHas('preferences');
+            ->assertInertia(fn ($page) => $page
+                ->component('Notifications/Preferences')
+                ->has('preferences')
+            );
     }
 
     public function test_can_update_notification_preferences()

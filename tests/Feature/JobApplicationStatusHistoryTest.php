@@ -184,11 +184,10 @@ class JobApplicationStatusHistoryTest extends TestCase
         $response = $this->get("/job-applications/{$application->id}");
 
         $response->assertStatus(200);
-        $response->assertViewHas('application', $application);
-
-        // The view should have access to status histories through the relationship
-        $viewApplication = $response->viewData('application');
-        $this->assertInstanceOf(JobApplication::class, $viewApplication);
+        $response->assertInertia(fn ($page) => $page
+            ->component('JobApplications/Show')
+            ->has('application')
+        );
     }
 
     public function test_status_history_belongs_to_correct_user()

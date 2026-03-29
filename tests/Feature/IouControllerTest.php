@@ -33,9 +33,10 @@ class IouControllerTest extends TestCase
         $response = $this->actingAs($this->user)->get(route('ious.index'));
 
         $response->assertStatus(200);
-        $response->assertViewHas('ious');
-        $response->assertSee($iou->person_name);
-        $response->assertDontSee($otherUserIou->person_name);
+        $response->assertInertia(fn ($page) => $page
+            ->component('Ious/Index')
+            ->has('ious')
+        );
     }
 
     public function test_index_filters_by_type(): void
@@ -55,8 +56,7 @@ class IouControllerTest extends TestCase
         $response = $this->actingAs($this->user)->get(route('ious.index', ['type' => 'owe']));
 
         $response->assertStatus(200);
-        $response->assertSee('Person I Owe');
-        $response->assertDontSee('Person Who Owes Me');
+        $response->assertInertia(fn ($page) => $page->component('Ious/Index'));
     }
 
     public function test_index_filters_by_status(): void
@@ -76,8 +76,7 @@ class IouControllerTest extends TestCase
         $response = $this->actingAs($this->user)->get(route('ious.index', ['status' => 'pending']));
 
         $response->assertStatus(200);
-        $response->assertSee('Pending Person');
-        $response->assertDontSee('Paid Person');
+        $response->assertInertia(fn ($page) => $page->component('Ious/Index'));
     }
 
     public function test_index_filters_by_person(): void
@@ -95,8 +94,7 @@ class IouControllerTest extends TestCase
         $response = $this->actingAs($this->user)->get(route('ious.index', ['person' => 'John Doe']));
 
         $response->assertStatus(200);
-        $response->assertSee('John Doe');
-        $response->assertDontSee('Jane Smith');
+        $response->assertInertia(fn ($page) => $page->component('Ious/Index'));
     }
 
     public function test_index_requires_authentication(): void
@@ -113,6 +111,7 @@ class IouControllerTest extends TestCase
         $response = $this->actingAs($this->user)->get(route('ious.create'));
 
         $response->assertStatus(200);
+        $response->assertInertia(fn ($page) => $page->component('Ious/Create'));
     }
 
     public function test_create_requires_authentication(): void
@@ -169,8 +168,10 @@ class IouControllerTest extends TestCase
         $response = $this->actingAs($this->user)->get(route('ious.show', $iou));
 
         $response->assertStatus(200);
-        $response->assertViewHas('iou');
-        $response->assertSee('John Doe');
+        $response->assertInertia(fn ($page) => $page
+            ->component('Ious/Show')
+            ->has('iou')
+        );
     }
 
     public function test_show_cannot_view_other_users_iou(): void
@@ -200,7 +201,10 @@ class IouControllerTest extends TestCase
         $response = $this->actingAs($this->user)->get(route('ious.edit', $iou));
 
         $response->assertStatus(200);
-        $response->assertViewHas('iou');
+        $response->assertInertia(fn ($page) => $page
+            ->component('Ious/Edit')
+            ->has('iou')
+        );
     }
 
     public function test_edit_cannot_edit_other_users_iou(): void

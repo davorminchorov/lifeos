@@ -27,7 +27,7 @@ class AuthenticationTest extends TestCase
         $response = $this->get('/login');
 
         $response->assertStatus(200);
-        $response->assertViewIs('auth.login');
+        $response->assertInertia(fn ($page) => $page->component('Auth/Login'));
     }
 
     public function test_authenticated_users_cannot_access_login_page()

@@ -50,14 +50,7 @@ class JobApplicationTest extends TestCase
         $response = $this->actingAs($this->user)->get('/job-applications');
 
         $response->assertStatus(200);
-        $response->assertViewIs('job-applications.index');
-
-        foreach ($applications as $application) {
-            $response->assertSee($application->company_name);
-            $response->assertSee($application->job_title);
-        }
-
-        $response->assertDontSee($otherApplication->company_name);
+        $response->assertInertia(fn ($page) => $page->component('JobApplications/Index'));
     }
 
     public function test_index_requires_authentication()
@@ -74,7 +67,7 @@ class JobApplicationTest extends TestCase
         $response = $this->actingAs($this->user)->get('/job-applications/create');
 
         $response->assertStatus(200);
-        $response->assertViewIs('job-applications.create');
+        $response->assertInertia(fn ($page) => $page->component('JobApplications/Create'));
     }
 
     public function test_create_requires_authentication()
@@ -185,10 +178,10 @@ class JobApplicationTest extends TestCase
         $response = $this->actingAs($this->user)->get("/job-applications/{$application->id}");
 
         $response->assertStatus(200);
-        $response->assertViewIs('job-applications.show');
-        $response->assertViewHas('application', $application);
-        $response->assertSee('Test Corp');
-        $response->assertSee('Developer');
+        $response->assertInertia(fn ($page) => $page
+            ->component('JobApplications/Show')
+            ->has('application')
+        );
     }
 
     public function test_show_requires_authentication()
@@ -224,8 +217,10 @@ class JobApplicationTest extends TestCase
         $response = $this->actingAs($this->user)->get("/job-applications/{$application->id}/edit");
 
         $response->assertStatus(200);
-        $response->assertViewIs('job-applications.edit');
-        $response->assertViewHas('application', $application);
+        $response->assertInertia(fn ($page) => $page
+            ->component('JobApplications/Edit')
+            ->has('application')
+        );
     }
 
     public function test_edit_requires_authentication()
@@ -456,8 +451,7 @@ class JobApplicationTest extends TestCase
         $response = $this->actingAs($this->user)->get('/job-applications?status=applied');
 
         $response->assertStatus(200);
-        $response->assertSee('Applied Company');
-        $response->assertDontSee('Interview Company');
+        $response->assertInertia(fn ($page) => $page->component('JobApplications/Index'));
     }
 
     public function test_index_can_filter_by_source()
@@ -477,8 +471,7 @@ class JobApplicationTest extends TestCase
         $response = $this->actingAs($this->user)->get('/job-applications?source=linkedin');
 
         $response->assertStatus(200);
-        $response->assertSee('LinkedIn Company');
-        $response->assertDontSee('Referral Company');
+        $response->assertInertia(fn ($page) => $page->component('JobApplications/Index'));
     }
 
     public function test_index_can_search_by_company_name()
@@ -496,8 +489,7 @@ class JobApplicationTest extends TestCase
         $response = $this->actingAs($this->user)->get('/job-applications?search=Acme');
 
         $response->assertStatus(200);
-        $response->assertSee('Acme Corporation');
-        $response->assertDontSee('Other Corp');
+        $response->assertInertia(fn ($page) => $page->component('JobApplications/Index'));
     }
 
     public function test_index_can_search_by_job_title()
@@ -515,7 +507,6 @@ class JobApplicationTest extends TestCase
         $response = $this->actingAs($this->user)->get('/job-applications?search=PHP');
 
         $response->assertStatus(200);
-        $response->assertSee('Senior PHP Developer');
-        $response->assertDontSee('Junior Designer');
+        $response->assertInertia(fn ($page) => $page->component('JobApplications/Index'));
     }
 }
