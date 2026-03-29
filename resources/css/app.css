@@ -238,7 +238,7 @@
 .assistant-markdown {
     @apply prose prose-sm dark:prose-invert max-w-none text-inherit;
     font-size: 0.8125rem; /* 13px — slightly smaller for chat density */
-    line-height: 1.65;
+    line-height: 1.75;
 
     & > *:first-child { margin-top: 0; }
     & > *:last-child { margin-bottom: 0; }

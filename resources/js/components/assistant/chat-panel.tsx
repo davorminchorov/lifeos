@@ -241,7 +241,7 @@ export function ChatPanel() {
                             className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                         >
                             {msg.role === 'assistant' ? (
-                                <div className="max-w-[92%] rounded-2xl rounded-tl-sm bg-muted/50 px-4 py-3 text-sm">
+                                <div className="max-w-[92%] rounded-2xl rounded-tl-sm border border-border/40 bg-card px-5 py-4 text-sm shadow-sm">
                                     <Markdown
                                         remarkPlugins={[remarkGfm]}
                                         className="assistant-markdown"
@@ -250,7 +250,7 @@ export function ChatPanel() {
                                     </Markdown>
                                 </div>
                             ) : (
-                                <div className="max-w-[80%] rounded-2xl rounded-tr-sm bg-[#F53003] px-4 py-2.5 text-sm text-white">
+                                <div className="max-w-[75%] rounded-2xl rounded-tr-sm bg-[#F53003] px-4 py-2.5 text-sm text-white shadow-sm">
                                     {msg.content}
                                 </div>
                             )}
@@ -259,7 +259,7 @@ export function ChatPanel() {
 
                     {loading ? (
                         <div className="flex justify-start">
-                            <div className="flex items-center gap-1.5 rounded-2xl rounded-tl-sm bg-muted/50 px-4 py-3">
+                            <div className="flex items-center gap-1.5 rounded-2xl rounded-tl-sm border border-border/40 bg-card px-5 py-4 shadow-sm">
                                 <span className="h-2 w-2 animate-bounce rounded-full bg-muted-foreground/60 [animation-delay:-0.3s]" />
                                 <span className="h-2 w-2 animate-bounce rounded-full bg-muted-foreground/60 [animation-delay:-0.15s]" />
                                 <span className="h-2 w-2 animate-bounce rounded-full bg-muted-foreground/60" />
