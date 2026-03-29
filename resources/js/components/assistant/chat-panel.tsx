@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import Markdown from 'react-markdown'
 import { router, usePage } from '@inertiajs/react'
 import {
     Sheet,
@@ -157,7 +158,13 @@ export function ChatPanel() {
                                         : 'bg-card text-card-foreground border'
                                 }`}
                             >
-                                {msg.content}
+                                {msg.role === 'assistant' ? (
+                                    <Markdown className="prose prose-sm dark:prose-invert max-w-none [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
+                                        {msg.content}
+                                    </Markdown>
+                                ) : (
+                                    msg.content
+                                )}
                             </div>
                         </div>
                     ))}
