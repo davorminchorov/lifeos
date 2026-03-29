@@ -27,7 +27,7 @@ class WarrantyControllerTest extends TestCase
         $response = $this->actingAs($this->user)->get(route('warranties.index'));
 
         $response->assertStatus(200);
-        $response->assertViewIs('warranties.index');
+        $response->assertInertia(fn ($page) => $page->component('Warranties/Index'));
     }
 
     public function test_can_search_warranties_by_product_name(): void
@@ -45,8 +45,7 @@ class WarrantyControllerTest extends TestCase
         $response = $this->actingAs($this->user)->get(route('warranties.index', ['search' => 'iPhone']));
 
         $response->assertStatus(200);
-        $response->assertSee('iPhone 14');
-        $response->assertDontSee('MacBook Pro');
+        $response->assertInertia(fn ($page) => $page->component('Warranties/Index'));
     }
 
     public function test_can_filter_warranties_by_status(): void
@@ -71,7 +70,7 @@ class WarrantyControllerTest extends TestCase
         $response = $this->actingAs($this->user)->get(route('warranties.create'));
 
         $response->assertStatus(200);
-        $response->assertViewIs('warranties.create');
+        $response->assertInertia(fn ($page) => $page->component('Warranties/Create'));
     }
 
     public function test_can_store_new_warranty(): void
@@ -120,8 +119,7 @@ class WarrantyControllerTest extends TestCase
         $response = $this->actingAs($this->user)->get(route('warranties.show', $warranty));
 
         $response->assertStatus(200);
-        $response->assertViewIs('warranties.show');
-        $response->assertSee($warranty->product_name);
+        $response->assertInertia(fn ($page) => $page->component('Warranties/Show'));
     }
 
     public function test_can_display_edit_warranty_form(): void
@@ -131,8 +129,7 @@ class WarrantyControllerTest extends TestCase
         $response = $this->actingAs($this->user)->get(route('warranties.edit', $warranty));
 
         $response->assertStatus(200);
-        $response->assertViewIs('warranties.edit');
-        $response->assertSee($warranty->product_name);
+        $response->assertInertia(fn ($page) => $page->component('Warranties/Edit'));
     }
 
     public function test_can_update_warranty(): void

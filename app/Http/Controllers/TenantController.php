@@ -6,6 +6,7 @@ use App\Models\Tenant;
 use App\Services\TenantService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Inertia\Inertia;
 
 class TenantController extends Controller
 {
@@ -23,7 +24,11 @@ class TenantController extends Controller
     {
         $tenants = $this->getUserAccessibleTenants();
 
-        return view('tenants.index', compact('tenants'));
+        return Inertia::render('Tenants/Index', [
+            'tenants' => $tenants->map(fn ($tenant) => array_merge($tenant->toArray(), [
+                'is_owner' => $tenant->owner_id === auth()->id(),
+            ])),
+        ]);
     }
 
     /**
@@ -33,7 +38,7 @@ class TenantController extends Controller
     {
         $this->authorize('create', Tenant::class);
 
-        return view('tenants.create');
+        return Inertia::render('Tenants/Create');
     }
 
     /**
@@ -66,7 +71,11 @@ class TenantController extends Controller
         $members = $tenant->members()->withPivot('role')->get();
         $isOwner = $tenant->owner_id === auth()->id();
 
-        return view('tenants.show', compact('tenant', 'members', 'isOwner'));
+        return Inertia::render('Tenants/Show', [
+            'tenant' => $tenant,
+            'members' => $members,
+            'isOwner' => $isOwner,
+        ]);
     }
 
     /**
@@ -76,7 +85,9 @@ class TenantController extends Controller
     {
         $this->authorize('update', $tenant);
 
-        return view('tenants.edit', compact('tenant'));
+        return Inertia::render('Tenants/Edit', [
+            'tenant' => $tenant,
+        ]);
     }
 
     /**
@@ -134,7 +145,11 @@ class TenantController extends Controller
     {
         $tenants = $this->getUserAccessibleTenants();
 
-        return view('tenants.select', compact('tenants'));
+        return Inertia::render('Tenants/Select', [
+            'tenants' => $tenants->map(fn ($tenant) => array_merge($tenant->toArray(), [
+                'is_owner' => $tenant->owner_id === auth()->id(),
+            ])),
+        ]);
     }
 
     /**

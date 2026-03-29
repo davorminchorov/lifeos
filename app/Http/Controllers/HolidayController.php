@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Tenant;
 use App\Services\CountryHolidayService;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class HolidayController extends Controller
 {
@@ -15,12 +17,12 @@ class HolidayController extends Controller
     /**
      * Display a listing of holidays based on tenant's default country.
      */
-    public function index(Request $request)
+    public function index(Request $request): Response
     {
         $user = $request->user();
         $tenant = $user->currentTenant;
 
-        if (!$tenant) {
+        if (! $tenant) {
             abort(403, 'No tenant selected');
         }
 
@@ -37,6 +39,6 @@ class HolidayController extends Controller
         $countryCode = $this->countryHolidayService->getTenantDefaultCountry($tenant);
         $countryName = $this->countryHolidayService->getCountryName($countryCode);
 
-        return view('holidays.index', compact('holidays', 'countryName', 'countryCode'));
+        return Inertia::render('Holidays/Index', compact('holidays', 'countryName', 'countryCode'));
     }
 }

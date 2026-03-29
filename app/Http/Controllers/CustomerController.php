@@ -6,6 +6,7 @@ use App\Http\Requests\StoreCustomerRequest;
 use App\Http\Requests\UpdateCustomerRequest;
 use App\Models\Customer;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class CustomerController extends Controller
 {
@@ -39,7 +40,7 @@ class CustomerController extends Controller
                 ->sum('credit_balance'),
         ];
 
-        return view('customers.index', compact('customers', 'summary'));
+        return Inertia::render('Invoicing/Customers/Index', compact('customers', 'summary'));
     }
 
     /**
@@ -47,7 +48,7 @@ class CustomerController extends Controller
      */
     public function create()
     {
-        return view('customers.create');
+        return Inertia::render('Invoicing/Customers/Create');
     }
 
     /**
@@ -79,7 +80,7 @@ class CustomerController extends Controller
             $query->latest()->limit(10);
         }]);
 
-        return view('customers.show', compact('customer'));
+        return Inertia::render('Invoicing/Customers/Show', compact('customer'));
     }
 
     /**
@@ -92,7 +93,7 @@ class CustomerController extends Controller
             abort(403);
         }
 
-        return view('customers.edit', compact('customer'));
+        return Inertia::render('Invoicing/Customers/Edit', compact('customer'));
     }
 
     /**

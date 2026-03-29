@@ -8,6 +8,7 @@ use App\Http\Requests\StoreJobApplicationRequest;
 use App\Http\Requests\UpdateJobApplicationRequest;
 use App\Models\JobApplication;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class JobApplicationController extends Controller
 {
@@ -73,7 +74,10 @@ class JobApplicationController extends Controller
 
         $applications = $query->paginate($request->get('per_page', 15));
 
-        return view('job-applications.index', compact('applications'));
+        return Inertia::render('JobApplications/Index', [
+            'applications' => $applications,
+            'filters' => $request->only(['search', 'status', 'source', 'priority', 'remote', 'archived', 'date_from', 'date_to', 'sort_by', 'sort_order']),
+        ]);
     }
 
     /**
@@ -81,11 +85,11 @@ class JobApplicationController extends Controller
      */
     public function create()
     {
-        $statuses = ApplicationStatus::cases();
-        $sources = ApplicationSource::cases();
+        $statuses = array_map(fn ($s) => ['value' => $s->value, 'label' => $s->label()], ApplicationStatus::cases());
+        $sources = array_map(fn ($s) => ['value' => $s->value, 'label' => $s->label()], ApplicationSource::cases());
         $currencies = ['MKD', 'USD', 'EUR', 'GBP', 'CAD', 'AUD', 'JPY', 'CHF', 'RSD', 'BGN'];
 
-        return view('job-applications.create', compact('statuses', 'sources', 'currencies'));
+        return Inertia::render('JobApplications/Create', compact('statuses', 'sources', 'currencies'));
     }
 
     /**
@@ -120,7 +124,7 @@ class JobApplicationController extends Controller
 
         $application = $job_application;
 
-        return view('job-applications.show', compact('application'));
+        return Inertia::render('JobApplications/Show', compact('application'));
     }
 
     /**
@@ -133,12 +137,12 @@ class JobApplicationController extends Controller
             abort(403);
         }
 
-        $statuses = ApplicationStatus::cases();
-        $sources = ApplicationSource::cases();
+        $statuses = array_map(fn ($s) => ['value' => $s->value, 'label' => $s->label()], ApplicationStatus::cases());
+        $sources = array_map(fn ($s) => ['value' => $s->value, 'label' => $s->label()], ApplicationSource::cases());
         $currencies = ['MKD', 'USD', 'EUR', 'GBP', 'CAD', 'AUD', 'JPY', 'CHF', 'RSD', 'BGN'];
         $application = $job_application;
 
-        return view('job-applications.edit', compact('application', 'statuses', 'sources', 'currencies'));
+        return Inertia::render('JobApplications/Edit', compact('application', 'statuses', 'sources', 'currencies'));
     }
 
     /**

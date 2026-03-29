@@ -8,6 +8,7 @@ use App\Http\Requests\StoreInterviewRequest;
 use App\Models\JobApplication;
 use App\Models\JobApplicationInterview;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class JobApplicationInterviewController extends Controller
 {
@@ -27,7 +28,7 @@ class JobApplicationInterviewController extends Controller
 
         $application = $job_application;
 
-        return view('job-applications.interviews.index', compact('application', 'interviews'));
+        return Inertia::render('JobApplications/Interviews/Index', compact('application', 'interviews'));
     }
 
     /**
@@ -40,11 +41,11 @@ class JobApplicationInterviewController extends Controller
             abort(403);
         }
 
-        $types = InterviewType::cases();
-        $outcomes = InterviewOutcome::cases();
+        $types = array_map(fn ($t) => ['value' => $t->value, 'label' => $t->label()], InterviewType::cases());
+        $outcomes = array_map(fn ($o) => ['value' => $o->value, 'label' => $o->label()], InterviewOutcome::cases());
         $application = $job_application;
 
-        return view('job-applications.interviews.create', compact('application', 'types', 'outcomes'));
+        return Inertia::render('JobApplications/Interviews/Create', compact('application', 'types', 'outcomes'));
     }
 
     /**
@@ -78,7 +79,7 @@ class JobApplicationInterviewController extends Controller
 
         $application = $job_application;
 
-        return view('job-applications.interviews.show', compact('application', 'interview'));
+        return Inertia::render('JobApplications/Interviews/Show', compact('application', 'interview'));
     }
 
     /**
@@ -91,11 +92,11 @@ class JobApplicationInterviewController extends Controller
             abort(403);
         }
 
-        $types = InterviewType::cases();
-        $outcomes = InterviewOutcome::cases();
+        $types = array_map(fn ($t) => ['value' => $t->value, 'label' => $t->label()], InterviewType::cases());
+        $outcomes = array_map(fn ($o) => ['value' => $o->value, 'label' => $o->label()], InterviewOutcome::cases());
         $application = $job_application;
 
-        return view('job-applications.interviews.edit', compact('application', 'interview', 'types', 'outcomes'));
+        return Inertia::render('JobApplications/Interviews/Edit', compact('application', 'interview', 'types', 'outcomes'));
     }
 
     /**

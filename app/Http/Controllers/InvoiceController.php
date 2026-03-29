@@ -7,10 +7,12 @@ use App\Http\Requests\StoreInvoiceRequest;
 use App\Http\Requests\UpdateInvoiceRequest;
 use App\Models\Customer;
 use App\Models\Invoice;
+use App\Models\TaxRate;
 use App\Services\InvoiceEmailService;
-use App\Services\InvoicingService;
 use App\Services\InvoicePdfService;
+use App\Services\InvoicingService;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class InvoiceController extends Controller
 {
@@ -19,6 +21,7 @@ class InvoiceController extends Controller
         protected InvoicePdfService $pdfService,
         protected InvoiceEmailService $emailService
     ) {}
+
     /**
      * Display a listing of the resource.
      */
@@ -39,7 +42,7 @@ class InvoiceController extends Controller
 
         // Search by invoice number
         if ($request->filled('search')) {
-            $query->where('number', 'like', '%' . $request->search . '%');
+            $query->where('number', 'like', '%'.$request->search.'%');
         }
 
         // Sort
@@ -62,7 +65,7 @@ class InvoiceController extends Controller
             ->orderBy('name')
             ->get();
 
-        return view('invoices.index', compact('invoices', 'summary', 'customers'));
+        return Inertia::render('Invoicing/Invoices/Index', compact('invoices', 'summary', 'customers'));
     }
 
     /**
@@ -77,7 +80,12 @@ class InvoiceController extends Controller
         // Pre-select customer if provided
         $selectedCustomerId = $request->get('customer_id');
 
-        return view('invoices.create', compact('customers', 'selectedCustomerId'));
+        $taxRates = TaxRate::where('user_id', auth()->id())
+            ->where('active', true)
+            ->orderBy('name')
+            ->get();
+
+        return Inertia::render('Invoicing/Invoices/Create', compact('customers', 'taxRates', 'selectedCustomerId'));
     }
 
     /**
@@ -90,7 +98,7 @@ class InvoiceController extends Controller
         $data['status'] = InvoiceStatus::DRAFT;
 
         // Set default net terms if not provided
-        if (!isset($data['net_terms_days'])) {
+        if (! isset($data['net_terms_days'])) {
             $data['net_terms_days'] = config('invoicing.net_terms_days', 14);
         }
 
@@ -113,7 +121,7 @@ class InvoiceController extends Controller
         // Load relationships
         $invoice->load(['customer', 'items.taxRate', 'items.discount', 'payments']);
 
-        return view('invoices.show', compact('invoice'));
+        return Inertia::render('Invoicing/Invoices/Show', compact('invoice'));
     }
 
     /**
@@ -136,7 +144,14 @@ class InvoiceController extends Controller
             ->orderBy('name')
             ->get();
 
-        return view('invoices.edit', compact('invoice', 'customers'));
+        $invoice->load(['items.taxRate', 'items.discount']);
+
+        $taxRates = TaxRate::where('user_id', auth()->id())
+            ->where('active', true)
+            ->orderBy('name')
+            ->get();
+
+        return Inertia::render('Invoicing/Invoices/Edit', compact('invoice', 'customers', 'taxRates'));
     }
 
     /**
@@ -272,9 +287,9 @@ class InvoiceController extends Controller
         try {
             // Check if invoice can be sent
             $errors = $this->emailService->getSendValidationErrors($invoice);
-            if (!empty($errors)) {
+            if (! empty($errors)) {
                 return redirect()->back()
-                    ->with('error', 'Cannot send invoice: ' . implode(' ', $errors));
+                    ->with('error', 'Cannot send invoice: '.implode(' ', $errors));
             }
 
             $this->emailService->sendInvoice(
@@ -284,7 +299,7 @@ class InvoiceController extends Controller
             );
 
             return redirect()->route('invoicing.invoices.show', $invoice)
-                ->with('success', 'Invoice sent successfully to ' . $invoice->customer->email);
+                ->with('success', 'Invoice sent successfully to '.$invoice->customer->email);
         } catch (\Exception $e) {
             return redirect()->back()
                 ->with('error', $e->getMessage());
@@ -313,7 +328,7 @@ class InvoiceController extends Controller
             );
 
             return redirect()->route('invoicing.invoices.show', $invoice)
-                ->with('success', 'Reminder sent successfully to ' . $invoice->customer->email);
+                ->with('success', 'Reminder sent successfully to '.$invoice->customer->email);
         } catch (\Exception $e) {
             return redirect()->back()
                 ->with('error', $e->getMessage());

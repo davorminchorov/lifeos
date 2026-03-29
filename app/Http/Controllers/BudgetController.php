@@ -9,6 +9,7 @@ use App\Models\Expense;
 use App\Services\CurrencyService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class BudgetController extends Controller
 {
@@ -51,16 +52,32 @@ class BudgetController extends Controller
 
         $budgets = $query->paginate(15);
 
+        // Append computed attributes to each budget
+        $budgets->getCollection()->transform(function ($budget) {
+            $budget->current_spending = $budget->getCurrentSpending();
+            $budget->remaining_amount = $budget->getRemainingAmount();
+            $budget->utilization_percentage = $budget->getUtilizationPercentage();
+            $budget->status = $budget->getStatus();
+
+            return $budget;
+        });
+
         // Get expense categories for filter dropdown
         $categories = Expense::where('user_id', auth()->id())
             ->distinct()
             ->pluck('category')
-            ->sort();
+            ->sort()
+            ->values();
 
         // Calculate summary statistics
         $summaryStats = $this->calculateSummaryStats();
 
-        return view('budgets.index', compact('budgets', 'categories', 'summaryStats'));
+        return Inertia::render('Budgets/Index', [
+            'budgets' => $budgets,
+            'categories' => $categories,
+            'summaryStats' => $summaryStats,
+            'filters' => $request->only(['status', 'period', 'category']),
+        ]);
     }
 
     /**
@@ -77,7 +94,10 @@ class BudgetController extends Controller
         // Get currency options
         $currencies = $this->currencyService->getCurrencyOptions();
 
-        return view('budgets.create', compact('categories', 'currencies'));
+        return Inertia::render('Budgets/Create', [
+            'categories' => $categories->values(),
+            'currencies' => $currencies,
+        ]);
     }
 
     /**
@@ -128,7 +148,17 @@ class BudgetController extends Controller
         $projectedSpending = $daysElapsed > 0 ?
             ($budget->getCurrentSpending() / $daysElapsed) * $totalDays : 0;
 
-        return view('budgets.show', compact('budget', 'expenses', 'dailySpending', 'projectedSpending'));
+        $budget->current_spending = $budget->getCurrentSpending();
+        $budget->remaining_amount = $budget->getRemainingAmount();
+        $budget->utilization_percentage = $budget->getUtilizationPercentage();
+        $budget->status = $budget->getStatus();
+
+        return Inertia::render('Budgets/Show', [
+            'budget' => $budget,
+            'expenses' => $expenses,
+            'dailySpending' => $dailySpending,
+            'projectedSpending' => round($projectedSpending, 2),
+        ]);
     }
 
     /**
@@ -147,7 +177,11 @@ class BudgetController extends Controller
         // Get currency options
         $currencies = $this->currencyService->getCurrencyOptions();
 
-        return view('budgets.edit', compact('budget', 'categories', 'currencies'));
+        return Inertia::render('Budgets/Edit', [
+            'budget' => $budget,
+            'categories' => $categories->values(),
+            'currencies' => $currencies,
+        ]);
     }
 
     /**
@@ -242,7 +276,9 @@ class BudgetController extends Controller
             'monthly_trends' => $monthlyTrends,
         ];
 
-        return view('budgets.analytics', compact('analytics'));
+        return Inertia::render('Budgets/Analytics', [
+            'analytics' => $analytics,
+        ]);
     }
 
     /**

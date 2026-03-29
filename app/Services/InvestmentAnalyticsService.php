@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Investment;
+use App\Models\ProjectInvestment;
 use Illuminate\Support\Collection;
 
 class InvestmentAnalyticsService
@@ -287,6 +288,30 @@ class InvestmentAnalyticsService
             'current_value' => $totalCurrentValue,
             'change' => $totalGainLoss,
             'trend' => $trend,
+        ];
+    }
+
+    /**
+     * Get project investment analytics
+     */
+    public function getProjectInvestmentAnalytics(int $userId): array
+    {
+        $projects = ProjectInvestment::where('user_id', $userId)
+            ->where('status', 'active')
+            ->get();
+
+        $defaultCurrency = $this->currencyService->getDefaultCurrency();
+        $totalValue = 0;
+
+        foreach ($projects as $project) {
+            $totalValue += $project->current_value ?? 0;
+        }
+
+        return [
+            'total_projects' => $projects->count(),
+            'total_value' => $totalValue,
+            'by_stage' => $projects->groupBy('stage')->map(fn ($group) => $group->count()),
+            'by_type' => $projects->groupBy('project_type')->map(fn ($group) => $group->count()),
         ];
     }
 

@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateProjectInvestmentRequest;
 use App\Models\ProjectInvestment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Inertia\Inertia;
 
 class ProjectInvestmentController extends Controller
 {
@@ -106,7 +107,11 @@ class ProjectInvestmentController extends Controller
             'total_gain_loss' => (float) $totalGainLoss,
         ];
 
-        return view('project-investments.index', ['projectInvestments' => $projectInvestments, 'summary' => $summaryData]);
+        return Inertia::render('ProjectInvestments/Index', [
+            'projectInvestments' => $projectInvestments,
+            'summary' => $summaryData,
+            'filters' => $request->only(['search', 'stage', 'business_model', 'status']),
+        ]);
     }
 
     /**
@@ -114,7 +119,7 @@ class ProjectInvestmentController extends Controller
      */
     public function create()
     {
-        return view('project-investments.create');
+        return Inertia::render('ProjectInvestments/Create');
     }
 
     /**
@@ -162,7 +167,7 @@ class ProjectInvestmentController extends Controller
             $query->orderByDesc('transaction_date')->orderByDesc('created_at');
         }]);
 
-        return view('project-investments.show', compact('projectInvestment'));
+        return Inertia::render('ProjectInvestments/Show', compact('projectInvestment'));
     }
 
     /**
@@ -172,7 +177,7 @@ class ProjectInvestmentController extends Controller
     {
         $this->authorizeOwnership($projectInvestment);
 
-        return view('project-investments.edit', compact('projectInvestment'));
+        return Inertia::render('ProjectInvestments/Edit', compact('projectInvestment'));
     }
 
     /**
@@ -306,6 +311,6 @@ class ProjectInvestmentController extends Controller
             'projects' => $projects,
         ];
 
-        return view('project-investments.analytics', compact('analytics'));
+        return Inertia::render('ProjectInvestments/Analytics', compact('analytics'));
     }
 }

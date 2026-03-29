@@ -6,20 +6,30 @@ use App\Models\UserNotificationPreference;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\View\View;
+use Inertia\Inertia;
 
 class NotificationController extends Controller
 {
     /**
      * Display the user's notifications.
      */
-    public function index(): View
+    public function index()
     {
         $user = Auth::user();
         $notifications = $user->notifications()->paginate(20);
         $unreadCount = $user->unreadNotifications()->count();
 
-        return view('notifications.index', compact('notifications', 'unreadCount'));
+        // Add human-readable timestamp to each notification
+        $notifications->getCollection()->transform(function ($notification) {
+            $notification->created_at_human = $notification->created_at->diffForHumans();
+
+            return $notification;
+        });
+
+        return Inertia::render('Notifications/Index', [
+            'notifications' => $notifications,
+            'unreadCount' => $unreadCount,
+        ]);
     }
 
     /**
@@ -55,59 +65,44 @@ class NotificationController extends Controller
     /**
      * Mark a notification as read.
      */
-    public function markAsRead(string $id): JsonResponse
+    public function markAsRead(string $id)
     {
         $user = Auth::user();
         $notification = $user->notifications()->findOrFail($id);
 
         $notification->markAsRead();
 
-        return response()->json([
-            'success' => true,
-            'unread_count' => $user->unreadNotifications()->count(),
-        ]);
+        return back();
     }
 
     /**
      * Mark all notifications as read.
      */
-    public function markAllAsRead(): JsonResponse
+    public function markAllAsRead()
     {
         $user = Auth::user();
         $user->unreadNotifications->markAsRead();
 
-        // Refresh user to get updated notification count
-        $user->refresh();
-
-        return response()->json([
-            'success' => true,
-            'unread_count' => 0,
-        ]);
+        return back();
     }
 
     /**
      * Delete a notification.
      */
-    public function destroy(string $id): JsonResponse
+    public function destroy(string $id)
     {
         $user = Auth::user();
         $notification = $user->notifications()->findOrFail($id);
 
         $notification->delete();
 
-        // Refresh user to get updated notification count
-        $user->refresh();
-
-        return response()->json([
-            'success' => true,
-            'unread_count' => $user->unreadNotifications()->count(),
-        ]);
+        return back();
     }
 
     /**
      * Display notification preferences.
      */
-    public function preferences(): View
+    public function preferences()
     {
         $user = Auth::user();
         $preferences = $user->notificationPreferences()
@@ -127,13 +122,15 @@ class NotificationController extends Controller
             }
         }
 
-        return view('notifications.preferences', compact('preferences'));
+        return Inertia::render('Notifications/Preferences', [
+            'preferences' => $preferences,
+        ]);
     }
 
     /**
      * Update notification preferences.
      */
-    public function updatePreferences(Request $request): JsonResponse
+    public function updatePreferences(Request $request)
     {
         $user = Auth::user();
         $preferences = $request->input('preferences', []);
@@ -152,10 +149,7 @@ class NotificationController extends Controller
             );
         }
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Notification preferences updated successfully.',
-        ]);
+        return back()->with('success', 'Notification preferences updated successfully.');
     }
 
     /**

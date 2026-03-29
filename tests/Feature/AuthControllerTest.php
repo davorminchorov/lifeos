@@ -16,7 +16,7 @@ class AuthControllerTest extends TestCase
         $response = $this->get(route('login'));
 
         $response->assertStatus(200);
-        $response->assertViewIs('auth.login');
+        $response->assertInertia(fn ($page) => $page->component('Auth/Login'));
     }
 
     public function test_can_login_with_valid_credentials(): void

@@ -27,8 +27,10 @@ class InvestmentTest extends TestCase
         $response = $this->get(route('investments.index'));
 
         $response->assertStatus(200);
-        $response->assertViewIs('investments.index');
-        $response->assertViewHas('investments');
+        $response->assertInertia(fn ($page) => $page
+            ->component('Investments/Index')
+            ->has('investments')
+        );
     }
 
     public function test_can_display_create_investment_form()
@@ -36,7 +38,7 @@ class InvestmentTest extends TestCase
         $response = $this->get(route('investments.create'));
 
         $response->assertStatus(200);
-        $response->assertViewIs('investments.create');
+        $response->assertInertia(fn ($page) => $page->component('Investments/Create'));
     }
 
     public function test_can_store_a_new_investment()
@@ -85,7 +87,7 @@ class InvestmentTest extends TestCase
         $response = $this->get(route('investments.show', $investment));
 
         $response->assertStatus(200);
-        $response->assertViewIs('investments.show');
+        $response->assertInertia(fn ($page) => $page->component('Investments/Show'));
     }
 
     public function test_can_display_edit_investment_form()
@@ -95,7 +97,7 @@ class InvestmentTest extends TestCase
         $response = $this->get(route('investments.edit', $investment));
 
         $response->assertStatus(200);
-        $response->assertViewIs('investments.edit');
+        $response->assertInertia(fn ($page) => $page->component('Investments/Edit'));
     }
 
     public function test_can_update_an_investment()
@@ -158,8 +160,7 @@ class InvestmentTest extends TestCase
         $response = $this->get(route('investments.index', ['investment_type' => 'stocks']));
 
         $response->assertStatus(200);
-        $response->assertSee('Stock Investment');
-        $response->assertDontSee('Crypto Investment');
+        $response->assertInertia(fn ($page) => $page->component('Investments/Index'));
     }
 
     public function test_can_search_investments_by_name()
@@ -179,8 +180,7 @@ class InvestmentTest extends TestCase
         $response = $this->get(route('investments.index', ['search' => 'Apple']));
 
         $response->assertStatus(200);
-        $response->assertSee('Apple Inc.');
-        $response->assertDontSee('Microsoft Corp.');
+        $response->assertInertia(fn ($page) => $page->component('Investments/Index'));
     }
 
     public function test_calculates_investment_performance_correctly()

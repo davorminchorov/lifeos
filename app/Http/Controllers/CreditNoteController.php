@@ -8,6 +8,7 @@ use App\Models\Customer;
 use App\Models\Invoice;
 use App\Services\InvoicingService;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class CreditNoteController extends Controller
 {
@@ -35,7 +36,7 @@ class CreditNoteController extends Controller
 
         // Search by credit note number
         if ($request->filled('search')) {
-            $query->where('number', 'like', '%' . $request->search . '%');
+            $query->where('number', 'like', '%'.$request->search.'%');
         }
 
         // Sort
@@ -59,7 +60,7 @@ class CreditNoteController extends Controller
             ->orderBy('name')
             ->get();
 
-        return view('credit-notes.index', compact('creditNotes', 'summary', 'customers'));
+        return Inertia::render('Invoicing/CreditNotes/Index', compact('creditNotes', 'summary', 'customers'));
     }
 
     /**
@@ -85,7 +86,7 @@ class CreditNoteController extends Controller
         $selectedCustomerId = $request->get('customer_id');
         $selectedInvoiceId = $request->get('invoice_id');
 
-        return view('credit-notes.create', compact('customers', 'invoices', 'selectedCustomerId', 'selectedInvoiceId'));
+        return Inertia::render('Invoicing/CreditNotes/Create', compact('customers', 'invoices', 'selectedCustomerId', 'selectedInvoiceId'));
     }
 
     /**
@@ -153,7 +154,7 @@ class CreditNoteController extends Controller
             ->with('customer')
             ->get();
 
-        return view('credit-notes.show', compact('creditNote', 'availableInvoices'));
+        return Inertia::render('Invoicing/CreditNotes/Show', compact('creditNote', 'availableInvoices'));
     }
 
     /**
@@ -231,8 +232,8 @@ class CreditNoteController extends Controller
             $this->invoicingService->recordPayment($invoice, $validated['amount'], [
                 'payment_date' => now()->toDateString(),
                 'payment_method' => 'credit_note',
-                'reference' => 'Credit Note: ' . $creditNote->number,
-                'notes' => 'Applied from credit note ' . $creditNote->number,
+                'reference' => 'Credit Note: '.$creditNote->number,
+                'notes' => 'Applied from credit note '.$creditNote->number,
             ]);
 
             if ($request->expectsJson()) {
@@ -269,11 +270,11 @@ class CreditNoteController extends Controller
 
         // Get the latest credit note number for this year
         $latestCreditNote = CreditNote::where('user_id', auth()->id())
-            ->where('number', 'like', $prefix . '-' . $year . '-%')
+            ->where('number', 'like', $prefix.'-'.$year.'-%')
             ->orderBy('number', 'desc')
             ->first();
 
-        if ($latestCreditNote && preg_match('/' . $prefix . '-' . $year . '-(\d+)/', $latestCreditNote->number, $matches)) {
+        if ($latestCreditNote && preg_match('/'.$prefix.'-'.$year.'-(\d+)/', $latestCreditNote->number, $matches)) {
             $sequence = intval($matches[1]) + 1;
         } else {
             $sequence = 1;

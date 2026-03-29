@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\ApplicationStatus;
 use App\Models\JobApplication;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class JobApplicationKanbanController extends Controller
 {
@@ -53,7 +54,7 @@ class JobApplicationKanbanController extends Controller
             ];
         }
 
-        return view('job-applications.kanban', compact('columns', 'applications'));
+        return Inertia::render('JobApplications/Kanban', compact('columns', 'applications'));
     }
 
     /**

@@ -9,6 +9,7 @@ use App\Models\Invoice;
 use App\Models\Payment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Inertia\Inertia;
 
 class InvoicingDashboardController extends Controller
 {
@@ -41,7 +42,7 @@ class InvoicingDashboardController extends Controller
                 ->count(),
             'available_credit' => CreditNote::where('user_id', $userId)
                 ->where('status', 'available')
-                ->sum('remaining_amount'),
+                ->sum('amount_remaining'),
         ];
 
         // Revenue by month (last 6 months)
@@ -86,10 +87,10 @@ class InvoicingDashboardController extends Controller
             ->select('status', DB::raw('count(*) as count'))
             ->groupBy('status')
             ->get()
-            ->pluck('count', 'status')
+            ->mapWithKeys(fn ($item) => [$item->status->value => $item->count])
             ->toArray();
 
-        return view('invoicing.dashboard', compact(
+        return Inertia::render('Invoicing/Dashboard', compact(
             'summary',
             'revenueByMonth',
             'topCustomers',
@@ -124,14 +125,14 @@ class InvoicingDashboardController extends Controller
 
         $invoices = $query->orderBy('created_at', 'desc')->get();
 
-        $filename = 'invoices_' . now()->format('Y-m-d_His') . '.csv';
+        $filename = 'invoices_'.now()->format('Y-m-d_His').'.csv';
 
         $headers = [
             'Content-Type' => 'text/csv',
-            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            'Content-Disposition' => 'attachment; filename="'.$filename.'"',
         ];
 
-        $callback = function() use ($invoices) {
+        $callback = function () use ($invoices) {
             $file = fopen('php://output', 'w');
 
             // Headers
@@ -193,14 +194,14 @@ class InvoicingDashboardController extends Controller
 
         $payments = $query->orderBy('payment_date', 'desc')->get();
 
-        $filename = 'payments_' . now()->format('Y-m-d_His') . '.csv';
+        $filename = 'payments_'.now()->format('Y-m-d_His').'.csv';
 
         $headers = [
             'Content-Type' => 'text/csv',
-            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            'Content-Disposition' => 'attachment; filename="'.$filename.'"',
         ];
 
-        $callback = function() use ($payments) {
+        $callback = function () use ($payments) {
             $file = fopen('php://output', 'w');
 
             // Headers

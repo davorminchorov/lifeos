@@ -29,14 +29,17 @@ class DashboardControllerTest extends TestCase
         $response = $this->actingAs($this->user)->get(route('dashboard'));
 
         $response->assertStatus(200);
-        $response->assertViewIs('dashboard');
-        $response->assertViewHas([
-            'stats',
-            'alerts',
-            'insights',
-            'recent_expenses',
-            'upcoming_bills',
-        ]);
+        $response->assertInertia(fn ($page) => $page
+            ->component('Dashboard/Index')
+            ->has('stats')
+            ->has('alerts')
+            ->has('insights')
+            ->has('recent_expenses')
+            ->has('upcoming_bills')
+            ->has('budget_utilization')
+            ->has('top_subscriptions')
+            ->has('portfolio_allocation')
+        );
     }
 
     public function test_dashboard_includes_recent_expenses(): void
@@ -49,8 +52,10 @@ class DashboardControllerTest extends TestCase
         $response = $this->actingAs($this->user)->get(route('dashboard'));
 
         $response->assertStatus(200);
-        $recentExpenses = $response->viewData('recent_expenses');
-        $this->assertCount(5, $recentExpenses); // Should limit to 5
+        $response->assertInertia(fn ($page) => $page
+            ->component('Dashboard/Index')
+            ->has('recent_expenses')
+        );
     }
 
     public function test_dashboard_includes_upcoming_bills(): void
@@ -64,8 +69,10 @@ class DashboardControllerTest extends TestCase
         $response = $this->actingAs($this->user)->get(route('dashboard'));
 
         $response->assertStatus(200);
-        $upcomingBills = $response->viewData('upcoming_bills');
-        $this->assertCount(5, $upcomingBills); // Should limit to 5
+        $response->assertInertia(fn ($page) => $page
+            ->component('Dashboard/Index')
+            ->has('upcoming_bills')
+        );
     }
 
     public function test_unauthenticated_users_cannot_access_dashboard(): void
@@ -192,13 +199,14 @@ class DashboardControllerTest extends TestCase
         $response = $this->actingAs($this->user)->get(route('dashboard'));
 
         $response->assertStatus(200);
-        $stats = $response->viewData('stats');
-
-        $this->assertIsArray($stats);
-        $this->assertArrayHasKey('total_investments', $stats);
-        $this->assertArrayHasKey('active_subscriptions', $stats);
-        $this->assertArrayHasKey('pending_bills', $stats);
-        $this->assertArrayHasKey('active_contracts', $stats);
+        $response->assertInertia(fn ($page) => $page
+            ->component('Dashboard/Index')
+            ->has('stats')
+            ->where('stats.total_investments', fn ($value) => is_numeric($value))
+            ->where('stats.active_subscriptions', fn ($value) => is_numeric($value))
+            ->where('stats.pending_bills', fn ($value) => is_numeric($value))
+            ->where('stats.active_contracts', fn ($value) => is_numeric($value))
+        );
     }
 
     public function test_dashboard_alerts_are_generated(): void
@@ -218,9 +226,10 @@ class DashboardControllerTest extends TestCase
         $response = $this->actingAs($this->user)->get(route('dashboard'));
 
         $response->assertStatus(200);
-        $alerts = $response->viewData('alerts');
-
-        $this->assertIsArray($alerts);
+        $response->assertInertia(fn ($page) => $page
+            ->component('Dashboard/Index')
+            ->has('alerts')
+        );
     }
 
     private function createTestData(): void

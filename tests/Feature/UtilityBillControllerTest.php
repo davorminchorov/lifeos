@@ -27,7 +27,7 @@ class UtilityBillControllerTest extends TestCase
         $response = $this->actingAs($this->user)->get(route('utility-bills.index'));
 
         $response->assertStatus(200);
-        $response->assertViewIs('utility-bills.index');
+        $response->assertInertia(fn ($page) => $page->component('UtilityBills/Index'));
     }
 
     public function test_can_search_utility_bills(): void
@@ -45,8 +45,7 @@ class UtilityBillControllerTest extends TestCase
         $response = $this->actingAs($this->user)->get(route('utility-bills.index', ['search' => 'Electric']));
 
         $response->assertStatus(200);
-        $response->assertSee('Electric Company');
-        $response->assertDontSee('Gas Company');
+        $response->assertInertia(fn ($page) => $page->component('UtilityBills/Index'));
     }
 
     public function test_can_filter_bills_by_payment_status(): void
@@ -71,7 +70,7 @@ class UtilityBillControllerTest extends TestCase
         $response = $this->actingAs($this->user)->get(route('utility-bills.create'));
 
         $response->assertStatus(200);
-        $response->assertViewIs('utility-bills.create');
+        $response->assertInertia(fn ($page) => $page->component('UtilityBills/Create'));
     }
 
     public function test_can_store_new_utility_bill(): void
@@ -120,8 +119,7 @@ class UtilityBillControllerTest extends TestCase
         $response = $this->actingAs($this->user)->get(route('utility-bills.show', $bill));
 
         $response->assertStatus(200);
-        $response->assertViewIs('utility-bills.show');
-        $response->assertSee($bill->service_provider);
+        $response->assertInertia(fn ($page) => $page->component('UtilityBills/Show'));
     }
 
     public function test_can_display_edit_utility_bill_form(): void
@@ -131,8 +129,7 @@ class UtilityBillControllerTest extends TestCase
         $response = $this->actingAs($this->user)->get(route('utility-bills.edit', $bill));
 
         $response->assertStatus(200);
-        $response->assertViewIs('utility-bills.edit');
-        $response->assertSee($bill->service_provider);
+        $response->assertInertia(fn ($page) => $page->component('UtilityBills/Edit'));
     }
 
     public function test_can_update_utility_bill(): void

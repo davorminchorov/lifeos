@@ -1,77 +1,60 @@
 @extends('emails.layouts.base')
 
+@section('preheader')
+    @if($daysUntilExpiration === 0)
+        Your {{ $warranty->product_name }} warranty expires today
+    @else
+        Your {{ $warranty->product_name }} warranty expires in {{ $daysUntilExpiration }} {{ Str::plural('day', $daysUntilExpiration) }}
+    @endif
+@endsection
+
 @section('content')
-    <div class="greeting">Hello {{ $user->name }}!</div>
+    <p style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 15px; font-weight: 600; color: #1B1B18; margin: 0 0 16px;" class="heading">Hello {{ $user->name }},</p>
 
-    <div class="content-text">
+    <p style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 15px; line-height: 24px; color: #1B1B18; margin: 0 0 20px;" class="body-text">
         @if($daysUntilExpiration === 0)
-            Your warranty is expiring <strong>today</strong>! This is your last chance to use your warranty coverage.
+            Your warranty for <strong>{{ $warranty->product_name }}</strong> expires today.
         @else
-            Your warranty is set to expire in <strong>{{ $daysUntilExpiration }} {{ Str::plural('day', $daysUntilExpiration) }}</strong>. Here are the details:
+            Your warranty for <strong>{{ $warranty->product_name }}</strong> expires in {{ $daysUntilExpiration }} {{ Str::plural('day', $daysUntilExpiration) }}.
         @endif
-    </div>
-
-    <div class="highlight">
-        <strong>{{ $warranty->product_name }}</strong> warranty
-        @if($daysUntilExpiration === 0)
-            expires today
-        @else
-            expires {{ $warranty->warranty_expiration_date->format('F j, Y') }}
-        @endif
-    </div>
+    </p>
 
     @php
         $details = [
             'Product' => $warranty->product_name,
-            'Purchase Date' => $warranty->purchase_date->format('F j, Y'),
-            'Warranty Expires' => $warranty->warranty_expiration_date->format('F j, Y'),
         ];
 
         if ($warranty->brand) {
-            $details['Brand'] = $warranty->brand;
+            $details['Manufacturer'] = $warranty->brand;
+        }
+
+        $details['Purchase Date'] = $warranty->purchase_date->format('F j, Y');
+        $details['Expires'] = $warranty->warranty_expiration_date->format('F j, Y');
+
+        if ($warranty->warranty_type) {
+            $details['Coverage'] = $warranty->warranty_type;
         }
 
         if ($warranty->model) {
             $details['Model'] = $warranty->model;
         }
 
-        if ($warranty->warranty_type) {
-            $details['Warranty Type'] = $warranty->warranty_type;
-        }
-
         if ($warranty->retailer) {
-            $details['Purchased From'] = $warranty->retailer;
+            $details['Retailer'] = $warranty->retailer;
         }
     @endphp
 
     <x-emails.components.detail-list :items="$details" />
 
-    @if($daysUntilExpiration === 0)
-        <div class="content-text">
-            <strong>Act Now:</strong> Your warranty coverage ends today. If you're experiencing any issues with this product, contact the manufacturer or retailer immediately to file a warranty claim.
-        </div>
-    @else
-        <div class="content-text">
-            Consider taking action before your warranty expires:
-        </div>
-        <div class="content-text">
-            • Test your product to ensure it's working properly<br>
-            • Review the warranty terms and coverage<br>
-            • Check if warranty extension options are available<br>
-            • Contact support if you have any issues
-        </div>
-    @endif
+    <p style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 13px; line-height: 20px; color: #706F6C; margin: 0 0 4px;" class="subtext">
+        @if($daysUntilExpiration === 0)
+            File any warranty claims before end of day.
+        @else
+            Check for issues or extension options before coverage ends.
+        @endif
+    </p>
 
     <x-emails.components.button :url="url('/warranties/' . $warranty->id)">
-        View Warranty Details
+        View Warranty
     </x-emails.components.button>
-
-    <div class="content-text">
-        Keep your warranty information organized and accessible from your LifeOS dashboard. You can also set up maintenance reminders to help protect your investment.
-    </div>
-
-    <div class="content-text">
-        <strong>Best regards,</strong><br>
-        The LifeOS Team
-    </div>
 @endsection

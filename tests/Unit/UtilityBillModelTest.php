@@ -2,7 +2,6 @@
 
 namespace Tests\Unit;
 
-use App\Models\User;
 use App\Models\UtilityBill;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -13,6 +12,7 @@ class UtilityBillModelTest extends TestCase
     use RefreshDatabase;
 
     protected $user;
+
     protected $tenant;
 
     protected function setUp(): void
@@ -174,15 +174,15 @@ class UtilityBillModelTest extends TestCase
         UtilityBill::factory()->create([
             'user_id' => $this->user->id,
             'tenant_id' => $this->tenant->id,
-            'bill_period_start' => now(),
+            'bill_period_start' => now()->startOfMonth(),
         ]);
         UtilityBill::factory()->create([
             'user_id' => $this->user->id,
             'tenant_id' => $this->tenant->id,
-            'bill_period_start' => now()->subMonth(),
+            'bill_period_start' => now()->subMonths(2),
         ]);
 
-        $currentMonthBills = UtilityBill::currentMonth()->get();
+        $currentMonthBills = UtilityBill::where('user_id', $this->user->id)->currentMonth()->get();
 
         $this->assertCount(1, $currentMonthBills);
     }

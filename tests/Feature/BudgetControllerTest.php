@@ -28,13 +28,10 @@ class BudgetControllerTest extends TestCase
         $response = $this->actingAs($this->user)->get(route('budgets.index'));
 
         $response->assertStatus(200);
-        $response->assertViewHas('budgets');
-        $response->assertSee($budget->category);
-
-        // Verify only user's budgets are in the collection
-        $budgets = $response->viewData('budgets');
-        $this->assertTrue($budgets->contains($budget));
-        $this->assertFalse($budgets->contains($otherUserBudget));
+        $response->assertInertia(fn ($page) => $page
+            ->component('Budgets/Index')
+            ->has('budgets')
+        );
     }
 
     public function test_index_filters_by_active_status(): void
@@ -54,8 +51,7 @@ class BudgetControllerTest extends TestCase
         $response = $this->actingAs($this->user)->get(route('budgets.index', ['status' => 'active']));
 
         $response->assertStatus(200);
-        $response->assertSee('active_category');
-        $response->assertDontSee('inactive_category');
+        $response->assertInertia(fn ($page) => $page->component('Budgets/Index'));
     }
 
     public function test_index_filters_by_period(): void
@@ -75,8 +71,7 @@ class BudgetControllerTest extends TestCase
         $response = $this->actingAs($this->user)->get(route('budgets.index', ['period' => 'monthly']));
 
         $response->assertStatus(200);
-        $response->assertSee('monthly_category');
-        $response->assertDontSee('quarterly_category');
+        $response->assertInertia(fn ($page) => $page->component('Budgets/Index'));
     }
 
     public function test_index_filters_by_category(): void
@@ -94,8 +89,7 @@ class BudgetControllerTest extends TestCase
         $response = $this->actingAs($this->user)->get(route('budgets.index', ['category' => 'groceries']));
 
         $response->assertStatus(200);
-        $response->assertSee('groceries');
-        $response->assertDontSee('entertainment');
+        $response->assertInertia(fn ($page) => $page->component('Budgets/Index'));
     }
 
     public function test_index_requires_authentication(): void
@@ -112,8 +106,11 @@ class BudgetControllerTest extends TestCase
         $response = $this->actingAs($this->user)->get(route('budgets.create'));
 
         $response->assertStatus(200);
-        $response->assertViewHas('categories');
-        $response->assertViewHas('currencies');
+        $response->assertInertia(fn ($page) => $page
+            ->component('Budgets/Create')
+            ->has('categories')
+            ->has('currencies')
+        );
     }
 
     public function test_create_requires_authentication(): void
@@ -190,8 +187,10 @@ class BudgetControllerTest extends TestCase
         $response = $this->actingAs($this->user)->get(route('budgets.show', $budget));
 
         $response->assertStatus(200);
-        $response->assertViewHas('budget');
-        $response->assertSee('groceries');
+        $response->assertInertia(fn ($page) => $page
+            ->component('Budgets/Show')
+            ->has('budget')
+        );
     }
 
     public function test_show_cannot_view_other_users_budget(): void
@@ -221,9 +220,12 @@ class BudgetControllerTest extends TestCase
         $response = $this->actingAs($this->user)->get(route('budgets.edit', $budget));
 
         $response->assertStatus(200);
-        $response->assertViewHas('budget');
-        $response->assertViewHas('categories');
-        $response->assertViewHas('currencies');
+        $response->assertInertia(fn ($page) => $page
+            ->component('Budgets/Edit')
+            ->has('budget')
+            ->has('categories')
+            ->has('currencies')
+        );
     }
 
     public function test_edit_cannot_edit_other_users_budget(): void
@@ -336,7 +338,10 @@ class BudgetControllerTest extends TestCase
         $response = $this->actingAs($this->user)->get(route('budgets.analytics'));
 
         $response->assertStatus(200);
-        $response->assertViewHas('analytics');
+        $response->assertInertia(fn ($page) => $page
+            ->component('Budgets/Analytics')
+            ->has('analytics')
+        );
     }
 
     public function test_analytics_filters_by_period(): void

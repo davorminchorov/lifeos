@@ -8,7 +8,8 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
-use Illuminate\View\View;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class CurrencyController extends Controller
 {
@@ -20,17 +21,17 @@ class CurrencyController extends Controller
     /**
      * Show the freelance rate calculator page.
      */
-    public function freelanceRateCalculator(): View
+    public function freelanceRateCalculator(): Response
     {
         $workingDaysInfo = $this->workingDaysService->getCurrentMonthWorkingDaysInfo();
 
-        return view('currency.freelance-rate-calculator', $workingDaysInfo);
+        return Inertia::render('Currency/FreelanceRateCalculator', $workingDaysInfo);
     }
 
     /**
      * Show the currency freshness overview page.
      */
-    public function index(): View
+    public function index(): Response
     {
         $defaultCurrency = config('currency.default', 'MKD');
         $supportedCurrencies = array_keys(config('currency.supported', [
@@ -53,7 +54,7 @@ class CurrencyController extends Controller
             }
         }
 
-        return view('currency.index', compact('currencyRates', 'defaultCurrency'));
+        return Inertia::render('Currency/Index', compact('currencyRates', 'defaultCurrency'));
     }
 
     /**

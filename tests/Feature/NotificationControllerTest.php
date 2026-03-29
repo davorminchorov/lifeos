@@ -40,8 +40,11 @@ class NotificationControllerTest extends TestCase
     {
         $this->get(route('notifications.index'))
             ->assertStatus(200)
-            ->assertViewIs('notifications.index')
-            ->assertViewHas(['notifications', 'unreadCount']);
+            ->assertInertia(fn ($page) => $page
+                ->component('Notifications/Index')
+                ->has('notifications')
+                ->has('unreadCount')
+            );
     }
 
     public function test_can_get_notifications_data_via_ajax()
@@ -87,11 +90,7 @@ class NotificationControllerTest extends TestCase
         $notification = $this->user->unreadNotifications->first();
 
         $this->postJson(route('notifications.mark-as-read', $notification->id))
-            ->assertStatus(200)
-            ->assertJson([
-                'success' => true,
-                'unread_count' => 0,
-            ]);
+            ->assertRedirect();
 
         $this->assertNotNull($notification->fresh()->read_at);
     }
@@ -110,12 +109,9 @@ class NotificationControllerTest extends TestCase
         $this->assertEquals(2, $this->user->unreadNotifications->count());
 
         $this->postJson(route('notifications.mark-all-as-read'))
-            ->assertStatus(200)
-            ->assertJson([
-                'success' => true,
-                'unread_count' => 0,
-            ]);
+            ->assertRedirect();
 
+        $this->user->refresh();
         $this->assertEquals(0, $this->user->unreadNotifications->count());
     }
 
@@ -133,9 +129,9 @@ class NotificationControllerTest extends TestCase
         $notification = $this->user->notifications->first();
 
         $this->deleteJson(route('notifications.destroy', $notification->id))
-            ->assertStatus(200)
-            ->assertJson(['success' => true]);
+            ->assertRedirect();
 
+        $this->user->refresh();
         $this->assertEquals(0, $this->user->notifications->count());
     }
 
@@ -143,8 +139,10 @@ class NotificationControllerTest extends TestCase
     {
         $this->get(route('notifications.preferences'))
             ->assertStatus(200)
-            ->assertViewIs('notifications.preferences')
-            ->assertViewHas('preferences');
+            ->assertInertia(fn ($page) => $page
+                ->component('Notifications/Preferences')
+                ->has('preferences')
+            );
     }
 
     public function test_can_update_notification_preferences()
@@ -165,11 +163,7 @@ class NotificationControllerTest extends TestCase
         ];
 
         $this->postJson(route('notifications.preferences.update'), ['preferences' => $preferences])
-            ->assertStatus(200)
-            ->assertJson([
-                'success' => true,
-                'message' => 'Notification preferences updated successfully.',
-            ]);
+            ->assertRedirect();
 
         // Check that preferences were saved
         $subscriptionPref = $this->user->notificationPreferences()

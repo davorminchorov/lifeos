@@ -6,6 +6,7 @@ use App\Http\Requests\StoreProjectInvestmentTransactionRequest;
 use App\Http\Requests\UpdateProjectInvestmentTransactionRequest;
 use App\Models\ProjectInvestment;
 use App\Models\ProjectInvestmentTransaction;
+use Inertia\Inertia;
 
 class ProjectInvestmentTransactionController extends Controller
 {
@@ -41,7 +42,7 @@ class ProjectInvestmentTransactionController extends Controller
             ->orderByDesc('created_at')
             ->paginate(15);
 
-        return view('project-investment-transactions.index', compact('projectInvestment', 'transactions'));
+        return Inertia::render('ProjectInvestments/Transactions/Index', compact('projectInvestment', 'transactions'));
     }
 
     /**
@@ -51,7 +52,7 @@ class ProjectInvestmentTransactionController extends Controller
     {
         $this->authorizeProjectOwnership($projectInvestment);
 
-        return view('project-investment-transactions.create', compact('projectInvestment'));
+        return Inertia::render('ProjectInvestments/Transactions/Create', compact('projectInvestment'));
     }
 
     /**
@@ -80,7 +81,7 @@ class ProjectInvestmentTransactionController extends Controller
 
         $projectInvestment = $projectInvestmentTransaction->projectInvestment;
 
-        return view('project-investment-transactions.edit', [
+        return Inertia::render('ProjectInvestments/Transactions/Edit', [
             'transaction' => $projectInvestmentTransaction,
             'projectInvestment' => $projectInvestment,
         ]);

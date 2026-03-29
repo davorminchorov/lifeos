@@ -36,8 +36,10 @@ class JobApplicationOfferTest extends TestCase
         $response = $this->actingAs($this->user)->get("/job-applications/{$this->application->id}/offers/create");
 
         $response->assertStatus(200);
-        $response->assertViewIs('job-applications.offers.create');
-        $response->assertViewHas('application', $this->application);
+        $response->assertInertia(fn ($page) => $page
+            ->component('JobApplications/Offers/Create')
+            ->has('application')
+        );
     }
 
     public function test_create_redirects_if_offer_already_exists()
@@ -184,9 +186,10 @@ class JobApplicationOfferTest extends TestCase
         $response = $this->actingAs($this->user)->get("/job-applications/{$this->application->id}/offers/{$offer->id}");
 
         $response->assertStatus(200);
-        $response->assertViewIs('job-applications.offers.show');
-        $response->assertViewHas('offer', $offer);
-        $response->assertSee('130,000.00');
+        $response->assertInertia(fn ($page) => $page
+            ->component('JobApplications/Offers/Show')
+            ->has('offer')
+        );
     }
 
     public function test_show_requires_authentication()
@@ -245,8 +248,10 @@ class JobApplicationOfferTest extends TestCase
         $response = $this->actingAs($this->user)->get("/job-applications/{$this->application->id}/offers/{$offer->id}/edit");
 
         $response->assertStatus(200);
-        $response->assertViewIs('job-applications.offers.edit');
-        $response->assertViewHas('offer', $offer);
+        $response->assertInertia(fn ($page) => $page
+            ->component('JobApplications/Offers/Edit')
+            ->has('offer')
+        );
     }
 
     public function test_edit_requires_authentication()

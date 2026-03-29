@@ -1,46 +1,44 @@
 @extends('emails.layouts.base')
 
+@section('preheader')
+    @if($isNoticeAlert)
+        @if($daysUntilExpiration === 0)
+            Contract notice period deadline for {{ $contract->title }} is today
+        @else
+            Contract notice period for {{ $contract->title }} ends in {{ $daysUntilExpiration }} {{ Str::plural('day', $daysUntilExpiration) }}
+        @endif
+    @else
+        @if($daysUntilExpiration === 0)
+            Your {{ $contract->title }} contract expires today
+        @else
+            Your {{ $contract->title }} contract expires in {{ $daysUntilExpiration }} {{ Str::plural('day', $daysUntilExpiration) }}
+        @endif
+    @endif
+@endsection
+
 @section('content')
-    <div class="greeting">Hello {{ $user->name }}!</div>
+    <p style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 15px; font-weight: 600; color: #1B1B18; margin: 0 0 16px;" class="heading">Hello {{ $user->name }},</p>
 
-    <div class="content-text">
+    <p style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 15px; line-height: 24px; color: #1B1B18; margin: 0 0 20px;" class="body-text">
         @if($isNoticeAlert)
             @if($daysUntilExpiration === 0)
-                Your contract notice period deadline is <strong>today</strong>! This is your last chance to provide termination notice if you don't wish to continue.
+                The notice period deadline for <strong>{{ $contract->title }}</strong> is today. This is your last opportunity to provide termination notice.
             @else
-                Your contract notice period ends in <strong>{{ $daysUntilExpiration }} {{ Str::plural('day', $daysUntilExpiration) }}</strong>. Here are the details:
+                The notice period for <strong>{{ $contract->title }}</strong> ends in {{ $daysUntilExpiration }} {{ Str::plural('day', $daysUntilExpiration) }}.
             @endif
         @else
             @if($daysUntilExpiration === 0)
-                Your contract is expiring <strong>today</strong>! Please review your renewal options or termination requirements.
+                Your contract <strong>{{ $contract->title }}</strong> expires today.
             @else
-                Your contract is set to expire in <strong>{{ $daysUntilExpiration }} {{ Str::plural('day', $daysUntilExpiration) }}</strong>. Here are the details:
+                Your contract <strong>{{ $contract->title }}</strong> expires in {{ $daysUntilExpiration }} {{ Str::plural('day', $daysUntilExpiration) }}.
             @endif
         @endif
-    </div>
-
-    <div class="highlight">
-        <strong>{{ $contract->title }}</strong>
-        @if($isNoticeAlert)
-            notice period
-            @if($daysUntilExpiration === 0)
-                deadline is today
-            @else
-                ends {{ $contract->notice_deadline->format('F j, Y') }}
-            @endif
-        @else
-            @if($daysUntilExpiration === 0)
-                expires today
-            @else
-                expires {{ $contract->end_date->format('F j, Y') }}
-            @endif
-        @endif
-    </div>
+    </p>
 
     @php
         $details = [
             'Contract' => $contract->title,
-            'Contract Type' => $contract->contract_type,
+            'Type' => $contract->contract_type,
         ];
 
         if ($contract->counterparty) {
@@ -54,7 +52,7 @@
             $currencyService = app(\App\Services\CurrencyService::class);
             $contractCurrency = $contract->currency ?? config('currency.default', 'MKD');
             $valueInDefault = $currencyService->convertToDefault($contract->contract_value, $contractCurrency);
-            $details['Contract Value'] = $currencyService->format($valueInDefault);
+            $details['Value'] = $currencyService->format($valueInDefault);
         }
 
         if ($isNoticeAlert && $contract->notice_period_days) {
@@ -63,54 +61,29 @@
         }
 
         if (!$isNoticeAlert) {
-            $details['Auto Renewal'] = $contract->auto_renewal ? 'Enabled' : 'Manual renewal required';
+            $details['Auto Renewal'] = $contract->auto_renewal ? 'Enabled' : 'Manual';
         }
     @endphp
 
     <x-emails.components.detail-list :items="$details" />
 
-    @if($isNoticeAlert)
-        @if($daysUntilExpiration === 0)
-            <div class="content-text">
-                <strong>Act Now:</strong> Today is the deadline to provide termination notice. If you want to end this contract, you must notify the counterparty immediately according to the contract terms.
-            </div>
+    <p style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 13px; line-height: 20px; color: #706F6C; margin: 0 0 4px;" class="subtext">
+        @if($isNoticeAlert)
+            @if($daysUntilExpiration === 0)
+                Act today if you wish to terminate this contract.
+            @else
+                Provide notice before the deadline if you wish to terminate.
+            @endif
         @else
-            <div class="content-text">
-                <strong>Important:</strong> If you want to terminate this contract, you must provide notice before the deadline. Review the contract terms for specific notice requirements and procedures.
-            </div>
+            @if($contract->auto_renewal)
+                This contract has auto-renewal enabled.
+            @else
+                This contract requires manual renewal.
+            @endif
         @endif
-    @else
-        @if($contract->auto_renewal)
-            <div class="content-text">
-                This contract has auto-renewal enabled and will continue automatically unless terminated. Review the terms and consider if you want to make any changes or provide termination notice.
-            </div>
-        @else
-            <div class="content-text">
-                <strong>Action Required:</strong> This contract requires manual renewal. If you wish to continue, contact the counterparty to discuss renewal terms and execute a new agreement.
-            </div>
-        @endif
-
-        <div class="content-text">
-            Consider the following actions:
-        </div>
-        <div class="content-text">
-            • Review contract performance and satisfaction<br>
-            • Negotiate improved terms if renewing<br>
-            • Compare with alternative providers<br>
-            • Plan for transition if not renewing
-        </div>
-    @endif
+    </p>
 
     <x-emails.components.button :url="url('/contracts/' . $contract->id)">
-        View Contract Details
+        View Contract
     </x-emails.components.button>
-
-    <div class="content-text">
-        Keep all your contract information organized and track important dates with LifeOS. Set up reminders for renewals and termination deadlines to stay on top of your agreements.
-    </div>
-
-    <div class="content-text">
-        <strong>Best regards,</strong><br>
-        The LifeOS Team
-    </div>
 @endsection

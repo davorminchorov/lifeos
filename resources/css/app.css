@@ -5,6 +5,8 @@
 @source '../../storage/framework/views/*.php';
 @source '../**/*.blade.php';
 @source '../**/*.js';
+@source '../**/*.ts';
+@source '../**/*.tsx';
 
 @theme {
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
@@ -12,22 +14,22 @@
 
     /* LifeOS Design System Colors */
 
-    /* Primary Cream/Warm Neutrals */
-    --color-primary-50: #FDFDFC;
-    --color-primary-100: #F8F7F4;
-    --color-primary-200: #EEEEEC;
-    --color-primary-300: #E3E3E0;
-    --color-primary-400: #DBDBD7;
-    --color-primary-500: #A1A09A;
-    --color-primary-600: #706F6C;
-    --color-primary-700: #1B1B18;
+    /* Warm Neutrals (LifeOS palette) */
+    --color-neutral-50: #FDFDFC;
+    --color-neutral-100: #F8F7F4;
+    --color-neutral-200: #EEEEEC;
+    --color-neutral-300: #E3E3E0;
+    --color-neutral-400: #DBDBD7;
+    --color-neutral-500: #A1A09A;
+    --color-neutral-600: #706F6C;
+    --color-neutral-700: #1B1B18;
 
-    /* Laravel Red Accent */
-    --color-accent-50: #FFF2F2;
-    --color-accent-100: #FFE5E5;
-    --color-accent-500: #F53003;
-    --color-accent-600: #E02B02;
-    --color-accent-700: #CC2602;
+    /* Brand Red (Laravel accent) */
+    --color-brand-50: #FFF2F2;
+    --color-brand-100: #FFE5E5;
+    --color-brand-500: #F53003;
+    --color-brand-600: #E02B02;
+    --color-brand-700: #CC2602;
 
     /* Dark Mode Variants */
     --color-dark-50: #0A0A0A;
@@ -63,4 +65,170 @@
     --color-info-700: #1D4ED8;
     --color-info-800: #1E40AF;
     --color-info-900: #1E3A8A;
+
+    --radius: 0.5rem;
+
+    /* shadcn/ui semantic colors - enables bg-background, text-foreground, etc. */
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+    --color-popover: var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-destructive: var(--destructive);
+    --color-destructive-foreground: var(--destructive-foreground);
+    --color-border: var(--border);
+    --color-input: var(--input);
+    --color-ring: var(--ring);
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-sidebar-background: var(--sidebar-background);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar-primary: var(--sidebar-primary);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-accent: var(--sidebar-accent);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-ring: var(--sidebar-ring);
+    --color-chart-1: var(--chart-1);
+    --color-chart-2: var(--chart-2);
+    --color-chart-3: var(--chart-3);
+    --color-chart-4: var(--chart-4);
+    --color-chart-5: var(--chart-5);
+}
+
+/* shadcn/ui CSS Variables - Light Mode */
+:root {
+    --background: #FDFDFC;
+    --foreground: #1B1B18;
+    --card: #FFFFFF;
+    --card-foreground: #1B1B18;
+    --popover: #FFFFFF;
+    --popover-foreground: #1B1B18;
+    --primary: #1B1B18;
+    --primary-foreground: #FDFDFC;
+    --secondary: #F8F7F4;
+    --secondary-foreground: #1B1B18;
+    --muted: #F8F7F4;
+    --muted-foreground: #706F6C;
+    --accent: #F8F7F4;
+    --accent-foreground: #1B1B18;
+    --destructive: #EF4444;
+    --destructive-foreground: #FDFDFC;
+    --border: #EEEEEC;
+    --input: #EEEEEC;
+    --ring: #1B1B18;
+    --chart-1: #F53003;
+    --chart-2: #3B82F6;
+    --chart-3: #22C55E;
+    --chart-4: #F59E0B;
+    --chart-5: #8B5CF6;
+    --sidebar-background: #FDFDFC;
+    --sidebar-foreground: #1B1B18;
+    --sidebar-primary: #1B1B18;
+    --sidebar-primary-foreground: #FDFDFC;
+    --sidebar-accent: #F8F7F4;
+    --sidebar-accent-foreground: #1B1B18;
+    --sidebar-border: #EEEEEC;
+    --sidebar-ring: #1B1B18;
+}
+
+/* shadcn/ui CSS Variables - Dark Mode */
+.dark {
+    --background: #0A0A0A;
+    --foreground: #EDEDEC;
+    --card: #161615;
+    --card-foreground: #EDEDEC;
+    --popover: #161615;
+    --popover-foreground: #EDEDEC;
+    --primary: #EDEDEC;
+    --primary-foreground: #0A0A0A;
+    --secondary: #1D1D1C;
+    --secondary-foreground: #EDEDEC;
+    --muted: #1D1D1C;
+    --muted-foreground: #A1A09A;
+    --accent: #1D1D1C;
+    --accent-foreground: #EDEDEC;
+    --destructive: #DC2626;
+    --destructive-foreground: #EDEDEC;
+    --border: #3E3E3A;
+    --input: #3E3E3A;
+    --ring: #EDEDEC;
+    --chart-1: #F53003;
+    --chart-2: #60A5FA;
+    --chart-3: #4ADE80;
+    --chart-4: #FBBF24;
+    --chart-5: #A78BFA;
+    --sidebar-background: #0A0A0A;
+    --sidebar-foreground: #EDEDEC;
+    --sidebar-primary: #EDEDEC;
+    --sidebar-primary-foreground: #0A0A0A;
+    --sidebar-accent: #1D1D1C;
+    --sidebar-accent-foreground: #EDEDEC;
+    --sidebar-border: #3E3E3A;
+    --sidebar-ring: #EDEDEC;
+}
+
+/* Entrance animation for cards and content */
+@keyframes fade-in-up {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in-up {
+    animation: fade-in-up 0.4s ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .animate-fade-in-up {
+        animation: none;
+    }
+}
+
+/* Shimmer effect for skeleton loading */
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+.shimmer {
+    background-image: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.4) 50%,
+        transparent 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s ease-in-out infinite;
+}
+
+.dark .shimmer {
+    background-image: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.05) 50%,
+        transparent 100%
+    );
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .shimmer {
+        animation: none;
+    }
 }

@@ -2,7 +2,19 @@
 
 ![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/davorminchorov/lifeos?utm_source=oss&utm_medium=github&utm_campaign=davorminchorov%2Flifeos&labelColor=171717&color=FF570A&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+Reviews)
 
-LifeOS is a Laravel-based application designed to help you organize and manage your life effectively.
+LifeOS is a personal life management platform built with Laravel 13, React 19, Inertia v3, and TypeScript.
+
+## Tech Stack
+
+- **Backend:** Laravel 13, PHP 8.5
+- **Frontend:** React 19, TypeScript 6, Inertia v3
+- **UI:** shadcn/ui (Radix primitives), Tailwind CSS v4
+- **Charts:** Recharts
+- **Build:** Vite 8
+- **Data Tables:** TanStack Table
+- **Drag & Drop:** dnd-kit (kanban, menu reordering)
+- **Dark Mode:** next-themes
+- **Email:** MJML-styled Blade templates
 
 ## Features
 
@@ -134,10 +146,10 @@ Notifications:
 
 Notes:
 - Policies are permissive for MVP (any authenticated user). Ownership can be added later via `user_id` columns and stricter policies.
-- Views use Tailwind v4 and support dark mode.
-  - Collapsible mobile navigation with hamburger menu
-  - Mobile-first form optimization
-  - Progressive enhancement approach
+- Frontend uses React 19 + Inertia v3 + TypeScript with shadcn/ui components
+  - Collapsible sidebar navigation with mobile sheet
+  - Responsive data tables with mobile card views
+  - Dark mode with next-themes
 - **Currency Management**: 
   - Multi-currency support across all financial modules
   - Automatic currency conversion with live exchange rates

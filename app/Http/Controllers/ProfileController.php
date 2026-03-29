@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
+use Inertia\Inertia;
 
 class ProfileController extends Controller
 {
@@ -16,7 +17,9 @@ class ProfileController extends Controller
     {
         $user = Auth::user();
 
-        return view('profile.show', compact('user'));
+        return Inertia::render('Profile/Show', [
+            'user' => $user,
+        ]);
     }
 
     /**
@@ -24,9 +27,9 @@ class ProfileController extends Controller
      */
     public function edit()
     {
-        $user = Auth::user();
-
-        return view('profile.edit', compact('user'));
+        return Inertia::render('Profile/Edit', [
+            'user' => Auth::user(),
+        ]);
     }
 
     /**
