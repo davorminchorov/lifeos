@@ -38,6 +38,7 @@
         "@radix-ui/react-switch": "^1.2.6",
         "@radix-ui/react-tabs": "^1.1.13",
         "@radix-ui/react-tooltip": "^1.2.8",
+        "@tailwindcss/typography": "^0.5.19",
         "@tanstack/react-table": "^8.21.3",
         "@vitejs/plugin-react": "^6.0.1",
         "class-variance-authority": "^0.7.1",

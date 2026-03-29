@@ -143,7 +143,7 @@ export function ChatPanel() {
         <Sheet open={open} onOpenChange={setOpen}>
             <SheetContent
                 side="right"
-                className="w-[400px] sm:w-[540px] flex flex-col"
+                className="w-full sm:w-[640px] lg:w-[720px] sm:max-w-[720px] flex flex-col"
             >
                 <SheetHeader>
                     <SheetTitle>LifeOS Assistant</SheetTitle>
@@ -167,14 +167,14 @@ export function ChatPanel() {
                             className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                         >
                             <div
-                                className={`max-w-[80%] rounded-lg px-3 py-2 text-sm ${
+                                className={`rounded-lg px-4 py-3 text-sm ${
                                     msg.role === 'user'
-                                        ? 'bg-secondary text-secondary-foreground'
-                                        : 'bg-card text-card-foreground border'
+                                        ? 'max-w-[80%] bg-secondary text-secondary-foreground'
+                                        : 'max-w-[90%] bg-card text-card-foreground border'
                                 }`}
                             >
                                 {msg.role === 'assistant' ? (
-                                    <Markdown className="prose prose-sm dark:prose-invert max-w-none [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
+                                    <Markdown className="prose prose-sm dark:prose-invert max-w-none [&>*:first-child]:mt-0 [&>*:last-child]:mb-0 [&_h3]:text-base [&_h3]:font-semibold [&_h3]:mt-4 [&_h3]:mb-2 [&_ul]:my-1 [&_li]:my-0.5 [&_hr]:my-3 [&_p]:my-1.5">
                                         {msg.content}
                                     </Markdown>
                                 ) : (
