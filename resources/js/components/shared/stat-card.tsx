@@ -25,7 +25,7 @@ export function StatCard({ label, value, icon: Icon, description, trend, classNa
                 <div className="mt-2">
                     <p className="text-2xl font-semibold tracking-tight">{value}</p>
                     {description && (
-                        <p className="mt-1 text-xs text-muted-foreground">{description}</p>
+                        <p className="mt-1 text-[13px] text-muted-foreground">{description}</p>
                     )}
                     {trend && (
                         <p className={cn(
