@@ -32,13 +32,13 @@ class CreateExpense extends TenantScopedTool
     {
         $date = $request['date'] ?? date('Y-m-d');
         $currency = $request['currency'] ?? 'MKD';
-        $merchant = $request['merchant'];
+        $merchant = $request['merchant'] ?? null;
         $description = $request['description'] ?? $merchant;
 
         $data = [
-            'amount' => $request['amount'],
+            'amount' => $request['amount'] ?? null,
             'currency' => $currency,
-            'category' => $request['category'],
+            'category' => $request['category'] ?? null,
             'expense_date' => $date,
             'description' => $description,
             'merchant' => $merchant,

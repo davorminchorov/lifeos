@@ -31,11 +31,11 @@ class LogPayment extends TenantScopedTool
 
     public function handle(Request $request): string
     {
-        $subscriptionName = $request['subscription_name'];
-        $utilityType = $request['utility_type'];
-        $amount = $request['amount'];
+        $subscriptionName = $request['subscription_name'] ?? null;
+        $utilityType = $request['utility_type'] ?? null;
+        $amount = $request['amount'] ?? null;
         $date = $request['date'] ?? date('Y-m-d');
-        $notes = $request['notes'];
+        $notes = $request['notes'] ?? null;
 
         $validated = $this->validate(
             ['amount' => $amount, 'date' => $date],

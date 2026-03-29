@@ -29,7 +29,7 @@ class GetUpcoming extends TenantScopedTool
 
     public function handle(Request $request): string
     {
-        $days = (int) $request['days'] ?? 7;
+        $days = (int) ($request['days'] ?? 7);
         $now = CarbonImmutable::now();
         $cutoff = $now->addDays($days);
 

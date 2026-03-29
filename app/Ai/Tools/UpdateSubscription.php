@@ -27,7 +27,7 @@ class UpdateSubscription extends TenantScopedTool
 
     public function handle(Request $request): string
     {
-        $name = $request['name'];
+        $name = $request['name'] ?? null;
 
         $subscription = $this->scopedQuery(Subscription::class)
             ->where('service_name', 'LIKE', '%'.$name.'%')
@@ -44,7 +44,7 @@ class UpdateSubscription extends TenantScopedTool
         $updates = [];
         $changes = [];
 
-        $newCost = $request['new_cost'];
+        $newCost = $request['new_cost'] ?? null;
         if ($newCost !== null) {
             $validated = $this->validate(
                 ['new_cost' => $newCost],
@@ -59,7 +59,7 @@ class UpdateSubscription extends TenantScopedTool
             $changes[] = "cost to {$newCost}";
         }
 
-        $newStatus = $request['new_status'];
+        $newStatus = $request['new_status'] ?? null;
         if ($newStatus !== null) {
             $validated = $this->validate(
                 ['new_status' => $newStatus],
@@ -74,7 +74,7 @@ class UpdateSubscription extends TenantScopedTool
             $changes[] = "status to {$newStatus}";
         }
 
-        $notes = $request['notes'];
+        $notes = $request['notes'] ?? null;
         if ($notes !== null) {
             $updates['notes'] = $notes;
             $changes[] = 'notes';

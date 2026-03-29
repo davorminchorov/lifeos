@@ -31,8 +31,8 @@ class CreateJobApplication extends TenantScopedTool
 
     public function handle(Request $request): string
     {
-        $companyName = $request['company_name'];
-        $jobTitle = $request['job_title'];
+        $companyName = $request['company_name'] ?? null;
+        $jobTitle = $request['job_title'] ?? null;
 
         $validated = $this->validate(
             ['company_name' => $companyName, 'job_title' => $jobTitle],
@@ -54,14 +54,14 @@ class CreateJobApplication extends TenantScopedTool
             'tenant_id' => $this->tenantId,
             'company_name' => $companyName,
             'job_title' => $jobTitle,
-            'job_url' => $request['job_url'],
-            'location' => $request['location'],
+            'job_url' => $request['job_url'] ?? null,
+            'location' => $request['location'] ?? null,
             'remote' => $request['remote'] ?? false,
             'status' => $status,
             'source' => $source,
             'applied_at' => date('Y-m-d'),
             'currency' => 'MKD',
-            'notes' => $request['notes'],
+            'notes' => $request['notes'] ?? null,
         ];
 
         JobApplication::create($data);

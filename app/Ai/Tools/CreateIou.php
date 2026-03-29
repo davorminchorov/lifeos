@@ -28,10 +28,10 @@ class CreateIou extends TenantScopedTool
 
     public function handle(Request $request): string
     {
-        $personName = $request['person_name'];
-        $amount = $request['amount'];
+        $personName = $request['person_name'] ?? null;
+        $amount = $request['amount'] ?? null;
         $type = $request['type'] ?? 'owed';
-        $reason = $request['reason'];
+        $reason = $request['reason'] ?? null;
         $currency = $request['currency'] ?? 'MKD';
 
         $validated = $this->validate(
