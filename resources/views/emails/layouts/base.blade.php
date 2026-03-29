@@ -55,6 +55,10 @@
             .footer-muted-dark { color: #62605B !important; }
             .highlight-bg { background-color: #232320 !important; }
             .separator-dark { border-color: #3E3E3A !important; }
+            /* Buttons: invert in dark mode */
+            .btn-primary { background-color: #EDEDEC !important; color: #1B1B18 !important; }
+            .btn-secondary { background-color: #3E3E3A !important; color: #EDEDEC !important; border-color: #3E3E3A !important; }
+            .btn-urgent { background-color: #F53003 !important; color: #ffffff !important; }
         }
     </style>
 </head>
