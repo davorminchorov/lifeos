@@ -183,21 +183,55 @@ export function ChatPanel() {
         <Sheet open={open} onOpenChange={setOpen}>
             <SheetContent
                 side="right"
-                className="w-full sm:w-[640px] lg:w-[720px] sm:max-w-[720px] flex flex-col"
+                className="w-full sm:w-[640px] lg:w-[720px] sm:max-w-[720px] flex flex-col gap-0 p-0"
             >
-                <SheetHeader>
-                    <SheetTitle>LifeOS Assistant</SheetTitle>
-                </SheetHeader>
+                {/* Header */}
+                <div className="flex items-center justify-between border-b px-6 py-4">
+                    <div>
+                        <SheetHeader className="p-0">
+                            <SheetTitle className="text-lg font-semibold tracking-tight">
+                                LifeOS Assistant
+                            </SheetTitle>
+                        </SheetHeader>
+                        <p className="text-xs text-muted-foreground mt-0.5">
+                            Ask anything or log an entry
+                        </p>
+                    </div>
+                </div>
 
                 {/* Messages area */}
-                <div className="flex-1 overflow-y-auto space-y-3 py-4">
+                <div className="flex-1 overflow-y-auto px-6 py-5 space-y-4">
                     {messages.length === 0 && !loading ? (
-                        <div className="flex h-full items-center justify-center px-4">
-                            <p className="text-center text-sm text-muted-foreground">
-                                Hi! I can help you log expenses, track
-                                applications, and more. Try: &ldquo;paid $50 at
-                                Costco for groceries&rdquo;
-                            </p>
+                        <div className="flex h-full flex-col items-center justify-center gap-4 px-4 text-center">
+                            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted">
+                                <Send className="h-5 w-5 text-muted-foreground" />
+                            </div>
+                            <div className="space-y-2 max-w-sm">
+                                <p className="text-sm font-medium">How can I help?</p>
+                                <p className="text-xs text-muted-foreground leading-relaxed">
+                                    I can log expenses, track job applications, manage subscriptions, and more. Just type naturally.
+                                </p>
+                            </div>
+                            <div className="flex flex-wrap gap-2 justify-center max-w-md">
+                                {[
+                                    'Paid $50 at Costco for groceries',
+                                    "What's due this week?",
+                                    'Daily briefing',
+                                    'How much did I spend this month?',
+                                ].map((suggestion) => (
+                                    <button
+                                        key={suggestion}
+                                        type="button"
+                                        onClick={() => {
+                                            setInput(suggestion)
+                                            inputRef.current?.focus()
+                                        }}
+                                        className="rounded-full border px-3 py-1.5 text-xs text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+                                    >
+                                        {suggestion}
+                                    </button>
+                                ))}
+                            </div>
                         </div>
                     ) : null}
 
@@ -206,33 +240,29 @@ export function ChatPanel() {
                             key={i}
                             className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                         >
-                            <div
-                                className={`rounded-lg px-4 py-3 text-sm ${
-                                    msg.role === 'user'
-                                        ? 'max-w-[80%] bg-secondary text-secondary-foreground'
-                                        : 'max-w-[90%] bg-card text-card-foreground border'
-                                }`}
-                            >
-                                {msg.role === 'assistant' ? (
+                            {msg.role === 'assistant' ? (
+                                <div className="max-w-[92%] rounded-2xl rounded-tl-sm bg-muted/50 px-4 py-3 text-sm">
                                     <Markdown
                                         remarkPlugins={[remarkGfm]}
                                         className="assistant-markdown"
                                     >
                                         {msg.content}
                                     </Markdown>
-                                ) : (
-                                    msg.content
-                                )}
-                            </div>
+                                </div>
+                            ) : (
+                                <div className="max-w-[80%] rounded-2xl rounded-tr-sm bg-[#F53003] px-4 py-2.5 text-sm text-white">
+                                    {msg.content}
+                                </div>
+                            )}
                         </div>
                     ))}
 
                     {loading ? (
                         <div className="flex justify-start">
-                            <div className="flex items-center gap-1 rounded-lg border bg-card px-3 py-2">
-                                <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-muted-foreground [animation-delay:-0.3s]" />
-                                <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-muted-foreground [animation-delay:-0.15s]" />
-                                <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-muted-foreground" />
+                            <div className="flex items-center gap-1.5 rounded-2xl rounded-tl-sm bg-muted/50 px-4 py-3">
+                                <span className="h-2 w-2 animate-bounce rounded-full bg-muted-foreground/60 [animation-delay:-0.3s]" />
+                                <span className="h-2 w-2 animate-bounce rounded-full bg-muted-foreground/60 [animation-delay:-0.15s]" />
+                                <span className="h-2 w-2 animate-bounce rounded-full bg-muted-foreground/60" />
                             </div>
                         </div>
                     ) : null}
@@ -241,28 +271,30 @@ export function ChatPanel() {
                 </div>
 
                 {/* Input area */}
-                <form
-                    onSubmit={sendMessage}
-                    className="flex items-center gap-2 border-t pt-3"
-                >
-                    <Input
-                        ref={inputRef}
-                        value={input}
-                        onChange={(e) => setInput(e.target.value)}
-                        placeholder="Type a message..."
-                        disabled={loading}
-                        className="flex-1"
-                    />
-                    <Button
-                        type="submit"
-                        size="icon"
-                        disabled={loading || !input.trim()}
-                        className="shrink-0 bg-[#F53003] hover:bg-[#F53003]/90 text-white"
+                <div className="border-t bg-background px-6 py-4">
+                    <form
+                        onSubmit={sendMessage}
+                        className="flex items-center gap-3"
                     >
-                        <Send className="h-4 w-4" />
-                        <span className="sr-only">Send</span>
-                    </Button>
-                </form>
+                        <Input
+                            ref={inputRef}
+                            value={input}
+                            onChange={(e) => setInput(e.target.value)}
+                            placeholder="Type a message..."
+                            disabled={loading}
+                            className="flex-1 rounded-full border-muted-foreground/20 bg-muted/30 px-4 py-2.5 text-sm placeholder:text-muted-foreground/50 focus-visible:ring-1 focus-visible:ring-[#F53003]/30"
+                        />
+                        <Button
+                            type="submit"
+                            size="icon"
+                            disabled={loading || !input.trim()}
+                            className="shrink-0 rounded-full h-10 w-10 bg-[#F53003] hover:bg-[#F53003]/90 text-white shadow-sm disabled:opacity-30"
+                        >
+                            <Send className="h-4 w-4" />
+                            <span className="sr-only">Send</span>
+                        </Button>
+                    </form>
+                </div>
             </SheetContent>
         </Sheet>
     )

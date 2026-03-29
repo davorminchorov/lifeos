@@ -236,60 +236,91 @@
 
 /* AI Assistant markdown rendering */
 .assistant-markdown {
-    @apply prose prose-sm dark:prose-invert max-w-none text-inherit leading-relaxed;
+    @apply prose prose-sm dark:prose-invert max-w-none text-inherit;
+    font-size: 0.8125rem; /* 13px — slightly smaller for chat density */
+    line-height: 1.65;
 
     & > *:first-child { margin-top: 0; }
     & > *:last-child { margin-bottom: 0; }
 
-    /* Headings */
-    h2 { @apply text-base font-bold mt-5 mb-2 tracking-tight; }
-    h3 { @apply text-sm font-bold mt-4 mb-1.5 tracking-tight; }
-    h4 { @apply text-sm font-semibold mt-3 mb-1; }
+    /* Headings — emoji + text pattern from LLM */
+    h2 {
+        @apply text-[0.9375rem] font-semibold mt-5 mb-1.5 tracking-tight;
+        &:not(:first-child) { @apply pt-1; }
+    }
+    h3 {
+        @apply text-[0.875rem] font-semibold mt-4 mb-1;
+        &:not(:first-child) { @apply pt-0.5; }
+    }
+    h4 { @apply text-[0.8125rem] font-semibold mt-3 mb-1; }
 
     /* Body text */
-    p { @apply my-2 leading-relaxed; }
+    p { @apply my-1.5; }
     strong { @apply font-semibold text-foreground; }
-    em { @apply text-muted-foreground; }
+    em { @apply text-muted-foreground not-italic; }
 
     /* Lists */
-    ul { @apply my-2 pl-5 list-disc space-y-1; }
-    ol { @apply my-2 pl-5 list-decimal space-y-1; }
-    li { @apply leading-relaxed; }
+    ul { @apply my-2 pl-4 list-disc space-y-0.5; }
+    ol { @apply my-2 pl-4 list-decimal space-y-0.5; }
+    li {
+        @apply leading-relaxed;
+        &::marker { @apply text-muted-foreground/50; }
+    }
     li > p { @apply my-0; }
 
-    /* Separators */
-    hr { @apply my-4 border-border/60; }
+    /* Separators — subtle dividers between sections */
+    hr {
+        @apply my-3 border-0;
+        height: 1px;
+        background: linear-gradient(
+            to right,
+            transparent,
+            var(--color-border) 15%,
+            var(--color-border) 85%,
+            transparent
+        );
+        opacity: 0.5;
+    }
 
     /* Code */
-    code { @apply text-xs bg-muted px-1.5 py-0.5 rounded font-mono; }
-    pre { @apply my-3 p-3 bg-muted rounded-lg overflow-x-auto; }
+    code {
+        @apply text-xs px-1.5 py-0.5 rounded font-mono;
+        background: color-mix(in srgb, currentColor 8%, transparent);
+    }
+    pre {
+        @apply my-3 p-3 rounded-lg overflow-x-auto text-xs;
+        background: color-mix(in srgb, currentColor 5%, transparent);
+    }
     pre code { @apply bg-transparent px-0 py-0; }
 
-    /* Blockquotes (used for example prompts) */
+    /* Blockquotes */
     blockquote {
-        @apply my-3 pl-3 border-l-2 border-border/60 text-muted-foreground italic;
+        @apply my-3 pl-3 border-l-2 border-[#F53003]/30 text-muted-foreground;
     }
 
     /* Links */
-    a { @apply text-[#F53003] underline underline-offset-2 hover:text-[#F53003]/80; }
+    a {
+        @apply text-[#F53003] no-underline font-medium;
+        &:hover { @apply underline underline-offset-2; }
+    }
 
     /* Tables */
     table {
-        @apply w-full text-xs my-3 border-collapse rounded-lg overflow-hidden;
+        @apply w-full text-xs my-3;
+        border-spacing: 0;
     }
-    thead {
-        @apply bg-muted/60;
+    thead th {
+        @apply px-3 py-2 text-left font-medium text-muted-foreground text-[0.6875rem] uppercase tracking-wider;
+        border-bottom: 2px solid var(--color-border);
     }
-    th {
-        @apply px-3 py-2 text-left font-semibold border-b border-border text-muted-foreground text-xs uppercase tracking-wide;
+    tbody td {
+        @apply px-3 py-2;
+        border-bottom: 1px solid color-mix(in srgb, var(--color-border) 50%, transparent);
     }
-    td {
-        @apply px-3 py-2 border-b border-border/50;
-    }
-    tr:last-child td {
+    tbody tr:last-child td {
         border-bottom: none;
     }
-    tbody tr:hover {
-        @apply bg-muted/20 transition-colors;
+    tbody tr:hover td {
+        background: color-mix(in srgb, currentColor 3%, transparent);
     }
 }
