@@ -10,11 +10,12 @@ use App\Services\AssistantContextService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Laravel\Ai\Responses\StreamedAgentResponse;
 
 class AssistantController extends Controller
 {
     /**
-     * Send a message to the AI assistant.
+     * Send a message to the AI assistant (non-streaming).
      */
     public function message(Request $request): JsonResponse
     {
@@ -44,6 +45,46 @@ class AssistantController extends Controller
             ]);
         } catch (\Exception $e) {
             Log::error('Assistant message failed', [
+                'error' => $e->getMessage(),
+                'user_id' => auth()->id(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => "I'm having trouble right now. Please try again.",
+            ], 500);
+        }
+    }
+
+    /**
+     * Send a message to the AI assistant (streaming via SSE).
+     */
+    public function stream(Request $request): mixed
+    {
+        $validated = $request->validate([
+            'message' => 'required|string|max:5000',
+            'conversation_id' => 'nullable|string',
+        ]);
+
+        try {
+            $user = auth()->user();
+
+            $agent = new LifeOsAssistant($user, new AssistantContextService);
+            $agent->withPage($request->header('X-Current-Page', ''));
+
+            if (! empty($validated['conversation_id'])) {
+                $streamable = $agent->continue($validated['conversation_id'], as: $user)
+                    ->stream($validated['message']);
+            } else {
+                $streamable = $agent->forUser($user)
+                    ->stream($validated['message']);
+            }
+
+            return $streamable->then(function (StreamedAgentResponse $response) {
+                // Conversation ID is available after streaming completes
+            });
+        } catch (\Exception $e) {
+            Log::error('Assistant stream failed', [
                 'error' => $e->getMessage(),
                 'user_id' => auth()->id(),
             ]);

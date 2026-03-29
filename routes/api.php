@@ -10,6 +10,7 @@ Route::get('/currency/exchange-rate', [CurrencyController::class, 'getExchangeRa
 // Assistant routes (require auth + tenant)
 Route::middleware(['web', 'auth', 'tenant'])->prefix('assistant')->name('api.assistant.')->group(function () {
     Route::post('/message', [AssistantController::class, 'message'])->name('message')->middleware('throttle:30,1');
+    Route::post('/stream', [AssistantController::class, 'stream'])->name('stream')->middleware('throttle:30,1');
     Route::get('/suggestions', [AssistantController::class, 'suggestions'])->name('suggestions')->middleware('throttle:60,1');
     Route::get('/history', [AssistantController::class, 'history'])->name('history')->middleware('throttle:60,1');
 });

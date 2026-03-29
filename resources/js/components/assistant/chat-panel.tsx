@@ -74,17 +74,21 @@ export function ChatPanel() {
             setInput('')
             setLoading(true)
 
+            // Add empty assistant message that we'll stream into
+            const assistantIndex = messages.length + 1
+            setMessages((prev) => [...prev, { role: 'assistant', content: '' }])
+
             try {
                 abortRef.current?.abort()
                 abortRef.current = new AbortController()
 
-                const response = await fetch('/api/assistant/message', {
+                const response = await fetch('/api/assistant/stream', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'X-XSRF-TOKEN': getCookie('XSRF-TOKEN'),
                         'X-Current-Page': page.component,
-                        Accept: 'application/json',
+                        Accept: 'text/event-stream',
                     },
                     body: JSON.stringify({
                         message: trimmed,
@@ -95,44 +99,78 @@ export function ChatPanel() {
                 })
 
                 if (!response.ok) {
-                    throw new Error('Request failed')
+                    // Fall back to non-streaming on error
+                    const json = await response.json().catch(() => null)
+                    setMessages((prev) => {
+                        const updated = [...prev]
+                        updated[assistantIndex] = {
+                            role: 'assistant',
+                            content: json?.message || 'Sorry, something went wrong. Please try again.',
+                        }
+                        return updated
+                    })
+                    return
                 }
 
-                const json = await response.json()
+                const reader = response.body?.getReader()
+                const decoder = new TextDecoder()
+                let fullText = ''
 
-                if (json.success && json.data) {
-                    setMessages((prev) => [
-                        ...prev,
-                        { role: 'assistant', content: json.data.message },
-                    ])
-                    setConversationId(json.data.conversation_id)
+                if (reader) {
+                    while (true) {
+                        const { done, value } = await reader.read()
+                        if (done) break
 
-                    const writeIndicators = ['Created', 'Added', 'Updated', 'Cancelled', 'Logged', 'Marked']
-                    if (writeIndicators.some(w => json.data.message.includes(w))) {
-                        router.reload()
+                        const chunk = decoder.decode(value, { stream: true })
+                        // Parse SSE events: lines starting with "data: "
+                        const lines = chunk.split('\n')
+                        for (const line of lines) {
+                            if (line.startsWith('data: ')) {
+                                const data = line.slice(6)
+                                if (data === '[DONE]') continue
+                                try {
+                                    const parsed = JSON.parse(data)
+                                    if (parsed.text) {
+                                        fullText += parsed.text
+                                    } else if (typeof parsed === 'string') {
+                                        fullText += parsed
+                                    }
+                                } catch {
+                                    // Raw text chunk (not JSON)
+                                    fullText += data
+                                }
+                            }
+                        }
+
+                        // Update the assistant message in real-time
+                        setMessages((prev) => {
+                            const updated = [...prev]
+                            updated[assistantIndex] = {
+                                role: 'assistant',
+                                content: fullText,
+                            }
+                            return updated
+                        })
                     }
-                } else {
-                    setMessages((prev) => [
-                        ...prev,
-                        {
-                            role: 'assistant',
-                            content:
-                                'Sorry, something went wrong. Please try again.',
-                        },
-                    ])
+                }
+
+                // After streaming completes, check if we need to reload
+                const writeIndicators = ['Created', 'Added', 'Updated', 'Cancelled', 'Logged', 'Marked']
+                if (writeIndicators.some(w => fullText.includes(w))) {
+                    router.reload()
                 }
             } catch (err) {
                 if (err instanceof DOMException && err.name === 'AbortError') {
                     return
                 }
-                setMessages((prev) => [
-                    ...prev,
-                    {
+                setMessages((prev) => {
+                    const updated = [...prev]
+                    updated[assistantIndex] = {
                         role: 'assistant',
-                        content:
-                            'Could not reach the assistant. Please try again.',
-                    },
-                ])
+                        content: 'Could not reach the assistant. Please try again.',
+                    }
+                    return updated
+                })
             } finally {
                 setLoading(false)
             }
