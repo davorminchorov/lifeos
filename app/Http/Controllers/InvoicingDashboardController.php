@@ -42,7 +42,7 @@ class InvoicingDashboardController extends Controller
                 ->count(),
             'available_credit' => CreditNote::where('user_id', $userId)
                 ->where('status', 'available')
-                ->sum('remaining_amount'),
+                ->sum('amount_remaining'),
         ];
 
         // Revenue by month (last 6 months)
