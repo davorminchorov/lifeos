@@ -399,7 +399,10 @@ class CurrencyService
         $options = [];
 
         foreach ($currencies as $code => $info) {
-            $options[$code] = $code.' ('.$info['symbol'].') - '.$info['name'];
+            $options[] = [
+                'code' => $code,
+                'name' => $info['name'],
+            ];
         }
 
         return $options;

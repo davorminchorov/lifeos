@@ -41,7 +41,7 @@ class DiscountController extends Controller
         $summary = [
             'total_discounts' => Discount::where('user_id', auth()->id())->count(),
             'active_discounts' => Discount::where('user_id', auth()->id())->where('active', true)->count(),
-            'total_redemptions' => Discount::where('user_id', auth()->id())->sum('redemptions_count'),
+            'total_redemptions' => Discount::where('user_id', auth()->id())->sum('current_redemptions'),
         ];
 
         return Inertia::render('Invoicing/Discounts/Index', compact('discounts', 'summary'));
