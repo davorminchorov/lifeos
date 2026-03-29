@@ -3,7 +3,6 @@
 namespace Tests\Unit;
 
 use App\Models\Expense;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -13,6 +12,7 @@ class ExpenseModelTest extends TestCase
     use RefreshDatabase;
 
     protected $user;
+
     protected $tenant;
 
     protected function setUp(): void
@@ -139,10 +139,10 @@ class ExpenseModelTest extends TestCase
 
     public function test_scope_current_month(): void
     {
-        Expense::factory()->create(['user_id' => $this->user->id, 'expense_date' => now(), 'tenant_id' => $this->tenant->id]);
-        Expense::factory()->create(['user_id' => $this->user->id, 'expense_date' => now()->subMonth(), 'tenant_id' => $this->tenant->id]);
+        Expense::factory()->create(['user_id' => $this->user->id, 'expense_date' => now()->startOfMonth(), 'tenant_id' => $this->tenant->id]);
+        Expense::factory()->create(['user_id' => $this->user->id, 'expense_date' => now()->subMonths(2), 'tenant_id' => $this->tenant->id]);
 
-        $expenses = Expense::currentMonth()->get();
+        $expenses = Expense::where('user_id', $this->user->id)->currentMonth()->get();
 
         $this->assertCount(1, $expenses);
     }
