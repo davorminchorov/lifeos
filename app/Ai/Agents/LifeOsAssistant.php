@@ -5,9 +5,18 @@ declare(strict_types=1);
 namespace App\Ai\Agents;
 
 use App\Ai\Tools\AddInterview;
+use App\Ai\Tools\CancelSubscription;
 use App\Ai\Tools\CreateExpense;
+use App\Ai\Tools\CreateIou;
 use App\Ai\Tools\CreateJobApplication;
 use App\Ai\Tools\GenerateBriefing;
+use App\Ai\Tools\GetUpcoming;
+use App\Ai\Tools\LogPayment;
+use App\Ai\Tools\QueryExpenses;
+use App\Ai\Tools\QueryJobApplications;
+use App\Ai\Tools\QuerySubscriptions;
+use App\Ai\Tools\SummarizeSpending;
+use App\Ai\Tools\UpdateSubscription;
 use App\Models\User;
 use App\Services\AssistantContextService;
 use Laravel\Ai\Concerns\RemembersConversations;
@@ -77,6 +86,15 @@ final class LifeOsAssistant implements Agent, Conversational, HasTools
             new CreateJobApplication($userId, $tenantId),
             new AddInterview($userId, $tenantId),
             new GenerateBriefing($userId, $tenantId),
+            new LogPayment($userId, $tenantId),
+            new CreateIou($userId, $tenantId),
+            new UpdateSubscription($userId, $tenantId),
+            new CancelSubscription($userId, $tenantId),
+            new QueryExpenses($userId, $tenantId),
+            new QuerySubscriptions($userId, $tenantId),
+            new SummarizeSpending($userId, $tenantId),
+            new GetUpcoming($userId, $tenantId),
+            new QueryJobApplications($userId, $tenantId),
         ];
     }
 }
