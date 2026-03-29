@@ -26,16 +26,16 @@
             .email-body { background-color: #1B1B18 !important; }
             .body-text, .heading { color: #EDEDEC !important; }
             .subtext { color: #A1A09A !important; }
-            .card-bg { background-color: #252521 !important; }
+            .card-bg { background-color: #232320 !important; }
             .border-color { border-color: #3E3E3A !important; }
             .detail-label-dark { color: #A1A09A !important; }
             .detail-value-dark { color: #EDEDEC !important; }
             .footer-text-dark { color: #706F6C !important; }
             .footer-muted-dark { color: #62605B !important; }
-            .amount-bg { background-color: #252521 !important; }
+            .amount-bg { background-color: #232320 !important; }
             .amount-text-dark { color: #EDEDEC !important; }
             .amount-label-dark { color: #A1A09A !important; }
-            .highlight-bg { background-color: #252521 !important; }
+            .highlight-bg { background-color: #232320 !important; }
         }
     </style>
 </head>
@@ -47,32 +47,32 @@
 
     <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #F5F4F0;" class="email-bg">
         <tr>
-            <td style="padding: 32px 16px;" class="padding-mobile">
-                <div style="max-width: 560px; margin: 0 auto;">
+            <td style="padding: 40px 16px;" class="padding-mobile">
+                <div style="max-width: 540px; margin: 0 auto;">
 
                     <!--[if mso]>
-                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="560" align="center"><tr><td>
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="540" align="center"><tr><td>
                     <![endif]-->
 
                     <!-- Header -->
-                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" class="email-container" style="max-width: 560px; margin: 0 auto;">
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" class="email-container" style="max-width: 540px; margin: 0 auto;">
                         <tr>
-                            <td style="padding: 28px 0; text-align: center;">
-                                <span style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 22px; font-weight: 700; color: #1B1B18; letter-spacing: -0.5px;" class="heading">Life<span style="color: #F53003;">OS</span></span>
+                            <td style="padding: 0 0 32px; text-align: center;">
+                                <span style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 700; color: #1B1B18; letter-spacing: -0.3px;" class="heading">LifeOS</span>
                             </td>
                         </tr>
                     </table>
 
                     <!-- Body card -->
-                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" class="email-container email-body" style="max-width: 560px; margin: 0 auto; background-color: #FDFDFC; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 3px rgba(27,27,24,0.08);">
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" class="email-container email-body" style="max-width: 540px; margin: 0 auto; background-color: #FDFDFC; border-radius: 10px; border: 1px solid #E3E3E0;">
                         <tr>
-                            <td style="padding: 40px 36px;" class="padding-mobile">
+                            <td style="padding: 36px 32px;" class="padding-mobile">
 
-                                <!-- Invoice badge -->
-                                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: 0 0 28px;">
+                                <!-- Status badge -->
+                                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: 0 0 24px;">
                                     <tr>
-                                        <td style="text-align: center;">
-                                            <span style="display: inline-block; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; padding: 6px 14px; border-radius: 20px;
+                                        <td>
+                                            <span style="display: inline-block; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; padding: 4px 10px; border-radius: 4px;
                                                 @if($invoice->status === \App\Enums\InvoiceStatus::PAID) background-color: #ECFDF5; color: #065F46;
                                                 @elseif($invoice->status === \App\Enums\InvoiceStatus::ISSUED || $invoice->status === \App\Enums\InvoiceStatus::PAST_DUE) background-color: #FEF2F2; color: #991B1B;
                                                 @else background-color: #F8F7F4; color: #706F6C;
@@ -81,32 +81,32 @@
                                     </tr>
                                 </table>
 
-                                <p style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 600; color: #1B1B18; margin: 0 0 20px;" class="heading">Hello {{ $invoice->customer->name }},</p>
+                                <p style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 15px; font-weight: 600; color: #1B1B18; margin: 0 0 16px;" class="heading">Hello {{ $invoice->customer->name }},</p>
 
                                 @if($customMessage)
-                                    <p style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 16px; line-height: 26px; color: #1B1B18; margin: 0 0 24px;" class="body-text">
+                                    <p style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 15px; line-height: 24px; color: #1B1B18; margin: 0 0 20px;" class="body-text">
                                         {!! nl2br(e($customMessage)) !!}
                                     </p>
                                 @else
-                                    <p style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 16px; line-height: 26px; color: #1B1B18; margin: 0 0 24px;" class="body-text">
+                                    <p style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 15px; line-height: 24px; color: #1B1B18; margin: 0 0 20px;" class="body-text">
                                         @if($invoice->status === \App\Enums\InvoiceStatus::ISSUED || $invoice->status === \App\Enums\InvoiceStatus::PAST_DUE)
-                                            Thank you for your business! Please find attached your invoice. Payment is due by <strong>{{ $invoice->due_at->format('F d, Y') }}</strong>.
+                                            Please find your invoice attached. Payment is due by <strong>{{ $invoice->due_at->format('F d, Y') }}</strong>.
                                         @elseif($invoice->status === \App\Enums\InvoiceStatus::DRAFT)
-                                            We have prepared a draft invoice for your review. Please find it attached to this email.
+                                            A draft invoice has been prepared for your review.
                                         @elseif($invoice->status === \App\Enums\InvoiceStatus::PAID)
-                                            Thank you for your payment! This invoice has been marked as paid.
+                                            This invoice has been paid. Thank you.
                                         @endif
                                     </p>
                                 @endif
 
-                                <!-- Amount highlight -->
-                                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: 0 0 28px;">
+                                <!-- Amount -->
+                                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: 0 0 24px;">
                                     <tr>
-                                        <td style="background-color: #F8F7F4; border-radius: 10px; padding: 24px; text-align: center;" class="amount-bg">
-                                            <p style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 13px; font-weight: 500; color: #706F6C; margin: 0 0 6px; text-transform: uppercase; letter-spacing: 0.5px;" class="amount-label-dark">
-                                                @if($invoice->amount_due > 0) Amount Due @else Total Amount @endif
+                                        <td style="background-color: #F8F7F4; border-radius: 8px; padding: 20px; text-align: center;" class="amount-bg">
+                                            <p style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 12px; font-weight: 500; color: #706F6C; margin: 0 0 4px; text-transform: uppercase; letter-spacing: 0.5px;" class="amount-label-dark">
+                                                @if($invoice->amount_due > 0) Amount Due @else Total @endif
                                             </p>
-                                            <p style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 32px; font-weight: 700; color: #1B1B18; margin: 0; letter-spacing: -1px;" class="amount-text-dark">
+                                            <p style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 28px; font-weight: 700; color: #1B1B18; margin: 0; letter-spacing: -0.5px;" class="amount-text-dark">
                                                 @if($invoice->amount_due > 0)
                                                     {{ $invoice->currency }} {{ number_format($invoice->amount_due / 100, 2) }}
                                                 @else
@@ -118,40 +118,38 @@
                                 </table>
 
                                 <!-- Invoice details -->
-                                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: 0 0 28px; background-color: #F8F7F4; border-radius: 8px; border: 1px solid #E3E3E0;" class="card-bg border-color">
+                                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: 0 0 24px; border-radius: 8px; border: 1px solid #E3E3E0;" class="card-bg border-color">
                                     <tr>
-                                        <td style="padding: 12px 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 14px; color: #706F6C; font-weight: 500; width: 40%; border-bottom: 1px solid #E3E3E0;" class="detail-label-dark border-color">Invoice Number</td>
-                                        <td style="padding: 12px 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 14px; color: #1B1B18; font-weight: 600; text-align: right; border-bottom: 1px solid #E3E3E0;" class="detail-value-dark border-color">{{ $invoice->number ?? 'Draft' }}</td>
+                                        <td style="padding: 10px 16px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 13px; color: #706F6C; font-weight: 500; width: 40%; border-bottom: 1px solid #E3E3E0;" class="detail-label-dark border-color">Invoice Number</td>
+                                        <td style="padding: 10px 16px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 13px; color: #1B1B18; font-weight: 600; text-align: right; border-bottom: 1px solid #E3E3E0;" class="detail-value-dark border-color">{{ $invoice->number ?? 'Draft' }}</td>
                                     </tr>
                                     @if($invoice->issued_at)
                                     <tr>
-                                        <td style="padding: 12px 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 14px; color: #706F6C; font-weight: 500; border-bottom: 1px solid #E3E3E0;" class="detail-label-dark border-color">Invoice Date</td>
-                                        <td style="padding: 12px 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 14px; color: #1B1B18; font-weight: 600; text-align: right; border-bottom: 1px solid #E3E3E0;" class="detail-value-dark border-color">{{ $invoice->issued_at->format('F d, Y') }}</td>
+                                        <td style="padding: 10px 16px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 13px; color: #706F6C; font-weight: 500; border-bottom: 1px solid #E3E3E0;" class="detail-label-dark border-color">Invoice Date</td>
+                                        <td style="padding: 10px 16px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 13px; color: #1B1B18; font-weight: 600; text-align: right; border-bottom: 1px solid #E3E3E0;" class="detail-value-dark border-color">{{ $invoice->issued_at->format('F d, Y') }}</td>
                                     </tr>
                                     @endif
                                     @if($invoice->due_at)
                                     <tr>
-                                        <td style="padding: 12px 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 14px; color: #706F6C; font-weight: 500; border-bottom: 1px solid #E3E3E0;" class="detail-label-dark border-color">Due Date</td>
-                                        <td style="padding: 12px 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 14px; color: #1B1B18; font-weight: 600; text-align: right; border-bottom: 1px solid #E3E3E0;" class="detail-value-dark border-color">{{ $invoice->due_at->format('F d, Y') }}</td>
+                                        <td style="padding: 10px 16px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 13px; color: #706F6C; font-weight: 500; border-bottom: 1px solid #E3E3E0;" class="detail-label-dark border-color">Due Date</td>
+                                        <td style="padding: 10px 16px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 13px; color: #1B1B18; font-weight: 600; text-align: right; border-bottom: 1px solid #E3E3E0;" class="detail-value-dark border-color">{{ $invoice->due_at->format('F d, Y') }}</td>
                                     </tr>
                                     @endif
                                     <tr>
-                                        <td style="padding: 12px 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 14px; color: #706F6C; font-weight: 500;" class="detail-label-dark">Payment Terms</td>
-                                        <td style="padding: 12px 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 14px; color: #1B1B18; font-weight: 600; text-align: right;" class="detail-value-dark">Net {{ $invoice->payment_terms }} days</td>
+                                        <td style="padding: 10px 16px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 13px; color: #706F6C; font-weight: 500;" class="detail-label-dark">Payment Terms</td>
+                                        <td style="padding: 10px 16px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 13px; color: #1B1B18; font-weight: 600; text-align: right;" class="detail-value-dark">Net {{ $invoice->payment_terms }} days</td>
                                     </tr>
                                 </table>
 
-                                <p style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 14px; line-height: 22px; color: #706F6C; margin: 0 0 8px; text-align: center;" class="subtext">
-                                    The complete invoice is attached as a PDF to this email.
+                                <p style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 13px; line-height: 20px; color: #706F6C; margin: 0;" class="subtext">
+                                    The complete invoice is attached as a PDF.
                                 </p>
 
                                 @if($invoice->notes)
-                                    <!-- Notes -->
-                                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: 24px 0 0;">
+                                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: 20px 0 0;">
                                         <tr>
-                                            <td style="background-color: #FFFBEB; border-left: 4px solid #F59E0B; border-radius: 0 8px 8px 0; padding: 14px 18px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 14px; line-height: 22px; color: #1B1B18;" class="highlight-bg body-text">
-                                                <strong style="color: #92400E;">Note:</strong>
-                                                <span style="display: block; margin-top: 4px;">{{ $invoice->notes }}</span>
+                                            <td style="background-color: #F8F7F4; border-radius: 8px; border: 1px solid #E3E3E0; padding: 12px 16px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 13px; line-height: 20px; color: #1B1B18;" class="highlight-bg body-text border-color">
+                                                <strong style="color: #706F6C;">Note:</strong> {{ $invoice->notes }}
                                             </td>
                                         </tr>
                                     </table>
@@ -162,14 +160,14 @@
                     </table>
 
                     <!-- Footer -->
-                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" class="email-container" style="max-width: 560px; margin: 0 auto;">
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" class="email-container" style="max-width: 540px; margin: 0 auto;">
                         <tr>
-                            <td style="padding: 28px 36px 8px;" class="padding-mobile">
+                            <td style="padding: 24px 32px 8px;" class="padding-mobile">
                                 <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
                                     <tr>
-                                        <td style="text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 13px; line-height: 20px; color: #A1A09A;" class="footer-text-dark">
-                                            <p style="margin: 0 0 12px;">
-                                                If you have any questions about this invoice, please contact us.
+                                        <td style="text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 12px; line-height: 18px; color: #A1A09A;" class="footer-text-dark">
+                                            <p style="margin: 0 0 8px;">
+                                                Questions about this invoice? Contact us.
                                             </p>
                                             <p style="margin: 0; color: #C4C4BE;" class="footer-muted-dark">
                                                 &copy; {{ date('Y') }} LifeOS

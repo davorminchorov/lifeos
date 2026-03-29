@@ -28,9 +28,9 @@
         .preheader { display: none !important; visibility: hidden; mso-hide: all; font-size: 1px; line-height: 1px; max-height: 0; max-width: 0; opacity: 0; overflow: hidden; }
 
         /* Typography */
-        .body-text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 16px; line-height: 26px; color: #1B1B18; }
+        .body-text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 15px; line-height: 24px; color: #1B1B18; }
         .heading { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-weight: 600; color: #1B1B18; }
-        .subtext { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 14px; line-height: 22px; color: #706F6C; }
+        .subtext { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 13px; line-height: 20px; color: #706F6C; }
 
         /* Responsive */
         @media only screen and (max-width: 620px) {
@@ -47,14 +47,14 @@
             .email-body { background-color: #1B1B18 !important; }
             .body-text, .heading { color: #EDEDEC !important; }
             .subtext { color: #A1A09A !important; }
-            .card-bg { background-color: #252521 !important; }
+            .card-bg { background-color: #232320 !important; }
             .border-color { border-color: #3E3E3A !important; }
             .detail-label-dark { color: #A1A09A !important; }
             .detail-value-dark { color: #EDEDEC !important; }
-            .footer-bg { background-color: #161615 !important; }
             .footer-text-dark { color: #706F6C !important; }
             .footer-muted-dark { color: #62605B !important; }
-            .highlight-bg { background-color: #252521 !important; }
+            .highlight-bg { background-color: #232320 !important; }
+            .separator-dark { border-color: #3E3E3A !important; }
         }
     </style>
 </head>
@@ -68,49 +68,44 @@
     <!-- Email wrapper -->
     <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #F5F4F0;" class="email-bg">
         <tr>
-            <td style="padding: 32px 16px;" class="padding-mobile">
-                <div style="max-width: 560px; margin: 0 auto;">
+            <td style="padding: 40px 16px;" class="padding-mobile">
+                <div style="max-width: 540px; margin: 0 auto;">
 
                     <!--[if mso]>
-                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="560" align="center">
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="540" align="center">
                     <tr><td>
                     <![endif]-->
 
                     <!-- Header -->
-                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" class="email-container" style="max-width: 560px; margin: 0 auto;">
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" class="email-container" style="max-width: 540px; margin: 0 auto;">
                         <tr>
-                            <td style="padding: 28px 0; text-align: center;">
-                                <span style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 22px; font-weight: 700; color: #1B1B18; letter-spacing: -0.5px;" class="heading">Life<span style="color: #F53003;">OS</span></span>
+                            <td style="padding: 0 0 32px; text-align: center;">
+                                <span style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 700; color: #1B1B18; letter-spacing: -0.3px;" class="heading">LifeOS</span>
                             </td>
                         </tr>
                     </table>
 
                     <!-- Body card -->
-                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" class="email-container email-body" style="max-width: 560px; margin: 0 auto; background-color: #FDFDFC; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 3px rgba(27,27,24,0.08);">
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" class="email-container email-body" style="max-width: 540px; margin: 0 auto; background-color: #FDFDFC; border-radius: 10px; border: 1px solid #E3E3E0;">
                         <!-- Content -->
                         <tr>
-                            <td style="padding: 40px 36px;" class="padding-mobile body-text">
+                            <td style="padding: 36px 32px;" class="padding-mobile body-text">
                                 @yield('content')
                             </td>
                         </tr>
                     </table>
 
                     <!-- Footer -->
-                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" class="email-container" style="max-width: 560px; margin: 0 auto;">
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" class="email-container" style="max-width: 540px; margin: 0 auto;">
                         <tr>
-                            <td style="padding: 28px 36px 8px;" class="padding-mobile">
+                            <td style="padding: 24px 32px 8px;" class="padding-mobile">
                                 <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
                                     <tr>
-                                        <td style="text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 13px; line-height: 20px; color: #A1A09A;" class="footer-text-dark">
-                                            <p style="margin: 0 0 12px;">
-                                                You received this because you have an active LifeOS account.
-                                            </p>
-                                            <p style="margin: 0 0 12px;">
+                                        <td style="text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 12px; line-height: 18px; color: #A1A09A;" class="footer-text-dark">
+                                            <p style="margin: 0 0 8px;">
                                                 <a href="{{ url('/settings/notifications') }}" style="color: #706F6C; text-decoration: underline;">Notification Settings</a>
                                                 &nbsp;&middot;&nbsp;
                                                 <a href="{{ url('/dashboard') }}" style="color: #706F6C; text-decoration: underline;">Dashboard</a>
-                                                &nbsp;&middot;&nbsp;
-                                                <a href="{{ url('/') }}" style="color: #706F6C; text-decoration: underline;">LifeOS</a>
                                             </p>
                                             <p style="margin: 0; color: #C4C4BE;" class="footer-muted-dark">
                                                 &copy; {{ date('Y') }} LifeOS
