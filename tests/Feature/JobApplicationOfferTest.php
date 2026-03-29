@@ -297,6 +297,7 @@ class JobApplicationOfferTest extends TestCase
             'base_salary' => 120000,
             'bonus' => 15000,
             'equity' => 'Updated equity package',
+            'currency' => 'USD',
             'status' => OfferStatus::NEGOTIATING->value,
         ];
 
@@ -339,6 +340,8 @@ class JobApplicationOfferTest extends TestCase
 
         $response = $this->actingAs($this->user)->patch("/job-applications/{$otherApplication->id}/offers/{$otherOffer->id}", [
             'base_salary' => 999999,
+            'currency' => 'USD',
+            'status' => OfferStatus::PENDING->value,
         ]);
 
         $response->assertStatus(403);

@@ -337,6 +337,8 @@ class JobApplicationInterviewTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)->patch("/job-applications/{$otherApplication->id}/interviews/{$otherInterview->id}", [
+            'type' => \App\Enums\InterviewType::PHONE->value,
+            'scheduled_at' => now()->addDay()->toDateTimeString(),
             'interviewer_name' => 'Hacked',
         ]);
 

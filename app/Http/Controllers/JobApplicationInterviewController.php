@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\InterviewOutcome;
 use App\Enums\InterviewType;
 use App\Http\Requests\StoreInterviewRequest;
+use App\Http\Requests\UpdateInterviewRequest;
 use App\Models\JobApplication;
 use App\Models\JobApplicationInterview;
 use Illuminate\Http\Request;
@@ -102,14 +103,14 @@ class JobApplicationInterviewController extends Controller
     /**
      * Update the specified interview.
      */
-    public function update(Request $request, JobApplication $job_application, JobApplicationInterview $interview)
+    public function update(UpdateInterviewRequest $request, JobApplication $job_application, JobApplicationInterview $interview)
     {
         // Ensure user owns the interview
         if ($interview->user_id !== auth()->id() || $interview->job_application_id !== $job_application->id) {
             abort(403);
         }
 
-        $interview->update($request->all());
+        $interview->update($request->validated());
 
         return redirect()->route('job-applications.show', $job_application)
             ->with('success', 'Interview updated successfully!');

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\ApplicationStatus;
 use App\Enums\OfferStatus;
 use App\Http\Requests\StoreOfferRequest;
+use App\Http\Requests\UpdateOfferRequest;
 use App\Models\JobApplication;
 use App\Models\JobApplicationOffer;
 use Illuminate\Http\Request;
@@ -95,14 +96,14 @@ class JobApplicationOfferController extends Controller
     /**
      * Update the specified offer.
      */
-    public function update(Request $request, JobApplication $job_application, JobApplicationOffer $offer)
+    public function update(UpdateOfferRequest $request, JobApplication $job_application, JobApplicationOffer $offer)
     {
         // Ensure user owns the offer
         if ($offer->user_id !== auth()->id() || $offer->job_application_id !== $job_application->id) {
             abort(403);
         }
 
-        $offer->update($request->all());
+        $offer->update($request->validated());
 
         return redirect()->route('job-applications.show', $job_application)
             ->with('success', 'Job offer updated successfully!');
