@@ -52,13 +52,14 @@ class InvoiceController extends Controller
 
         $invoices = $query->paginate($request->get('per_page', 20));
 
-        // Calculate summary statistics
-        $summary = [
-            'total_invoices' => Invoice::where('user_id', auth()->id())->count(),
-            'draft_count' => Invoice::where('user_id', auth()->id())->draft()->count(),
-            'total_outstanding' => Invoice::where('user_id', auth()->id())->unpaid()->sum('amount_due'),
-            'total_overdue' => Invoice::where('user_id', auth()->id())->pastDue()->sum('amount_due'),
-        ];
+        // Calculate summary statistics in a single query
+        $now = now()->toDateTimeString();
+        $summary = Invoice::where('user_id', auth()->id())
+            ->selectRaw('COUNT(*) as total_invoices')
+            ->selectRaw("SUM(CASE WHEN status = 'draft' THEN 1 ELSE 0 END) as draft_count")
+            ->selectRaw("SUM(CASE WHEN status IN ('issued','partially_paid','past_due') THEN amount_due ELSE 0 END) as total_outstanding")
+            ->selectRaw("SUM(CASE WHEN status = 'past_due' OR (status = 'issued' AND due_at < ?) THEN amount_due ELSE 0 END) as total_overdue", [$now])
+            ->first();
 
         // Get customers for filter
         $customers = Customer::where('user_id', auth()->id())

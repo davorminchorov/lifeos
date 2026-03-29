@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Enums\InvoiceStatus;
 use App\Events\InvoiceIssued;
 use App\Events\InvoicePaid;
+use App\Exceptions\InvoicingException;
 use App\Models\Invoice;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -57,7 +58,7 @@ class InvoicingService
     public function addItem(Invoice $invoice, array $itemData): void
     {
         if ($invoice->status !== InvoiceStatus::DRAFT) {
-            throw new \Exception('Can only add items to draft invoices');
+            throw new InvoicingException('Can only add items to draft invoices');
         }
 
         $invoice->items()->create($itemData);
@@ -76,7 +77,7 @@ class InvoicingService
     public function updateItem(Invoice $invoice, int $itemId, array $itemData): void
     {
         if ($invoice->status !== InvoiceStatus::DRAFT) {
-            throw new \Exception('Can only update items on draft invoices');
+            throw new InvoicingException('Can only update items on draft invoices');
         }
 
         $item = $invoice->items()->findOrFail($itemId);
@@ -95,7 +96,7 @@ class InvoicingService
     public function removeItem(Invoice $invoice, int $itemId): void
     {
         if ($invoice->status !== InvoiceStatus::DRAFT) {
-            throw new \Exception('Can only remove items from draft invoices');
+            throw new InvoicingException('Can only remove items from draft invoices');
         }
 
         $item = $invoice->items()->findOrFail($itemId);
@@ -174,15 +175,15 @@ class InvoicingService
     public function issue(Invoice $invoice): Invoice
     {
         if ($invoice->status !== InvoiceStatus::DRAFT) {
-            throw new \Exception('Only draft invoices can be issued');
+            throw new InvoicingException('Only draft invoices can be issued');
         }
 
         if ($invoice->items()->count() === 0) {
-            throw new \Exception('Cannot issue invoice with no items');
+            throw new InvoicingException('Cannot issue invoice with no items');
         }
 
         if ($invoice->total <= 0) {
-            throw new \Exception('Cannot issue invoice with zero or negative total');
+            throw new InvoicingException('Cannot issue invoice with zero or negative total');
         }
 
         return DB::transaction(function () use ($invoice) {
@@ -220,7 +221,7 @@ class InvoicingService
     public function void(Invoice $invoice, ?string $reason = null): Invoice
     {
         if (!in_array($invoice->status, [InvoiceStatus::ISSUED, InvoiceStatus::PARTIALLY_PAID])) {
-            throw new \Exception('Only issued or partially paid invoices can be voided');
+            throw new InvoicingException('Only issued or partially paid invoices can be voided');
         }
 
         $invoice->update([
@@ -242,7 +243,7 @@ class InvoicingService
     public function writeOff(Invoice $invoice, ?string $reason = null): Invoice
     {
         if ($invoice->status !== InvoiceStatus::PAST_DUE) {
-            throw new \Exception('Only past due invoices can be written off');
+            throw new InvoicingException('Only past due invoices can be written off');
         }
 
         $invoice->update([
@@ -264,11 +265,11 @@ class InvoicingService
     public function recordPayment(Invoice $invoice, int $amount, array $paymentData = []): void
     {
         if ($amount > $invoice->amount_due) {
-            throw new \Exception('Payment amount exceeds amount due');
+            throw new InvoicingException('Payment amount exceeds amount due');
         }
 
         if ($amount <= 0) {
-            throw new \Exception('Payment amount must be greater than zero');
+            throw new InvoicingException('Payment amount must be greater than zero');
         }
 
         DB::transaction(function () use ($invoice, $amount, $paymentData) {

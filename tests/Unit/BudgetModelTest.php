@@ -63,7 +63,6 @@ class BudgetModelTest extends TestCase
         Expense::factory()->create([
             'user_id' => $this->user->id,
             'tenant_id' => $this->tenant->id,
-            'tenant_id' => $this->tenant->id,
             'category' => 'groceries',
             'amount' => 100.00,
             'expense_date' => now(),
@@ -71,7 +70,6 @@ class BudgetModelTest extends TestCase
 
         Expense::factory()->create([
             'user_id' => $this->user->id,
-            'tenant_id' => $this->tenant->id,
             'tenant_id' => $this->tenant->id,
             'category' => 'groceries',
             'amount' => 150.00,
@@ -82,7 +80,6 @@ class BudgetModelTest extends TestCase
         Expense::factory()->create([
             'user_id' => $this->user->id,
             'tenant_id' => $this->tenant->id,
-            'tenant_id' => $this->tenant->id,
             'category' => 'entertainment',
             'amount' => 50.00,
             'expense_date' => now(),
@@ -91,7 +88,6 @@ class BudgetModelTest extends TestCase
         // Create expense outside period (should not count)
         Expense::factory()->create([
             'user_id' => $this->user->id,
-            'tenant_id' => $this->tenant->id,
             'tenant_id' => $this->tenant->id,
             'category' => 'groceries',
             'amount' => 75.00,
