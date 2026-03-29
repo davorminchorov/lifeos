@@ -2,7 +2,7 @@ import { useState, type ReactNode } from 'react'
 import { Sidebar } from './sidebar'
 import { Topbar } from './topbar'
 import { FlashMessages } from './flash-messages'
-import { Sheet, SheetContent } from '@/components/ui/sheet'
+import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet'
 
 interface AppLayoutProps {
     children: ReactNode
@@ -25,6 +25,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
             {/* Mobile sidebar */}
             <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
                 <SheetContent side="left" className="w-64 p-0">
+                    <SheetTitle className="sr-only">Navigation</SheetTitle>
                     <Sidebar
                         collapsed={false}
                         onToggle={() => setMobileMenuOpen(false)}
