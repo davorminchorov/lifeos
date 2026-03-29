@@ -2,6 +2,7 @@ import { Head, Link } from '@inertiajs/react'
 import { lazy, Suspense, useCallback, useEffect, useState } from 'react'
 import AppLayout from '@/components/shared/app-layout'
 import { PageHeader } from '@/components/shared/page-header'
+import { QuickEntryBar } from '@/components/assistant/quick-entry-bar'
 import { StatCard } from '@/components/shared/stat-card'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -225,6 +226,10 @@ export default function DashboardIndex({
         <AppLayout>
             <Head title="Dashboard" />
             <PageHeader title="Dashboard" description="Your financial overview at a glance" />
+
+            <div className="mb-6">
+                <QuickEntryBar />
+            </div>
 
             {/* Quick Stats */}
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
