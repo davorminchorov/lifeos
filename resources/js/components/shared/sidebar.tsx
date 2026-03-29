@@ -140,7 +140,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                     className={cn(
                         'flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors',
                         isActive('/dashboard')
-                            ? 'bg-sidebar-accent text-sidebar-accent-foreground'
+                            ? 'border-l-2 border-foreground bg-sidebar-accent text-sidebar-accent-foreground'
                             : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
                     )}
                 >
@@ -178,7 +178,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                                         className={cn(
                                             'flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors',
                                             isActive(item.href)
-                                                ? 'bg-sidebar-accent font-medium text-sidebar-accent-foreground'
+                                                ? 'border-l-2 border-foreground bg-sidebar-accent font-medium text-sidebar-accent-foreground'
                                                 : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
                                         )}
                                         title={collapsed ? item.label : undefined}
