@@ -87,7 +87,7 @@ class InvoicingDashboardController extends Controller
             ->select('status', DB::raw('count(*) as count'))
             ->groupBy('status')
             ->get()
-            ->pluck('count', 'status')
+            ->mapWithKeys(fn ($item) => [$item->status->value => $item->count])
             ->toArray();
 
         return Inertia::render('Invoicing/Dashboard', compact(
