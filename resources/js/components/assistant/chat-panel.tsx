@@ -250,7 +250,7 @@ export function ChatPanel() {
                                     </Markdown>
                                 </div>
                             ) : (
-                                <div className="max-w-[75%] rounded-2xl rounded-tr-sm bg-[#F53003] px-4 py-2.5 text-sm text-white shadow-sm">
+                                <div className="max-w-[75%] rounded-2xl rounded-tr-sm bg-primary px-4 py-2.5 text-sm text-primary-foreground shadow-sm">
                                     {msg.content}
                                 </div>
                             )}
@@ -282,13 +282,13 @@ export function ChatPanel() {
                             onChange={(e) => setInput(e.target.value)}
                             placeholder="Type a message..."
                             disabled={loading}
-                            className="flex-1 rounded-full border-muted-foreground/20 bg-muted/30 px-4 py-2.5 text-sm placeholder:text-muted-foreground/50 focus-visible:ring-1 focus-visible:ring-[#F53003]/30"
+                            className="flex-1 rounded-full border-muted-foreground/20 bg-muted/30 px-4 py-2.5 text-sm placeholder:text-muted-foreground/50 focus-visible:ring-1 focus-visible:ring-primary/30"
                         />
                         <Button
                             type="submit"
                             size="icon"
                             disabled={loading || !input.trim()}
-                            className="shrink-0 rounded-full h-10 w-10 bg-[#F53003] hover:bg-[#F53003]/90 text-white shadow-sm disabled:opacity-30"
+                            className="shrink-0 rounded-full h-10 w-10 bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm disabled:opacity-30"
                         >
                             <Send className="h-4 w-4" />
                             <span className="sr-only">Send</span>

@@ -295,12 +295,12 @@
 
     /* Blockquotes */
     blockquote {
-        @apply my-3 pl-3 border-l-2 border-[#F53003]/30 text-muted-foreground;
+        @apply my-3 pl-3 border-l-2 border-primary/30 text-muted-foreground;
     }
 
     /* Links */
     a {
-        @apply text-[#F53003] no-underline font-medium;
+        @apply text-primary underline-offset-2 font-medium;
         &:hover { @apply underline underline-offset-2; }
     }
 
