@@ -38,7 +38,117 @@ use App\Http\Controllers\TaxRateController;
 use App\Http\Controllers\TenantController;
 use App\Http\Controllers\UtilityBillController;
 use App\Http\Controllers\WarrantyController;
+use App\Mail\InvoiceMail;
+use App\Mail\PaymentConfirmationMail;
+use App\Models\Contract;
+use App\Models\Invoice;
+use App\Models\Payment;
+use App\Models\Subscription;
+use App\Models\User;
+use App\Models\UtilityBill;
+use App\Models\Warranty;
 use Illuminate\Support\Facades\Route;
+
+// ============================================================
+// TEMPORARY: Email template preview routes (remove before merge)
+// ============================================================
+Route::prefix('_preview/emails')->group(function () {
+    Route::get('/', function () {
+        $links = [
+            'Invoice' => '/_preview/emails/invoice',
+            'Payment Confirmation' => '/_preview/emails/payment-confirmation',
+            'Subscription Renewal Alert' => '/_preview/emails/subscription-renewal',
+            'Contract Expiration Alert' => '/_preview/emails/contract-expiration',
+            'Warranty Expiration Alert' => '/_preview/emails/warranty-expiration',
+            'Utility Bill Due Alert' => '/_preview/emails/utility-bill-due',
+        ];
+        $html = '<html><body style="font-family:sans-serif;max-width:600px;margin:40px auto;"><h1>Email Template Previews</h1><ul>';
+        foreach ($links as $name => $url) {
+            $html .= "<li style='margin:8px 0'><a href='{$url}'>{$name}</a></li>";
+        }
+        $html .= '</ul></body></html>';
+
+        return $html;
+    });
+
+    Route::get('/invoice', function () {
+        $invoice = Invoice::with('customer')->first();
+        if (! $invoice) {
+            return 'No invoices in database. Create one first to preview.';
+        }
+
+        return new InvoiceMail($invoice, 'Please find your invoice attached.', false);
+    });
+
+    Route::get('/payment-confirmation', function () {
+        $payment = Payment::with('invoice')->first();
+        if (! $payment) {
+            return 'No payments in database. Create one first to preview.';
+        }
+
+        return new PaymentConfirmationMail($payment, $payment->invoice, 'Your payment has been received.');
+    });
+
+    Route::get('/subscription-renewal', function () {
+        $subscription = Subscription::first() ?? new Subscription([
+            'service_name' => 'Netflix Premium',
+            'cost' => 15.99,
+            'currency' => 'USD',
+            'billing_cycle' => 'monthly',
+            'next_billing_date' => now()->addDays(3),
+            'payment_method' => 'Credit Card',
+        ]);
+        $user = auth()->user() ?? User::first();
+
+        return view('emails.notifications.subscription-renewal-alert', [
+            'user' => $user,
+            'subscription' => $subscription,
+            'daysUntilRenewal' => 3,
+            'subject' => "⏰ {$subscription->service_name} renews in 3 days",
+        ]);
+    });
+
+    Route::get('/contract-expiration', function () {
+        $contract = Contract::first()
+            ?? Contract::factory()->make();
+        $user = auth()->user() ?? User::first();
+
+        return view('emails.notifications.contract-expiration-alert', [
+            'user' => $user,
+            'contract' => $contract,
+            'daysUntilExpiration' => 14,
+            'isNoticeAlert' => false,
+            'subject' => "Contract '{$contract->title}' expires in 14 days",
+        ]);
+    });
+
+    Route::get('/warranty-expiration', function () {
+        $warranty = Warranty::first()
+            ?? Warranty::factory()->make();
+        $user = auth()->user() ?? User::first();
+
+        return view('emails.notifications.warranty-expiration-alert', [
+            'user' => $user,
+            'warranty' => $warranty,
+            'daysUntilExpiration' => 30,
+            'subject' => "Warranty for {$warranty->product_name} expires in 30 days",
+        ]);
+    });
+
+    Route::get('/utility-bill-due', function () {
+        $bill = UtilityBill::first()
+            ?? UtilityBill::factory()->make();
+        $user = auth()->user() ?? User::first();
+
+        return view('emails.notifications.utility-bill-due-alert', [
+            'user' => $user,
+            'bill' => $bill,
+            'daysTillDue' => 5,
+            'daysUntilDue' => 5,
+            'subject' => "Utility bill from {$bill->provider} due in 5 days",
+        ]);
+    });
+});
 
 // Authentication Routes
 Route::middleware('guest')->group(function () {
