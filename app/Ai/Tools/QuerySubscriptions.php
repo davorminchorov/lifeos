@@ -35,6 +35,10 @@ class QuerySubscriptions extends TenantScopedTool
         }
 
         $status = $request['status'] ?? null;
+        if ($status !== null && ! in_array($status, ['active', 'paused', 'cancelled'], true)) {
+            return "Invalid status '{$status}'. Must be one of: active, paused, cancelled.";
+        }
+
         if ($status !== null) {
             $query->where('status', $status);
         }
@@ -49,7 +53,7 @@ class QuerySubscriptions extends TenantScopedTool
             $query->where('cost', '<=', $maxCost);
         }
 
-        $subscriptions = $query->orderBy('service_name')->get();
+        $subscriptions = $query->orderBy('service_name')->limit(20)->get();
 
         if ($subscriptions->isEmpty()) {
             return 'No subscriptions found matching your criteria.';

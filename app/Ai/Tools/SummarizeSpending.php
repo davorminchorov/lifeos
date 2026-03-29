@@ -40,7 +40,7 @@ class SummarizeSpending extends TenantScopedTool
                 'this year',
             ],
             'last_30_days' => [
-                $now->subDays(30)->toDateString(),
+                $now->subDays(29)->toDateString(),
                 $now->toDateString(),
                 'last 30 days',
             ],

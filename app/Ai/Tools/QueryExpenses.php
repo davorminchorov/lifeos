@@ -29,6 +29,27 @@ class QueryExpenses extends TenantScopedTool
 
     public function handle(Request $request): string
     {
+        $dateFrom = $request['date_from'] ?? null;
+        $dateTo = $request['date_to'] ?? null;
+        $minAmount = $request['min_amount'] ?? null;
+        $maxAmount = $request['max_amount'] ?? null;
+
+        if ($dateFrom !== null && ! strtotime($dateFrom)) {
+            return 'Invalid date_from format. Use YYYY-MM-DD.';
+        }
+
+        if ($dateTo !== null && ! strtotime($dateTo)) {
+            return 'Invalid date_to format. Use YYYY-MM-DD.';
+        }
+
+        if ($minAmount !== null && ! is_numeric($minAmount)) {
+            return 'min_amount must be a number.';
+        }
+
+        if ($maxAmount !== null && ! is_numeric($maxAmount)) {
+            return 'max_amount must be a number.';
+        }
+
         $query = $this->scopedQuery(Expense::class);
 
         $category = $request['category'] ?? null;
@@ -41,22 +62,18 @@ class QueryExpenses extends TenantScopedTool
             $query->where('merchant', 'LIKE', '%'.$merchant.'%');
         }
 
-        $dateFrom = $request['date_from'] ?? null;
         if ($dateFrom !== null) {
             $query->where('expense_date', '>=', $dateFrom);
         }
 
-        $dateTo = $request['date_to'] ?? null;
         if ($dateTo !== null) {
             $query->where('expense_date', '<=', $dateTo);
         }
 
-        $minAmount = $request['min_amount'] ?? null;
         if ($minAmount !== null) {
             $query->where('amount', '>=', $minAmount);
         }
 
-        $maxAmount = $request['max_amount'] ?? null;
         if ($maxAmount !== null) {
             $query->where('amount', '<=', $maxAmount);
         }

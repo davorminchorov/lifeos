@@ -21,14 +21,17 @@ export function QuickEntryBar() {
     const [loading, setLoading] = useState(false)
     const [result, setResult] = useState<Result | null>(null)
     const dismissTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+    const abortRef = useRef<AbortController | null>(null)
     const page = usePage()
 
-    // Clear dismiss timer on unmount
+    // Clean up on unmount
     useEffect(() => {
         return () => {
             if (dismissTimerRef.current) {
                 clearTimeout(dismissTimerRef.current)
             }
+            abortRef.current?.abort()
+            abortRef.current = null
         }
     }, [])
 
@@ -50,6 +53,9 @@ export function QuickEntryBar() {
             setLoading(true)
 
             try {
+                abortRef.current?.abort()
+                abortRef.current = new AbortController()
+
                 const response = await fetch('/api/assistant/message', {
                     method: 'POST',
                     headers: {
@@ -60,6 +66,7 @@ export function QuickEntryBar() {
                     },
                     body: JSON.stringify({ message: trimmed }),
                     credentials: 'include',
+                    signal: abortRef.current.signal,
                 })
 
                 if (!response.ok) {
@@ -81,7 +88,10 @@ export function QuickEntryBar() {
                         message: 'Sorry, something went wrong. Please try again.',
                     })
                 }
-            } catch {
+            } catch (err) {
+                if (err instanceof DOMException && err.name === 'AbortError') {
+                    return
+                }
                 setResult({
                     message: 'Could not reach the assistant. Please try again.',
                 })

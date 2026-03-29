@@ -33,7 +33,7 @@ The 10x version is a LifeOS that barely needs you to type. Gmail watches your in
 
 ## Detailed Design Doc
 Full implementation specs (data models, tool schemas, error handling, auth, architecture diagram, validation bridge, ProposedAction schema) are in the design doc:
-`~/.gstack/projects/davorminchorov-lifeos/davorminchorov-main-design-20260329-165903.md`
+Full design specifications are maintained in the project's gstack design directory.
 
 ## Key Implementation Decisions
 - AI Package: Laravel AI SDK (`laravel/ai`, first-party, ships with Laravel 13)

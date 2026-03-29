@@ -31,41 +31,40 @@ class CreateJobApplication extends TenantScopedTool
 
     public function handle(Request $request): string
     {
-        $companyName = $request['company_name'] ?? null;
-        $jobTitle = $request['job_title'] ?? null;
+        $data = [
+            'company_name' => $request['company_name'] ?? null,
+            'job_title' => $request['job_title'] ?? null,
+            'job_url' => $request['job_url'] ?? null,
+            'location' => $request['location'] ?? null,
+            'remote' => $request['remote'] ?? false,
+            'notes' => $request['notes'] ?? null,
+            'status' => $request['status'] ?? 'applied',
+            'source' => $request['source'] ?? 'other',
+        ];
 
-        $validated = $this->validate(
-            ['company_name' => $companyName, 'job_title' => $jobTitle],
-            [
-                'company_name' => 'required|string|max:255',
-                'job_title' => 'required|string|max:255',
-            ],
-        );
+        $validated = $this->validate($data, [
+            'company_name' => 'required|string|max:255',
+            'job_title' => 'required|string|max:255',
+            'job_url' => 'nullable|string|url|max:500',
+            'location' => 'nullable|string|max:255',
+            'remote' => 'nullable|boolean',
+            'notes' => 'nullable|string|max:10000',
+            'status' => 'required|string|in:wishlist,applied,screening,interview,assessment,offer,accepted,rejected,withdrawn,archived',
+            'source' => 'required|string|in:linkedin,company_website,job_board,referral,recruiter,networking,other',
+        ]);
 
         if (is_string($validated)) {
             return $validated;
         }
 
-        $status = $request['status'] ?? 'applied';
-        $source = $request['source'] ?? 'other';
-
-        $data = [
+        JobApplication::create([
             'user_id' => $this->userId,
             'tenant_id' => $this->tenantId,
-            'company_name' => $companyName,
-            'job_title' => $jobTitle,
-            'job_url' => $request['job_url'] ?? null,
-            'location' => $request['location'] ?? null,
-            'remote' => $request['remote'] ?? false,
-            'status' => $status,
-            'source' => $source,
+            ...$validated,
             'applied_at' => date('Y-m-d'),
             'currency' => 'MKD',
-            'notes' => $request['notes'] ?? null,
-        ];
+        ]);
 
-        JobApplication::create($data);
-
-        return "Created job application: {$jobTitle} at {$companyName} (status: {$status})";
+        return "Created job application: {$validated['job_title']} at {$validated['company_name']} (status: {$validated['status']})";
     }
 }

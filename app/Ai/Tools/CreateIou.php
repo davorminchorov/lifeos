@@ -40,12 +40,14 @@ class CreateIou extends TenantScopedTool
                 'amount' => $amount,
                 'type' => $type,
                 'currency' => $currency,
+                'reason' => $reason,
             ],
             [
                 'person_name' => 'required|string|max:255',
                 'amount' => 'required|numeric|min:0.01|max:99999999',
                 'type' => 'required|string|in:owed,owe',
-                'currency' => 'required|string|size:3',
+                'currency' => 'required|string|size:3|alpha',
+                'reason' => 'nullable|string|max:1000',
             ],
         );
 
@@ -56,19 +58,19 @@ class CreateIou extends TenantScopedTool
         Iou::create([
             'user_id' => $this->userId,
             'tenant_id' => $this->tenantId,
-            'person_name' => $personName,
-            'amount' => $amount,
-            'type' => $type,
-            'description' => $reason,
-            'currency' => $currency,
+            'person_name' => $validated['person_name'],
+            'amount' => $validated['amount'],
+            'type' => $validated['type'],
+            'description' => $validated['reason'],
+            'currency' => $validated['currency'],
             'status' => 'pending',
             'transaction_date' => date('Y-m-d'),
         ]);
 
-        $direction = $type === 'owe'
-            ? "You owe {$personName}"
-            : "{$personName} owes you";
+        $direction = $validated['type'] === 'owe'
+            ? "You owe {$validated['person_name']}"
+            : "{$validated['person_name']} owes you";
 
-        return "Created IOU: {$direction} {$amount} {$currency}".($reason ? " for {$reason}" : '').'.';
+        return "Created IOU: {$direction} {$validated['amount']} {$validated['currency']}".($validated['reason'] ? " for {$validated['reason']}" : '').'.';
     }
 }

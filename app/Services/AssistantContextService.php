@@ -60,6 +60,7 @@ final class AssistantContextService
             return 'SUBSCRIPTIONS: None active';
         }
 
+        // monthly_cost is a computed accessor on Subscription (from cost + billing_cycle)
         $total = $active->sum(fn (Subscription $s): float => (float) $s->monthly_cost);
 
         return sprintf(

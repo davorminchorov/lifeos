@@ -62,11 +62,12 @@ class LogPayment extends TenantScopedTool
 
     private function logSubscriptionPayment(string $name, float $amount, string $date, ?string $notes): string
     {
-        $subscription = $this->scopedQuery(Subscription::class)
+        $matches = $this->scopedQuery(Subscription::class)
             ->where('service_name', 'LIKE', '%'.$name.'%')
-            ->first();
+            ->limit(5)
+            ->get();
 
-        if (! $subscription) {
+        if ($matches->isEmpty()) {
             $available = $this->scopedQuery(Subscription::class)
                 ->pluck('service_name')
                 ->implode(', ');
@@ -74,10 +75,19 @@ class LogPayment extends TenantScopedTool
             return "No subscription found matching '{$name}'. Available subscriptions: {$available}";
         }
 
+        if ($matches->count() > 1) {
+            $names = $matches->pluck('service_name')->implode(', ');
+
+            return "Multiple subscriptions match '{$name}'. Please be more specific: {$names}";
+        }
+
+        $subscription = $matches->first();
+        $paymentAmount = $amount > 0 ? $amount : (float) $subscription->cost;
+
         Expense::create([
             'user_id' => $this->userId,
             'tenant_id' => $this->tenantId,
-            'amount' => $amount,
+            'amount' => $paymentAmount,
             'currency' => $subscription->currency ?? 'MKD',
             'category' => $subscription->service_name,
             'expense_date' => $date,
@@ -86,18 +96,19 @@ class LogPayment extends TenantScopedTool
             'notes' => $notes,
         ]);
 
-        return "Logged payment of {$amount} for subscription '{$subscription->service_name}' on {$date}.";
+        return "Logged payment of {$paymentAmount} for subscription '{$subscription->service_name}' on {$date}.";
     }
 
     private function logUtilityPayment(string $type, float $amount, string $date, ?string $notes): string
     {
-        $bill = $this->scopedQuery(UtilityBill::class)
+        $matches = $this->scopedQuery(UtilityBill::class)
             ->where('utility_type', 'LIKE', '%'.$type.'%')
             ->where('payment_status', 'pending')
             ->orderBy('due_date')
-            ->first();
+            ->limit(5)
+            ->get();
 
-        if (! $bill) {
+        if ($matches->isEmpty()) {
             $available = $this->scopedQuery(UtilityBill::class)
                 ->where('payment_status', 'pending')
                 ->pluck('utility_type')
@@ -111,11 +122,35 @@ class LogPayment extends TenantScopedTool
             return "No pending utility bill found matching '{$type}'. Available pending bills: {$available}";
         }
 
-        $bill->update([
+        if ($matches->count() > 1) {
+            $names = $matches->map(fn (UtilityBill $b): string => sprintf(
+                '%s (due %s, %s)',
+                $b->utility_type,
+                $b->due_date->format('Y-m-d'),
+                number_format((float) $b->bill_amount, 2),
+            ))->implode(', ');
+
+            return "Multiple pending bills match '{$type}'. Please be more specific: {$names}";
+        }
+
+        $bill = $matches->first();
+        $paymentAmount = $amount > 0 ? $amount : (float) $bill->bill_amount;
+
+        $updateData = [
             'payment_status' => 'paid',
             'payment_date' => CarbonImmutable::parse($date),
-        ]);
+        ];
 
-        return "Marked {$bill->utility_type} bill of {$bill->bill_amount} as paid on {$date}.";
+        if ($amount > 0) {
+            $updateData['bill_amount'] = $paymentAmount;
+        }
+
+        if ($notes !== null) {
+            $updateData['notes'] = $notes;
+        }
+
+        $bill->update($updateData);
+
+        return "Marked {$bill->utility_type} bill of {$paymentAmount} as paid on {$date}.";
     }
 }
