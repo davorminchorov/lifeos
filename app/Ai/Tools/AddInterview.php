@@ -31,11 +31,12 @@ class AddInterview extends TenantScopedTool
     {
         $companyName = $request['company_name'] ?? null;
 
-        $application = $this->scopedQuery(JobApplication::class)
+        $matches = $this->scopedQuery(JobApplication::class)
             ->where('company_name', 'LIKE', '%'.$companyName.'%')
-            ->first();
+            ->limit(5)
+            ->get();
 
-        if (! $application) {
+        if ($matches->isEmpty()) {
             $available = $this->scopedQuery(JobApplication::class)
                 ->pluck('company_name')
                 ->implode(', ');
@@ -43,20 +44,42 @@ class AddInterview extends TenantScopedTool
             return "No job application found for '{$companyName}'. Available: {$available}";
         }
 
+        if ($matches->count() > 1) {
+            $names = $matches->pluck('company_name')->implode(', ');
+
+            return "Multiple applications match '{$companyName}'. Please be more specific: {$names}";
+        }
+
+        $application = $matches->first();
+
         $type = $request['type'] ?? 'video';
         $scheduledAt = $request['scheduled_at'] ?? null;
         $durationMinutes = $request['duration_minutes'] ?? 60;
+
+        $validated = $this->validate([
+            'scheduled_at' => $scheduledAt,
+            'type' => $type,
+            'duration_minutes' => $durationMinutes,
+        ], [
+            'scheduled_at' => 'required|date',
+            'type' => 'required|string|in:phone,video,onsite,panel,technical,behavioral,final',
+            'duration_minutes' => 'required|integer|min:1|max:480',
+        ]);
+
+        if (is_string($validated)) {
+            return $validated;
+        }
 
         JobApplicationInterview::create([
             'tenant_id' => $this->tenantId,
             'user_id' => $this->userId,
             'job_application_id' => $application->id,
-            'type' => $type,
-            'scheduled_at' => $scheduledAt,
-            'duration_minutes' => $durationMinutes,
+            'type' => $validated['type'],
+            'scheduled_at' => $validated['scheduled_at'],
+            'duration_minutes' => $validated['duration_minutes'],
             'notes' => $request['notes'] ?? null,
         ]);
 
-        return "Added {$type} interview for {$application->company_name} on {$scheduledAt}";
+        return "Added {$validated['type']} interview for {$application->company_name} on {$validated['scheduled_at']}";
     }
 }

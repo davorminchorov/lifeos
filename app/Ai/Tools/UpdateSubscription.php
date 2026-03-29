@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Ai\Tools;
 
 use App\Models\Subscription;
+use Carbon\CarbonImmutable;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Ai\Tools\Request;
 
@@ -29,17 +30,26 @@ class UpdateSubscription extends TenantScopedTool
     {
         $name = $request['name'] ?? null;
 
-        $subscription = $this->scopedQuery(Subscription::class)
+        $matches = $this->scopedQuery(Subscription::class)
             ->where('service_name', 'LIKE', '%'.$name.'%')
-            ->first();
+            ->limit(5)
+            ->get();
 
-        if (! $subscription) {
+        if ($matches->isEmpty()) {
             $available = $this->scopedQuery(Subscription::class)
                 ->pluck('service_name')
                 ->implode(', ');
 
             return "No subscription found matching '{$name}'. Available subscriptions: {$available}";
         }
+
+        if ($matches->count() > 1) {
+            $names = $matches->pluck('service_name')->implode(', ');
+
+            return "Multiple subscriptions match '{$name}'. Please be more specific: {$names}";
+        }
+
+        $subscription = $matches->first();
 
         $updates = [];
         $changes = [];
@@ -72,10 +82,23 @@ class UpdateSubscription extends TenantScopedTool
 
             $updates['status'] = $newStatus;
             $changes[] = "status to {$newStatus}";
+
+            if ($newStatus === 'cancelled') {
+                $updates['cancellation_date'] = CarbonImmutable::now();
+            }
         }
 
         $notes = $request['notes'] ?? null;
         if ($notes !== null) {
+            $validated = $this->validate(
+                ['notes' => $notes],
+                ['notes' => 'nullable|string|max:10000'],
+            );
+
+            if (is_string($validated)) {
+                return $validated;
+            }
+
             $updates['notes'] = $notes;
             $changes[] = 'notes';
         }

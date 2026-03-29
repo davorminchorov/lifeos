@@ -65,6 +65,8 @@ class CreateExpense extends TenantScopedTool
             ...$validated,
         ]);
 
-        return "Created expense: {$validated['amount']} {$validated['currency']} at {$validated['merchant']} ({$validated['category']}) on {$validated['expense_date']}";
+        $merchantDisplay = $validated['merchant'] ?? 'Unknown';
+
+        return "Created expense: {$validated['amount']} {$validated['currency']} at {$merchantDisplay} ({$validated['category']}) on {$validated['expense_date']}";
     }
 }

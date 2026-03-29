@@ -18,12 +18,12 @@ class AssistantController extends Controller
      */
     public function message(Request $request): JsonResponse
     {
-        try {
-            $validated = $request->validate([
-                'message' => 'required|string|max:5000',
-                'conversation_id' => 'nullable|string',
-            ]);
+        $validated = $request->validate([
+            'message' => 'required|string|max:5000',
+            'conversation_id' => 'nullable|string',
+        ]);
 
+        try {
             $user = auth()->user();
 
             $agent = new LifeOsAssistant($user, new AssistantContextService);

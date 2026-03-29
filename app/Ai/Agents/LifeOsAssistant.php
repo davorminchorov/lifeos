@@ -81,6 +81,10 @@ final class LifeOsAssistant implements Agent, Conversational, HasTools
         $userId = $this->user->id;
         $tenantId = $this->user->current_tenant_id;
 
+        if ($tenantId === null) {
+            return [];
+        }
+
         return [
             new CreateExpense($userId, $tenantId),
             new CreateJobApplication($userId, $tenantId),

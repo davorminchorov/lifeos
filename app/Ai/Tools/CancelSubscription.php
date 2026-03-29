@@ -27,11 +27,12 @@ class CancelSubscription extends TenantScopedTool
     {
         $name = $request['name'] ?? null;
 
-        $subscription = $this->scopedQuery(Subscription::class)
+        $matches = $this->scopedQuery(Subscription::class)
             ->where('service_name', 'LIKE', '%'.$name.'%')
-            ->first();
+            ->limit(5)
+            ->get();
 
-        if (! $subscription) {
+        if ($matches->isEmpty()) {
             $available = $this->scopedQuery(Subscription::class)
                 ->where('status', '!=', 'cancelled')
                 ->pluck('service_name')
@@ -39,6 +40,14 @@ class CancelSubscription extends TenantScopedTool
 
             return "No subscription found matching '{$name}'. Available subscriptions: {$available}";
         }
+
+        if ($matches->count() > 1) {
+            $names = $matches->pluck('service_name')->implode(', ');
+
+            return "Multiple subscriptions match '{$name}'. Please be more specific: {$names}";
+        }
+
+        $subscription = $matches->first();
 
         if ($subscription->status === 'cancelled') {
             return "'{$subscription->service_name}' is already cancelled.";

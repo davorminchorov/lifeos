@@ -70,7 +70,11 @@ export function QuickEntryBar() {
                 if (json.success && json.data) {
                     setResult({ message: json.data.message })
                     setInput('')
-                    router.reload()
+
+                    const writeIndicators = ['Created', 'Added', 'Updated', 'Cancelled', 'Logged', 'Marked']
+                    if (writeIndicators.some(w => json.data.message.includes(w))) {
+                        router.reload()
+                    }
                 } else {
                     setResult({
                         message: 'Sorry, something went wrong. Please try again.',

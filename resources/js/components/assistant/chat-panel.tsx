@@ -31,6 +31,7 @@ export function ChatPanel() {
     const [conversationId, setConversationId] = useState<string | null>(null)
     const messagesEndRef = useRef<HTMLDivElement>(null)
     const inputRef = useRef<HTMLInputElement>(null)
+    const abortRef = useRef<AbortController | null>(null)
     const page = usePage()
 
     // Cmd+K shortcut
@@ -51,10 +52,13 @@ export function ChatPanel() {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
     }, [messages, loading])
 
-    // Focus input when sheet opens
+    // Focus input when sheet opens; abort in-flight request when it closes
     useEffect(() => {
         if (open) {
             setTimeout(() => inputRef.current?.focus(), 100)
+        } else {
+            abortRef.current?.abort()
+            abortRef.current = null
         }
     }, [open])
 
@@ -70,6 +74,9 @@ export function ChatPanel() {
             setLoading(true)
 
             try {
+                abortRef.current?.abort()
+                abortRef.current = new AbortController()
+
                 const response = await fetch('/api/assistant/message', {
                     method: 'POST',
                     headers: {
@@ -83,6 +90,7 @@ export function ChatPanel() {
                         conversation_id: conversationId,
                     }),
                     credentials: 'include',
+                    signal: abortRef.current.signal,
                 })
 
                 if (!response.ok) {
@@ -97,7 +105,11 @@ export function ChatPanel() {
                         { role: 'assistant', content: json.data.message },
                     ])
                     setConversationId(json.data.conversation_id)
-                    router.reload()
+
+                    const writeIndicators = ['Created', 'Added', 'Updated', 'Cancelled', 'Logged', 'Marked']
+                    if (writeIndicators.some(w => json.data.message.includes(w))) {
+                        router.reload()
+                    }
                 } else {
                     setMessages((prev) => [
                         ...prev,
@@ -108,7 +120,10 @@ export function ChatPanel() {
                         },
                     ])
                 }
-            } catch {
+            } catch (err) {
+                if (err instanceof DOMException && err.name === 'AbortError') {
+                    return
+                }
                 setMessages((prev) => [
                     ...prev,
                     {

@@ -21,7 +21,7 @@ final class AssistantContextService
         $tenantId = $user->current_tenant_id;
 
         $summary = Cache::remember(
-            "assistant_context_{$user->id}",
+            "assistant_context_{$user->id}_{$tenantId}",
             60,
             fn (): string => $this->buildSummary($user->id, $tenantId),
         );
