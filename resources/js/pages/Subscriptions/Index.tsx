@@ -146,34 +146,34 @@ export default function SubscriptionIndex({ subscriptions, filters = {} }: Subsc
                         className="pl-9"
                     />
                 </div>
-                <Select value={filters.status ?? ''} onValueChange={(v) => applyFilter('status', v)}>
+                <Select value={filters.status ?? '__all__'} onValueChange={(v) => applyFilter('status', v === "__all__" ? "" : v)}>
                     <SelectTrigger className="w-[130px]">
                         <SelectValue placeholder="Status" />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="">All</SelectItem>
+                        <SelectItem value="__all__">All</SelectItem>
                         {statuses.map(s => (
                             <SelectItem key={s} value={s} className="capitalize">{s}</SelectItem>
                         ))}
                     </SelectContent>
                 </Select>
-                <Select value={filters.category ?? ''} onValueChange={(v) => applyFilter('category', v)}>
+                <Select value={filters.category ?? '__all__'} onValueChange={(v) => applyFilter('category', v === "__all__" ? "" : v)}>
                     <SelectTrigger className="w-[150px]">
                         <SelectValue placeholder="Category" />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="">All</SelectItem>
+                        <SelectItem value="__all__">All</SelectItem>
                         {categories.map(c => (
                             <SelectItem key={c} value={c}>{c}</SelectItem>
                         ))}
                     </SelectContent>
                 </Select>
-                <Select value={filters.due_soon ?? ''} onValueChange={(v) => applyFilter('due_soon', v)}>
+                <Select value={filters.due_soon ?? '__all__'} onValueChange={(v) => applyFilter('due_soon', v === "__all__" ? "" : v)}>
                     <SelectTrigger className="w-[130px]">
                         <SelectValue placeholder="Due soon" />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="">Any time</SelectItem>
+                        <SelectItem value="__all__">Any time</SelectItem>
                         {dueSoonOptions.map(o => (
                             <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
                         ))}

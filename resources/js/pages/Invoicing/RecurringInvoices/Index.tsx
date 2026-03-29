@@ -137,23 +137,23 @@ export default function RecurringInvoiceIndex({ recurringInvoices, summary, cust
                         className="pl-9"
                     />
                 </div>
-                <Select value={filters.status ?? ''} onValueChange={(v) => applyFilter('status', v)}>
+                <Select value={filters.status ?? '__all__'} onValueChange={(v) => applyFilter('status', v === "__all__" ? "" : v)}>
                     <SelectTrigger className="w-[130px]">
                         <SelectValue placeholder="Status" />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="">All</SelectItem>
+                        <SelectItem value="__all__">All</SelectItem>
                         {statuses.map(s => (
                             <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
                         ))}
                     </SelectContent>
                 </Select>
-                <Select value={filters.customer_id ?? ''} onValueChange={(v) => applyFilter('customer_id', v)}>
+                <Select value={filters.customer_id ?? '__all__'} onValueChange={(v) => applyFilter('customer_id', v === "__all__" ? "" : v)}>
                     <SelectTrigger className="w-[180px]">
                         <SelectValue placeholder="Customer" />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="">All Customers</SelectItem>
+                        <SelectItem value="__all__">All Customers</SelectItem>
                         {customers.map(c => (
                             <SelectItem key={c.id} value={String(c.id)}>{c.name}</SelectItem>
                         ))}

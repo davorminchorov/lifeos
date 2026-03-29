@@ -152,34 +152,34 @@ export default function InvestmentIndex({ investments, filters = {} }: Investmen
                         className="pl-9"
                     />
                 </div>
-                <Select value={filters.investment_type ?? ''} onValueChange={(v) => applyFilter('investment_type', v)}>
+                <Select value={filters.investment_type ?? '__all__'} onValueChange={(v) => applyFilter('investment_type', v === "__all__" ? "" : v)}>
                     <SelectTrigger className="w-[150px]">
                         <SelectValue placeholder="Type" />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="">All Types</SelectItem>
+                        <SelectItem value="__all__">All Types</SelectItem>
                         {investmentTypes.map(t => (
                             <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>
                         ))}
                     </SelectContent>
                 </Select>
-                <Select value={filters.risk_tolerance ?? ''} onValueChange={(v) => applyFilter('risk_tolerance', v)}>
+                <Select value={filters.risk_tolerance ?? '__all__'} onValueChange={(v) => applyFilter('risk_tolerance', v === "__all__" ? "" : v)}>
                     <SelectTrigger className="w-[150px]">
                         <SelectValue placeholder="Risk" />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="">All Risk</SelectItem>
+                        <SelectItem value="__all__">All Risk</SelectItem>
                         {riskTolerances.map(r => (
                             <SelectItem key={r.value} value={r.value}>{r.label}</SelectItem>
                         ))}
                     </SelectContent>
                 </Select>
-                <Select value={filters.status ?? ''} onValueChange={(v) => applyFilter('status', v)}>
+                <Select value={filters.status ?? '__all__'} onValueChange={(v) => applyFilter('status', v === "__all__" ? "" : v)}>
                     <SelectTrigger className="w-[130px]">
                         <SelectValue placeholder="Status" />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="">All</SelectItem>
+                        <SelectItem value="__all__">All</SelectItem>
                         {statuses.map(s => (
                             <SelectItem key={s} value={s} className="capitalize">{s}</SelectItem>
                         ))}

@@ -170,34 +170,34 @@ export default function ProjectInvestmentIndex({ projectInvestments, summary, fi
                         className="pl-9"
                     />
                 </div>
-                <Select value={filters.stage ?? ''} onValueChange={(v) => applyFilter('stage', v)}>
+                <Select value={filters.stage ?? '__all__'} onValueChange={(v) => applyFilter('stage', v === "__all__" ? "" : v)}>
                     <SelectTrigger className="w-[130px]">
                         <SelectValue placeholder="Stage" />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="">All</SelectItem>
+                        <SelectItem value="__all__">All</SelectItem>
                         {stages.map(s => (
                             <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
                         ))}
                     </SelectContent>
                 </Select>
-                <Select value={filters.business_model ?? ''} onValueChange={(v) => applyFilter('business_model', v)}>
+                <Select value={filters.business_model ?? '__all__'} onValueChange={(v) => applyFilter('business_model', v === "__all__" ? "" : v)}>
                     <SelectTrigger className="w-[150px]">
                         <SelectValue placeholder="Business Model" />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="">All</SelectItem>
+                        <SelectItem value="__all__">All</SelectItem>
                         {businessModels.map(b => (
                             <SelectItem key={b.value} value={b.value}>{b.label}</SelectItem>
                         ))}
                     </SelectContent>
                 </Select>
-                <Select value={filters.status ?? ''} onValueChange={(v) => applyFilter('status', v)}>
+                <Select value={filters.status ?? '__all__'} onValueChange={(v) => applyFilter('status', v === "__all__" ? "" : v)}>
                     <SelectTrigger className="w-[130px]">
                         <SelectValue placeholder="Status" />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="">All</SelectItem>
+                        <SelectItem value="__all__">All</SelectItem>
                         {statuses.map(s => (
                             <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
                         ))}

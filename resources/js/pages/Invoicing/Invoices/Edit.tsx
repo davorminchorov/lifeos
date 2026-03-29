@@ -248,7 +248,7 @@ export default function InvoiceEdit({ invoice, customers, taxRates = [] }: Invoi
                                                             <SelectValue placeholder="None" />
                                                         </SelectTrigger>
                                                         <SelectContent>
-                                                            <SelectItem value="">None</SelectItem>
+                                                            <SelectItem value="none">None</SelectItem>
                                                             {taxRates.map(t => (
                                                                 <SelectItem key={t.id} value={String(t.id)}>
                                                                     {t.name} ({t.percentage_basis_points / 100}%)

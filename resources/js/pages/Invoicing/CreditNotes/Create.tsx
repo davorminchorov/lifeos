@@ -84,7 +84,7 @@ export default function CreditNoteCreate({ customers, invoices, selectedCustomer
                                         <SelectValue placeholder="Select invoice (optional)" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="">None</SelectItem>
+                                        <SelectItem value="none">None</SelectItem>
                                         {filteredInvoices.map(inv => (
                                             <SelectItem key={inv.id} value={String(inv.id)}>
                                                 {inv.number ?? `Draft #${inv.id}`}

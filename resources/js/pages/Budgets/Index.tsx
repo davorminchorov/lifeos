@@ -147,34 +147,34 @@ export default function BudgetIndex({ budgets, categories, summaryStats, filters
             ) : null}
 
             <div className="mb-4 flex flex-wrap items-center gap-3">
-                <Select value={filters.status ?? ''} onValueChange={(v) => applyFilter('status', v)}>
+                <Select value={filters.status ?? '__all__'} onValueChange={(v) => applyFilter('status', v === "__all__" ? "" : v)}>
                     <SelectTrigger className="w-[130px]">
                         <SelectValue placeholder="Status" />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="">All</SelectItem>
+                        <SelectItem value="__all__">All</SelectItem>
                         {statusOptions.map(s => (
                             <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
                         ))}
                     </SelectContent>
                 </Select>
-                <Select value={filters.period ?? ''} onValueChange={(v) => applyFilter('period', v)}>
+                <Select value={filters.period ?? '__all__'} onValueChange={(v) => applyFilter('period', v === "__all__" ? "" : v)}>
                     <SelectTrigger className="w-[130px]">
                         <SelectValue placeholder="Period" />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="">All</SelectItem>
+                        <SelectItem value="__all__">All</SelectItem>
                         {periodOptions.map(p => (
                             <SelectItem key={p.value} value={p.value}>{p.label}</SelectItem>
                         ))}
                     </SelectContent>
                 </Select>
-                <Select value={filters.category ?? ''} onValueChange={(v) => applyFilter('category', v)}>
+                <Select value={filters.category ?? '__all__'} onValueChange={(v) => applyFilter('category', v === "__all__" ? "" : v)}>
                     <SelectTrigger className="w-[150px]">
                         <SelectValue placeholder="Category" />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="">All</SelectItem>
+                        <SelectItem value="__all__">All</SelectItem>
                         {categories.map(c => (
                             <SelectItem key={c} value={c}>{c}</SelectItem>
                         ))}

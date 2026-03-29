@@ -138,23 +138,23 @@ export default function IouIndex({ ious, summary, filters = {} }: IouIndexProps)
                         className="pl-9"
                     />
                 </div>
-                <Select value={filters.type ?? ''} onValueChange={(v) => applyFilter('type', v)}>
+                <Select value={filters.type ?? '__all__'} onValueChange={(v) => applyFilter('type', v === "__all__" ? "" : v)}>
                     <SelectTrigger className="w-[130px]">
                         <SelectValue placeholder="Type" />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="">All</SelectItem>
+                        <SelectItem value="__all__">All</SelectItem>
                         {typeOptions.map(t => (
                             <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>
                         ))}
                     </SelectContent>
                 </Select>
-                <Select value={filters.status ?? ''} onValueChange={(v) => applyFilter('status', v)}>
+                <Select value={filters.status ?? '__all__'} onValueChange={(v) => applyFilter('status', v === "__all__" ? "" : v)}>
                     <SelectTrigger className="w-[150px]">
                         <SelectValue placeholder="Status" />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="">All</SelectItem>
+                        <SelectItem value="__all__">All</SelectItem>
                         {statusOptions.map(s => (
                             <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
                         ))}

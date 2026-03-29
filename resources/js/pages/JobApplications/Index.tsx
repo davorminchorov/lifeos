@@ -153,34 +153,34 @@ export default function JobApplicationIndex({ applications, filters = {} }: JobA
                         className="pl-9"
                     />
                 </div>
-                <Select value={filters.status ?? ''} onValueChange={(v) => applyFilter('status', v)}>
+                <Select value={filters.status ?? '__all__'} onValueChange={(v) => applyFilter('status', v === "__all__" ? "" : v)}>
                     <SelectTrigger className="w-[140px]">
                         <SelectValue placeholder="Status" />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="">All Statuses</SelectItem>
+                        <SelectItem value="__all__">All Statuses</SelectItem>
                         {statusOptions.map(s => (
                             <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
                         ))}
                     </SelectContent>
                 </Select>
-                <Select value={filters.source ?? ''} onValueChange={(v) => applyFilter('source', v)}>
+                <Select value={filters.source ?? '__all__'} onValueChange={(v) => applyFilter('source', v === "__all__" ? "" : v)}>
                     <SelectTrigger className="w-[160px]">
                         <SelectValue placeholder="Source" />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="">All Sources</SelectItem>
+                        <SelectItem value="__all__">All Sources</SelectItem>
                         {sourceOptions.map(s => (
                             <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
                         ))}
                     </SelectContent>
                 </Select>
-                <Select value={filters.priority ?? ''} onValueChange={(v) => applyFilter('priority', v)}>
+                <Select value={filters.priority ?? '__all__'} onValueChange={(v) => applyFilter('priority', v === "__all__" ? "" : v)}>
                     <SelectTrigger className="w-[130px]">
                         <SelectValue placeholder="Priority" />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="">Any Priority</SelectItem>
+                        <SelectItem value="__all__">Any Priority</SelectItem>
                         {priorityOptions.map(p => (
                             <SelectItem key={p.value} value={p.value}>{p.label}</SelectItem>
                         ))}

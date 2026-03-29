@@ -204,34 +204,34 @@ export default function ExpenseIndex({ expenses, filters = {} }: ExpenseIndexPro
                         className="pl-9"
                     />
                 </div>
-                <Select value={filters.category ?? ''} onValueChange={(v) => applyFilter('category', v)}>
+                <Select value={filters.category ?? '__all__'} onValueChange={(v) => applyFilter('category', v === "__all__" ? "" : v)}>
                     <SelectTrigger className="w-[160px]">
                         <SelectValue placeholder="Category" />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="">All</SelectItem>
+                        <SelectItem value="__all__">All</SelectItem>
                         {categories.map(c => (
                             <SelectItem key={c} value={c}>{c}</SelectItem>
                         ))}
                     </SelectContent>
                 </Select>
-                <Select value={filters.expense_type ?? ''} onValueChange={(v) => applyFilter('expense_type', v)}>
+                <Select value={filters.expense_type ?? '__all__'} onValueChange={(v) => applyFilter('expense_type', v === "__all__" ? "" : v)}>
                     <SelectTrigger className="w-[130px]">
                         <SelectValue placeholder="Type" />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="">All</SelectItem>
+                        <SelectItem value="__all__">All</SelectItem>
                         {expenseTypes.map(t => (
                             <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>
                         ))}
                     </SelectContent>
                 </Select>
-                <Select value={filters.status ?? ''} onValueChange={(v) => applyFilter('status', v)}>
+                <Select value={filters.status ?? '__all__'} onValueChange={(v) => applyFilter('status', v === "__all__" ? "" : v)}>
                     <SelectTrigger className="w-[130px]">
                         <SelectValue placeholder="Status" />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="">All</SelectItem>
+                        <SelectItem value="__all__">All</SelectItem>
                         {statuses.map(s => (
                             <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
                         ))}
@@ -239,14 +239,14 @@ export default function ExpenseIndex({ expenses, filters = {} }: ExpenseIndexPro
                 </Select>
                 <Input
                     type="date"
-                    value={filters.start_date ?? ''}
+                    value={filters.start_date ?? '__all__'}
                     onChange={(e) => applyFilter('start_date', e.target.value)}
                     className="w-[150px]"
                     placeholder="From"
                 />
                 <Input
                     type="date"
-                    value={filters.end_date ?? ''}
+                    value={filters.end_date ?? '__all__'}
                     onChange={(e) => applyFilter('end_date', e.target.value)}
                     className="w-[150px]"
                     placeholder="To"

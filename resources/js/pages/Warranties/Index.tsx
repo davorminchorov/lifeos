@@ -112,23 +112,23 @@ export default function WarrantyIndex({ warranties, filters = {} }: WarrantyInde
                         className="pl-9"
                     />
                 </div>
-                <Select value={filters.current_status ?? ''} onValueChange={(v) => applyFilter('current_status', v)}>
+                <Select value={filters.current_status ?? '__all__'} onValueChange={(v) => applyFilter('current_status', v === "__all__" ? "" : v)}>
                     <SelectTrigger className="w-[130px]">
                         <SelectValue placeholder="Status" />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="">All</SelectItem>
+                        <SelectItem value="__all__">All</SelectItem>
                         {statusOptions.map(s => (
                             <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
                         ))}
                     </SelectContent>
                 </Select>
-                <Select value={filters.warranty_type ?? ''} onValueChange={(v) => applyFilter('warranty_type', v)}>
+                <Select value={filters.warranty_type ?? '__all__'} onValueChange={(v) => applyFilter('warranty_type', v === "__all__" ? "" : v)}>
                     <SelectTrigger className="w-[150px]">
                         <SelectValue placeholder="Type" />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="">All</SelectItem>
+                        <SelectItem value="__all__">All</SelectItem>
                         {warrantyTypes.map(t => (
                             <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>
                         ))}

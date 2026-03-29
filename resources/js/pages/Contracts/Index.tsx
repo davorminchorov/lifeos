@@ -108,23 +108,23 @@ export default function ContractIndex({ contracts, filters = {} }: ContractIndex
                         className="pl-9"
                     />
                 </div>
-                <Select value={filters.status ?? ''} onValueChange={(v) => applyFilter('status', v)}>
+                <Select value={filters.status ?? '__all__'} onValueChange={(v) => applyFilter('status', v === "__all__" ? "" : v)}>
                     <SelectTrigger className="w-[130px]">
                         <SelectValue placeholder="Status" />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="">All</SelectItem>
+                        <SelectItem value="__all__">All</SelectItem>
                         {statuses.map(s => (
                             <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
                         ))}
                     </SelectContent>
                 </Select>
-                <Select value={filters.contract_type ?? ''} onValueChange={(v) => applyFilter('contract_type', v)}>
+                <Select value={filters.contract_type ?? '__all__'} onValueChange={(v) => applyFilter('contract_type', v === "__all__" ? "" : v)}>
                     <SelectTrigger className="w-[150px]">
                         <SelectValue placeholder="Type" />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="">All</SelectItem>
+                        <SelectItem value="__all__">All</SelectItem>
                         {contractTypes.map(t => (
                             <SelectItem key={t} value={t}>{t}</SelectItem>
                         ))}
