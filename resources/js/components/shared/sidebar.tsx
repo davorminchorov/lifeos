@@ -127,7 +127,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                     variant="ghost"
                     size="icon"
                     onClick={onToggle}
-                    className="h-8 w-8 text-sidebar-foreground"
+                    className="h-10 w-10 text-sidebar-foreground"
                 >
                     <ChevronLeft className={cn('h-4 w-4 transition-transform', collapsed && 'rotate-180')} />
                 </Button>
@@ -138,7 +138,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                 <Link
                     href="/dashboard"
                     className={cn(
-                        'flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors',
+                        'flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-colors',
                         isActive('/dashboard')
                             ? 'border-l-2 border-foreground bg-sidebar-accent text-sidebar-accent-foreground'
                             : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
@@ -156,7 +156,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                         {!collapsed ? (
                             <button
                                 onClick={() => toggleGroup(group.label)}
-                                className="flex w-full items-center justify-between rounded-md px-3 py-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground hover:text-sidebar-foreground"
+                                className="flex w-full items-center justify-between rounded-md px-3 py-2.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground hover:text-sidebar-foreground"
                             >
                                 <span>{group.label}</span>
                                 <ChevronDown
@@ -176,7 +176,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                                         key={item.href}
                                         href={item.href}
                                         className={cn(
-                                            'flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors',
+                                            'flex items-center gap-3 rounded-md px-3 py-2.5 text-sm transition-colors',
                                             isActive(item.href)
                                                 ? 'border-l-2 border-foreground bg-sidebar-accent font-medium text-sidebar-accent-foreground'
                                                 : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
