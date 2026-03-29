@@ -19,6 +19,16 @@ class ImportInvestmentsCsv implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
+     * The number of seconds the job can run before timing out.
+     */
+    public int $timeout = 300;
+
+    /**
+     * The number of times the job may be attempted.
+     */
+    public int $tries = 3;
+
+    /**
      * Map of header aliases to support different broker exports.
      */
     private const HEADER_ALIASES = [
@@ -347,5 +357,15 @@ class ImportInvestmentsCsv implements ShouldQueue
         }
 
         $investment->save();
+    }
+
+    /**
+     * Handle a job failure.
+     */
+    public function failed(\Throwable $exception): void
+    {
+        Log::error('ImportInvestmentsCsv failed', [
+            'exception' => $exception->getMessage(),
+        ]);
     }
 }

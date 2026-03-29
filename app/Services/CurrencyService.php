@@ -341,7 +341,7 @@ class CurrencyService
 
         $url = "https://v6.exchangerate-api.com/v6/{$apiKey}/latest/{$fromCurrency}";
 
-        $response = Http::timeout(10)->get($url);
+        $response = Http::timeout(10)->retry(3, 100)->get($url);
 
         if (! $response->successful()) {
             return null;
@@ -371,7 +371,7 @@ class CurrencyService
 
         $url = 'https://data.fixer.io/api/latest';
 
-        $response = Http::timeout(15)->get($url, [
+        $response = Http::timeout(15)->retry(3, 100)->get($url, [
             'access_key' => $apiKey,
             'base' => $fromCurrency,
             'symbols' => $toCurrency,

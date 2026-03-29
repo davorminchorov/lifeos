@@ -18,6 +18,16 @@ class CreateSubscriptionAutoRenewExpenses implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
+     * The number of seconds the job can run before timing out.
+     */
+    public int $timeout = 300;
+
+    /**
+     * The number of times the job may be attempted.
+     */
+    public int $tries = 3;
+
+    /**
      * Execute the job.
      */
     public function handle(): void
@@ -78,5 +88,15 @@ class CreateSubscriptionAutoRenewExpenses implements ShouldQueue
         }
 
         Log::info("Completed CreateSubscriptionAutoRenewExpenses job. Created {$created} expenses.");
+    }
+
+    /**
+     * Handle a job failure.
+     */
+    public function failed(\Throwable $exception): void
+    {
+        Log::error('CreateSubscriptionAutoRenewExpenses failed', [
+            'exception' => $exception->getMessage(),
+        ]);
     }
 }

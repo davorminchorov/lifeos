@@ -22,18 +22,19 @@ class ParseReceiptAndCreateExpense implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
-     * The number of times the job may be attempted.
-     *
-     * @var int
+     * The number of seconds the job can run before timing out.
      */
-    public $tries = 3;
+    public int $timeout = 120;
+
+    /**
+     * The number of times the job may be attempted.
+     */
+    public int $tries = 3;
 
     /**
      * The number of seconds to wait before retrying the job.
-     *
-     * @var int
      */
-    public $backoff = 30;
+    public int $backoff = 30;
 
     /**
      * The processed email to parse.

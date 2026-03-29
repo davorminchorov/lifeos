@@ -8,6 +8,7 @@ use App\Models\UtilityBill;
 use App\Observers\ExpenseObserver;
 use App\Observers\JobApplicationObserver;
 use App\Observers\UtilityBillObserver;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -25,6 +26,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Model::preventLazyLoading(! app()->isProduction());
+
         Expense::observe(ExpenseObserver::class);
         JobApplication::observe(JobApplicationObserver::class);
         UtilityBill::observe(UtilityBillObserver::class);

@@ -17,6 +17,16 @@ class UpdateSubscriptionNextBillingDates implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
+     * The number of seconds the job can run before timing out.
+     */
+    public int $timeout = 300;
+
+    /**
+     * The number of times the job may be attempted.
+     */
+    public int $tries = 3;
+
+    /**
      * Execute the job.
      */
     public function handle(): void
@@ -91,5 +101,15 @@ class UpdateSubscriptionNextBillingDates implements ShouldQueue
             'custom' => max(0, (int) ($subscription->billing_cycle_days ?? 0)),
             default => max(0, (int) ($subscription->billing_cycle_days ?? 0)), // fallback to custom days if provided
         };
+    }
+
+    /**
+     * Handle a job failure.
+     */
+    public function failed(\Throwable $exception): void
+    {
+        Log::error('UpdateSubscriptionNextBillingDates failed', [
+            'exception' => $exception->getMessage(),
+        ]);
     }
 }
