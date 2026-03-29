@@ -2,6 +2,7 @@ import { useState, type ReactNode } from 'react'
 import { Sidebar } from './sidebar'
 import { Topbar } from './topbar'
 import { FlashMessages } from './flash-messages'
+import { ChatPanel } from '@/components/assistant/chat-panel'
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet'
 
 interface AppLayoutProps {
@@ -44,6 +45,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
             </div>
 
             <FlashMessages />
+            <ChatPanel />
         </div>
     )
 }
