@@ -57,17 +57,17 @@ interface RecentExpense {
     id: number
     description: string
     category: string | null
-    date: string
+    expense_date: string
     amount: number
     currency: string
 }
 
 interface UpcomingBill {
     id: number
-    provider: string
-    type: string | null
+    service_provider: string
+    utility_type: string | null
     due_date: string
-    amount: number
+    bill_amount: number
     currency: string
 }
 
@@ -479,7 +479,7 @@ export default function DashboardIndex({
                                         <div className="min-w-0 flex-1">
                                             <p className="truncate font-medium">{expense.description}</p>
                                             <p className="text-xs text-muted-foreground">
-                                                {expense.category ? `${expense.category} · ` : ''}{formatDate(expense.date)}
+                                                {expense.category ? `${expense.category} · ` : ''}{formatDate(expense.expense_date)}
                                             </p>
                                         </div>
                                         <p className="shrink-0 font-medium">{formatCurrency(expense.amount, expense.currency)}</p>
@@ -506,12 +506,12 @@ export default function DashboardIndex({
                                 {billsList.map((bill) => (
                                     <div key={bill.id} className="flex items-center justify-between text-sm">
                                         <div className="min-w-0 flex-1">
-                                            <p className="truncate font-medium">{bill.provider}</p>
+                                            <p className="truncate font-medium">{bill.service_provider}</p>
                                             <p className="text-xs text-muted-foreground">
-                                                {bill.type ? `${bill.type} · ` : ''}Due {formatDate(bill.due_date)}
+                                                {bill.utility_type ? `${bill.utility_type} · ` : ''}Due {formatDate(bill.due_date)}
                                             </p>
                                         </div>
-                                        <p className="shrink-0 font-medium">{formatCurrency(bill.amount, bill.currency)}</p>
+                                        <p className="shrink-0 font-medium">{formatCurrency(bill.bill_amount, bill.currency)}</p>
                                     </div>
                                 ))}
                             </div>
