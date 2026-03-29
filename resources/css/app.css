@@ -236,36 +236,60 @@
 
 /* AI Assistant markdown rendering */
 .assistant-markdown {
-    @apply prose prose-sm dark:prose-invert max-w-none text-inherit;
+    @apply prose prose-sm dark:prose-invert max-w-none text-inherit leading-relaxed;
 
     & > *:first-child { margin-top: 0; }
     & > *:last-child { margin-bottom: 0; }
 
-    h3 { @apply text-sm font-semibold mt-3 mb-1.5; }
-    h2 { @apply text-base font-semibold mt-4 mb-2; }
-    p { @apply my-1.5 leading-relaxed; }
-    ul, ol { @apply my-1.5 pl-4; }
-    li { @apply my-0.5; }
-    hr { @apply my-3; }
-    strong { @apply font-semibold; }
-    code { @apply text-xs bg-muted px-1 py-0.5 rounded; }
+    /* Headings */
+    h2 { @apply text-base font-bold mt-5 mb-2 tracking-tight; }
+    h3 { @apply text-sm font-bold mt-4 mb-1.5 tracking-tight; }
+    h4 { @apply text-sm font-semibold mt-3 mb-1; }
 
+    /* Body text */
+    p { @apply my-2 leading-relaxed; }
+    strong { @apply font-semibold text-foreground; }
+    em { @apply text-muted-foreground; }
+
+    /* Lists */
+    ul { @apply my-2 pl-5 list-disc space-y-1; }
+    ol { @apply my-2 pl-5 list-decimal space-y-1; }
+    li { @apply leading-relaxed; }
+    li > p { @apply my-0; }
+
+    /* Separators */
+    hr { @apply my-4 border-border/60; }
+
+    /* Code */
+    code { @apply text-xs bg-muted px-1.5 py-0.5 rounded font-mono; }
+    pre { @apply my-3 p-3 bg-muted rounded-lg overflow-x-auto; }
+    pre code { @apply bg-transparent px-0 py-0; }
+
+    /* Blockquotes (used for example prompts) */
+    blockquote {
+        @apply my-3 pl-3 border-l-2 border-border/60 text-muted-foreground italic;
+    }
+
+    /* Links */
+    a { @apply text-[#F53003] underline underline-offset-2 hover:text-[#F53003]/80; }
+
+    /* Tables */
     table {
-        @apply w-full text-xs my-2 border-collapse rounded-md overflow-hidden;
+        @apply w-full text-xs my-3 border-collapse rounded-lg overflow-hidden;
     }
     thead {
-        @apply bg-muted/50;
+        @apply bg-muted/60;
     }
     th {
-        @apply px-3 py-1.5 text-left font-semibold border-b border-border text-muted-foreground;
+        @apply px-3 py-2 text-left font-semibold border-b border-border text-muted-foreground text-xs uppercase tracking-wide;
     }
     td {
-        @apply px-3 py-1.5 border-b border-border;
+        @apply px-3 py-2 border-b border-border/50;
     }
     tr:last-child td {
         border-bottom: none;
     }
     tbody tr:hover {
-        @apply bg-muted/30;
+        @apply bg-muted/20 transition-colors;
     }
 }
