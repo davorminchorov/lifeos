@@ -29,7 +29,7 @@ class AddInterview extends TenantScopedTool
 
     public function handle(Request $request): string
     {
-        $companyName = $request->get('company_name');
+        $companyName = $request['company_name'];
 
         $application = $this->scopedQuery(JobApplication::class)
             ->where('company_name', 'LIKE', '%'.$companyName.'%')
@@ -43,9 +43,9 @@ class AddInterview extends TenantScopedTool
             return "No job application found for '{$companyName}'. Available: {$available}";
         }
 
-        $type = $request->get('type', 'video');
-        $scheduledAt = $request->get('scheduled_at');
-        $durationMinutes = $request->get('duration_minutes', 60);
+        $type = $request['type'] ?? 'video';
+        $scheduledAt = $request['scheduled_at'];
+        $durationMinutes = $request['duration_minutes'] ?? 60;
 
         JobApplicationInterview::create([
             'tenant_id' => $this->tenantId,
@@ -54,7 +54,7 @@ class AddInterview extends TenantScopedTool
             'type' => $type,
             'scheduled_at' => $scheduledAt,
             'duration_minutes' => $durationMinutes,
-            'notes' => $request->get('notes'),
+            'notes' => $request['notes'],
         ]);
 
         return "Added {$type} interview for {$application->company_name} on {$scheduledAt}";

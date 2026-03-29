@@ -30,15 +30,15 @@ class CreateExpense extends TenantScopedTool
 
     public function handle(Request $request): string
     {
-        $date = $request->get('date', date('Y-m-d'));
-        $currency = $request->get('currency', 'MKD');
-        $merchant = $request->get('merchant');
-        $description = $request->get('description', $merchant);
+        $date = $request['date'] ?? date('Y-m-d');
+        $currency = $request['currency'] ?? 'MKD';
+        $merchant = $request['merchant'];
+        $description = $request['description'] ?? $merchant;
 
         $data = [
-            'amount' => $request->get('amount'),
+            'amount' => $request['amount'],
             'currency' => $currency,
-            'category' => $request->get('category'),
+            'category' => $request['category'],
             'expense_date' => $date,
             'description' => $description,
             'merchant' => $merchant,

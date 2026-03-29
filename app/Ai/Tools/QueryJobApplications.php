@@ -29,22 +29,22 @@ class QueryJobApplications extends TenantScopedTool
     {
         $query = $this->scopedQuery(JobApplication::class);
 
-        $company = $request->get('company');
+        $company = $request['company'];
         if ($company !== null) {
             $query->where('company_name', 'LIKE', '%'.$company.'%');
         }
 
-        $status = $request->get('status');
+        $status = $request['status'];
         if ($status !== null) {
             $query->where('status', $status);
         }
 
-        $dateFrom = $request->get('date_from');
+        $dateFrom = $request['date_from'];
         if ($dateFrom !== null) {
             $query->where('applied_at', '>=', $dateFrom);
         }
 
-        $dateTo = $request->get('date_to');
+        $dateTo = $request['date_to'];
         if ($dateTo !== null) {
             $query->where('applied_at', '<=', $dateTo);
         }

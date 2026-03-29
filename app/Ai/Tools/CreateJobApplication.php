@@ -31,8 +31,8 @@ class CreateJobApplication extends TenantScopedTool
 
     public function handle(Request $request): string
     {
-        $companyName = $request->get('company_name');
-        $jobTitle = $request->get('job_title');
+        $companyName = $request['company_name'];
+        $jobTitle = $request['job_title'];
 
         $validated = $this->validate(
             ['company_name' => $companyName, 'job_title' => $jobTitle],
@@ -46,22 +46,22 @@ class CreateJobApplication extends TenantScopedTool
             return $validated;
         }
 
-        $status = $request->get('status', 'applied');
-        $source = $request->get('source', 'other');
+        $status = $request['status'] ?? 'applied';
+        $source = $request['source'] ?? 'other';
 
         $data = [
             'user_id' => $this->userId,
             'tenant_id' => $this->tenantId,
             'company_name' => $companyName,
             'job_title' => $jobTitle,
-            'job_url' => $request->get('job_url'),
-            'location' => $request->get('location'),
-            'remote' => $request->get('remote', false),
+            'job_url' => $request['job_url'],
+            'location' => $request['location'],
+            'remote' => $request['remote'] ?? false,
             'status' => $status,
             'source' => $source,
             'applied_at' => date('Y-m-d'),
             'currency' => 'MKD',
-            'notes' => $request->get('notes'),
+            'notes' => $request['notes'],
         ];
 
         JobApplication::create($data);

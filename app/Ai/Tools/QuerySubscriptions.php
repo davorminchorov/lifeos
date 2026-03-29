@@ -29,22 +29,22 @@ class QuerySubscriptions extends TenantScopedTool
     {
         $query = $this->scopedQuery(Subscription::class);
 
-        $name = $request->get('name');
+        $name = $request['name'];
         if ($name !== null) {
             $query->where('service_name', 'LIKE', '%'.$name.'%');
         }
 
-        $status = $request->get('status');
+        $status = $request['status'];
         if ($status !== null) {
             $query->where('status', $status);
         }
 
-        $minCost = $request->get('min_cost');
+        $minCost = $request['min_cost'];
         if ($minCost !== null) {
             $query->where('cost', '>=', $minCost);
         }
 
-        $maxCost = $request->get('max_cost');
+        $maxCost = $request['max_cost'];
         if ($maxCost !== null) {
             $query->where('cost', '<=', $maxCost);
         }

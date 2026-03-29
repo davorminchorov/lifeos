@@ -31,32 +31,32 @@ class QueryExpenses extends TenantScopedTool
     {
         $query = $this->scopedQuery(Expense::class);
 
-        $category = $request->get('category');
+        $category = $request['category'];
         if ($category !== null) {
             $query->where('category', 'LIKE', '%'.$category.'%');
         }
 
-        $merchant = $request->get('merchant');
+        $merchant = $request['merchant'];
         if ($merchant !== null) {
             $query->where('merchant', 'LIKE', '%'.$merchant.'%');
         }
 
-        $dateFrom = $request->get('date_from');
+        $dateFrom = $request['date_from'];
         if ($dateFrom !== null) {
             $query->where('expense_date', '>=', $dateFrom);
         }
 
-        $dateTo = $request->get('date_to');
+        $dateTo = $request['date_to'];
         if ($dateTo !== null) {
             $query->where('expense_date', '<=', $dateTo);
         }
 
-        $minAmount = $request->get('min_amount');
+        $minAmount = $request['min_amount'];
         if ($minAmount !== null) {
             $query->where('amount', '>=', $minAmount);
         }
 
-        $maxAmount = $request->get('max_amount');
+        $maxAmount = $request['max_amount'];
         if ($maxAmount !== null) {
             $query->where('amount', '<=', $maxAmount);
         }

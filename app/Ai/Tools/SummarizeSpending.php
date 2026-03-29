@@ -25,7 +25,7 @@ class SummarizeSpending extends TenantScopedTool
 
     public function handle(Request $request): string
     {
-        $period = $request->get('period', 'this_month');
+        $period = $request['period'] ?? 'this_month';
         $now = CarbonImmutable::now();
 
         [$startDate, $endDate, $label] = match ($period) {

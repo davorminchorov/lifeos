@@ -25,7 +25,7 @@ class CancelSubscription extends TenantScopedTool
 
     public function handle(Request $request): string
     {
-        $name = $request->get('name');
+        $name = $request['name'];
 
         $subscription = $this->scopedQuery(Subscription::class)
             ->where('service_name', 'LIKE', '%'.$name.'%')
