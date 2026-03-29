@@ -130,10 +130,11 @@ export function ChatPanel() {
                                 if (data === '[DONE]') continue
                                 try {
                                     const parsed = JSON.parse(data)
-                                    if (parsed.text) {
+                                    // Laravel AI SDK sends TextDelta events with "delta" field
+                                    if (parsed.delta) {
+                                        fullText += parsed.delta
+                                    } else if (parsed.text) {
                                         fullText += parsed.text
-                                    } else if (typeof parsed === 'string') {
-                                        fullText += parsed
                                     }
                                 } catch {
                                     // Raw text chunk (not JSON)
