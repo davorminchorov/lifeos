@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import Markdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 import { router, usePage } from '@inertiajs/react'
 import {
     Sheet,
@@ -174,7 +175,10 @@ export function ChatPanel() {
                                 }`}
                             >
                                 {msg.role === 'assistant' ? (
-                                    <Markdown className="prose prose-sm dark:prose-invert max-w-none [&>*:first-child]:mt-0 [&>*:last-child]:mb-0 [&_h3]:text-base [&_h3]:font-semibold [&_h3]:mt-4 [&_h3]:mb-2 [&_ul]:my-1 [&_li]:my-0.5 [&_hr]:my-3 [&_p]:my-1.5">
+                                    <Markdown
+                                        remarkPlugins={[remarkGfm]}
+                                        className="prose prose-sm dark:prose-invert max-w-none [&>*:first-child]:mt-0 [&>*:last-child]:mb-0 [&_h3]:text-base [&_h3]:font-semibold [&_h3]:mt-4 [&_h3]:mb-2 [&_ul]:my-1 [&_li]:my-0.5 [&_hr]:my-3 [&_p]:my-1.5 [&_table]:text-xs [&_th]:px-2 [&_th]:py-1 [&_td]:px-2 [&_td]:py-1 [&_table]:border-collapse [&_th]:border [&_th]:border-border [&_td]:border [&_td]:border-border"
+                                    >
                                         {msg.content}
                                     </Markdown>
                                 ) : (

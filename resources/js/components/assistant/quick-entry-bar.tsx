@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import Markdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 import { router, usePage } from '@inertiajs/react'
 import { Input } from '@/components/ui/input'
 import { CheckCircle, Loader2 } from 'lucide-react'
@@ -133,7 +134,7 @@ export function QuickEntryBar() {
                     {isSuccess ? (
                         <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" />
                     ) : null}
-                    <Markdown className="prose prose-sm dark:prose-invert max-w-none [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
+                    <Markdown remarkPlugins={[remarkGfm]} className="prose prose-sm dark:prose-invert max-w-none [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
                         {result.message}
                     </Markdown>
                 </div>
