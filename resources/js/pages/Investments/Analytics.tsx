@@ -45,25 +45,9 @@ interface RiskData {
 
 interface ProjectInvestmentData {
     total_projects: number
-    total_invested: number
-    active_projects: number
-    completed_projects: number
-    projects: Array<{
-        id: number
-        name: string
-        project_type: string | null
-        project_stage: string | null
-        project_business_model: string | null
-        invested_amount: number
-        current_value: number
-        gain_loss: number
-        gain_loss_percentage: number
-        equity_percentage: number | null
-        currency: string
-        project_website: string | null
-        project_repository: string | null
-    }>
-    by_stage: Record<string, { count: number; total_invested: number }>
+    total_value: number
+    by_stage: Record<string, number>
+    by_type: Record<string, number>
 }
 
 interface AnalyticsProps {
@@ -89,25 +73,26 @@ interface AnalyticsProps {
 }
 
 export default function InvestmentAnalytics({ analytics, investments }: AnalyticsProps) {
-    const currency = analytics.overview.currency
+    const currency = analytics.overview?.currency ?? 'USD'
+    const hasInvestments = investments.length > 0
 
-    const allocationChartData = Object.entries(analytics.allocation).map(([type, data]) => ({
+    const allocationChartData = Object.entries(analytics.allocation ?? {}).map(([type, data]) => ({
         name: type.replace('_', ' '),
         value: data.value,
     }))
 
-    const riskChartData = Object.entries(analytics.risk_analysis).map(([risk, data]) => ({
+    const riskChartData = Object.entries(analytics.risk_analysis ?? {}).map(([risk, data]) => ({
         name: risk,
         value: data.value,
     }))
 
-    const byTypeChartData = Object.entries(analytics.by_type).map(([type, data]) => ({
+    const byTypeChartData = Object.entries(analytics.by_type ?? {}).map(([type, data]) => ({
         type: type.replace('_', ' '),
         value: data.total_value,
         cost: data.total_cost,
     }))
 
-    const dividendsByYearData = Object.entries(analytics.dividends.dividends_by_year).map(([year, amount]) => ({
+    const dividendsByYearData = Object.entries(analytics.dividends?.dividends_by_year ?? {}).map(([year, amount]) => ({
         year,
         amount,
     }))
@@ -121,6 +106,19 @@ export default function InvestmentAnalytics({ analytics, investments }: Analytic
                     <Link href="/investments">Back to Investments</Link>
                 </Button>
             </PageHeader>
+
+            {!hasInvestments ? (
+                <Card>
+                    <CardContent className="flex flex-col items-center justify-center py-16">
+                        <p className="mb-2 text-lg font-medium text-muted-foreground">No investments yet</p>
+                        <p className="mb-6 text-sm text-muted-foreground">Add your first investment to see portfolio analytics here.</p>
+                        <Button asChild>
+                            <Link href="/investments/create">Add Investment</Link>
+                        </Button>
+                    </CardContent>
+                </Card>
+            ) : (
+            <>
 
             {/* Portfolio Overview */}
             <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -143,18 +141,18 @@ export default function InvestmentAnalytics({ analytics, investments }: Analytic
                 <Card>
                     <CardContent className="p-4">
                         <p className="text-sm text-muted-foreground">Unrealized Gain/Loss</p>
-                        <p className={`text-2xl font-bold ${analytics.overview.unrealized_gain_loss >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                            {formatCurrency(analytics.overview.unrealized_gain_loss, currency)}
-                            <span className="ml-1 text-sm">({analytics.overview.unrealized_gain_loss_percentage.toFixed(2)}%)</span>
+                        <p className={`text-2xl font-bold ${(analytics.overview?.unrealized_gain_loss ?? 0) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                            {formatCurrency(analytics.overview?.unrealized_gain_loss ?? 0, currency)}
+                            <span className="ml-1 text-sm">({(analytics.overview?.unrealized_gain_loss_percentage ?? 0).toFixed(2)}%)</span>
                         </p>
                     </CardContent>
                 </Card>
                 <Card>
                     <CardContent className="p-4">
                         <p className="text-sm text-muted-foreground">Total Return</p>
-                        <p className={`text-2xl font-bold ${analytics.overview.total_return >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                            {formatCurrency(analytics.overview.total_return, currency)}
-                            <span className="ml-1 text-sm">({analytics.overview.total_return_percentage.toFixed(2)}%)</span>
+                        <p className={`text-2xl font-bold ${(analytics.overview?.total_return ?? 0) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                            {formatCurrency(analytics.overview?.total_return ?? 0, currency)}
+                            <span className="ml-1 text-sm">({(analytics.overview?.total_return_percentage ?? 0).toFixed(2)}%)</span>
                         </p>
                     </CardContent>
                 </Card>
@@ -316,8 +314,8 @@ export default function InvestmentAnalytics({ analytics, investments }: Analytic
                                             <TableCell className={data.gain_loss >= 0 ? 'text-green-600' : 'text-red-600'}>
                                                 {formatCurrency(data.gain_loss, currency)}
                                             </TableCell>
-                                            <TableCell className={`font-semibold ${data.gain_loss_percentage >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                                                {data.gain_loss_percentage.toFixed(2)}%
+                                            <TableCell className={`font-semibold ${(data.gain_loss_percentage ?? 0) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                                                {(data.gain_loss_percentage ?? 0).toFixed(2)}%
                                             </TableCell>
                                         </TableRow>
                                     ))}
@@ -329,85 +327,43 @@ export default function InvestmentAnalytics({ analytics, investments }: Analytic
             ) : null}
 
             {/* Project Investments */}
-            {analytics.project_investments.total_projects > 0 ? (
+            {(analytics.project_investments?.total_projects ?? 0) > 0 ? (
                 <Card className="mb-6">
                     <CardHeader>
                         <CardTitle>Project Investment Analytics</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                        <div className="mb-6 grid gap-4 sm:grid-cols-2">
                             <div className="rounded-md bg-muted p-4">
                                 <p className="text-sm text-muted-foreground">Total Projects</p>
                                 <p className="mt-1 text-xl font-bold">{analytics.project_investments.total_projects}</p>
                             </div>
                             <div className="rounded-md bg-muted p-4">
-                                <p className="text-sm text-muted-foreground">Total Invested</p>
+                                <p className="text-sm text-muted-foreground">Total Value</p>
                                 <p className="mt-1 text-xl font-bold">
-                                    {formatCurrency(analytics.project_investments.total_invested, currency)}
+                                    {formatCurrency(analytics.project_investments.total_value, currency)}
                                 </p>
-                            </div>
-                            <div className="rounded-md bg-muted p-4">
-                                <p className="text-sm text-muted-foreground">Active Projects</p>
-                                <p className="mt-1 text-xl font-bold">{analytics.project_investments.active_projects}</p>
-                            </div>
-                            <div className="rounded-md bg-muted p-4">
-                                <p className="text-sm text-muted-foreground">Completed Projects</p>
-                                <p className="mt-1 text-xl font-bold">{analytics.project_investments.completed_projects}</p>
                             </div>
                         </div>
 
-                        {analytics.project_investments.projects.length > 0 ? (
-                            <div className="space-y-4">
-                                <h3 className="text-lg font-semibold">Individual Projects</h3>
-                                {analytics.project_investments.projects.map((project) => (
-                                    <Card key={project.id}>
-                                        <CardContent className="p-4">
-                                            <div className="mb-3 flex items-start justify-between">
-                                                <div>
-                                                    <h4 className="font-semibold">{project.name}</h4>
-                                                    <div className="mt-1 flex flex-wrap gap-2">
-                                                        {project.project_type ? (
-                                                            <span className="rounded bg-secondary px-2 py-0.5 text-xs capitalize">{project.project_type}</span>
-                                                        ) : null}
-                                                        {project.project_stage ? (
-                                                            <span className="rounded bg-secondary px-2 py-0.5 text-xs capitalize">{project.project_stage}</span>
-                                                        ) : null}
-                                                    </div>
-                                                </div>
-                                                <Link href={`/investments/${project.id}`} className="text-sm text-primary hover:underline">
-                                                    View Details
-                                                </Link>
-                                            </div>
-                                            <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-                                                <div>
-                                                    <p className="text-xs text-muted-foreground">Invested</p>
-                                                    <p className="text-sm font-semibold">{formatCurrency(project.invested_amount, project.currency)}</p>
-                                                </div>
-                                                <div>
-                                                    <p className="text-xs text-muted-foreground">Current Value</p>
-                                                    <p className="text-sm font-semibold">{formatCurrency(project.current_value, project.currency)}</p>
-                                                </div>
-                                                <div>
-                                                    <p className="text-xs text-muted-foreground">Gain/Loss</p>
-                                                    <p className={`text-sm font-semibold ${project.gain_loss >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                                                        {project.gain_loss >= 0 ? '+' : ''}{formatCurrency(project.gain_loss, project.currency)}
-                                                    </p>
-                                                </div>
-                                                <div>
-                                                    <p className="text-xs text-muted-foreground">Return</p>
-                                                    <p className={`text-sm font-semibold ${project.gain_loss_percentage >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                                                        {project.gain_loss_percentage >= 0 ? '+' : ''}{project.gain_loss_percentage.toFixed(2)}%
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </CardContent>
-                                    </Card>
-                                ))}
+                        {Object.keys(analytics.project_investments.by_stage ?? {}).length > 0 ? (
+                            <div className="space-y-2">
+                                <h3 className="text-lg font-semibold">By Stage</h3>
+                                <div className="flex flex-wrap gap-3">
+                                    {Object.entries(analytics.project_investments.by_stage).map(([stage, count]) => (
+                                        <div key={stage} className="rounded-md bg-muted px-3 py-2">
+                                            <p className="text-xs text-muted-foreground capitalize">{stage}</p>
+                                            <p className="text-sm font-semibold">{count}</p>
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
                         ) : null}
                     </CardContent>
                 </Card>
             ) : null}
+            </>
+            )}
         </AppLayout>
     )
 }

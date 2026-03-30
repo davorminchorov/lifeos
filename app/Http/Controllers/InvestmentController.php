@@ -832,7 +832,8 @@ class InvestmentController extends Controller
             ->get()
             ->sortByDesc(function ($investment) {
                 return $investment->current_market_value;
-            });
+            })
+            ->values();
 
         return Inertia::render('Investments/Analytics', [
             'analytics' => $analytics,
