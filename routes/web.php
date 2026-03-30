@@ -356,6 +356,9 @@ Route::middleware('auth')->group(function () {
         // Cycle Menu Routes
         Route::resource('cycle-menus', CycleMenuController::class);
         Route::put('cycle-menu-days/{cycle_menu_day}', [CycleMenuDayController::class, 'update'])->name('cycle-menu-days.update');
+        Route::get('cycle-menu-items/import', [CycleMenuItemController::class, 'importForm'])->name('cycle-menu-items.import');
+        Route::post('cycle-menu-items/import', [CycleMenuItemController::class, 'importCsv'])->name('cycle-menu-items.import-csv');
+        Route::get('cycle-menu-items/import/progress', [CycleMenuItemController::class, 'importProgress'])->name('cycle-menu-items.import-progress');
         Route::prefix('cycle-menu-items')->name('cycle-menu-items.')->group(function () {
             Route::post('/', [CycleMenuItemController::class, 'store'])->name('store');
             Route::put('{cycle_menu_item}', [CycleMenuItemController::class, 'update'])->name('update');

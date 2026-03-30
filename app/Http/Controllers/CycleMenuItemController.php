@@ -1,13 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CycleMenus\StoreCycleMenuItemRequest;
 use App\Http\Requests\CycleMenus\UpdateCycleMenuItemRequest;
+use App\Http\Requests\ImportCycleMenuItemsCsvRequest;
+use App\Jobs\ImportCycleMenuItemsCsv;
+use App\Models\CycleMenu;
 use App\Models\CycleMenuDay;
 use App\Models\CycleMenuItem;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class CycleMenuItemController extends Controller
 {
@@ -74,5 +83,52 @@ class CycleMenuItemController extends Controller
 
         // Try to redirect back to the menu show page if referer includes it
         return back()->with('status', 'Items reordered.');
+    }
+
+    /**
+     * Show the import CSV form page.
+     */
+    public function importForm(): Response
+    {
+        $menus = CycleMenu::query()
+            ->where('user_id', auth()->id())
+            ->orderBy('name')
+            ->get(['id', 'name', 'cycle_length_days', 'is_active']);
+
+        return Inertia::render('CycleMenus/Import', [
+            'menus' => $menus,
+        ]);
+    }
+
+    /**
+     * Queue an import of cycle menu items from an uploaded CSV.
+     */
+    public function importCsv(ImportCycleMenuItemsCsvRequest $request): JsonResponse|RedirectResponse
+    {
+        $userId = auth()->id();
+        $tenantId = auth()->user()->current_tenant_id;
+        $cycleMenuId = (int) $request->validated('cycle_menu_id');
+        $file = $request->file('file');
+
+        $storedPath = $file->storeAs('imports/'.$userId, uniqid('cycle_menu_items_').'.csv');
+
+        ImportCycleMenuItemsCsv::dispatch($cycleMenuId, $userId, $tenantId, $storedPath)->onQueue('imports');
+
+        if ($request->expectsJson()) {
+            return new JsonResponse(['status' => 'queued']);
+        }
+
+        return redirect()->route('cycle-menus.index')
+            ->with('success', 'Your CSV import has been queued and will be processed shortly.');
+    }
+
+    /**
+     * Return the current import progress for the authenticated user.
+     */
+    public function importProgress(): JsonResponse
+    {
+        $progress = Cache::get('cycle_menu_items_import_progress:'.auth()->id());
+
+        return new JsonResponse($progress ?? ['status' => 'idle']);
     }
 }
