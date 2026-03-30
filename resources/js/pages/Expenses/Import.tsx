@@ -74,11 +74,13 @@ export default function ExpenseImport() {
         const formData = new FormData()
         formData.append('file', file)
 
-        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ?? ''
+        const xsrfToken = decodeURIComponent(
+            document.cookie.split('; ').find(row => row.startsWith('XSRF-TOKEN='))?.split('=')[1] ?? ''
+        )
 
         const xhr = new XMLHttpRequest()
         xhr.open('POST', '/expenses/import')
-        xhr.setRequestHeader('X-CSRF-TOKEN', csrfToken)
+        xhr.setRequestHeader('X-XSRF-TOKEN', xsrfToken)
         xhr.setRequestHeader('Accept', 'application/json')
         xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest')
 
