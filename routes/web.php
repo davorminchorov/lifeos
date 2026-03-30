@@ -216,6 +216,10 @@ Route::middleware('auth')->group(function () {
         Route::get('subscriptions/analytics/spending', [SubscriptionController::class, 'spendingAnalytics'])->name('subscriptions.analytics.spending');
         Route::get('subscriptions/analytics/category-breakdown', [SubscriptionController::class, 'categoryBreakdown'])->name('subscriptions.analytics.category-breakdown');
 
+        Route::get('subscriptions/import', [SubscriptionController::class, 'importForm'])->name('subscriptions.import');
+        Route::post('subscriptions/import', [SubscriptionController::class, 'importCsv'])->name('subscriptions.import-csv');
+        Route::get('subscriptions/import/progress', [SubscriptionController::class, 'importProgress'])->name('subscriptions.import-progress');
+
         Route::resource('subscriptions', SubscriptionController::class);
         Route::patch('subscriptions/{subscription}/pause', [SubscriptionController::class, 'pause'])->name('subscriptions.pause');
         Route::patch('subscriptions/{subscription}/resume', [SubscriptionController::class, 'resume'])->name('subscriptions.resume');

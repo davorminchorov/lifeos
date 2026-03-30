@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ImportSubscriptionCsvRequest;
 use App\Http\Requests\StoreSubscriptionRequest;
 use App\Http\Requests\UpdateSubscriptionRequest;
+use App\Jobs\ImportSubscriptionsCsv;
 use App\Models\Subscription;
 use App\Services\CurrencyService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
 
 class SubscriptionController extends Controller
@@ -346,5 +350,44 @@ class SubscriptionController extends Controller
         })->values(); // Convert to indexed array for JSON
 
         return response()->json(['data' => $data]);
+    }
+
+    /**
+     * Show the import CSV form page.
+     */
+    public function importForm()
+    {
+        return Inertia::render('Subscriptions/Import');
+    }
+
+    /**
+     * Queue an import of subscriptions from an uploaded CSV.
+     */
+    public function importCsv(ImportSubscriptionCsvRequest $request)
+    {
+        $userId = auth()->id();
+        $tenantId = auth()->user()->current_tenant_id;
+        $file = $request->file('file');
+
+        $storedPath = $file->storeAs('imports/'.$userId, uniqid('subscriptions_').'.csv');
+
+        ImportSubscriptionsCsv::dispatch($userId, $tenantId, $storedPath)->onQueue('imports');
+
+        if ($request->expectsJson()) {
+            return new JsonResponse(['status' => 'queued']);
+        }
+
+        return redirect()->route('subscriptions.index')
+            ->with('success', 'Your CSV import has been queued and will be processed shortly.');
+    }
+
+    /**
+     * Return the current import progress for the authenticated user.
+     */
+    public function importProgress(): JsonResponse
+    {
+        $progress = Cache::get('subscription_import_progress:'.auth()->id());
+
+        return new JsonResponse($progress ?? ['status' => 'idle']);
     }
 }

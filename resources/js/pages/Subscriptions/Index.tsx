@@ -29,7 +29,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { CreditCard, Plus, Search, MoreHorizontal, Eye, Pencil, Pause, Play, X } from 'lucide-react'
+import { CreditCard, Plus, Search, MoreHorizontal, Eye, Pencil, Pause, Play, X, Upload } from 'lucide-react'
 import { formatCurrency, formatDate } from '@/lib/utils'
 import type { Subscription } from '@/types/models'
 import type { PaginatedData } from '@/types'
@@ -104,12 +104,20 @@ export default function SubscriptionIndex({ subscriptions, filters = {} }: Subsc
             <Head title="Subscriptions" />
 
             <PageHeader title="Subscriptions" description="Manage your recurring subscriptions">
-                <Button asChild>
-                    <Link href="/subscriptions/create">
-                        <Plus className="mr-2 h-4 w-4" />
-                        Add Subscription
-                    </Link>
-                </Button>
+                <div className="flex gap-2">
+                    <Button variant="outline" asChild>
+                        <Link href="/subscriptions/import">
+                            <Upload className="mr-2 h-4 w-4" />
+                            Import CSV
+                        </Link>
+                    </Button>
+                    <Button asChild>
+                        <Link href="/subscriptions/create">
+                            <Plus className="mr-2 h-4 w-4" />
+                            Add Subscription
+                        </Link>
+                    </Button>
+                </div>
             </PageHeader>
 
             {subscriptions.total > 0 ? (
