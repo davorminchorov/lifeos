@@ -273,6 +273,9 @@ Route::middleware('auth')->group(function () {
         Route::put('project-investment-transactions/{project_investment_transaction}', [ProjectInvestmentTransactionController::class, 'update'])->name('project-investment-transactions.update');
         Route::delete('project-investment-transactions/{project_investment_transaction}', [ProjectInvestmentTransactionController::class, 'destroy'])->name('project-investment-transactions.destroy');
 
+        Route::get('expenses/import', [ExpenseController::class, 'importForm'])->name('expenses.import');
+        Route::post('expenses/import', [ExpenseController::class, 'importCsv'])->name('expenses.import-csv');
+        Route::get('expenses/import/progress', [ExpenseController::class, 'importProgress'])->name('expenses.import-progress');
         Route::resource('expenses', ExpenseController::class);
         Route::get('expenses/analytics', [ExpenseController::class, 'analytics'])->name('expenses.analytics');
         Route::patch('expenses/{expense}/mark-reimbursed', [ExpenseController::class, 'markReimbursed'])->name('expenses.mark-reimbursed');
