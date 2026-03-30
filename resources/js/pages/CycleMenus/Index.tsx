@@ -21,7 +21,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { UtensilsCrossed, Plus, MoreHorizontal, Eye, Pencil, Trash2 } from 'lucide-react'
+import { UtensilsCrossed, Plus, MoreHorizontal, Eye, Pencil, Trash2, Upload } from 'lucide-react'
 import { formatDate } from '@/lib/utils'
 import type { CycleMenu } from '@/types/models'
 import type { PaginatedData } from '@/types'
@@ -45,6 +45,12 @@ export default function CycleMenuIndex({ menus }: CycleMenuIndexProps) {
             <Head title="Cycle Menus" />
 
             <PageHeader title="Cycle Menus" description="Plan meals in repeating cycles and see each day's items">
+                <Button variant="outline" asChild>
+                    <Link href="/cycle-menu-items/import">
+                        <Upload className="mr-2 h-4 w-4" />
+                        Import CSV
+                    </Link>
+                </Button>
                 <Button asChild>
                     <Link href="/cycle-menus/create">
                         <Plus className="mr-2 h-4 w-4" />

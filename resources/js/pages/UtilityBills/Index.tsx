@@ -29,7 +29,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Zap, Plus, Search, MoreHorizontal, Eye, Pencil, Check, ToggleLeft, ToggleRight, Copy, Trash2 } from 'lucide-react'
+import { Zap, Plus, Search, MoreHorizontal, Eye, Pencil, Check, ToggleLeft, ToggleRight, Copy, Trash2, Upload } from 'lucide-react'
 import { formatCurrency, formatDate } from '@/lib/utils'
 import type { UtilityBill } from '@/types/models'
 import type { PaginatedData } from '@/types'
@@ -163,12 +163,20 @@ export default function UtilityBillIndex({ utilityBills, filters = {} }: Utility
             <Head title="Utility Bills" />
 
             <PageHeader title="Utility Bills" description="Track your utility bills and monitor usage patterns">
-                <Button asChild>
-                    <Link href="/utility-bills/create">
-                        <Plus className="mr-2 h-4 w-4" />
-                        Add Utility Bill
-                    </Link>
-                </Button>
+                <div className="flex gap-2">
+                    <Button variant="outline" asChild>
+                        <Link href="/utility-bills/import">
+                            <Upload className="mr-2 h-4 w-4" />
+                            Import CSV
+                        </Link>
+                    </Button>
+                    <Button asChild>
+                        <Link href="/utility-bills/create">
+                            <Plus className="mr-2 h-4 w-4" />
+                            Add Utility Bill
+                        </Link>
+                    </Button>
+                </div>
             </PageHeader>
 
             {utilityBills.total > 0 ? (
