@@ -6,6 +6,9 @@ namespace App\Ai\Tools;
 
 use App\Models\Budget;
 use App\Models\Contract;
+use App\Models\Holiday;
+use App\Models\InvestmentGoal;
+use App\Models\Invoice;
 use App\Models\JobApplicationInterview;
 use App\Models\Subscription;
 use App\Models\UtilityBill;
@@ -37,6 +40,9 @@ final class GenerateBriefing extends TenantScopedTool
         $sections[] = $this->subscriptionsSection($now, $weekFromNow);
         $sections[] = $this->interviewsSection($now, $weekFromNow);
         $sections[] = $this->budgetsSection();
+        $sections[] = $this->invoicesSection($now, $weekFromNow);
+        $sections[] = $this->investmentGoalsSection();
+        $sections[] = $this->holidaysSection($now, $weekFromNow);
         $sections[] = $this->overdueSection($now);
 
         $content = array_filter($sections);
@@ -152,6 +158,87 @@ final class GenerateBriefing extends TenantScopedTool
         });
 
         return 'BUDGETS: '.$items->implode(', ').'.';
+    }
+
+    private function invoicesSection(CarbonImmutable $now, CarbonImmutable $weekFromNow): string
+    {
+        $invoices = $this->scopedQuery(Invoice::class)
+            ->whereIn('status', ['issued', 'partially_paid', 'past_due'])
+            ->whereBetween('due_at', [$now->toDateString(), $weekFromNow->toDateString().' 23:59:59'])
+            ->with('customer')
+            ->orderBy('due_at')
+            ->get();
+
+        if ($invoices->isEmpty()) {
+            return '';
+        }
+
+        $total = $invoices->sum(fn (Invoice $i): float => $i->amount_due / 100);
+
+        $items = $invoices->map(
+            fn (Invoice $i): string => sprintf(
+                '%s %s %s due %s',
+                $i->number ?? 'DRAFT',
+                $i->customer?->name ?? 'Unknown',
+                number_format($i->amount_due / 100, 2),
+                $i->due_at->format('M j'),
+            ),
+        );
+
+        return sprintf(
+            'INVOICES DUE: %d this week (%s total). %s.',
+            $invoices->count(),
+            number_format($total, 2),
+            $items->implode(', '),
+        );
+    }
+
+    private function investmentGoalsSection(): string
+    {
+        $goals = $this->scopedQuery(InvestmentGoal::class)
+            ->where('status', 'active')
+            ->whereNotNull('target_date')
+            ->where('target_date', '<=', CarbonImmutable::now()->addDays(30)->toDateString())
+            ->get();
+
+        if ($goals->isEmpty()) {
+            return '';
+        }
+
+        $items = $goals->map(
+            fn (InvestmentGoal $g): string => sprintf(
+                '%s at %s%% (target %s by %s)',
+                $g->title,
+                $g->progress_percentage,
+                number_format((float) $g->target_amount, 2),
+                $g->target_date->format('M j'),
+            ),
+        );
+
+        return 'INVESTMENT GOALS (approaching deadline): '.$items->implode(', ').'.';
+    }
+
+    private function holidaysSection(CarbonImmutable $now, CarbonImmutable $weekFromNow): string
+    {
+        $holidays = $this->scopedQuery(Holiday::class)
+            ->whereBetween('date', [$now->toDateString(), $weekFromNow->toDateString()])
+            ->orderBy('date')
+            ->get();
+
+        if ($holidays->isEmpty()) {
+            return '';
+        }
+
+        $items = $holidays->map(
+            fn (Holiday $h): string => sprintf(
+                '%s on %s (%s)',
+                $h->name,
+                $h->date->format('M j'),
+                $h->country,
+            ),
+        );
+
+        return 'HOLIDAYS: '.$items->implode(', ').'.';
     }
 
     private function overdueSection(CarbonImmutable $now): string
