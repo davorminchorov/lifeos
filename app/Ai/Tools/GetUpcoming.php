@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace App\Ai\Tools;
 
 use App\Models\Contract;
+use App\Models\Holiday;
+use App\Models\Invoice;
 use App\Models\JobApplicationInterview;
+use App\Models\RecurringInvoice;
 use App\Models\Subscription;
 use App\Models\UtilityBill;
 use App\Models\Warranty;
@@ -123,6 +126,63 @@ class GetUpcoming extends TenantScopedTool
                 ),
             );
             $sections[] = "WARRANTIES EXPIRING:\n".$lines->implode("\n");
+        }
+
+        $invoices = $this->scopedQuery(Invoice::class)
+            ->whereIn('status', ['ISSUED', 'PARTIALLY_PAID', 'PAST_DUE'])
+            ->whereBetween('due_at', [$now->toDateString(), $cutoff->toDateString().' 23:59:59'])
+            ->with('customer')
+            ->orderBy('due_at')
+            ->get();
+
+        if ($invoices->isNotEmpty()) {
+            $lines = $invoices->map(
+                fn (Invoice $i): string => sprintf(
+                    '  - %s: %s %s due %s',
+                    $i->number ?? 'DRAFT',
+                    $i->customer?->name ?? 'Unknown',
+                    number_format($i->amount_due / 100, 2),
+                    $i->due_at->format('M j'),
+                ),
+            );
+            $sections[] = "INVOICES DUE:\n".$lines->implode("\n");
+        }
+
+        $recurring = RecurringInvoice::query()
+            ->where('user_id', $this->userId)
+            ->where('status', 'ACTIVE')
+            ->whereBetween('next_billing_date', [$now->toDateString(), $cutoff->toDateString()])
+            ->with('customer')
+            ->orderBy('next_billing_date')
+            ->get();
+
+        if ($recurring->isNotEmpty()) {
+            $lines = $recurring->map(
+                fn (RecurringInvoice $r): string => sprintf(
+                    '  - %s: %s on %s',
+                    $r->name,
+                    $r->customer?->name ?? 'Unknown',
+                    $r->next_billing_date->format('M j'),
+                ),
+            );
+            $sections[] = "RECURRING INVOICES:\n".$lines->implode("\n");
+        }
+
+        $holidays = $this->scopedQuery(Holiday::class)
+            ->whereBetween('date', [$now->toDateString(), $cutoff->toDateString()])
+            ->orderBy('date')
+            ->get();
+
+        if ($holidays->isNotEmpty()) {
+            $lines = $holidays->map(
+                fn (Holiday $h): string => sprintf(
+                    '  - %s: %s (%s)',
+                    $h->date->format('M j'),
+                    $h->name,
+                    $h->country,
+                ),
+            );
+            $sections[] = "HOLIDAYS:\n".$lines->implode("\n");
         }
 
         if ($sections === []) {

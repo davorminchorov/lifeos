@@ -5,12 +5,18 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Models\Budget;
+use App\Models\Contract;
+use App\Models\CycleMenu;
 use App\Models\Expense;
+use App\Models\Holiday;
+use App\Models\Investment;
+use App\Models\Invoice;
 use App\Models\Iou;
 use App\Models\JobApplication;
 use App\Models\Subscription;
 use App\Models\User;
 use App\Models\UtilityBill;
+use App\Models\Warranty;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Cache;
 
@@ -45,6 +51,10 @@ final class AssistantContextService
         $lines[] = $this->buildBudgetsSummary($tenantId, $userId);
         $lines[] = $this->buildPendingBills($tenantId);
         $lines[] = $this->buildIousSummary($tenantId);
+        $lines[] = $this->buildInvestmentsSummary($tenantId);
+        $lines[] = $this->buildInvoicesSummary($tenantId);
+        $lines[] = $this->buildContractsSummary($tenantId);
+        $lines[] = $this->buildWarrantiesSummary($tenantId);
 
         return implode("\n", array_filter($lines));
     }
@@ -205,6 +215,34 @@ final class AssistantContextService
             return $this->loadJobApplicationDetails($tenantId);
         }
 
+        if (str_starts_with($page, 'CycleMenus')) {
+            return $this->loadCycleMenuDetails($tenantId);
+        }
+
+        if (str_starts_with($page, 'Investments')) {
+            return $this->loadInvestmentDetails($tenantId);
+        }
+
+        if (str_starts_with($page, 'Invoic')) {
+            return $this->loadInvoiceDetails($tenantId);
+        }
+
+        if (str_starts_with($page, 'Budgets')) {
+            return $this->loadBudgetDetails($tenantId, $userId);
+        }
+
+        if (str_starts_with($page, 'Contracts')) {
+            return $this->loadContractDetails($tenantId);
+        }
+
+        if (str_starts_with($page, 'Warranties')) {
+            return $this->loadWarrantyDetails($tenantId);
+        }
+
+        if (str_starts_with($page, 'Holidays')) {
+            return $this->loadHolidayDetails($tenantId);
+        }
+
         return '';
     }
 
@@ -247,6 +285,262 @@ final class AssistantContextService
         );
 
         return 'ALL SUBSCRIPTIONS: '.$items->implode(' | ');
+    }
+
+    private function buildInvestmentsSummary(int $tenantId): string
+    {
+        $active = Investment::query()
+            ->where('tenant_id', $tenantId)
+            ->where('status', 'active')
+            ->get();
+
+        if ($active->isEmpty()) {
+            return 'INVESTMENTS: None active';
+        }
+
+        $totalValue = $active->sum(fn (Investment $i): float => (float) $i->current_market_value);
+
+        return sprintf(
+            'INVESTMENTS: %d active, %s total market value',
+            $active->count(),
+            number_format($totalValue, 2),
+        );
+    }
+
+    private function buildInvoicesSummary(int $tenantId): string
+    {
+        $unpaid = Invoice::query()
+            ->where('tenant_id', $tenantId)
+            ->whereIn('status', ['ISSUED', 'PARTIALLY_PAID', 'PAST_DUE'])
+            ->get();
+
+        if ($unpaid->isEmpty()) {
+            return 'INVOICES: None outstanding';
+        }
+
+        $totalDue = $unpaid->sum(fn (Invoice $i): float => $i->amount_due / 100);
+
+        return sprintf(
+            'INVOICES: %d outstanding, %s total due',
+            $unpaid->count(),
+            number_format($totalDue, 2),
+        );
+    }
+
+    private function buildContractsSummary(int $tenantId): string
+    {
+        $active = Contract::query()
+            ->where('tenant_id', $tenantId)
+            ->where('status', 'active')
+            ->get();
+
+        if ($active->isEmpty()) {
+            return 'CONTRACTS: None active';
+        }
+
+        $expiringSoon = $active->filter(fn (Contract $c) => $c->end_date && $c->days_until_expiration <= 30)->count();
+        $expiringNote = $expiringSoon > 0 ? ", {$expiringSoon} expiring within 30 days" : '';
+
+        return sprintf(
+            'CONTRACTS: %d active%s',
+            $active->count(),
+            $expiringNote,
+        );
+    }
+
+    private function buildWarrantiesSummary(int $tenantId): string
+    {
+        $active = Warranty::query()
+            ->where('tenant_id', $tenantId)
+            ->where('current_status', 'active')
+            ->get();
+
+        if ($active->isEmpty()) {
+            return 'WARRANTIES: None active';
+        }
+
+        $expiringSoon = $active->filter(fn (Warranty $w) => $w->days_until_expiration <= 30)->count();
+        $expiringNote = $expiringSoon > 0 ? ", {$expiringSoon} expiring within 30 days" : '';
+
+        return sprintf(
+            'WARRANTIES: %d active%s',
+            $active->count(),
+            $expiringNote,
+        );
+    }
+
+    private function loadCycleMenuDetails(int $tenantId): string
+    {
+        $menus = CycleMenu::query()
+            ->where('tenant_id', $tenantId)
+            ->where('is_active', true)
+            ->withCount('days')
+            ->orderBy('name')
+            ->get();
+
+        if ($menus->isEmpty()) {
+            return '';
+        }
+
+        $items = $menus->map(
+            fn (CycleMenu $m): string => sprintf(
+                '%s (%d-day cycle, starts %s)',
+                $m->name,
+                $m->cycle_length_days,
+                $m->starts_on->format('M j'),
+            ),
+        );
+
+        return 'ACTIVE CYCLE MENUS: '.$items->implode(' | ');
+    }
+
+    private function loadInvestmentDetails(int $tenantId): string
+    {
+        $investments = Investment::query()
+            ->where('tenant_id', $tenantId)
+            ->where('status', 'active')
+            ->orderBy('name')
+            ->get();
+
+        if ($investments->isEmpty()) {
+            return '';
+        }
+
+        $items = $investments->map(
+            fn (Investment $i): string => sprintf(
+                '%s %s %s @ %s',
+                $i->symbol_identifier ?? '',
+                $i->name,
+                number_format((float) $i->quantity, 2),
+                number_format((float) $i->current_value, 2),
+            ),
+        );
+
+        return 'ACTIVE INVESTMENTS: '.$items->implode(' | ');
+    }
+
+    private function loadInvoiceDetails(int $tenantId): string
+    {
+        $invoices = Invoice::query()
+            ->where('tenant_id', $tenantId)
+            ->whereIn('status', ['DRAFT', 'ISSUED', 'PARTIALLY_PAID', 'PAST_DUE'])
+            ->with('customer')
+            ->orderBy('due_at')
+            ->get();
+
+        if ($invoices->isEmpty()) {
+            return '';
+        }
+
+        $items = $invoices->map(
+            fn (Invoice $i): string => sprintf(
+                '%s %s %s due %s',
+                $i->number ?? 'DRAFT',
+                $i->customer?->name ?? 'N/A',
+                number_format($i->amount_due / 100, 2),
+                $i->due_at?->format('M j') ?? 'N/A',
+            ),
+        );
+
+        return 'OPEN INVOICES: '.$items->implode(' | ');
+    }
+
+    private function loadBudgetDetails(int $tenantId, int $userId): string
+    {
+        $budgets = Budget::query()
+            ->where('tenant_id', $tenantId)
+            ->where('is_active', true)
+            ->get();
+
+        if ($budgets->isEmpty()) {
+            return '';
+        }
+
+        $items = $budgets->map(function (Budget $b): string {
+            $pct = $b->getUtilizationPercentage();
+
+            return sprintf(
+                '%s %s%% of %s',
+                $b->category,
+                $pct,
+                number_format((float) $b->amount, 2),
+            );
+        });
+
+        return 'ALL BUDGETS: '.$items->implode(' | ');
+    }
+
+    private function loadContractDetails(int $tenantId): string
+    {
+        $contracts = Contract::query()
+            ->where('tenant_id', $tenantId)
+            ->where('status', 'active')
+            ->orderBy('end_date')
+            ->get();
+
+        if ($contracts->isEmpty()) {
+            return '';
+        }
+
+        $items = $contracts->map(
+            fn (Contract $c): string => sprintf(
+                '%s with %s%s',
+                $c->title,
+                $c->counterparty,
+                $c->end_date ? ' expires '.$c->end_date->format('M j') : '',
+            ),
+        );
+
+        return 'ACTIVE CONTRACTS: '.$items->implode(' | ');
+    }
+
+    private function loadWarrantyDetails(int $tenantId): string
+    {
+        $warranties = Warranty::query()
+            ->where('tenant_id', $tenantId)
+            ->where('current_status', 'active')
+            ->orderBy('warranty_expiration_date')
+            ->get();
+
+        if ($warranties->isEmpty()) {
+            return '';
+        }
+
+        $items = $warranties->map(
+            fn (Warranty $w): string => sprintf(
+                '%s (%s) expires %s',
+                $w->product_name,
+                $w->brand ?? 'N/A',
+                $w->warranty_expiration_date->format('M j'),
+            ),
+        );
+
+        return 'ACTIVE WARRANTIES: '.$items->implode(' | ');
+    }
+
+    private function loadHolidayDetails(int $tenantId): string
+    {
+        $holidays = Holiday::query()
+            ->where('tenant_id', $tenantId)
+            ->where('date', '>=', CarbonImmutable::now()->toDateString())
+            ->orderBy('date')
+            ->limit(10)
+            ->get();
+
+        if ($holidays->isEmpty()) {
+            return '';
+        }
+
+        $items = $holidays->map(
+            fn (Holiday $h): string => sprintf(
+                '%s %s (%s)',
+                $h->date->format('M j'),
+                $h->name,
+                $h->country,
+            ),
+        );
+
+        return 'UPCOMING HOLIDAYS: '.$items->implode(' | ');
     }
 
     private function loadJobApplicationDetails(int $tenantId): string

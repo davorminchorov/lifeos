@@ -4,18 +4,39 @@ declare(strict_types=1);
 
 namespace App\Ai\Agents;
 
+use App\Ai\Tools\AddCycleMenuItem;
 use App\Ai\Tools\AddInterview;
 use App\Ai\Tools\CancelSubscription;
+use App\Ai\Tools\CreateBudget;
+use App\Ai\Tools\CreateContract;
+use App\Ai\Tools\CreateCycleMenu;
 use App\Ai\Tools\CreateExpense;
+use App\Ai\Tools\CreateInvoice;
 use App\Ai\Tools\CreateIou;
 use App\Ai\Tools\CreateJobApplication;
+use App\Ai\Tools\CreateWarranty;
+use App\Ai\Tools\FileWarrantyClaim;
 use App\Ai\Tools\GenerateBriefing;
 use App\Ai\Tools\GetUpcoming;
 use App\Ai\Tools\LogPayment;
+use App\Ai\Tools\QueryBudgets;
+use App\Ai\Tools\QueryContracts;
+use App\Ai\Tools\QueryCycleMenus;
 use App\Ai\Tools\QueryExpenses;
+use App\Ai\Tools\QueryHolidays;
+use App\Ai\Tools\QueryInvestmentGoals;
+use App\Ai\Tools\QueryInvestments;
+use App\Ai\Tools\QueryInvoices;
 use App\Ai\Tools\QueryJobApplications;
+use App\Ai\Tools\QueryRecurringInvoices;
 use App\Ai\Tools\QuerySubscriptions;
+use App\Ai\Tools\QueryWarranties;
+use App\Ai\Tools\RecordInvestmentTransaction;
+use App\Ai\Tools\SummarizePortfolio;
+use App\Ai\Tools\SummarizeRevenue;
 use App\Ai\Tools\SummarizeSpending;
+use App\Ai\Tools\UpdateBudget;
+use App\Ai\Tools\UpdateContract;
 use App\Ai\Tools\UpdateSubscription;
 use App\Models\User;
 use App\Services\AssistantContextService;
@@ -58,6 +79,13 @@ final class LifeOsAssistant implements Agent, Conversational, HasTools
         - Tracking job applications and interviews
         - Managing subscriptions
         - Logging payments
+        - Managing cycle menus and meal planning
+        - Tracking investments, transactions, and portfolio goals
+        - Creating and querying invoices and recurring invoices
+        - Managing budgets and tracking spending against limits
+        - Tracking contracts and their terms
+        - Managing product warranties and filing claims
+        - Querying holidays
         - Querying data across all modules
 
         == USER CONTEXT ==
@@ -106,6 +134,27 @@ final class LifeOsAssistant implements Agent, Conversational, HasTools
             new SummarizeSpending($userId, $tenantId),
             new GetUpcoming($userId, $tenantId),
             new QueryJobApplications($userId, $tenantId),
+            new QueryCycleMenus($userId, $tenantId),
+            new CreateCycleMenu($userId, $tenantId),
+            new AddCycleMenuItem($userId, $tenantId),
+            new QueryInvestments($userId, $tenantId),
+            new QueryInvestmentGoals($userId, $tenantId),
+            new SummarizePortfolio($userId, $tenantId),
+            new RecordInvestmentTransaction($userId, $tenantId),
+            new QueryInvoices($userId, $tenantId),
+            new QueryRecurringInvoices($userId, $tenantId),
+            new SummarizeRevenue($userId, $tenantId),
+            new CreateInvoice($userId, $tenantId),
+            new QueryBudgets($userId, $tenantId),
+            new CreateBudget($userId, $tenantId),
+            new UpdateBudget($userId, $tenantId),
+            new QueryContracts($userId, $tenantId),
+            new CreateContract($userId, $tenantId),
+            new UpdateContract($userId, $tenantId),
+            new QueryWarranties($userId, $tenantId),
+            new CreateWarranty($userId, $tenantId),
+            new FileWarrantyClaim($userId, $tenantId),
+            new QueryHolidays($userId, $tenantId),
         ];
     }
 }
