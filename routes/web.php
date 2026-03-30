@@ -298,6 +298,9 @@ Route::middleware('auth')->group(function () {
         Route::get('utility-bills/analytics/spending', [UtilityBillController::class, 'spendingAnalytics'])->name('utility-bills.spending-analytics');
         Route::get('utility-bills/analytics/due-date', [UtilityBillController::class, 'dueDateAnalytics'])->name('utility-bills.due-date-analytics');
 
+        Route::get('utility-bills/import', [UtilityBillController::class, 'importForm'])->name('utility-bills.import');
+        Route::post('utility-bills/import', [UtilityBillController::class, 'importCsv'])->name('utility-bills.import-csv');
+        Route::get('utility-bills/import/progress', [UtilityBillController::class, 'importProgress'])->name('utility-bills.import-progress');
         Route::resource('utility-bills', UtilityBillController::class);
         Route::patch('utility-bills/{utility_bill}/mark-paid', [UtilityBillController::class, 'markPaid'])->name('utility-bills.mark-paid');
         Route::patch('utility-bills/{utility_bill}/set-auto-pay', [UtilityBillController::class, 'setAutoPay'])->name('utility-bills.set-auto-pay');

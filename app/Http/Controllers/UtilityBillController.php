@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ImportUtilityBillCsvRequest;
 use App\Http\Requests\StoreUtilityBillRequest;
 use App\Http\Requests\UpdateUtilityBillRequest;
+use App\Jobs\ImportUtilityBillsCsv;
 use App\Models\UtilityBill;
 use App\Services\CurrencyService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
@@ -993,5 +997,44 @@ class UtilityBillController extends Controller
 
         return redirect()->route('utility-bills.show', $utilityBill)
             ->with('success', 'Auto-pay setting updated successfully.');
+    }
+
+    /**
+     * Show the CSV import form.
+     */
+    public function importForm()
+    {
+        return Inertia::render('UtilityBills/Import');
+    }
+
+    /**
+     * Queue an import of utility bills from an uploaded CSV.
+     */
+    public function importCsv(ImportUtilityBillCsvRequest $request)
+    {
+        $userId = auth()->id();
+        $tenantId = auth()->user()->current_tenant_id;
+        $file = $request->file('file');
+
+        $storedPath = $file->storeAs('imports/'.$userId, uniqid('utility_bills_').'.csv');
+
+        ImportUtilityBillsCsv::dispatch($userId, $tenantId, $storedPath)->onQueue('imports');
+
+        if ($request->expectsJson()) {
+            return new JsonResponse(['status' => 'queued']);
+        }
+
+        return redirect()->route('utility-bills.index')
+            ->with('success', 'Your CSV import has been queued and will be processed shortly.');
+    }
+
+    /**
+     * Return the current import progress for the authenticated user.
+     */
+    public function importProgress(): JsonResponse
+    {
+        $progress = Cache::get('utility_bill_import_progress:'.auth()->id());
+
+        return new JsonResponse($progress ?? ['status' => 'idle']);
     }
 }
