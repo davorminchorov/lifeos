@@ -3,13 +3,14 @@
 namespace App\Models;
 
 use App\Traits\BelongsToTenant;
+use Database\Factories\SubscriptionFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Subscription extends Model
 {
-    /** @use HasFactory<\Database\Factories\SubscriptionFactory> */
+    /** @use HasFactory<SubscriptionFactory> */
     use BelongsToTenant, HasFactory;
 
     protected $fillable = [
@@ -33,6 +34,7 @@ class Subscription extends Model
         'notes',
         'tags',
         'status',
+        'unique_key',
     ];
 
     protected function casts(): array
