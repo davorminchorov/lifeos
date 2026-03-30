@@ -14,7 +14,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select'
-import { Pencil, Trash2, ArrowLeft, Plus, GripVertical, X } from 'lucide-react'
+import { Pencil, Trash2, ArrowLeft, Plus, GripVertical, X, Upload } from 'lucide-react'
 import { formatDate } from '@/lib/utils'
 import { MealType } from '@/types/enums'
 import type { CycleMenu, CycleMenuDay, CycleMenuItem } from '@/types/models'
@@ -338,6 +338,11 @@ export default function CycleMenuShow({ menu, daysByIndex }: CycleMenuShowProps)
                 <Button variant="outline" size="sm" asChild>
                     <Link href={`/cycle-menus/${menu.id}/edit`}>
                         <Pencil className="mr-2 h-4 w-4" /> Edit
+                    </Link>
+                </Button>
+                <Button variant="outline" size="sm" asChild>
+                    <Link href="/cycle-menu-items/import">
+                        <Upload className="mr-2 h-4 w-4" /> Import CSV
                     </Link>
                 </Button>
                 <StatusBadge status={menu.is_active ? 'active' : 'paused'} />
