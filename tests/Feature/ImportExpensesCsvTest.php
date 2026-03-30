@@ -73,7 +73,7 @@ class ImportExpensesCsvTest extends TestCase
         $csvContent = "expense_date,amount,category,description\n2026-03-15,25.50,Food & Dining,Lunch";
         $file = UploadedFile::fake()->createWithContent('expenses.csv', $csvContent);
 
-        $response = $this->post('/expenses/import', ['file' => $file]);
+        $response = $this->postJson('/expenses/import', ['file' => $file]);
 
         $response->assertOk();
         $response->assertJson(['status' => 'queued']);

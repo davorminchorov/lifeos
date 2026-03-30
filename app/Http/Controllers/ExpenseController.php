@@ -654,7 +654,12 @@ class ExpenseController extends Controller
 
         ImportExpensesCsv::dispatch($userId, $tenantId, $storedPath)->onQueue('imports');
 
-        return new JsonResponse(['status' => 'queued']);
+        if ($request->wantsJson()) {
+            return new JsonResponse(['status' => 'queued']);
+        }
+
+        return redirect()->route('expenses.index')
+            ->with('success', 'Your CSV import has been queued and will be processed shortly.');
     }
 
     /**
