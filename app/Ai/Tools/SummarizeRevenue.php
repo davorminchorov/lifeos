@@ -78,7 +78,7 @@ class SummarizeRevenue extends TenantScopedTool
             $amount = (int) $row->total / 100;
             $grandTotal += $amount;
 
-            if (in_array(strtoupper($status), ['PAID', 'PARTIALLY_PAID'])) {
+            if (in_array(strtolower($status), ['paid', 'partially_paid'])) {
                 $paidTotal += $amount;
             }
 

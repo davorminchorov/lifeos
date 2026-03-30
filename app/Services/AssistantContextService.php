@@ -311,7 +311,7 @@ final class AssistantContextService
     {
         $unpaid = Invoice::query()
             ->where('tenant_id', $tenantId)
-            ->whereIn('status', ['ISSUED', 'PARTIALLY_PAID', 'PAST_DUE'])
+            ->whereIn('status', ['issued', 'partially_paid', 'past_due'])
             ->get();
 
         if ($unpaid->isEmpty()) {
@@ -423,7 +423,7 @@ final class AssistantContextService
     {
         $invoices = Invoice::query()
             ->where('tenant_id', $tenantId)
-            ->whereIn('status', ['DRAFT', 'ISSUED', 'PARTIALLY_PAID', 'PAST_DUE'])
+            ->whereIn('status', ['draft', 'issued', 'partially_paid', 'past_due'])
             ->with('customer')
             ->orderBy('due_at')
             ->get();

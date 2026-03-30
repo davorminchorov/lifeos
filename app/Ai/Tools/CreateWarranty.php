@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Ai\Tools;
 
 use App\Models\Warranty;
+use Carbon\CarbonImmutable;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Ai\Tools\Request;
 
@@ -40,7 +41,7 @@ class CreateWarranty extends TenantScopedTool
             'serial_number' => $request['serial_number'] ?? null,
             'purchase_date' => $request['purchase_date'] ?? null,
             'purchase_price' => $request['purchase_price'] ?? null,
-            'retailer' => $request['retailer'] ?? null,
+            'retailer' => $request['retailer'] ?? '',
             'warranty_expiration_date' => $request['warranty_expiration_date'] ?? null,
             'warranty_type' => $request['warranty_type'] ?? 'manufacturer',
             'notes' => $request['notes'] ?? null,
@@ -53,7 +54,7 @@ class CreateWarranty extends TenantScopedTool
             'serial_number' => 'nullable|string|max:255',
             'purchase_date' => 'required|date',
             'purchase_price' => 'nullable|numeric|min:0',
-            'retailer' => 'nullable|string|max:255',
+            'retailer' => 'string|max:255',
             'warranty_expiration_date' => 'required|date|after:purchase_date',
             'warranty_type' => 'string|in:manufacturer,extended,both',
             'notes' => 'nullable|string|max:10000',
@@ -63,10 +64,15 @@ class CreateWarranty extends TenantScopedTool
             return $validated;
         }
 
+        $purchaseDate = CarbonImmutable::parse($validated['purchase_date']);
+        $expirationDate = CarbonImmutable::parse($validated['warranty_expiration_date']);
+        $durationMonths = (int) $purchaseDate->diffInMonths($expirationDate);
+
         Warranty::create([
             'tenant_id' => $this->tenantId,
             'user_id' => $this->userId,
             'current_status' => 'active',
+            'warranty_duration_months' => $durationMonths,
             ...$validated,
         ]);
 

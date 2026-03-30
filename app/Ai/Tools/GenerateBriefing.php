@@ -163,7 +163,7 @@ final class GenerateBriefing extends TenantScopedTool
     private function invoicesSection(CarbonImmutable $now, CarbonImmutable $weekFromNow): string
     {
         $invoices = $this->scopedQuery(Invoice::class)
-            ->whereIn('status', ['ISSUED', 'PARTIALLY_PAID', 'PAST_DUE'])
+            ->whereIn('status', ['issued', 'partially_paid', 'past_due'])
             ->whereBetween('due_at', [$now->toDateString(), $weekFromNow->toDateString().' 23:59:59'])
             ->with('customer')
             ->orderBy('due_at')

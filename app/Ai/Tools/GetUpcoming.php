@@ -129,7 +129,7 @@ class GetUpcoming extends TenantScopedTool
         }
 
         $invoices = $this->scopedQuery(Invoice::class)
-            ->whereIn('status', ['ISSUED', 'PARTIALLY_PAID', 'PAST_DUE'])
+            ->whereIn('status', ['issued', 'partially_paid', 'past_due'])
             ->whereBetween('due_at', [$now->toDateString(), $cutoff->toDateString().' 23:59:59'])
             ->with('customer')
             ->orderBy('due_at')
@@ -150,7 +150,7 @@ class GetUpcoming extends TenantScopedTool
 
         $recurring = RecurringInvoice::query()
             ->where('user_id', $this->userId)
-            ->where('status', 'ACTIVE')
+            ->where('status', 'active')
             ->whereBetween('next_billing_date', [$now->toDateString(), $cutoff->toDateString()])
             ->with('customer')
             ->orderBy('next_billing_date')

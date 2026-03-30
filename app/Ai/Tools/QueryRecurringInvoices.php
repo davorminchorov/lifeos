@@ -32,7 +32,7 @@ class QueryRecurringInvoices extends TenantScopedTool
 
         $status = $request['status'] ?? null;
         if ($status !== null) {
-            $query->where('status', strtoupper($status));
+            $query->where('status', strtolower($status));
         }
 
         $customer = $request['customer'] ?? null;
