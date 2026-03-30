@@ -12,6 +12,7 @@ class SubscriptionTest extends TestCase
     use RefreshDatabase;
 
     protected $user;
+
     protected $tenant;
 
     protected function setUp(): void
@@ -53,6 +54,7 @@ class SubscriptionTest extends TestCase
             'notes',
             'tags',
             'status',
+            'unique_key',
         ];
 
         $this->assertEquals($expectedFillable, $subscription->getFillable());
