@@ -26,3 +26,5 @@ Thumbs.db
 .spin.yml
 .gstack/
 .cloud/
+.ai/
+.playwright-mcp/
