@@ -6,6 +6,7 @@ use App\Jobs\ImportExpensesCsv;
 use App\Models\Expense;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
@@ -74,8 +75,8 @@ class ImportExpensesCsvTest extends TestCase
 
         $response = $this->post('/expenses/import', ['file' => $file]);
 
-        $response->assertRedirect(route('expenses.index'));
-        $response->assertSessionHas('success');
+        $response->assertOk();
+        $response->assertJson(['status' => 'queued']);
 
         Queue::assertPushedOn('imports', ImportExpensesCsv::class, function ($job) use ($user, $tenant) {
             return $job->userId === $user->id && $job->tenantId === $tenant->id;
@@ -284,5 +285,73 @@ class ImportExpensesCsvTest extends TestCase
         $job->handle();
 
         $this->assertDatabaseCount('expenses', 0);
+    }
+
+    public function test_job_writes_progress_to_cache(): void
+    {
+        Storage::fake();
+
+        ['user' => $user, 'tenant' => $tenant] = $this->setupTenantContext();
+
+        $csvContent = implode("\n", [
+            'expense_date,amount,category,description',
+            '2026-03-15,25.50,Food & Dining,Lunch at cafe',
+            '2026-03-16,30.00,Shopping,New book',
+        ]);
+
+        $storedPath = 'imports/'.$user->id.'/test_expenses.csv';
+        Storage::put($storedPath, $csvContent);
+
+        $job = new ImportExpensesCsv($user->id, $tenant->id, $storedPath);
+        $job->handle();
+
+        $progress = Cache::get('expense_import_progress:'.$user->id);
+        $this->assertNotNull($progress);
+        $this->assertEquals('completed', $progress['status']);
+        $this->assertEquals(2, $progress['total']);
+        $this->assertEquals(2, $progress['created']);
+        $this->assertEquals(0, $progress['skipped']);
+        $this->assertEquals(0, $progress['failed']);
+    }
+
+    public function test_progress_endpoint_returns_cached_data(): void
+    {
+        ['user' => $user] = $this->setupTenantContext();
+
+        Cache::put('expense_import_progress:'.$user->id, [
+            'status' => 'processing',
+            'total' => 10,
+            'created' => 5,
+            'skipped' => 1,
+            'failed' => 0,
+        ], 300);
+
+        $response = $this->getJson('/expenses/import/progress');
+
+        $response->assertOk();
+        $response->assertJson([
+            'status' => 'processing',
+            'total' => 10,
+            'created' => 5,
+            'skipped' => 1,
+            'failed' => 0,
+        ]);
+    }
+
+    public function test_progress_endpoint_returns_idle_when_no_import(): void
+    {
+        $this->setupTenantContext();
+
+        $response = $this->getJson('/expenses/import/progress');
+
+        $response->assertOk();
+        $response->assertJson(['status' => 'idle']);
+    }
+
+    public function test_progress_endpoint_requires_authentication(): void
+    {
+        $response = $this->getJson('/expenses/import/progress');
+
+        $response->assertUnauthorized();
     }
 }

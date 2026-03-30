@@ -9,7 +9,9 @@ use App\Jobs\ImportExpensesCsv;
 use App\Models\Budget;
 use App\Models\Expense;
 use App\Services\CurrencyService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
@@ -652,7 +654,16 @@ class ExpenseController extends Controller
 
         ImportExpensesCsv::dispatch($userId, $tenantId, $storedPath)->onQueue('imports');
 
-        return redirect()->route('expenses.index')
-            ->with('success', 'Your CSV import has been queued and will be processed shortly.');
+        return new JsonResponse(['status' => 'queued']);
+    }
+
+    /**
+     * Return the current import progress for the authenticated user.
+     */
+    public function importProgress(): JsonResponse
+    {
+        $progress = Cache::get('expense_import_progress:'.auth()->id());
+
+        return new JsonResponse($progress ?? ['status' => 'idle']);
     }
 }

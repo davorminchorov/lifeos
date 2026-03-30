@@ -12,6 +12,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
@@ -80,8 +81,13 @@ class ImportExpensesCsv implements ShouldQueue
 
         $index = $this->buildHeaderIndex($header);
 
+        $totalRows = count($lines);
         $created = 0;
         $skipped = 0;
+        $failed = 0;
+        $cacheKey = 'expense_import_progress:'.$this->userId;
+
+        $this->updateProgress($cacheKey, 'processing', $totalRows, $created, $skipped, $failed);
 
         foreach ($lines as $line) {
             $row = str_getcsv($line);
@@ -98,6 +104,7 @@ class ImportExpensesCsv implements ShouldQueue
 
                 if (! $expenseDate || ! $amount || ! $category || ! $description) {
                     $skipped++;
+                    $this->updateProgress($cacheKey, 'processing', $totalRows, $created, $skipped, $failed);
                     Log::warning('ImportExpensesCsv: skipped row due to missing required fields', [
                         'expense_date' => $expenseDate,
                         'amount' => $amount,
@@ -118,6 +125,7 @@ class ImportExpensesCsv implements ShouldQueue
 
                 if ($exists) {
                     $skipped++;
+                    $this->updateProgress($cacheKey, 'processing', $totalRows, $created, $skipped, $failed);
 
                     continue;
                 }
@@ -162,8 +170,10 @@ class ImportExpensesCsv implements ShouldQueue
                 $expense->save();
 
                 $created++;
+                $this->updateProgress($cacheKey, 'processing', $totalRows, $created, $skipped, $failed);
             } catch (\Throwable $e) {
-                $skipped++;
+                $failed++;
+                $this->updateProgress($cacheKey, 'processing', $totalRows, $created, $skipped, $failed);
                 Log::error('ImportExpensesCsv: row import failed', [
                     'message' => $e->getMessage(),
                     'trace' => $e->getTraceAsString(),
@@ -177,10 +187,13 @@ class ImportExpensesCsv implements ShouldQueue
             // Ignore cleanup errors
         }
 
+        $this->updateProgress($cacheKey, 'completed', $totalRows, $created, $skipped, $failed);
+
         Log::info('ImportExpensesCsv: import finished', [
             'user_id' => $this->userId,
             'created' => $created,
             'skipped' => $skipped,
+            'failed' => $failed,
         ]);
     }
 
@@ -282,8 +295,28 @@ class ImportExpensesCsv implements ShouldQueue
         return in_array(strtolower(trim($value)), ['true', '1', 'yes'], true);
     }
 
+    private function updateProgress(string $cacheKey, string $status, int $total, int $created, int $skipped, int $failed): void
+    {
+        Cache::put($cacheKey, [
+            'status' => $status,
+            'total' => $total,
+            'created' => $created,
+            'skipped' => $skipped,
+            'failed' => $failed,
+        ], 300);
+    }
+
     public function failed(\Throwable $exception): void
     {
+        Cache::put('expense_import_progress:'.$this->userId, [
+            'status' => 'failed',
+            'total' => 0,
+            'created' => 0,
+            'skipped' => 0,
+            'failed' => 0,
+            'error' => $exception->getMessage(),
+        ], 300);
+
         Log::error('ImportExpensesCsv failed', [
             'exception' => $exception->getMessage(),
         ]);
