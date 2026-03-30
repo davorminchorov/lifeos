@@ -42,7 +42,7 @@ class SummarizePortfolioTest extends TestCase
         Investment::factory()->create([
             'tenant_id' => $this->tenantId,
             'user_id' => $this->userId,
-            'investment_type' => 'stock',
+            'investment_type' => 'stocks',
             'status' => 'active',
             'quantity' => 10,
             'purchase_price' => 100,
@@ -54,6 +54,6 @@ class SummarizePortfolioTest extends TestCase
 
         $this->assertStringContainsString('PORTFOLIO SUMMARY', $result);
         $this->assertStringContainsString('ALLOCATION BY TYPE', $result);
-        $this->assertStringContainsString('stock', $result);
+        $this->assertStringContainsString('stocks', $result);
     }
 }

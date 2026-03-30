@@ -19,7 +19,7 @@ class QueryInvestments extends TenantScopedTool
     {
         return [
             'name' => $schema->string()->description('Filter by investment name or symbol'),
-            'investment_type' => $schema->string()->description('Filter by type: stock, bond, etf, mutual_fund, crypto, real_estate, commodities, cash, project'),
+            'investment_type' => $schema->string()->description('Filter by type: stocks, bonds, etf, mutual_fund, crypto, real_estate, commodities, cash, project'),
             'status' => $schema->string()->description('Filter by status: active, sold, pending'),
             'risk_tolerance' => $schema->string()->description('Filter by risk: conservative, moderate, aggressive'),
         ];
