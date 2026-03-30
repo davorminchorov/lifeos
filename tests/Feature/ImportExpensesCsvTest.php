@@ -161,6 +161,38 @@ class ImportExpensesCsvTest extends TestCase
         $this->assertDatabaseCount('expenses', 1);
     }
 
+    public function test_job_skips_duplicate_rows_matching_manually_created_expenses(): void
+    {
+        Storage::fake();
+
+        ['user' => $user, 'tenant' => $tenant] = $this->setupTenantContext();
+
+        $csvContent = implode("\n", [
+            'expense_date,amount,category,description,merchant',
+            '2026-03-15,25.50,Food & Dining,Lunch at cafe,Cafe Central',
+        ]);
+
+        Expense::create([
+            'user_id' => $user->id,
+            'tenant_id' => $tenant->id,
+            'amount' => 25.50,
+            'currency' => 'MKD',
+            'category' => 'Food & Dining',
+            'description' => 'Lunch at cafe',
+            'merchant' => 'Cafe Central',
+            'expense_date' => '2026-03-15',
+            'status' => 'confirmed',
+        ]);
+
+        $storedPath = 'imports/'.$user->id.'/test_expenses.csv';
+        Storage::put($storedPath, $csvContent);
+
+        $job = new ImportExpensesCsv($user->id, $tenant->id, $storedPath);
+        $job->handle();
+
+        $this->assertDatabaseCount('expenses', 1);
+    }
+
     public function test_job_skips_rows_missing_required_fields(): void
     {
         Storage::fake();

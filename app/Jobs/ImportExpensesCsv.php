@@ -116,11 +116,28 @@ class ImportExpensesCsv implements ShouldQueue
                 }
 
                 $merchant = (string) $this->getValue($row, $index, 'merchant', '');
+                $parsedAmount = $this->parseDecimal($amount);
+                $parsedDate = $this->parseDate($expenseDate);
                 $uniqueKey = 'csv-import:'.md5($expenseDate.$amount.$merchant.$description);
+
+                $merchantValue = $merchant ?: null;
 
                 $exists = Expense::withoutGlobalScope(TenantScope::class)
                     ->where('user_id', $this->userId)
-                    ->where('unique_key', $uniqueKey)
+                    ->where(function ($query) use ($uniqueKey, $parsedDate, $parsedAmount, $merchantValue, $description) {
+                        $query->where('unique_key', $uniqueKey)
+                            ->orWhere(function ($query) use ($parsedDate, $parsedAmount, $merchantValue, $description) {
+                                $query->whereDate('expense_date', $parsedDate)
+                                    ->where('amount', round($parsedAmount, 2))
+                                    ->where('description', $description);
+
+                                if ($merchantValue === null) {
+                                    $query->whereNull('merchant');
+                                } else {
+                                    $query->where('merchant', $merchantValue);
+                                }
+                            });
+                    })
                     ->exists();
 
                 if ($exists) {
@@ -129,8 +146,6 @@ class ImportExpensesCsv implements ShouldQueue
 
                     continue;
                 }
-
-                $parsedAmount = $this->parseDecimal($amount);
                 $currency = $this->normalizeCurrency((string) $this->getValue($row, $index, 'currency', 'MKD'));
                 $subcategory = (string) $this->getValue($row, $index, 'subcategory', '');
                 $paymentMethod = (string) $this->getValue($row, $index, 'payment_method', '');
@@ -155,7 +170,7 @@ class ImportExpensesCsv implements ShouldQueue
                     'currency' => $currency,
                     'category' => $category,
                     'subcategory' => $subcategory ?: null,
-                    'expense_date' => $this->parseDate($expenseDate),
+                    'expense_date' => $parsedDate,
                     'description' => $description,
                     'merchant' => $merchant ?: null,
                     'payment_method' => $paymentMethod ?: null,
