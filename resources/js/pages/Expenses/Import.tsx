@@ -80,6 +80,7 @@ export default function ExpenseImport() {
         xhr.open('POST', '/expenses/import')
         xhr.setRequestHeader('X-CSRF-TOKEN', csrfToken)
         xhr.setRequestHeader('Accept', 'application/json')
+        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest')
 
         xhr.upload.onprogress = (event) => {
             if (event.lengthComputable) {

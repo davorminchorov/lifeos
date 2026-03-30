@@ -654,7 +654,7 @@ class ExpenseController extends Controller
 
         ImportExpensesCsv::dispatch($userId, $tenantId, $storedPath)->onQueue('imports');
 
-        if ($request->wantsJson()) {
+        if ($request->expectsJson()) {
             return new JsonResponse(['status' => 'queued']);
         }
 
