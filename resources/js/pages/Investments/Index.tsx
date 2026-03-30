@@ -29,7 +29,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { TrendingUp, Plus, Search, MoreHorizontal, Eye, Pencil, Trash2 } from 'lucide-react'
+import { TrendingUp, Plus, Search, MoreHorizontal, Eye, Pencil, Trash2, Upload } from 'lucide-react'
 import { formatCurrency, formatDate } from '@/lib/utils'
 import type { Investment } from '@/types/models'
 import type { PaginatedData } from '@/types'
@@ -109,6 +109,12 @@ export default function InvestmentIndex({ investments, filters = {} }: Investmen
             <PageHeader title="Investments" description="Manage your investment portfolio">
                 <Button variant="outline" asChild>
                     <Link href="/investments/analytics">Analytics</Link>
+                </Button>
+                <Button variant="outline" asChild>
+                    <Link href="/investments/import">
+                        <Upload className="mr-2 h-4 w-4" />
+                        Import CSV
+                    </Link>
                 </Button>
                 <Button asChild>
                     <Link href="/investments/create">
