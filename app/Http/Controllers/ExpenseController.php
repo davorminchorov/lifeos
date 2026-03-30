@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ImportExpenseCsvRequest;
 use App\Http\Requests\StoreExpenseRequest;
 use App\Http\Requests\UpdateExpenseRequest;
+use App\Jobs\ImportExpensesCsv;
 use App\Models\Budget;
 use App\Models\Expense;
 use App\Services\CurrencyService;
@@ -627,5 +629,30 @@ class ExpenseController extends Controller
         $currentTotal = $currentMonthExpenses->sum('amount');
 
         return $dayOfMonth > 0 ? round(($currentTotal / $dayOfMonth) * $daysInMonth, 2) : 0;
+    }
+
+    /**
+     * Show the import CSV form page.
+     */
+    public function importForm()
+    {
+        return Inertia::render('Expenses/Import');
+    }
+
+    /**
+     * Queue an import of expenses from an uploaded CSV.
+     */
+    public function importCsv(ImportExpenseCsvRequest $request)
+    {
+        $userId = auth()->id();
+        $tenantId = auth()->user()->current_tenant_id;
+        $file = $request->file('file');
+
+        $storedPath = $file->storeAs('imports/'.$userId, uniqid('expenses_').'.csv');
+
+        ImportExpensesCsv::dispatch($userId, $tenantId, $storedPath)->onQueue('imports');
+
+        return redirect()->route('expenses.index')
+            ->with('success', 'Your CSV import has been queued and will be processed shortly.');
     }
 }

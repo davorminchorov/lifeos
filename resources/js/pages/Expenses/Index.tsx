@@ -30,7 +30,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { DollarSign, Plus, Search, MoreHorizontal, Eye, Pencil, Copy, CheckCircle, Trash2 } from 'lucide-react'
+import { DollarSign, Plus, Search, MoreHorizontal, Eye, Pencil, Copy, CheckCircle, Trash2, Upload } from 'lucide-react'
 import { formatCurrency, formatDate } from '@/lib/utils'
 import type { Expense } from '@/types/models'
 import type { PaginatedData } from '@/types'
@@ -162,12 +162,20 @@ export default function ExpenseIndex({ expenses, filters = {} }: ExpenseIndexPro
             <Head title="Expenses" />
 
             <PageHeader title="Expenses" description="Track your spending and manage your budget">
-                <Button asChild>
-                    <Link href="/expenses/create">
-                        <Plus className="mr-2 h-4 w-4" />
-                        Add Expense
-                    </Link>
-                </Button>
+                <div className="flex gap-2">
+                    <Button variant="outline" asChild>
+                        <Link href="/expenses/import">
+                            <Upload className="mr-2 h-4 w-4" />
+                            Import CSV
+                        </Link>
+                    </Button>
+                    <Button asChild>
+                        <Link href="/expenses/create">
+                            <Plus className="mr-2 h-4 w-4" />
+                            Add Expense
+                        </Link>
+                    </Button>
+                </div>
             </PageHeader>
 
             {expenses.total > 0 ? (
