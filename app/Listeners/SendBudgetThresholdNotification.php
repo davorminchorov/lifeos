@@ -3,9 +3,10 @@
 namespace App\Listeners;
 
 use App\Events\BudgetThresholdCrossed;
-use App\Models\UserNotificationPreference;
 use App\Notifications\BudgetThresholdAlert;
+use App\Support\NotificationDeduplicator;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\Facades\Log;
 
 class SendBudgetThresholdNotification implements ShouldQueue
 {
@@ -14,20 +15,26 @@ class SendBudgetThresholdNotification implements ShouldQueue
         $budget = $event->budget;
         $user = $budget->user;
 
-        // Load preference; fallback to defaults if not set
-        $pref = UserNotificationPreference::query()
-            ->where('user_id', $user->id)
-            ->where('notification_type', 'budget_threshold')
-            ->first();
+        try {
+            $enabledChannels = $user->getEnabledNotificationChannels('budget_threshold');
 
-        $channels = $pref?->getEnabledChannels() ?? (UserNotificationPreference::getDefaultPreferences()['budget_threshold']['email_enabled']
-            ? ['mail', 'database']
-            : ['database']);
+            if (empty($enabledChannels)) {
+                Log::info("Skipping notification for budget {$budget->id} - user has disabled all channels");
 
-        if (empty($channels)) {
-            return; // nothing to send
+                return;
+            }
+
+            if (! NotificationDeduplicator::acquire('budget_threshold', $user->id, 'budget', $budget->id, $event->direction)) {
+                Log::info("Skipping duplicate budget threshold notification for budget {$budget->id} ({$event->direction})");
+
+                return;
+            }
+
+            $user->notify(new BudgetThresholdAlert($budget, $event->direction));
+
+            Log::info("Sent budget threshold notification for budget {$budget->id} ({$budget->category}) to user {$user->email} via channels: ".implode(', ', $enabledChannels));
+        } catch (\Exception $e) {
+            Log::error("Failed to send notification for budget {$budget->id}: {$e->getMessage()}");
         }
-
-        $user->notify((new BudgetThresholdAlert($budget, $event->direction))->onQueue('notifications')->via($channels));
     }
 }

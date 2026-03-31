@@ -9,6 +9,7 @@ use App\Notifications\InterviewReminderNotification;
 use App\Notifications\NextActionReminderNotification;
 use App\Notifications\OfferDeadlineNotification;
 use App\Notifications\StaleApplicationNotification;
+use App\Scopes\TenantScope;
 use Illuminate\Console\Command;
 
 class CheckJobApplicationReminders extends Command
@@ -61,7 +62,7 @@ class CheckJobApplicationReminders extends Command
      */
     protected function checkUpcomingInterviews(): int
     {
-        $interviews = JobApplicationInterview::query()
+        $interviews = JobApplicationInterview::withoutGlobalScope(TenantScope::class)
             ->with(['jobApplication.user'])
             ->where('completed', false)
             ->whereBetween('scheduled_at', [now(), now()->addDay()])
@@ -81,7 +82,7 @@ class CheckJobApplicationReminders extends Command
      */
     protected function checkOfferDeadlines(): int
     {
-        $offers = JobApplicationOffer::query()
+        $offers = JobApplicationOffer::withoutGlobalScope(TenantScope::class)
             ->with(['jobApplication.user'])
             ->whereIn('status', ['pending', 'negotiating'])
             ->whereNotNull('decision_deadline')
@@ -102,7 +103,7 @@ class CheckJobApplicationReminders extends Command
      */
     protected function checkOverdueActions(): int
     {
-        $applications = JobApplication::query()
+        $applications = JobApplication::withoutGlobalScope(TenantScope::class)
             ->with('user')
             ->whereNotNull('next_action_at')
             ->where('next_action_at', '<', now())
@@ -123,7 +124,7 @@ class CheckJobApplicationReminders extends Command
      */
     protected function checkStaleApplications(): int
     {
-        $applications = JobApplication::query()
+        $applications = JobApplication::withoutGlobalScope(TenantScope::class)
             ->with(['user', 'statusHistories'])
             ->whereNull('archived_at')
             ->whereNotIn('status', ['accepted', 'rejected', 'withdrawn', 'archived'])
