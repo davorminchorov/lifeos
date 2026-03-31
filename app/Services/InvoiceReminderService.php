@@ -2,9 +2,10 @@
 
 namespace App\Services;
 
+use App\Enums\InvoiceStatus;
 use App\Models\Invoice;
 use App\Models\InvoiceReminder;
-use App\Enums\InvoiceStatus;
+use App\Scopes\TenantScope;
 use Carbon\Carbon;
 
 class InvoiceReminderService
@@ -36,7 +37,8 @@ class InvoiceReminderService
     {
         $schedule = $this->getDefaultSchedule();
 
-        return Invoice::with(['customer', 'reminders'])
+        return Invoice::withoutGlobalScope(TenantScope::class)
+            ->with(['customer', 'reminders'])
             ->whereIn('status', [
                 InvoiceStatus::ISSUED,
                 InvoiceStatus::PARTIALLY_PAID,
