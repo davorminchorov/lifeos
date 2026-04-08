@@ -117,6 +117,12 @@ class UserNotificationPreference extends Model
                 'push_enabled' => false,
                 'settings' => ['days_before' => [7, 3, 1, 0]],
             ],
+            'job_application_reminder' => [
+                'email_enabled' => true,
+                'database_enabled' => true,
+                'push_enabled' => false,
+                'settings' => [],
+            ],
             'investment_alert' => [
                 'email_enabled' => false,
                 'database_enabled' => true,

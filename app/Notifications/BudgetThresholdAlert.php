@@ -16,8 +16,7 @@ class BudgetThresholdAlert extends Notification implements ShouldQueue
 
     public function via(object $notifiable): array
     {
-        // Channels will be overridden by listener via($channels), but keep sensible default
-        return ['database'];
+        return $notifiable->getEnabledNotificationChannels('budget_threshold');
     }
 
     public function toMail(object $notifiable): MailMessage
