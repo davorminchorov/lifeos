@@ -90,6 +90,26 @@ class InvestmentTest extends TestCase
         $response->assertInertia(fn ($page) => $page->component('Investments/Show'));
     }
 
+    public function test_investment_details_returns_numerically_coercible_decimals()
+    {
+        $investment = Investment::factory()->create([
+            'user_id' => $this->user->id,
+            'quantity' => '10.50000000',
+            'purchase_price' => '150.25000000',
+            'current_value' => '175.75000000',
+        ]);
+
+        $response = $this->get(route('investments.show', $investment));
+
+        $response->assertStatus(200);
+        $response->assertInertia(fn ($page) => $page
+            ->component('Investments/Show')
+            ->where('investment.quantity', fn ($value) => is_numeric($value) && (float) $value === 10.5)
+            ->where('investment.purchase_price', fn ($value) => is_numeric($value) && (float) $value === 150.25)
+            ->where('investment.current_value', fn ($value) => is_numeric($value) && (float) $value === 175.75)
+        );
+    }
+
     public function test_can_display_edit_investment_form()
     {
         $investment = Investment::factory()->create(['user_id' => $this->user->id]);

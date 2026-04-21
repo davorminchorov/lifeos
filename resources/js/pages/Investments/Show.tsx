@@ -36,9 +36,12 @@ export default function InvestmentShow({ investment }: InvestmentShowProps) {
     }, [investment.id])
 
     const currency = investment.currency ?? 'USD'
-    const totalCostBasis = investment.purchase_price * investment.quantity
-    const unrealizedGainLoss = investment.current_value !== null
-        ? investment.current_value - totalCostBasis
+    const purchasePrice = Number(investment.purchase_price)
+    const quantity = Number(investment.quantity)
+    const currentValue = investment.current_value !== null ? Number(investment.current_value) : null
+    const totalCostBasis = purchasePrice * quantity
+    const unrealizedGainLoss = currentValue !== null
+        ? currentValue - totalCostBasis
         : null
     const gainLossPercentage = unrealizedGainLoss !== null && totalCostBasis > 0
         ? (unrealizedGainLoss / totalCostBasis) * 100
