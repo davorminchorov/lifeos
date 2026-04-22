@@ -63,7 +63,7 @@ class CheckJobApplicationReminders extends Command
     protected function checkUpcomingInterviews(): int
     {
         $interviews = JobApplicationInterview::withoutGlobalScope(TenantScope::class)
-            ->with(['jobApplication.user'])
+            ->with(['jobApplication' => fn ($query) => $query->withoutGlobalScope(TenantScope::class)->with('user')])
             ->where('completed', false)
             ->whereBetween('scheduled_at', [now(), now()->addDay()])
             ->get();
@@ -83,7 +83,7 @@ class CheckJobApplicationReminders extends Command
     protected function checkOfferDeadlines(): int
     {
         $offers = JobApplicationOffer::withoutGlobalScope(TenantScope::class)
-            ->with(['jobApplication.user'])
+            ->with(['jobApplication' => fn ($query) => $query->withoutGlobalScope(TenantScope::class)->with('user')])
             ->whereIn('status', ['pending', 'negotiating'])
             ->whereNotNull('decision_deadline')
             ->whereBetween('decision_deadline', [now(), now()->addDays(3)])
