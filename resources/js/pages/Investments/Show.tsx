@@ -36,9 +36,17 @@ export default function InvestmentShow({ investment }: InvestmentShowProps) {
     }, [investment.id])
 
     const currency = investment.currency ?? 'USD'
-    const totalCostBasis = investment.purchase_price * investment.quantity
-    const unrealizedGainLoss = investment.current_value !== null
-        ? investment.current_value - totalCostBasis
+    const purchasePrice = Number(investment.purchase_price)
+    const quantity = Number(investment.quantity)
+    const currentValue = investment.current_value !== null ? Number(investment.current_value) : null
+    const totalFeesPaid = Number(investment.total_fees_paid ?? 0)
+    const totalDividendsReceived = Number(investment.total_dividends_received ?? 0)
+    const targetAllocationPercentage = investment.target_allocation_percentage !== null && investment.target_allocation_percentage !== undefined
+        ? Number(investment.target_allocation_percentage)
+        : null
+    const totalCostBasis = purchasePrice * quantity
+    const unrealizedGainLoss = currentValue !== null
+        ? currentValue - totalCostBasis
         : null
     const gainLossPercentage = unrealizedGainLoss !== null && totalCostBasis > 0
         ? (unrealizedGainLoss / totalCostBasis) * 100
@@ -145,11 +153,11 @@ export default function InvestmentShow({ investment }: InvestmentShowProps) {
                                 </div>
                                 <div>
                                     <p className="text-sm text-muted-foreground">Purchase Price (per unit)</p>
-                                    <p className="font-medium">{formatCurrency(investment.purchase_price, currency)}</p>
+                                    <p className="font-medium">{formatCurrency(purchasePrice, currency)}</p>
                                 </div>
                                 <div>
                                     <p className="text-sm text-muted-foreground">Quantity</p>
-                                    <p className="font-medium">{investment.quantity}</p>
+                                    <p className="font-medium">{quantity}</p>
                                 </div>
                                 <div>
                                     <p className="text-sm text-muted-foreground">Total Cost Basis</p>
@@ -157,11 +165,11 @@ export default function InvestmentShow({ investment }: InvestmentShowProps) {
                                 </div>
                                 <div>
                                     <p className="text-sm text-muted-foreground">Total Fees Paid</p>
-                                    <p className="font-medium">{formatCurrency(investment.total_fees_paid, currency)}</p>
+                                    <p className="font-medium">{formatCurrency(totalFeesPaid, currency)}</p>
                                 </div>
                                 <div>
                                     <p className="text-sm text-muted-foreground">Total Dividends Received</p>
-                                    <p className="font-medium">{formatCurrency(investment.total_dividends_received, currency)}</p>
+                                    <p className="font-medium">{formatCurrency(totalDividendsReceived, currency)}</p>
                                 </div>
                             </div>
                         </CardContent>
@@ -247,8 +255,8 @@ export default function InvestmentShow({ investment }: InvestmentShowProps) {
                             <div>
                                 <p className="text-sm text-muted-foreground">Current Value</p>
                                 <p className="text-2xl font-semibold">
-                                    {investment.current_value !== null
-                                        ? formatCurrency(investment.current_value, currency)
+                                    {currentValue !== null
+                                        ? formatCurrency(currentValue, currency)
                                         : '\u2014'}
                                 </p>
                             </div>
@@ -268,10 +276,10 @@ export default function InvestmentShow({ investment }: InvestmentShowProps) {
                                     </p>
                                 </div>
                             ) : null}
-                            {investment.target_allocation_percentage !== null ? (
+                            {targetAllocationPercentage !== null ? (
                                 <div>
                                     <p className="text-sm text-muted-foreground">Target Allocation</p>
-                                    <p className="font-medium">{investment.target_allocation_percentage}%</p>
+                                    <p className="font-medium">{targetAllocationPercentage}%</p>
                                 </div>
                             ) : null}
                             {investment.last_price_update ? (
