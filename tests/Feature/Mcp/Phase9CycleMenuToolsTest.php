@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Mcp;
 
+use App\Enums\MealType;
 use App\Mcp\LifeOsServer;
 use App\Mcp\Tools\CycleMenu\AddItem as AddCycleMenuItem;
 use App\Mcp\Tools\CycleMenu\SetWeek as SetCycleMenuWeek;
@@ -18,6 +19,7 @@ use App\Models\User;
 use App\Services\Agents\PendingActionApplier;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\App;
+use Illuminate\Testing\Fluent\AssertableJson;
 use Tests\TestCase;
 
 class Phase9CycleMenuToolsTest extends TestCase
@@ -131,11 +133,10 @@ class Phase9CycleMenuToolsTest extends TestCase
                     ['title' => 'Pasta', 'meal_type' => 'dinner'],
                 ],
             ],
-        ])->assertOk()->assertStructuredContent(function (array $content): bool {
-            $this->assertSame(2, $content['day_count']);
-            $this->assertSame(3, $content['item_count']);
-
-            return true;
+        ])->assertOk()->assertStructuredContent(function (AssertableJson $json): void {
+            $json->where('day_count', 2)
+                ->where('item_count', 3)
+                ->etc();
         });
 
         $action = PendingAction::query()->firstOrFail();
@@ -154,7 +155,7 @@ class Phase9CycleMenuToolsTest extends TestCase
         CycleMenuItem::factory()->create([
             'cycle_menu_day_id' => $day->id,
             'title' => 'Original',
-            'meal_type' => \App\Enums\MealType::Lunch,
+            'meal_type' => MealType::Lunch,
             'position' => 0,
         ]);
 
@@ -191,32 +192,33 @@ class Phase9CycleMenuToolsTest extends TestCase
         CycleMenuItem::factory()->create([
             'cycle_menu_day_id' => $day0->id,
             'title' => 'Eggs',
-            'meal_type' => \App\Enums\MealType::Breakfast,
+            'meal_type' => MealType::Breakfast,
             'quantity' => '2',
         ]);
         CycleMenuItem::factory()->create([
             'cycle_menu_day_id' => $day1->id,
             'title' => 'Eggs',
-            'meal_type' => \App\Enums\MealType::Breakfast,
+            'meal_type' => MealType::Breakfast,
             'quantity' => '2',
         ]);
         CycleMenuItem::factory()->create([
             'cycle_menu_day_id' => $day0->id,
             'title' => 'Salad',
-            'meal_type' => \App\Enums\MealType::Lunch,
+            'meal_type' => MealType::Lunch,
         ]);
 
         LifeOsServer::tool(CycleMenuShoppingList::class, ['window_days' => 7])
             ->assertOk()
-            ->assertStructuredContent(function (array $content): bool {
-                $titles = collect($content['items'])->pluck('title', 'count')->all();
-                $this->assertNotEmpty($content['items']);
-                // Eggs should appear with count >= 1 (depending on which day is "today")
-                $eggsRow = collect($content['items'])->firstWhere('title', 'Eggs');
-                $this->assertNotNull($eggsRow);
-                $this->assertGreaterThanOrEqual(1, $eggsRow['count']);
+            ->assertStructuredContent(function (AssertableJson $json): void {
+                $json->where('items', function ($items): bool {
+                    $items = is_array($items) ? $items : $items->all();
+                    $this->assertNotEmpty($items);
+                    $eggsRow = collect($items)->firstWhere('title', 'Eggs');
+                    $this->assertNotNull($eggsRow);
+                    $this->assertGreaterThanOrEqual(1, $eggsRow['count']);
 
-                return true;
+                    return true;
+                })->etc();
             });
     }
 }
