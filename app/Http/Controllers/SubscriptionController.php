@@ -76,10 +76,8 @@ class SubscriptionController extends Controller
      */
     public function store(StoreSubscriptionRequest $request)
     {
-        $subscription = Subscription::create([
-            'user_id' => auth()->id(),
-            ...$request->validated(),
-        ]);
+        $subscription = app(\App\Services\Subscriptions\SubscriptionService::class)
+            ->create(auth()->user(), $request->validated());
 
         return redirect()->route('subscriptions.show', $subscription)
             ->with('success', 'Subscription created successfully!');
@@ -127,7 +125,8 @@ class SubscriptionController extends Controller
             abort(403, 'Unauthorized access to subscription.');
         }
 
-        $subscription->update($request->validated());
+        app(\App\Services\Subscriptions\SubscriptionService::class)
+            ->update($subscription, $request->validated());
 
         return redirect()->route('subscriptions.show', $subscription)
             ->with('success', 'Subscription updated successfully!');
@@ -143,7 +142,7 @@ class SubscriptionController extends Controller
             abort(403, 'Unauthorized access to subscription.');
         }
 
-        $subscription->delete();
+        app(\App\Services\Subscriptions\SubscriptionService::class)->delete($subscription);
 
         return redirect()->route('subscriptions.index')
             ->with('success', 'Subscription deleted successfully!');
@@ -159,10 +158,7 @@ class SubscriptionController extends Controller
             abort(403, 'Unauthorized access to subscription.');
         }
 
-        $subscription->update([
-            'status' => 'cancelled',
-            'cancellation_date' => now(),
-        ]);
+        app(\App\Services\Subscriptions\SubscriptionService::class)->cancel($subscription);
 
         return redirect()->route('subscriptions.show', $subscription)
             ->with('success', 'Subscription cancelled successfully!');
@@ -178,7 +174,7 @@ class SubscriptionController extends Controller
             abort(403, 'Unauthorized access to subscription.');
         }
 
-        $subscription->update(['status' => 'paused']);
+        app(\App\Services\Subscriptions\SubscriptionService::class)->pause($subscription);
 
         return redirect()->route('subscriptions.show', $subscription)
             ->with('success', 'Subscription paused successfully!');
@@ -194,7 +190,7 @@ class SubscriptionController extends Controller
             abort(403, 'Unauthorized access to subscription.');
         }
 
-        $subscription->update(['status' => 'active']);
+        app(\App\Services\Subscriptions\SubscriptionService::class)->resume($subscription);
 
         return redirect()->route('subscriptions.show', $subscription)
             ->with('success', 'Subscription resumed successfully!');

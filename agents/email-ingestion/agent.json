@@ -1,0 +1,28 @@
+{
+    "slug": "email-ingestion",
+    "model": "claude-opus-4-7",
+    "fallback_model": "claude-sonnet-4-6",
+    "mcp_servers": ["lifeos", "gmail"],
+    "allowed_tools": [
+        "expenses.list",
+        "expenses.create",
+        "expenses.bulkImport",
+        "subscriptions.list",
+        "subscriptions.create",
+        "contracts.list",
+        "contracts.create",
+        "warranties.list",
+        "warranties.create",
+        "iou.list",
+        "iou.create",
+        "bills.upcoming",
+        "utilityBills.create",
+        "jobs.pipeline",
+        "jobs.updateStatus",
+        "jobs.addInterview"
+    ],
+    "max_session_duration_seconds": 900,
+    "max_tool_calls": 300,
+    "feature_flag": "agents.email_ingestion.enabled",
+    "schedule": "*/30 * * * *"
+}

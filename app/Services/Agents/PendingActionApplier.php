@@ -4,12 +4,30 @@ declare(strict_types=1);
 
 namespace App\Services\Agents;
 
+use App\Http\Requests\StoreContractRequest;
 use App\Http\Requests\StoreExpenseRequest;
+use App\Http\Requests\StoreIouRequest;
+use App\Http\Requests\StoreJobApplicationRequest;
+use App\Http\Requests\StoreSubscriptionRequest;
+use App\Http\Requests\StoreUtilityBillRequest;
+use App\Http\Requests\StoreWarrantyRequest;
 use App\Models\AgentToken;
+use App\Models\Contract;
 use App\Models\Expense;
+use App\Models\Iou;
+use App\Models\JobApplication;
 use App\Models\PendingAction;
+use App\Models\Subscription;
 use App\Models\User;
+use App\Models\UtilityBill;
+use App\Models\Warranty;
+use App\Services\Contracts\ContractService;
 use App\Services\Expenses\ExpenseService;
+use App\Services\Iou\IouService;
+use App\Services\Jobs\JobApplicationService;
+use App\Services\Subscriptions\SubscriptionService;
+use App\Services\UtilityBills\UtilityBillService;
+use App\Services\Warranties\WarrantyService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
@@ -25,6 +43,12 @@ class PendingActionApplier
 {
     public function __construct(
         protected ExpenseService $expenses,
+        protected SubscriptionService $subscriptions,
+        protected ContractService $contracts,
+        protected WarrantyService $warranties,
+        protected IouService $ious,
+        protected UtilityBillService $bills,
+        protected JobApplicationService $jobs,
         protected IdempotencyKey $keys,
     ) {}
 
@@ -209,8 +233,64 @@ class PendingActionApplier
             'expenses.create' => $this->validateExpenseCreate($action->payload),
             'expenses.bulkImport' => $this->validateExpenseBulkImport($action->payload),
             'expenses.categorize' => $this->validateExpenseCategorize($action->payload),
+            'subscriptions.create' => $this->validateWithFormRequest(StoreSubscriptionRequest::class, $action->payload),
+            'contracts.create' => $this->validateWithFormRequest(StoreContractRequest::class, $action->payload),
+            'warranties.create' => $this->validateWithFormRequest(StoreWarrantyRequest::class, $action->payload),
+            'iou.create' => $this->validateWithFormRequest(StoreIouRequest::class, $action->payload),
+            'utilityBills.create' => $this->validateWithFormRequest(StoreUtilityBillRequest::class, $action->payload),
+            'jobs.updateStatus' => $this->validateJobsUpdateStatus($action->payload),
+            'jobs.addInterview' => $this->validateJobsAddInterview($action->payload),
             default => throw new RuntimeException("No validator registered for tool [{$action->tool}]."),
         };
+    }
+
+    /**
+     * @param  class-string<\Illuminate\Foundation\Http\FormRequest>  $formRequestClass
+     * @param  array<string, mixed>  $payload
+     */
+    private function validateWithFormRequest(string $formRequestClass, array $payload): void
+    {
+        $rules = (new $formRequestClass)->rules();
+        $validator = Validator::make($payload, $rules);
+
+        if ($validator->fails()) {
+            throw new ValidationException($validator);
+        }
+    }
+
+    /**
+     * @param  array<string, mixed>  $payload
+     */
+    private function validateJobsUpdateStatus(array $payload): void
+    {
+        $validator = Validator::make($payload, [
+            'job_application_id' => 'required|integer|exists:job_applications,id',
+            'status' => 'required|string|max:64',
+            'next_action_at' => 'nullable|date',
+        ]);
+
+        if ($validator->fails()) {
+            throw new ValidationException($validator);
+        }
+    }
+
+    /**
+     * @param  array<string, mixed>  $payload
+     */
+    private function validateJobsAddInterview(array $payload): void
+    {
+        $validator = Validator::make($payload, [
+            'job_application_id' => 'required|integer|exists:job_applications,id',
+            'scheduled_at' => 'required|date',
+            'interview_type' => 'nullable|string|max:64',
+            'interviewer_name' => 'nullable|string|max:255',
+            'location' => 'nullable|string|max:255',
+            'notes' => 'nullable|string',
+        ]);
+
+        if ($validator->fails()) {
+            throw new ValidationException($validator);
+        }
     }
 
     /**
@@ -278,8 +358,165 @@ class PendingActionApplier
             'expenses.create' => $this->executeExpenseCreate($action, $user, $attribution),
             'expenses.bulkImport' => $this->executeExpenseBulkImport($action, $user, $attribution),
             'expenses.categorize' => $this->executeExpenseCategorize($action),
+            'subscriptions.create' => $this->executeSubscriptionCreate($action, $user, $attribution),
+            'contracts.create' => $this->executeContractCreate($action, $user, $attribution),
+            'warranties.create' => $this->executeWarrantyCreate($action, $user, $attribution),
+            'iou.create' => $this->executeIouCreate($action, $user, $attribution),
+            'utilityBills.create' => $this->executeUtilityBillCreate($action, $user, $attribution),
+            'jobs.updateStatus' => $this->executeJobsUpdateStatus($action),
+            'jobs.addInterview' => $this->executeJobsAddInterview($action),
             default => throw new RuntimeException("No executor registered for tool [{$action->tool}]."),
         };
+    }
+
+    /**
+     * @param  array<string, mixed>  $attribution
+     * @return array<string, mixed>
+     */
+    private function executeSubscriptionCreate(PendingAction $action, User $user, array $attribution): array
+    {
+        $sub = $this->subscriptions->create($user, $action->payload, $attribution);
+
+        $action->forceFill([
+            'target_type' => Subscription::class,
+            'target_id' => $sub->id,
+        ])->save();
+
+        return [
+            'before' => null,
+            'after' => $sub->only(['id', 'service_name', 'cost', 'currency', 'billing_cycle', 'next_billing_date', 'status']),
+        ];
+    }
+
+    /**
+     * @param  array<string, mixed>  $attribution
+     * @return array<string, mixed>
+     */
+    private function executeContractCreate(PendingAction $action, User $user, array $attribution): array
+    {
+        $contract = $this->contracts->create($user, $action->payload, $attribution);
+
+        $action->forceFill([
+            'target_type' => Contract::class,
+            'target_id' => $contract->id,
+        ])->save();
+
+        return [
+            'before' => null,
+            'after' => $contract->only(['id', 'title', 'counterparty', 'contract_type', 'start_date', 'end_date', 'status']),
+        ];
+    }
+
+    /**
+     * @param  array<string, mixed>  $attribution
+     * @return array<string, mixed>
+     */
+    private function executeWarrantyCreate(PendingAction $action, User $user, array $attribution): array
+    {
+        $warranty = $this->warranties->create($user, $action->payload, $attribution);
+
+        $action->forceFill([
+            'target_type' => Warranty::class,
+            'target_id' => $warranty->id,
+        ])->save();
+
+        return [
+            'before' => null,
+            'after' => $warranty->only(['id', 'product_name', 'brand', 'purchase_date', 'warranty_expiration_date', 'current_status']),
+        ];
+    }
+
+    /**
+     * @param  array<string, mixed>  $attribution
+     * @return array<string, mixed>
+     */
+    private function executeIouCreate(PendingAction $action, User $user, array $attribution): array
+    {
+        $iou = $this->ious->create($user, $action->payload, $attribution);
+
+        $action->forceFill([
+            'target_type' => Iou::class,
+            'target_id' => $iou->id,
+        ])->save();
+
+        return [
+            'before' => null,
+            'after' => $iou->only(['id', 'type', 'person_name', 'amount', 'currency', 'transaction_date', 'due_date', 'status']),
+        ];
+    }
+
+    /**
+     * @param  array<string, mixed>  $attribution
+     * @return array<string, mixed>
+     */
+    private function executeUtilityBillCreate(PendingAction $action, User $user, array $attribution): array
+    {
+        $bill = $this->bills->create($user, $action->payload, $attribution);
+
+        $action->forceFill([
+            'target_type' => UtilityBill::class,
+            'target_id' => $bill->id,
+        ])->save();
+
+        return [
+            'before' => null,
+            'after' => $bill->only(['id', 'utility_type', 'service_provider', 'bill_amount', 'currency', 'due_date', 'payment_status']),
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function executeJobsUpdateStatus(PendingAction $action): array
+    {
+        $application = JobApplication::query()->findOrFail((int) $action->payload['job_application_id']);
+        $before = $application->only(['id', 'status', 'next_action_at']);
+
+        $nextAt = isset($action->payload['next_action_at'])
+            ? new \DateTimeImmutable((string) $action->payload['next_action_at'])
+            : null;
+
+        $this->jobs->updateStatus($application, (string) $action->payload['status'], $nextAt);
+
+        $action->forceFill([
+            'target_type' => JobApplication::class,
+            'target_id' => $application->id,
+        ])->save();
+
+        return [
+            'before' => $before,
+            'after' => $application->refresh()->only(['id', 'status', 'next_action_at']),
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function executeJobsAddInterview(PendingAction $action): array
+    {
+        $application = JobApplication::query()->findOrFail((int) $action->payload['job_application_id']);
+
+        $interview = $this->jobs->addInterview($application, [
+            'scheduled_at' => $action->payload['scheduled_at'],
+            'interview_type' => $action->payload['interview_type'] ?? null,
+            'interviewer_name' => $action->payload['interviewer_name'] ?? null,
+            'location' => $action->payload['location'] ?? null,
+            'notes' => $action->payload['notes'] ?? null,
+        ]);
+
+        $action->forceFill([
+            'target_type' => JobApplication::class,
+            'target_id' => $application->id,
+        ])->save();
+
+        return [
+            'before' => null,
+            'after' => [
+                'job_application_id' => $application->id,
+                'interview_id' => $interview->id,
+                'scheduled_at' => $interview->scheduled_at?->toIso8601String(),
+            ],
+        ];
     }
 
     /**
@@ -353,9 +590,88 @@ class PendingActionApplier
                 $this->revertExpenseCategorize($action);
 
                 return;
+            case 'subscriptions.create':
+                $this->revertCreateById($action, Subscription::class);
+
+                return;
+            case 'contracts.create':
+                $this->revertCreateById($action, Contract::class);
+
+                return;
+            case 'warranties.create':
+                $this->revertCreateById($action, Warranty::class);
+
+                return;
+            case 'iou.create':
+                $this->revertCreateById($action, Iou::class);
+
+                return;
+            case 'utilityBills.create':
+                $this->revertCreateById($action, UtilityBill::class);
+
+                return;
+            case 'jobs.updateStatus':
+                $this->revertJobsUpdateStatus($action);
+
+                return;
+            case 'jobs.addInterview':
+                $this->revertJobsAddInterview($action);
+
+                return;
         }
 
         throw new RuntimeException("No revert executor for tool [{$action->tool}].");
+    }
+
+    /**
+     * @param  class-string<\Illuminate\Database\Eloquent\Model>  $modelClass
+     */
+    private function revertCreateById(PendingAction $action, string $modelClass): void
+    {
+        $diff = $action->applied_diff ?? [];
+        $after = $diff['after'] ?? null;
+
+        if (! is_array($after) || ! isset($after['id'])) {
+            return;
+        }
+
+        $modelClass::query()->whereKey((int) $after['id'])->delete();
+    }
+
+    private function revertJobsUpdateStatus(PendingAction $action): void
+    {
+        $diff = $action->applied_diff ?? [];
+        $before = $diff['before'] ?? null;
+
+        if (! is_array($before) || ! isset($before['id'])) {
+            return;
+        }
+
+        $application = JobApplication::query()->find((int) $before['id']);
+
+        if ($application === null) {
+            return;
+        }
+
+        $payload = ['status' => $before['status']];
+
+        if (array_key_exists('next_action_at', $before)) {
+            $payload['next_action_at'] = $before['next_action_at'];
+        }
+
+        $this->jobs->update($application, $payload);
+    }
+
+    private function revertJobsAddInterview(PendingAction $action): void
+    {
+        $diff = $action->applied_diff ?? [];
+        $after = $diff['after'] ?? null;
+
+        if (! is_array($after) || ! isset($after['interview_id'])) {
+            return;
+        }
+
+        \App\Models\JobApplicationInterview::query()->whereKey((int) $after['interview_id'])->delete();
     }
 
     private function revertExpenseCreate(PendingAction $action): void
@@ -450,6 +766,66 @@ class PendingActionApplier
                     'Categorize expense #%d as %s',
                     (int) ($payload['expense_id'] ?? 0),
                     (string) ($payload['category'] ?? ''),
+                ),
+            ],
+            'subscriptions.create' => [
+                'summary' => sprintf(
+                    'Subscribe to %s — %s %s / %s',
+                    (string) ($payload['service_name'] ?? '—'),
+                    number_format((float) ($payload['cost'] ?? 0), 2),
+                    (string) ($payload['currency'] ?? ''),
+                    (string) ($payload['billing_cycle'] ?? ''),
+                ),
+            ],
+            'contracts.create' => [
+                'summary' => sprintf(
+                    '%s with %s (%s → %s)',
+                    (string) ($payload['title'] ?? '—'),
+                    (string) ($payload['counterparty'] ?? '—'),
+                    (string) ($payload['start_date'] ?? '?'),
+                    (string) ($payload['end_date'] ?? '?'),
+                ),
+            ],
+            'warranties.create' => [
+                'summary' => sprintf(
+                    '%s %s (purchased %s, warranty until %s)',
+                    (string) ($payload['brand'] ?? ''),
+                    (string) ($payload['product_name'] ?? '—'),
+                    (string) ($payload['purchase_date'] ?? '?'),
+                    (string) ($payload['warranty_expiration_date'] ?? '?'),
+                ),
+            ],
+            'iou.create' => [
+                'summary' => sprintf(
+                    '%s %s %s %s',
+                    ($payload['type'] ?? '') === 'owe' ? 'I owe' : 'Owed by',
+                    (string) ($payload['person_name'] ?? '—'),
+                    number_format((float) ($payload['amount'] ?? 0), 2),
+                    (string) ($payload['currency'] ?? ''),
+                ),
+            ],
+            'utilityBills.create' => [
+                'summary' => sprintf(
+                    '%s %s — %s %s due %s',
+                    (string) ($payload['service_provider'] ?? '—'),
+                    (string) ($payload['utility_type'] ?? ''),
+                    number_format((float) ($payload['bill_amount'] ?? 0), 2),
+                    (string) ($payload['currency'] ?? ''),
+                    (string) ($payload['due_date'] ?? ''),
+                ),
+            ],
+            'jobs.updateStatus' => [
+                'summary' => sprintf(
+                    'Set application #%d → %s',
+                    (int) ($payload['job_application_id'] ?? 0),
+                    (string) ($payload['status'] ?? ''),
+                ),
+            ],
+            'jobs.addInterview' => [
+                'summary' => sprintf(
+                    'Schedule interview for #%d at %s',
+                    (int) ($payload['job_application_id'] ?? 0),
+                    (string) ($payload['scheduled_at'] ?? ''),
                 ),
             ],
             default => [],

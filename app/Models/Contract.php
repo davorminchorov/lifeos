@@ -34,6 +34,8 @@ class Contract extends Model
         'amendments',
         'notes',
         'status',
+        'source',
+        'created_by_agent_token_id',
     ];
 
     protected function casts(): array

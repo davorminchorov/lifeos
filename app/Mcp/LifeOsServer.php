@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Mcp;
 
+use App\Mcp\Tools\Bills\CreateUtilityBill;
 use App\Mcp\Tools\Bills\UpcomingBills;
+use App\Mcp\Tools\Contracts\CreateContract;
 use App\Mcp\Tools\Contracts\ListContracts;
 use App\Mcp\Tools\CycleMenu\CurrentWeekCycleMenu;
 use App\Mcp\Tools\Dashboard\Summary;
@@ -13,10 +15,15 @@ use App\Mcp\Tools\Expenses\CategorizeExpense;
 use App\Mcp\Tools\Expenses\CreateExpense;
 use App\Mcp\Tools\Expenses\ListExpenses;
 use App\Mcp\Tools\Investments\Portfolio;
+use App\Mcp\Tools\Iou\CreateIou;
 use App\Mcp\Tools\Iou\ListIou;
+use App\Mcp\Tools\Jobs\AddInterview;
 use App\Mcp\Tools\Jobs\Pipeline;
+use App\Mcp\Tools\Jobs\UpdateJobStatus;
 use App\Mcp\Tools\Notifications\ListNotifications;
+use App\Mcp\Tools\Subscriptions\CreateSubscription;
 use App\Mcp\Tools\Subscriptions\ListSubscriptions;
+use App\Mcp\Tools\Warranties\CreateWarranty;
 use App\Mcp\Tools\Warranties\ListWarranties;
 use Laravel\Mcp\Server;
 
@@ -52,5 +59,12 @@ class LifeOsServer extends Server
         CreateExpense::class,
         BulkImportExpenses::class,
         CategorizeExpense::class,
+        CreateSubscription::class,
+        CreateContract::class,
+        CreateWarranty::class,
+        CreateIou::class,
+        CreateUtilityBill::class,
+        UpdateJobStatus::class,
+        AddInterview::class,
     ];
 }

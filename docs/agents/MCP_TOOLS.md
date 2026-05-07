@@ -247,6 +247,113 @@ Returns: `{ pending_action_id, status, idempotency_key, item_count, auto_applied
 
 Returns: `{ pending_action_id, status, idempotency_key, auto_applied }`.
 
+## Write tools (Phase 4)
+
+Phase 4 widens the email-ingestion agent's reach. Each tool follows the same shape as the Phase 2 tools: validate via the controller's FormRequest, call the module's service, record agent attribution on the new row, and queue the result for human approval. Idempotency keys are deterministic per natural fields and include `source_email_id` where available.
+
+### `subscriptions.create`
+
+| field | type | description |
+|---|---|---|
+| `service_name` | string | Required. |
+| `cost` | number | Required. |
+| `currency` | string | Defaults to MKD. |
+| `billing_cycle` | string | Required (`"monthly"`, `"yearly"`, `"weekly"`, `"custom"`). |
+| `billing_cycle_days` | int | When `billing_cycle = "custom"`. |
+| `start_date` | date | Required. |
+| `next_billing_date` | date | Optional. |
+| `category` | string | Optional. |
+| `payment_method` | string | Optional. |
+| `auto_renewal` | bool | Optional. |
+| `source_email_id` | string | Optional, used for idempotency disambiguation. |
+
+Idempotency key: `sha256("subscriptions.create|<tenant>|<service_normalized>|<currency>|<cycle>|<source_email_id>")`.
+
+### `contracts.create`
+
+| field | type | description |
+|---|---|---|
+| `title` | string | Required. |
+| `counterparty` | string | Required. |
+| `contract_type` | string | Optional. |
+| `start_date` | date | Required. |
+| `end_date` | date | Optional. |
+| `notice_period_days` | int | Optional. |
+| `auto_renewal` | bool | Optional. |
+| `contract_value` | number | Optional. |
+| `payment_terms` | string | Optional. |
+| `notes` | string | Optional. |
+| `source_email_id` | string | Optional, used for idempotency. |
+
+### `warranties.create`
+
+| field | type | description |
+|---|---|---|
+| `product_name` | string | Required. |
+| `brand` | string | Optional. |
+| `model` | string | Optional. |
+| `serial_number` | string | Optional, included in idempotency key when present. |
+| `purchase_date` | date | Required. |
+| `purchase_price` | number | Optional. |
+| `retailer` | string | Optional. |
+| `warranty_duration_months` | int | Optional. |
+| `warranty_expiration_date` | date | Required. |
+| `warranty_type` | string | Optional. |
+| `warranty_terms` | string | Optional. |
+| `source_email_id` | string | Optional. |
+
+### `iou.create`
+
+| field | type | description |
+|---|---|---|
+| `type` | string | `"owe"` or `"owed"`. Required. |
+| `person_name` | string | Required. |
+| `amount` | number | Required. |
+| `currency` | string | Defaults to MKD. |
+| `transaction_date` | date | Required. |
+| `due_date` | date | Optional. |
+| `description` | string | Required. |
+| `category` | string | Optional. |
+| `source_email_id` | string | Optional. |
+
+### `utilityBills.create`
+
+| field | type | description |
+|---|---|---|
+| `utility_type` | string | Required. |
+| `service_provider` | string | Required. |
+| `account_number` | string | Optional. |
+| `service_address` | string | Optional. |
+| `bill_amount` | number | Required. |
+| `currency` | string | Defaults to MKD. |
+| `usage_amount` | number | Optional. |
+| `usage_unit` | string | Optional. |
+| `bill_period_start` | date | Optional. |
+| `bill_period_end` | date | Optional, included in idempotency. |
+| `due_date` | date | Required. |
+| `source_email_id` | string | Optional. |
+
+### `jobs.updateStatus`
+
+| field | type | description |
+|---|---|---|
+| `job_application_id` | int | Required. Application must belong to the authenticated tenant. |
+| `status` | string | Required. New pipeline status. |
+| `next_action_at` | datetime | Optional. ISO 8601. |
+| `source_email_id` | string | Optional. |
+
+### `jobs.addInterview`
+
+| field | type | description |
+|---|---|---|
+| `job_application_id` | int | Required. |
+| `scheduled_at` | datetime | Required. ISO 8601. |
+| `interview_type` | string | Optional. |
+| `interviewer_name` | string | Optional. |
+| `location` | string | Optional. |
+| `notes` | string | Optional. |
+| `source_email_id` | string | Optional. |
+
 ## Approval surface
 
 Reviewers act through `/dashboard/pending-actions`:

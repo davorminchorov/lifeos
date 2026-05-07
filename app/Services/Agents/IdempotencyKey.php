@@ -23,6 +23,13 @@ class IdempotencyKey
             'expenses.create' => $this->expensesCreate($tenantId, $payload),
             'expenses.bulkImport' => $this->expensesBulkImport($tenantId, $payload),
             'expenses.categorize' => $this->expensesCategorize($tenantId, $payload),
+            'subscriptions.create' => $this->subscriptionsCreate($tenantId, $payload),
+            'contracts.create' => $this->contractsCreate($tenantId, $payload),
+            'warranties.create' => $this->warrantiesCreate($tenantId, $payload),
+            'iou.create' => $this->iouCreate($tenantId, $payload),
+            'utilityBills.create' => $this->utilityBillsCreate($tenantId, $payload),
+            'jobs.updateStatus' => $this->jobsUpdateStatus($tenantId, $payload),
+            'jobs.addInterview' => $this->jobsAddInterview($tenantId, $payload),
             default => throw new InvalidArgumentException("No idempotency-key generator registered for tool [{$tool}]."),
         };
 
@@ -73,6 +80,101 @@ class IdempotencyKey
         $subcategory = $this->normalize((string) ($p['subcategory'] ?? ''));
 
         return "expenses.categorize|{$tenantId}|{$expenseId}|{$category}|{$subcategory}";
+    }
+
+    /**
+     * @param  array<string, mixed>  $p
+     */
+    private function subscriptionsCreate(int $tenantId, array $p): string
+    {
+        $service = $this->normalize((string) ($p['service_name'] ?? ''));
+        $currency = strtoupper((string) ($p['currency'] ?? ''));
+        $cycle = $this->normalize((string) ($p['billing_cycle'] ?? ''));
+        $sourceEmail = (string) ($p['source_email_id'] ?? '');
+
+        return "subscriptions.create|{$tenantId}|{$service}|{$currency}|{$cycle}|{$sourceEmail}";
+    }
+
+    /**
+     * @param  array<string, mixed>  $p
+     */
+    private function contractsCreate(int $tenantId, array $p): string
+    {
+        $title = $this->normalize((string) ($p['title'] ?? ''));
+        $counterparty = $this->normalize((string) ($p['counterparty'] ?? ''));
+        $start = (string) ($p['start_date'] ?? '');
+        $sourceEmail = (string) ($p['source_email_id'] ?? '');
+
+        return "contracts.create|{$tenantId}|{$title}|{$counterparty}|{$start}|{$sourceEmail}";
+    }
+
+    /**
+     * @param  array<string, mixed>  $p
+     */
+    private function warrantiesCreate(int $tenantId, array $p): string
+    {
+        $product = $this->normalize((string) ($p['product_name'] ?? ''));
+        $serial = $this->normalize((string) ($p['serial_number'] ?? ''));
+        $purchase = (string) ($p['purchase_date'] ?? '');
+        $sourceEmail = (string) ($p['source_email_id'] ?? '');
+
+        return "warranties.create|{$tenantId}|{$product}|{$serial}|{$purchase}|{$sourceEmail}";
+    }
+
+    /**
+     * @param  array<string, mixed>  $p
+     */
+    private function iouCreate(int $tenantId, array $p): string
+    {
+        $direction = $this->normalize((string) ($p['type'] ?? ''));
+        $person = $this->normalize((string) ($p['person_name'] ?? ''));
+        $amount = $this->amountCents($p['amount'] ?? 0);
+        $currency = strtoupper((string) ($p['currency'] ?? ''));
+        $date = (string) ($p['transaction_date'] ?? '');
+        $sourceEmail = (string) ($p['source_email_id'] ?? '');
+
+        return "iou.create|{$tenantId}|{$direction}|{$person}|{$amount}|{$currency}|{$date}|{$sourceEmail}";
+    }
+
+    /**
+     * @param  array<string, mixed>  $p
+     */
+    private function utilityBillsCreate(int $tenantId, array $p): string
+    {
+        $type = $this->normalize((string) ($p['utility_type'] ?? ''));
+        $provider = $this->normalize((string) ($p['service_provider'] ?? ''));
+        $amount = $this->amountCents($p['bill_amount'] ?? 0);
+        $currency = strtoupper((string) ($p['currency'] ?? ''));
+        $due = (string) ($p['due_date'] ?? '');
+        $period = (string) ($p['bill_period_end'] ?? '');
+        $sourceEmail = (string) ($p['source_email_id'] ?? '');
+
+        return "utilityBills.create|{$tenantId}|{$type}|{$provider}|{$amount}|{$currency}|{$due}|{$period}|{$sourceEmail}";
+    }
+
+    /**
+     * @param  array<string, mixed>  $p
+     */
+    private function jobsUpdateStatus(int $tenantId, array $p): string
+    {
+        $jobId = (int) ($p['job_application_id'] ?? 0);
+        $status = $this->normalize((string) ($p['status'] ?? ''));
+        $sourceEmail = (string) ($p['source_email_id'] ?? '');
+
+        return "jobs.updateStatus|{$tenantId}|{$jobId}|{$status}|{$sourceEmail}";
+    }
+
+    /**
+     * @param  array<string, mixed>  $p
+     */
+    private function jobsAddInterview(int $tenantId, array $p): string
+    {
+        $jobId = (int) ($p['job_application_id'] ?? 0);
+        $scheduledAt = (string) ($p['scheduled_at'] ?? '');
+        $type = $this->normalize((string) ($p['interview_type'] ?? ''));
+        $sourceEmail = (string) ($p['source_email_id'] ?? '');
+
+        return "jobs.addInterview|{$tenantId}|{$jobId}|{$scheduledAt}|{$type}|{$sourceEmail}";
     }
 
     private function normalize(string $value): string

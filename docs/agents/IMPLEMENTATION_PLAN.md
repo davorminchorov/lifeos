@@ -4,8 +4,10 @@
 >
 > **Progress:**
 > - Phase 0 — plan committed (this file).
-> - Phase 1 — read-only MCP server: PR #148 (`claude/managed-agents-phase-1`).
-> - Phase 2 — Pending Actions queue + Expenses writes: in PR.
+> - Phase 1 — read-only MCP server: PR #148, **merged**.
+> - Phase 2 — Pending Actions queue + Expenses writes: PR #150, **merged**.
+> - Phase 3 — email-ingestion agent + ManagedAgentsClient + `agents:run`: PR #154 (in review). See `docs/agents/AGENTS.md`.
+> - Phase 4 — email-ingestion expansion (Subscriptions, Contracts, Warranties, IOU, Utility Bills, Job status updates + interviews): in PR.
 
 ## Context
 

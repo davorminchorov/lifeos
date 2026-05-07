@@ -33,6 +33,8 @@ class Warranty extends Model
         'transfer_history',
         'maintenance_reminders',
         'notes',
+        'source',
+        'created_by_agent_token_id',
     ];
 
     protected function casts(): array
