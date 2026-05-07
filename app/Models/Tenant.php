@@ -18,7 +18,31 @@ class Tenant extends Model
         'default_currency',
         'default_country',
         'owner_id',
+        'agents_writes_disabled',
+        'tool_auto_apply',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'agents_writes_disabled' => 'boolean',
+            'tool_auto_apply' => 'array',
+        ];
+    }
+
+    /**
+     * Whether the named MCP write tool may auto-apply on this tenant.
+     */
+    public function autoAppliesTool(string $tool): bool
+    {
+        if ($this->agents_writes_disabled) {
+            return false;
+        }
+
+        $map = $this->tool_auto_apply ?? [];
+
+        return ($map[$tool] ?? false) === true;
+    }
 
     /**
      * Get the owner of the tenant.

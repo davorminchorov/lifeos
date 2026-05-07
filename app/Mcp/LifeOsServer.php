@@ -8,6 +8,9 @@ use App\Mcp\Tools\Bills\UpcomingBills;
 use App\Mcp\Tools\Contracts\ListContracts;
 use App\Mcp\Tools\CycleMenu\CurrentWeekCycleMenu;
 use App\Mcp\Tools\Dashboard\Summary;
+use App\Mcp\Tools\Expenses\BulkImportExpenses;
+use App\Mcp\Tools\Expenses\CategorizeExpense;
+use App\Mcp\Tools\Expenses\CreateExpense;
 use App\Mcp\Tools\Expenses\ListExpenses;
 use App\Mcp\Tools\Investments\Portfolio;
 use App\Mcp\Tools\Iou\ListIou;
@@ -46,5 +49,8 @@ class LifeOsServer extends Server
         Pipeline::class,
         CurrentWeekCycleMenu::class,
         ListNotifications::class,
+        CreateExpense::class,
+        BulkImportExpenses::class,
+        CategorizeExpense::class,
     ];
 }

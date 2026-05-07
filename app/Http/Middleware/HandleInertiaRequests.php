@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\PendingAction;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -56,6 +57,23 @@ class HandleInertiaRequests extends Middleware
             'notifications' => [
                 'unread_count' => $request->user()?->unreadNotifications()->count() ?? 0,
             ],
+            'pendingActions' => [
+                'count' => $this->pendingActionsCount($request),
+            ],
         ]);
+    }
+
+    private function pendingActionsCount(Request $request): int
+    {
+        $tenantId = $request->user()?->current_tenant_id;
+
+        if ($tenantId === null) {
+            return 0;
+        }
+
+        return PendingAction::query()
+            ->where('tenant_id', $tenantId)
+            ->where('status', PendingAction::STATUS_PENDING)
+            ->count();
     }
 }

@@ -9,6 +9,7 @@ use App\Jobs\ImportExpensesCsv;
 use App\Models\Budget;
 use App\Models\Expense;
 use App\Services\CurrencyService;
+use App\Services\Expenses\ExpenseService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -17,12 +18,10 @@ use Inertia\Inertia;
 
 class ExpenseController extends Controller
 {
-    protected CurrencyService $currencyService;
-
-    public function __construct(CurrencyService $currencyService)
-    {
-        $this->currencyService = $currencyService;
-    }
+    public function __construct(
+        protected CurrencyService $currencyService,
+        protected ExpenseService $expenseService,
+    ) {}
 
     /**
      * Display a listing of the resource.
@@ -106,10 +105,7 @@ class ExpenseController extends Controller
      */
     public function store(StoreExpenseRequest $request)
     {
-        $expense = Expense::create([
-            'user_id' => auth()->id(),
-            ...$request->validated(),
-        ]);
+        $expense = $this->expenseService->create(auth()->user(), $request->validated());
 
         return redirect()->route('expenses.show', $expense)
             ->with('success', 'Expense created successfully!');
@@ -157,7 +153,7 @@ class ExpenseController extends Controller
             abort(403, 'Unauthorized access to expense.');
         }
 
-        $expense->update($request->validated());
+        $this->expenseService->update($expense, $request->validated());
 
         return redirect()->route('expenses.show', $expense)
             ->with('success', 'Expense updated successfully!');
@@ -173,7 +169,7 @@ class ExpenseController extends Controller
             abort(403, 'Unauthorized access to expense.');
         }
 
-        $expense->delete();
+        $this->expenseService->delete($expense);
 
         return redirect()->route('expenses.index')
             ->with('success', 'Expense deleted successfully!');
@@ -189,7 +185,7 @@ class ExpenseController extends Controller
             abort(403, 'Unauthorized access to expense.');
         }
 
-        $expense->update(['status' => 'reimbursed']);
+        $this->expenseService->markReimbursed($expense);
 
         return redirect()->route('expenses.show', $expense)
             ->with('success', 'Expense marked as reimbursed!');
@@ -297,10 +293,7 @@ class ExpenseController extends Controller
             abort(403, 'Unauthorized access to expense.');
         }
 
-        $newExpense = $expense->replicate();
-        $newExpense->expense_date = now()->toDateString();
-        $newExpense->status = 'pending';
-        $newExpense->save();
+        $newExpense = $this->expenseService->duplicate($expense);
 
         return redirect()->route('expenses.show', $newExpense)
             ->with('success', 'Expense duplicated successfully!');
@@ -329,28 +322,27 @@ class ExpenseController extends Controller
             abort(403, 'Unauthorized access to one or more expenses.');
         }
 
+        $user = auth()->user();
+        $ids = $request->expense_ids;
+
         switch ($request->action) {
             case 'delete':
-                Expense::where('user_id', auth()->id())
-                    ->whereIn('id', $request->expense_ids)->delete();
+                $this->expenseService->bulkDelete($user, $ids);
                 $message = "{$count} expenses deleted successfully!";
                 break;
 
             case 'mark_reimbursed':
-                Expense::where('user_id', auth()->id())
-                    ->whereIn('id', $request->expense_ids)->update(['status' => 'reimbursed']);
+                $this->expenseService->bulkMarkReimbursed($user, $ids);
                 $message = "{$count} expenses marked as reimbursed!";
                 break;
 
             case 'change_category':
-                Expense::where('user_id', auth()->id())
-                    ->whereIn('id', $request->expense_ids)->update(['category' => $request->category]);
+                $this->expenseService->bulkChangeCategory($user, $ids, $request->category);
                 $message = "{$count} expenses moved to {$request->category} category!";
                 break;
 
             case 'change_status':
-                Expense::where('user_id', auth()->id())
-                    ->whereIn('id', $request->expense_ids)->update(['status' => $request->status]);
+                $this->expenseService->bulkChangeStatus($user, $ids, $request->status);
                 $message = "{$count} expenses status changed to {$request->status}!";
                 break;
         }
