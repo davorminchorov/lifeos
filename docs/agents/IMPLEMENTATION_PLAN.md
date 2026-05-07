@@ -12,6 +12,10 @@
 > - Phase 6 — bank/card statement processor with reconciliation against existing expenses: PR #157. Introduces a `bank_lines` table, a deterministic matcher (amount + date + merchant fuzzy), and `bank.recordLines` / `bank.linkExpense` / `bank.unmatched` MCP tools.
 > - Phase 7 — receipts/documents OCR agent: PR #158. Adds `source_file_id` (with backward-compatible idempotency keys) to `expenses.create`, `warranties.create`, `utilityBills.create`; new `receipts.processed` read tool to skip already-OCR'd Drive files. Vision via the user's Drive MCP — no new LifeOS infrastructure.
 > - Phase 8 — job-search hunter agent: in PR. Gated by `agents.job_search.enabled` AND a per-skill active-search window. New `jobs.createApplication` MCP tool + starter `cv` and `job-criteria` skills (placeholder content the user replaces).
+> - Phase 9 — cycle-menu planner agent: in PR. New `cycleMenu.addItem`, `cycleMenu.setWeek`, `cycleMenu.shoppingList` tools. The agent fills empty days only (never overwrites the user's plan) and produces a structured shopping list aggregation for the next 7 days.
+> - Phase 10 — weekly digest agent: in PR. New `digest.send` MCP tool, `digest_logs` table, `WeeklyDigestMail` Mailable. The agent reads across all modules (read-only) and composes a one-page Sunday-night summary; on approval the email is sent. Auto-apply gate is relaxed for `digest.send` so weekly auto-send works after one manual approval.
+>
+> All ten phases of the Managed Agents initiative are now built.
 
 ## Context
 
