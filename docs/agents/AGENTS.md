@@ -89,7 +89,7 @@ Reads receipt-shaped messages from the connected Gmail mailbox and proposes one 
 - Each run issues a fresh `AgentToken` with abilities limited to the agent's tool allowlist. The token is revoked at the end of the run (success or failure).
 - The plaintext token never lands on disk: it's generated in memory, passed into `AgentSessionConfig` as a config value scoped to the run, and discarded.
 - `agent_run_events` is append-only. A retention sweep (default 90 days, see `agents.run_event_retention_days`) is intentionally not implemented in Phase 3 — add it once we have data on event volume in production.
-- The Managed Agents wire format is still in beta (`managed-agents-2026-04-01`). `ManagedAgentsClient` isolates the protocol so individual methods can swap to `anthropic/anthropic-sdk-php` calls as the SDK gains coverage. No callers will need to change.
+- The Managed Agents wire format is still in beta (`managed-agents-2026-04-01`). `ManagedAgentsClient` isolates the protocol so individual methods can swap to `anthropic-ai/sdk` calls as the SDK gains coverage. No callers will need to change.
 
 ## Failure modes
 

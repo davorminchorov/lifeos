@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Agents;
 
 use Generator;
+use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -16,7 +17,7 @@ use RuntimeException;
  * The class isolates the wire protocol so callers (the agents:run command,
  * tests) work against a stable PHP interface. Today every method goes through
  * raw HTTP with the `anthropic-beta: managed-agents-2026-04-01` header. As the
- * official anthropic/anthropic-sdk-php gains coverage of Managed Agents
+ * official anthropic-ai/sdk gains coverage of Managed Agents
  * endpoints, individual methods can swap in `Anthropic::beta()->...` calls
  * without callers noticing.
  *
@@ -119,7 +120,7 @@ class ManagedAgentsClient
         return (array) $response->json();
     }
 
-    private function http(): \Illuminate\Http\Client\PendingRequest
+    private function http(): PendingRequest
     {
         $config = (array) Config::get('agents.anthropic', []);
         $apiKey = (string) ($config['api_key'] ?? '');

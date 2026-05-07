@@ -65,22 +65,22 @@ Every write tool defaults to creating a `pending_action` rather than mutating da
 ### 5. Orchestration: Laravel scheduler dispatches `agents:run` artisan commands
 
 - Reuse the existing scheduler. Each agent has a `Schedule::command('agents:run {slug}')->cron(...)` entry behind a feature flag.
-- The `agents:run` command (Phase 3) creates a Managed Agents session via the official Anthropic PHP SDK (`anthropic/anthropic-sdk-php`), passes the LifeOS MCP server URL and the agent's tool allowlist, streams events into an `agent_runs` table, and exits when the session terminates.
+- The `agents:run` command (Phase 3) creates a Managed Agents session via the official Anthropic PHP SDK (`anthropic-ai/sdk`), passes the LifeOS MCP server URL and the agent's tool allowlist, streams events into an `agent_runs` table, and exits when the session terminates.
 - **Reject** external cron hitting the Managed Agents API directly: duplicates scheduling logic and loses the ability to gate runs behind a tenancy/feature-flag check.
 
-### 6. Anthropic client: official `anthropic/anthropic-sdk-php` + HTTP fallback inside `ManagedAgentsClient`
+### 6. Anthropic client: official `anthropic-ai/sdk` + HTTP fallback inside `ManagedAgentsClient`
 
 **Why this is needed at all.** `laravel/ai` does not cover Managed Agents — verified on both the installed version (`v0.4.2`, per `composer.lock`) and the latest release (`v0.6.6`, published 2026-05-02). `AnthropicProvider` in both versions implements only `TextProvider`, `FileProvider`, `SupportsWebFetch`, `SupportsWebSearch`, and a recursive listing of the v0.6.6 source tree returns zero paths matching `managed`, `session`, or `agent`. The existing `LifeOsAssistant` is therefore an in-process agent against the Messages API, not a Managed Agents client. We need a separate client for the hosted runtime.
 
 **Approach.** A new `App\Services\Agents\ManagedAgentsClient` exposes the minimum surface Phase 3 needs: `createSession`, `streamEvents`, `sendUserMessage`, `cancel`, `getSession`. Internally:
 
-1. **Primary path:** `anthropic/anthropic-sdk-php` (added to composer in Phase 3, when it's first needed). Each `ManagedAgentsClient` method delegates to the SDK where the SDK exposes the corresponding Managed Agents endpoint.
+1. **Primary path:** `anthropic-ai/sdk` (added to composer in Phase 3, when it's first needed). Each `ManagedAgentsClient` method delegates to the SDK where the SDK exposes the corresponding Managed Agents endpoint.
 2. **Fallback path:** for any endpoint the SDK doesn't yet expose, the same method falls back to `Http::withHeaders(['anthropic-beta' => 'managed-agents-2026-04-01', 'x-api-key' => ...])`. The fallback is isolated to the client class so callers (`agents:run`, tests) never see the difference.
 3. **Migration path:** as new SDK versions cover more endpoints, the per-method `if ($this->sdkSupports(...))` checks shrink and the fallback eventually goes away. No caller changes.
 
 This way we benefit from the SDK's idiomatic interfaces, type safety, retries, and streaming where available, while remaining unblocked for any endpoint the SDK still lags on.
 
-**Phase boundary.** No SDK dependency change in Phases 1 or 2. `composer require anthropic/anthropic-sdk-php` happens at the start of Phase 3, alongside the Managed Agents client implementation.
+**Phase boundary.** No SDK dependency change in Phases 1 or 2. `composer require anthropic-ai/sdk` happens at the start of Phase 3, alongside the Managed Agents client implementation.
 
 ### 7. Agent definitions: file-based registry
 
@@ -362,7 +362,7 @@ Each phase ships: (a) any service-extraction needed, (b) module write tools adde
 
 ## Resolved decisions (from plan-mode Q&A)
 
-- **Anthropic client.** `laravel/ai` does not cover Managed Agents (verified against source on both v0.4.2 installed and v0.6.6 latest). Recommended approach selected: official `anthropic/anthropic-sdk-php` is the primary path inside `ManagedAgentsClient`, with raw-HTTP fallback for any endpoint the SDK doesn't yet expose, all behind one interface. SDK is added to composer at the start of Phase 3 (no dependency change in Phases 1–2).
+- **Anthropic client.** `laravel/ai` does not cover Managed Agents (verified against source on both v0.4.2 installed and v0.6.6 latest). Recommended approach selected: official `anthropic-ai/sdk` is the primary path inside `ManagedAgentsClient`, with raw-HTTP fallback for any endpoint the SDK doesn't yet expose, all behind one interface. SDK is added to composer at the start of Phase 3 (no dependency change in Phases 1–2).
 - **Token model.** Dedicated `agent_tokens` table.
 - **Phase 2 auto-apply.** Strict — every write produces a pending action in Phase 2. The auto-apply rule is implemented as plumbing (config + idempotency-key match check) but the config defaults to `false` for every (tenant, tool) pair and only flips after the user approves it explicitly in a later phase.
 - **Branch cadence.** One PR per phase, child branches off `claude/implement-managed-agents-L1MeH`. Final merge to `main` once all phases land.
@@ -396,7 +396,7 @@ Phase 2 and onward have analogous acceptance steps; spelt out in `docs/agents/RU
 
 ## Critical files to be modified or created
 
-- `composer.json` — promote `laravel/mcp` (Phase 1); add `anthropic/anthropic-sdk-php` (Phase 3).
+- `composer.json` — promote `laravel/mcp` (Phase 1); add `anthropic-ai/sdk` (Phase 3).
 - `routes/ai.php` (new), `bootstrap/app.php` — register routes file and `auth.agent` alias.
 - `app/Mcp/**` (new tree).
 - `app/Models/{AgentToken,AgentRun,AgentRunEvent,PendingAction}.php` (new).
