@@ -60,5 +60,10 @@
     },
     "optionalDependencies": {
         "@rollup/rollup-linux-x64-gnu": "^4.60.3"
+    },
+    "pnpm": {
+        "ignoredBuiltDependencies": [
+            "core-js"
+        ]
     }
 }
