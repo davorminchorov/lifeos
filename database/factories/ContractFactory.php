@@ -2,10 +2,12 @@
 
 namespace Database\Factories;
 
+use App\Models\Contract;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Contract>
+ * @extends Factory<Contract>
  */
 class ContractFactory extends Factory
 {
@@ -31,7 +33,7 @@ class ContractFactory extends Factory
         $endDate = $this->faker->optional(0.8)->dateTimeBetween($startDate, '+2 years');
 
         return [
-            'user_id' => 1, // Will be overridden when creating with relationships
+            'user_id' => User::factory(),
             'contract_type' => $this->faker->randomElement($contractTypes),
             'title' => $this->faker->randomElement($titles),
             'counterparty' => $this->faker->company(),

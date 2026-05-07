@@ -28,6 +28,7 @@ class ExpenseModelTest extends TestCase
             'description', 'merchant', 'payment_method', 'receipt_attachments', 'tags',
             'location', 'is_tax_deductible', 'expense_type', 'is_recurring',
             'recurring_schedule', 'budget_allocated', 'notes', 'status', 'unique_key',
+            'source', 'created_by_agent_token_id',
         ];
         $expense = new Expense;
 
