@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace App\Ai\Tools;
 
-use App\Models\Expense;
+use App\Models\User;
+use App\Services\Expenses\ExpenseService;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Arr;
 use Laravel\Ai\Tools\Request;
@@ -59,11 +60,8 @@ class CreateExpense extends TenantScopedTool
             return $validated;
         }
 
-        Expense::create([
-            'user_id' => $this->userId,
-            'tenant_id' => $this->tenantId,
-            ...$validated,
-        ]);
+        $user = User::findOrFail($this->userId);
+        app(ExpenseService::class)->create($user, $validated);
 
         $merchantDisplay = $validated['merchant'] ?? 'Unknown';
 

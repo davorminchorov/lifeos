@@ -1,6 +1,11 @@
 # LifeOS Managed Agents — Implementation Plan
 
 > **Status:** Approved 2026-05-06. Canonical location for the plan; further phases update this file in place. Branch: `claude/implement-managed-agents-L1MeH` with one child branch + PR per phase.
+>
+> **Progress:**
+> - Phase 0 — plan committed (this file).
+> - Phase 1 — read-only MCP server: PR #148 (`claude/managed-agents-phase-1`).
+> - Phase 2 — Pending Actions queue + Expenses writes: in PR.
 
 ## Context
 

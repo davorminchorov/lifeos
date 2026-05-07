@@ -201,10 +201,58 @@ Items: `id, type, data, read_at, created_at`.
 - The `AuthenticateAgent` middleware sets `current_tenant_id` on the bound user before tools run, so the existing `TenantScope` global scope filters every Eloquent query.
 - The middleware does not modify the database (only the in-memory `User` model state), so concurrent web sessions for the same user are unaffected.
 
-## Phase 2 preview
+## Write tools (Phase 2)
 
-Phase 2 introduces:
+The Phase 2 write tools never mutate live data on call. Each one creates a row in `pending_actions` (idempotent by `idempotency_key`) and returns the row's id and status. The user reviews and approves at `/dashboard/pending-actions`. Auto-apply is allowed only when (a) `tenants.agents_writes_disabled = false` AND (b) `tenants.tool_auto_apply[tool] = true` AND (c) an identical idempotency key was previously approved on this tenant. The default is `false` for every (tenant, tool) pair.
 
-- A `pending_actions` table with idempotency keys.
-- Write tools `expenses.create`, `expenses.bulkImport`, `expenses.categorize` that produce pending actions.
-- A `tool_auto_apply` per-tenant config that defaults to `false` for every (tenant, tool) pair.
+### `expenses.create`
+
+| field | type | description |
+|---|---|---|
+| `amount` | number | Required. |
+| `currency` | string | ISO 4217. Defaults to MKD. |
+| `expense_date` | date | YYYY-MM-DD. Required. |
+| `merchant` | string | Vendor / store. |
+| `category` | string | Required. |
+| `subcategory` | string | Optional. |
+| `description` | string | Required (falls back to `merchant`). |
+| `payment_method` | string | Optional. |
+| `expense_type` | string | "business" or "personal". |
+| `is_tax_deductible` | bool | Optional. |
+| `tags` | string[] | Optional. |
+| `source_email_id` | string | Optional, used as an idempotency disambiguator (e.g. Gmail message id). |
+
+Idempotency key: `sha256("expenses.create|<tenant>|<merchant_normalized>|<amount_cents>|<currency>|<expense_date>|<source_email_id>")`.
+
+Returns: `{ pending_action_id, status, idempotency_key, auto_applied }`.
+
+### `expenses.bulkImport`
+
+| field | type | description |
+|---|---|---|
+| `items` | array | Each item uses the same shape as `expenses.create`. |
+
+A single pending action is created for the whole batch. Idempotency key is derived from the sorted hashes of the per-item `expenses.create` keys, so reorderings collide.
+
+Returns: `{ pending_action_id, status, idempotency_key, item_count, auto_applied }`.
+
+### `expenses.categorize`
+
+| field | type | description |
+|---|---|---|
+| `expense_id` | int | Required. The expense must belong to the authenticated tenant (enforced via the global tenant scope). |
+| `category` | string | Required. |
+| `subcategory` | string | Optional. |
+| `confidence` | number | Optional 0-1 score. |
+
+Returns: `{ pending_action_id, status, idempotency_key, auto_applied }`.
+
+## Approval surface
+
+Reviewers act through `/dashboard/pending-actions`:
+
+- Index (filterable list) with bulk-approve.
+- Detail page with payload, applied diff (when applied), and approve / reject (with reason) / revert (within a 10-minute window) actions.
+- Sidebar shows a count badge fed by a global Inertia share `pendingActions.count`.
+
+`PendingActionPolicy` gates view, approve, reject, revert. Revert is only allowed for `applied` actions inside the configurable window.

@@ -23,15 +23,18 @@ import {
     UtensilsCrossed,
     DollarSign,
     Calendar,
+    Inbox,
     type LucideIcon,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
 
 interface NavItem {
     label: string
     href: string
     icon: LucideIcon
+    badgeKey?: 'pendingActionsCount'
 }
 
 interface NavGroup {
@@ -49,6 +52,7 @@ const navigation: NavGroup[] = [
             { label: 'Expenses', href: '/expenses', icon: Receipt },
             { label: 'Subscriptions', href: '/subscriptions', icon: CreditCard },
             { label: 'Utility Bills', href: '/utility-bills', icon: Zap },
+            { label: 'Pending Actions', href: '/dashboard/pending-actions', icon: Inbox, badgeKey: 'pendingActionsCount' },
         ],
     },
     {
@@ -91,8 +95,16 @@ interface SidebarProps {
     onToggle: () => void
 }
 
+interface SharedPageProps {
+    pendingActions?: { count?: number }
+}
+
 export function Sidebar({ collapsed, onToggle }: SidebarProps) {
-    const { url } = usePage()
+    const { url, props } = usePage<SharedPageProps>()
+    const pendingActionsCount = props.pendingActions?.count ?? 0
+    const badgeValues: Record<NonNullable<NavItem['badgeKey']>, number> = {
+        pendingActionsCount,
+    }
     const [openGroups, setOpenGroups] = useState<string[]>(
         navigation.map(g => g.label)
     )
@@ -171,22 +183,34 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                         )}
                         {(collapsed || openGroups.includes(group.label)) && (
                             <div className="space-y-0.5">
-                                {group.items.map((item) => (
-                                    <Link
-                                        key={item.href}
-                                        href={item.href}
-                                        className={cn(
-                                            'flex items-center gap-3 rounded-md px-3 py-2.5 text-sm transition-colors',
-                                            isActive(item.href)
-                                                ? 'border-l-2 border-foreground bg-sidebar-accent font-medium text-sidebar-accent-foreground'
-                                                : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
-                                        )}
-                                        title={collapsed ? item.label : undefined}
-                                    >
-                                        <item.icon className="h-4 w-4 shrink-0" />
-                                        {!collapsed && <span>{item.label}</span>}
-                                    </Link>
-                                ))}
+                                {group.items.map((item) => {
+                                    const badgeCount = item.badgeKey ? badgeValues[item.badgeKey] : 0
+                                    return (
+                                        <Link
+                                            key={item.href}
+                                            href={item.href}
+                                            className={cn(
+                                                'flex items-center gap-3 rounded-md px-3 py-2.5 text-sm transition-colors',
+                                                isActive(item.href)
+                                                    ? 'border-l-2 border-foreground bg-sidebar-accent font-medium text-sidebar-accent-foreground'
+                                                    : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
+                                            )}
+                                            title={collapsed ? item.label : undefined}
+                                        >
+                                            <item.icon className="h-4 w-4 shrink-0" />
+                                            {!collapsed && (
+                                                <span className="flex flex-1 items-center justify-between">
+                                                    <span>{item.label}</span>
+                                                    {badgeCount > 0 && (
+                                                        <Badge variant="destructive" className="ml-2 h-5 px-1.5 text-[10px]">
+                                                            {badgeCount}
+                                                        </Badge>
+                                                    )}
+                                                </span>
+                                            )}
+                                        </Link>
+                                    )
+                                })}
                             </div>
                         )}
                     </div>

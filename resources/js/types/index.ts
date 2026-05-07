@@ -19,6 +19,9 @@ export interface SharedProps {
     notifications: {
         unread_count: number
     }
+    pendingActions: {
+        count: number
+    }
     [key: string]: unknown
 }
 
