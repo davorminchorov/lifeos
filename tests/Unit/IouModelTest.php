@@ -5,6 +5,7 @@ namespace Tests\Unit;
 use App\Models\Iou;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Carbon;
 use Tests\TestCase;
 
 class IouModelTest extends TestCase
@@ -12,6 +13,7 @@ class IouModelTest extends TestCase
     use RefreshDatabase;
 
     protected $user;
+
     protected $tenant;
 
     protected function setUp(): void
@@ -27,6 +29,7 @@ class IouModelTest extends TestCase
             'transaction_date', 'due_date', 'description', 'notes', 'status',
             'amount_paid', 'payment_method', 'category', 'attachments',
             'is_recurring', 'recurring_schedule',
+            'source', 'created_by_agent_token_id',
         ];
         $iou = new Iou;
 
@@ -404,8 +407,8 @@ class IouModelTest extends TestCase
 
         $this->assertIsString($iou->amount);
         $this->assertIsString($iou->amount_paid);
-        $this->assertInstanceOf(\Illuminate\Support\Carbon::class, $iou->transaction_date);
-        $this->assertInstanceOf(\Illuminate\Support\Carbon::class, $iou->due_date);
+        $this->assertInstanceOf(Carbon::class, $iou->transaction_date);
+        $this->assertInstanceOf(Carbon::class, $iou->due_date);
         $this->assertIsArray($iou->attachments);
         $this->assertIsBool($iou->is_recurring);
     }

@@ -4,6 +4,7 @@ namespace Tests\Unit;
 
 use App\Models\Contract;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -12,6 +13,7 @@ class ContractModelTest extends TestCase
     use RefreshDatabase;
 
     protected $user;
+
     protected $tenant;
 
     protected function setUp(): void
@@ -196,8 +198,8 @@ class ContractModelTest extends TestCase
             'tenant_id' => $this->tenant->id,
         ]);
 
-        $this->assertInstanceOf(\Carbon\Carbon::class, $contract->start_date);
-        $this->assertInstanceOf(\Carbon\Carbon::class, $contract->end_date);
+        $this->assertInstanceOf(Carbon::class, $contract->start_date);
+        $this->assertInstanceOf(Carbon::class, $contract->end_date);
         $this->assertIsInt($contract->notice_period_days);
         $this->assertIsBool($contract->auto_renewal);
         $this->assertIsFloat($contract->contract_value);
@@ -230,6 +232,8 @@ class ContractModelTest extends TestCase
             'amendments',
             'notes',
             'status',
+            'source',
+            'created_by_agent_token_id',
         ];
 
         $contract = new Contract;

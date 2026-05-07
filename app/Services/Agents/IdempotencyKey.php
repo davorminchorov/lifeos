@@ -30,6 +30,7 @@ class IdempotencyKey
             'utilityBills.create' => $this->utilityBillsCreate($tenantId, $payload),
             'jobs.updateStatus' => $this->jobsUpdateStatus($tenantId, $payload),
             'jobs.addInterview' => $this->jobsAddInterview($tenantId, $payload),
+            'jobs.createApplication' => $this->jobsCreateApplication($tenantId, $payload),
             'investments.recordTransaction' => $this->investmentsRecordTransaction($tenantId, $payload),
             'investments.recordDividend' => $this->investmentsRecordDividend($tenantId, $payload),
             'investments.repriceLot' => $this->investmentsRepriceLot($tenantId, $payload),
@@ -181,6 +182,30 @@ class IdempotencyKey
         $sourceEmail = (string) ($p['source_email_id'] ?? '');
 
         return "jobs.addInterview|{$tenantId}|{$jobId}|{$scheduledAt}|{$type}|{$sourceEmail}";
+    }
+
+    /**
+     * Job application creation. Anchors on (tenant, normalized company,
+     * normalized title, source-or-url). The url falls back into the source
+     * reference so two runs that find the same posting via different channels
+     * can still collide if they end up with the same canonical URL.
+     *
+     * @param  array<string, mixed>  $p
+     */
+    private function jobsCreateApplication(int $tenantId, array $p): string
+    {
+        $company = $this->normalize((string) ($p['company_name'] ?? ''));
+        $title = $this->normalize((string) ($p['job_title'] ?? ''));
+
+        $url = (string) ($p['job_url'] ?? '');
+        $sourceRef = $this->sourceRef($p);
+
+        // Prefer source_email_id / source_file_id when present (most stable
+        // anchor); fall back to job_url; fall back to "" so otherwise-identical
+        // postings collide on (company, title) alone.
+        $anchor = $sourceRef !== '' ? $sourceRef : strtolower(trim($url));
+
+        return "jobs.createApplication|{$tenantId}|{$company}|{$title}|{$anchor}";
     }
 
     /**

@@ -10,7 +10,8 @@
 > - Phase 4 — email-ingestion expansion (Subscriptions, Contracts, Warranties, IOU, Utility Bills, Job status updates + interviews): PR #155.
 > - Phase 5 — investments-sync agent (record transactions, dividends, mark-to-market, bulk-import statements): PR #156. Broker-agnostic; reads from Gmail (broker confirms) + Drive (statements).
 > - Phase 6 — bank/card statement processor with reconciliation against existing expenses: PR #157. Introduces a `bank_lines` table, a deterministic matcher (amount + date + merchant fuzzy), and `bank.recordLines` / `bank.linkExpense` / `bank.unmatched` MCP tools.
-> - Phase 7 — receipts/documents OCR agent: in PR. Adds `source_file_id` (with backward-compatible idempotency keys) to `expenses.create`, `warranties.create`, `utilityBills.create`; new `receipts.processed` read tool to skip already-OCR'd Drive files. Vision via the user's Drive MCP — no new LifeOS infrastructure.
+> - Phase 7 — receipts/documents OCR agent: PR #158. Adds `source_file_id` (with backward-compatible idempotency keys) to `expenses.create`, `warranties.create`, `utilityBills.create`; new `receipts.processed` read tool to skip already-OCR'd Drive files. Vision via the user's Drive MCP — no new LifeOS infrastructure.
+> - Phase 8 — job-search hunter agent: in PR. Gated by `agents.job_search.enabled` AND a per-skill active-search window. New `jobs.createApplication` MCP tool + starter `cv` and `job-criteria` skills (placeholder content the user replaces).
 
 ## Context
 

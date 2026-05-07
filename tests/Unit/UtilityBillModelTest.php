@@ -29,6 +29,7 @@ class UtilityBillModelTest extends TestCase
             'bill_period_end', 'due_date', 'payment_status', 'payment_date', 'meter_readings',
             'bill_attachments', 'service_plan', 'contract_terms', 'auto_pay_enabled',
             'usage_history', 'budget_alert_threshold', 'notes',
+            'source', 'created_by_agent_token_id',
         ];
         $bill = new UtilityBill;
 

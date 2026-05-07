@@ -501,6 +501,38 @@ Returns `{ count, within_days, items[] }` where each item is `{ source_file_id, 
 
 The tool walks both single-payload tools (`expenses.create`, `warranties.create`, `utilityBills.create`) and bulk-style tools (`expenses.bulkImport`) so any agent that attached `source_file_id` is reflected.
 
+## Job-search hunter (Phase 8)
+
+Phase 8 ships a single new write tool plus the `job-search` agent definition and two new skills (`cv`, `job-criteria`). The agent is intentionally narrow: it discovers postings and records them — it never applies on the user's behalf.
+
+### `jobs.createApplication`
+
+| field | type | description |
+|---|---|---|
+| `company_name` | string | Required. |
+| `job_title` | string | Required. |
+| `job_description` | string | Optional, one-paragraph summary. |
+| `job_url` | url | Optional canonical URL. |
+| `location` | string | Optional. |
+| `remote` | bool | Optional. |
+| `salary_min` | number | Optional. |
+| `salary_max` | number | Optional. |
+| `currency` | string | ISO 4217. Defaults to MKD. |
+| `status` | string | `"discovered"` (default) or `"shortlisted"`. |
+| `source` | string | One of `linkedin`, `company_website`, `job_board`, `referral`, `recruiter`, `networking`, `other`. |
+| `priority` | int | 1-3 only. (4-5 are reserved for the user.) |
+| `contact_name`, `contact_email` | string | Optional. |
+| `notes` | string | Required-by-convention. One-line rationale. |
+| `source_email_id` | string | Optional Gmail message id. Strongest idempotency anchor. |
+| `source_file_id` | string | Optional Drive file id (for saved listings). |
+
+Idempotency: `(tenant, normalized company, normalized title, source_email_id || source_file_id || lowercased job_url)`. Re-runs over the same email or canonical URL collapse to the same pending action. Cross-channel discovery (e.g. once via LinkedIn email, once via the company's career page) deliberately produces *separate* pending actions because the `source` differs and the URLs aren't identical — the user merges them manually if needed.
+
+### Skills
+
+- **`cv`** — the user's CV. Authoritative for fit assessment. Replace placeholder content before enabling the agent.
+- **`job-criteria`** — hard and soft criteria, plus an active-search-window date range. The agent exits immediately if today is outside the window or if either skill is still placeholder content.
+
 ## Approval surface
 
 Reviewers act through `/dashboard/pending-actions`:
