@@ -82,10 +82,8 @@ class ContractController extends Controller
      */
     public function store(StoreContractRequest $request)
     {
-        $contract = Contract::create([
-            'user_id' => auth()->id(),
-            ...$request->validated(),
-        ]);
+        $contract = app(\App\Services\Contracts\ContractService::class)
+            ->create(auth()->user(), $request->validated());
 
         return redirect()->route('contracts.show', $contract)
             ->with('success', 'Contract created successfully!');
@@ -129,7 +127,7 @@ class ContractController extends Controller
             abort(403, 'Unauthorized access to contract.');
         }
 
-        $contract->update($request->validated());
+        app(\App\Services\Contracts\ContractService::class)->update($contract, $request->validated());
 
         return redirect()->route('contracts.show', $contract)
             ->with('success', 'Contract updated successfully!');
@@ -145,7 +143,7 @@ class ContractController extends Controller
             abort(403, 'Unauthorized access to contract.');
         }
 
-        $contract->delete();
+        app(\App\Services\Contracts\ContractService::class)->delete($contract);
 
         return redirect()->route('contracts.index')
             ->with('success', 'Contract deleted successfully!');
@@ -161,10 +159,7 @@ class ContractController extends Controller
             abort(403, 'Unauthorized access to contract.');
         }
 
-        $contract->update([
-            'status' => 'terminated',
-            'end_date' => now(),
-        ]);
+        app(\App\Services\Contracts\ContractService::class)->terminate($contract);
 
         return redirect()->route('contracts.show', $contract)
             ->with('success', 'Contract terminated successfully!');

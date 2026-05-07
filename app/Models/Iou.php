@@ -30,6 +30,8 @@ class Iou extends Model
         'attachments',
         'is_recurring',
         'recurring_schedule',
+        'source',
+        'created_by_agent_token_id',
     ];
 
     protected function casts(): array

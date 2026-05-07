@@ -37,6 +37,8 @@ class UtilityBill extends Model
         'usage_history',
         'budget_alert_threshold',
         'notes',
+        'source',
+        'created_by_agent_token_id',
     ];
 
     protected function casts(): array
