@@ -16,6 +16,7 @@ use App\Services\Agents\PendingActionApplier;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Testing\Fluent\AssertableJson;
 use Tests\TestCase;
 
 class Phase10DigestTest extends TestCase
@@ -50,11 +51,10 @@ class Phase10DigestTest extends TestCase
     {
         LifeOsServer::tool(DigestSend::class, $this->digestArgs())
             ->assertOk()
-            ->assertStructuredContent(function (array $content): bool {
-                $this->assertSame(PendingAction::STATUS_PENDING, $content['status']);
-                $this->assertFalse($content['auto_applied']);
-
-                return true;
+            ->assertStructuredContent(function (AssertableJson $json): void {
+                $json->where('status', PendingAction::STATUS_PENDING)
+                    ->where('auto_applied', false)
+                    ->etc();
             });
 
         $this->assertSame(1, PendingAction::query()->where('tool', 'digest.send')->count());
