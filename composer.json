@@ -12,6 +12,7 @@
         "inertiajs/inertia-laravel": "^3.0",
         "laravel/ai": "^0.4.2",
         "laravel/framework": "^13.0",
+        "laravel/mcp": "^0.6",
         "laravel/nightwatch": "^1.13",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^3.0",
