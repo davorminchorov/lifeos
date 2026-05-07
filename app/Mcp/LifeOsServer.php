@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Mcp;
 
+use App\Mcp\Tools\Bank\LinkExpense as BankLinkExpense;
+use App\Mcp\Tools\Bank\RecordLines as BankRecordLines;
+use App\Mcp\Tools\Bank\UnmatchedLines as BankUnmatchedLines;
 use App\Mcp\Tools\Bills\CreateUtilityBill;
 use App\Mcp\Tools\Bills\UpcomingBills;
 use App\Mcp\Tools\Contracts\CreateContract;
@@ -74,5 +77,8 @@ class LifeOsServer extends Server
         RecordDividend::class,
         RepriceLot::class,
         BulkImportTransactions::class,
+        BankRecordLines::class,
+        BankLinkExpense::class,
+        BankUnmatchedLines::class,
     ];
 }

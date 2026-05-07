@@ -420,6 +420,62 @@ Queue an entire brokerage statement as a single pending action.
 
 Idempotency: derived from the sorted hashes of the per-item `recordTransaction` keys, so reorderings collide.
 
+## Bank reconciliation tools (Phase 6)
+
+Phase 6 ships the bank-statements agent. It ingests parsed lines from a brokerage / card statement, runs them through the reconciliation matcher, and links each line to the existing expense it represents (so a single purchase doesn't end up as two separate rows). High-confidence matches link automatically; the rest are saved as `unmatched` for human review at `/dashboard/pending-actions` (with the matcher's top-3 candidates available via `bank.unmatched`).
+
+### Matcher rules (deterministic, no ML)
+
+For each bank line, candidate expenses must be in the same tenant, use the same currency, and have an absolute amount (in cents) that matches exactly. Within that pool, each candidate gets a score:
+
+- Base 0.5 (amount + currency match).
+- +0.30 for same date, +0.20 for ±1 day, +0.10 for ±3 days.
+- +0.20 if merchant similarity ≥80%, +0.10 if ≥50% (PHP `similar_text`, normalized to lowercase / no punctuation).
+
+Auto-link rules: best candidate score ≥ 0.85 **and** at least 0.10 above the runner-up. Otherwise the line stays unmatched and the top-3 candidates are persisted in `match_candidates` for review. An expense already linked to another bank line is excluded from the candidate pool.
+
+### `bank.recordLines`
+
+Submit parsed lines from a single statement as one pending action.
+
+| field | type | description |
+|---|---|---|
+| `lines` | array | Required. Each item: |
+| `lines[].account` | string | Required. Same string for every row in the statement. |
+| `lines[].posted_at` | date | Required. YYYY-MM-DD. |
+| `lines[].amount_cents` | int | Required. Signed (negative = debit). |
+| `lines[].currency` | string | Required. ISO 4217. |
+| `lines[].merchant_raw` | string | Optional. Bank's printed merchant string. |
+| `lines[].description` | string | Optional. Full row text. |
+| `lines[].balance_after_cents` | int | Optional. |
+| `lines[].statement_id` | string | Optional. Statement document id. |
+| `lines[].statement_row` | int | Optional. 1-based row index within the statement. |
+
+Server-side computed fields per line: `fingerprint` (deterministic SHA-256 over natural fields). Re-importing the same statement collapses to the same pending action because the per-line fingerprints match.
+
+Idempotency: derived from the sorted set of per-line fingerprints.
+
+### `bank.linkExpense`
+
+| field | type | description |
+|---|---|---|
+| `bank_line_id` | int | Required. |
+| `expense_id` | int | Required. |
+
+Forces a link regardless of matcher confidence. Used when the agent (or a human reviewer) knows better than the matcher.
+
+### `bank.unmatched`
+
+Read-only triage helper.
+
+| field | type | description |
+|---|---|---|
+| `within_days` | int | Default 30. |
+| `account` | string | Optional filter. |
+| `limit` | int | Default 100, max 500. |
+
+Returns `{ count, within_days, items[] }`. Each item carries the line plus the matcher's persisted top-3 candidates from `match_candidates`.
+
 ## Approval surface
 
 Reviewers act through `/dashboard/pending-actions`:

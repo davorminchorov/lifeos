@@ -1,0 +1,16 @@
+{
+    "slug": "bank-statements",
+    "model": "claude-opus-4-7",
+    "fallback_model": "claude-sonnet-4-6",
+    "mcp_servers": ["lifeos", "drive", "gmail"],
+    "allowed_tools": [
+        "expenses.list",
+        "bank.recordLines",
+        "bank.linkExpense",
+        "bank.unmatched"
+    ],
+    "max_session_duration_seconds": 1200,
+    "max_tool_calls": 200,
+    "feature_flag": "agents.bank_statements.enabled",
+    "schedule": "0 8 * * *"
+}
