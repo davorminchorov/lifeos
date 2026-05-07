@@ -13,6 +13,7 @@ use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\App;
+use Illuminate\Testing\Fluent\AssertableJson;
 use Tests\TestCase;
 
 class Phase7ReceiptsTest extends TestCase
@@ -86,13 +87,15 @@ class Phase7ReceiptsTest extends TestCase
 
         LifeOsServer::tool(ProcessedFiles::class)
             ->assertOk()
-            ->assertStructuredContent(function (array $content): bool {
-                $ids = collect($content['items'])->pluck('source_file_id')->all();
-                $this->assertSame(2, $content['count']);
-                $this->assertContains('drive-001', $ids);
-                $this->assertContains('drive-002', $ids);
+            ->assertStructuredContent(function (AssertableJson $json) {
+                $json->where('count', 2)
+                    ->where('items', function ($items): bool {
+                        $ids = collect($items)->pluck('source_file_id')->all();
 
-                return true;
+                        return in_array('drive-001', $ids, true)
+                            && in_array('drive-002', $ids, true);
+                    })
+                    ->etc();
             });
     }
 
@@ -123,10 +126,8 @@ class Phase7ReceiptsTest extends TestCase
 
         LifeOsServer::tool(ProcessedFiles::class)
             ->assertOk()
-            ->assertStructuredContent(function (array $content): bool {
-                $this->assertSame(0, $content['count']);
-
-                return true;
+            ->assertStructuredContent(function (AssertableJson $json) {
+                $json->where('count', 0)->etc();
             });
     }
 
@@ -157,11 +158,10 @@ class Phase7ReceiptsTest extends TestCase
 
         LifeOsServer::tool(ProcessedFiles::class)
             ->assertOk()
-            ->assertStructuredContent(function (array $content): bool {
-                $this->assertSame(1, $content['count']);
-                $this->assertSame('drive-bulk-001', $content['items'][0]['source_file_id']);
-
-                return true;
+            ->assertStructuredContent(function (AssertableJson $json) {
+                $json->where('count', 1)
+                    ->where('items.0.source_file_id', 'drive-bulk-001')
+                    ->etc();
             });
     }
 }

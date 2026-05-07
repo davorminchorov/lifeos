@@ -55,6 +55,8 @@ class SubscriptionTest extends TestCase
             'tags',
             'status',
             'unique_key',
+            'source',
+            'created_by_agent_token_id',
         ];
 
         $this->assertEquals($expectedFillable, $subscription->getFillable());

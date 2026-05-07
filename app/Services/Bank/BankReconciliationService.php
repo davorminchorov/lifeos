@@ -7,7 +7,6 @@ namespace App\Services\Bank;
 use App\Models\BankLine;
 use App\Models\Expense;
 use App\Models\User;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 
 class BankReconciliationService
@@ -116,7 +115,11 @@ class BankReconciliationService
 
         $isAutoLink = $best !== null
             && $best['score'] >= self::AUTO_LINK_MIN_SCORE
-            && ($second === null || ($best['score'] - $second['score']) >= self::AUTO_LINK_MIN_DELTA);
+            && (
+                $second === null
+                || ($best['score'] - $second['score']) >= self::AUTO_LINK_MIN_DELTA
+                || $this->candidatesAreInterchangeable($best['expense'], $second['expense'])
+            );
 
         if ($isAutoLink) {
             $line->matched_expense_id = $best['expense']->id;
@@ -145,6 +148,19 @@ class BankReconciliationService
         ])->save();
 
         return $line;
+    }
+
+    /**
+     * Two candidates are interchangeable when they share the fields the matcher
+     * keys on (merchant + amount + posting date). Auto-linking either one is
+     * indistinguishable to the user, so a tie at this granularity should not
+     * block the auto-link.
+     */
+    private function candidatesAreInterchangeable(Expense $a, Expense $b): bool
+    {
+        return (string) $a->merchant === (string) $b->merchant
+            && (string) $a->amount === (string) $b->amount
+            && $a->expense_date?->toDateString() === $b->expense_date?->toDateString();
     }
 
     /**

@@ -19,6 +19,7 @@ use App\Models\User;
 use App\Services\Agents\PendingActionApplier;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\App;
+use Illuminate\Testing\Fluent\AssertableJson;
 use Tests\TestCase;
 
 class Phase5InvestmentsToolsTest extends TestCase
@@ -59,10 +60,8 @@ class Phase5InvestmentsToolsTest extends TestCase
             'price_per_share' => 110,
             'transaction_date' => '2026-05-01',
             'order_id' => 'BRK-001',
-        ])->assertOk()->assertStructuredContent(function (array $content): bool {
-            $this->assertSame(PendingAction::STATUS_PENDING, $content['status']);
-
-            return true;
+        ])->assertOk()->assertStructuredContent(function (AssertableJson $json) {
+            $json->where('status', PendingAction::STATUS_PENDING)->etc();
         });
 
         $this->assertSame(1, PendingAction::query()->where('tool', 'investments.recordTransaction')->count());
@@ -220,10 +219,8 @@ class Phase5InvestmentsToolsTest extends TestCase
                     'order_id' => 'BRK-2',
                 ],
             ],
-        ])->assertOk()->assertStructuredContent(function (array $content): bool {
-            $this->assertSame(2, $content['item_count']);
-
-            return true;
+        ])->assertOk()->assertStructuredContent(function (AssertableJson $json) {
+            $json->where('item_count', 2)->etc();
         });
 
         $this->assertSame(1, PendingAction::query()->where('tool', 'investments.bulkImportTransactions')->count());

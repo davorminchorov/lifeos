@@ -31,7 +31,7 @@ class CreateApplication extends AbstractTool
             'salary_max' => $schema->number()->description('Upper bound of stated compensation.'),
             'currency' => $schema->string()->description('ISO 4217. Defaults to MKD.'),
             'status' => $schema->string()->description('"discovered" (default) or "shortlisted" when fit is high.'),
-            'source' => $schema->string()->description('Where the agent found the posting (e.g. "linkedin", "company_site", "recruiter_email").'),
+            'source' => $schema->string()->description('Where the agent found the posting. One of: "linkedin", "company_website", "job_board", "referral", "recruiter", "networking", "other".'),
             'priority' => $schema->integer()->description('Optional 1-5 priority. The agent should set this only when fit is very high.'),
             'contact_name' => $schema->string()->description('Recruiter or hiring contact, if present.'),
             'contact_email' => $schema->string()->description('Contact email, if present.'),

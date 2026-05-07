@@ -15,6 +15,7 @@ use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\App;
+use Illuminate\Testing\Fluent\AssertableJson;
 use Tests\TestCase;
 
 class WriteToolsTest extends TestCase
@@ -51,13 +52,12 @@ class WriteToolsTest extends TestCase
     {
         LifeOsServer::tool(CreateExpense::class, $this->expenseArgs())
             ->assertOk()
-            ->assertStructuredContent(function (array $content): bool {
-                $this->assertArrayHasKey('pending_action_id', $content);
-                $this->assertSame(PendingAction::STATUS_PENDING, $content['status']);
-                $this->assertNotEmpty($content['idempotency_key']);
-                $this->assertFalse($content['auto_applied']);
-
-                return true;
+            ->assertStructuredContent(function (AssertableJson $json) {
+                $json->has('pending_action_id')
+                    ->where('status', PendingAction::STATUS_PENDING)
+                    ->whereNot('idempotency_key', '')
+                    ->where('auto_applied', false)
+                    ->etc();
             });
 
         $this->assertSame(1, PendingAction::query()->count());
@@ -92,11 +92,10 @@ class WriteToolsTest extends TestCase
             ],
         ])
             ->assertOk()
-            ->assertStructuredContent(function (array $content): bool {
-                $this->assertSame(2, $content['item_count']);
-                $this->assertSame(PendingAction::STATUS_PENDING, $content['status']);
-
-                return true;
+            ->assertStructuredContent(function (AssertableJson $json) {
+                $json->where('item_count', 2)
+                    ->where('status', PendingAction::STATUS_PENDING)
+                    ->etc();
             });
 
         $this->assertSame(1, PendingAction::query()->count());

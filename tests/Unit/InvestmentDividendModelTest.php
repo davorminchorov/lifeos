@@ -4,8 +4,8 @@ namespace Tests\Unit;
 
 use App\Models\Investment;
 use App\Models\InvestmentDividend;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -14,6 +14,7 @@ class InvestmentDividendModelTest extends TestCase
     use RefreshDatabase;
 
     protected $user;
+
     protected $tenant;
 
     protected function setUp(): void
@@ -39,6 +40,8 @@ class InvestmentDividendModelTest extends TestCase
             'currency',
             'reinvested',
             'notes',
+            'source',
+            'created_by_agent_token_id',
         ];
         $dividend = new InvestmentDividend;
 
@@ -132,7 +135,7 @@ class InvestmentDividendModelTest extends TestCase
     {
         $investment = Investment::factory()->create(['user_id' => $this->user->id, 'tenant_id' => $this->tenant->id]);
 
-        $this->expectException(\Illuminate\Database\QueryException::class);
+        $this->expectException(QueryException::class);
         InvestmentDividend::create([
             'investment_id' => $investment->id,
             'record_date' => now(),
@@ -144,7 +147,7 @@ class InvestmentDividendModelTest extends TestCase
 
     public function test_investment_id_is_required(): void
     {
-        $this->expectException(\Illuminate\Database\QueryException::class);
+        $this->expectException(QueryException::class);
         InvestmentDividend::create([
             'amount' => 100.00,
             'record_date' => now(),

@@ -17,6 +17,7 @@ use App\Models\User;
 use App\Services\Agents\PendingActionApplier;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\App;
+use Illuminate\Testing\Fluent\AssertableJson;
 use Tests\TestCase;
 
 class Phase6BankToolsTest extends TestCase
@@ -54,11 +55,10 @@ class Phase6BankToolsTest extends TestCase
     {
         LifeOsServer::tool(BankRecordLines::class, [
             'lines' => [$this->lineArgs()],
-        ])->assertOk()->assertStructuredContent(function (array $content): bool {
-            $this->assertSame(PendingAction::STATUS_PENDING, $content['status']);
-            $this->assertSame(1, $content['line_count']);
-
-            return true;
+        ])->assertOk()->assertStructuredContent(function (AssertableJson $json) {
+            $json->where('status', PendingAction::STATUS_PENDING)
+                ->where('line_count', 1)
+                ->etc();
         });
 
         $this->assertSame(1, PendingAction::query()->where('tool', 'bank.recordLines')->count());
@@ -149,11 +149,10 @@ class Phase6BankToolsTest extends TestCase
 
         LifeOsServer::tool(BankUnmatchedLines::class, ['within_days' => 7])
             ->assertOk()
-            ->assertStructuredContent(function (array $content): bool {
-                $this->assertSame(1, $content['count']);
-                $this->assertSame('KONZUM AERODROM', $content['items'][0]['merchant_raw']);
-
-                return true;
+            ->assertStructuredContent(function (AssertableJson $json) {
+                $json->where('count', 1)
+                    ->where('items.0.merchant_raw', 'KONZUM AERODROM')
+                    ->etc();
             });
     }
 

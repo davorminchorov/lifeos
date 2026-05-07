@@ -14,6 +14,8 @@ use App\Models\User;
 use App\Services\Agents\PendingActionApplier;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\App;
+use Illuminate\Testing\Fluent\AssertableJson;
+use Illuminate\Validation\ValidationException;
 use Tests\TestCase;
 
 class Phase8JobSearchTest extends TestCase
@@ -46,7 +48,7 @@ class Phase8JobSearchTest extends TestCase
             'salary_max' => 90000,
             'currency' => 'EUR',
             'status' => 'discovered',
-            'source' => 'recruiter_email',
+            'source' => 'recruiter',
             'notes' => 'Matches: Laravel, AWS, EU-remote.',
             'source_email_id' => 'gmail-msg-1',
         ], $overrides);
@@ -56,10 +58,8 @@ class Phase8JobSearchTest extends TestCase
     {
         LifeOsServer::tool(CreateApplication::class, $this->jobArgs())
             ->assertOk()
-            ->assertStructuredContent(function (array $content): bool {
-                $this->assertSame(PendingAction::STATUS_PENDING, $content['status']);
-
-                return true;
+            ->assertStructuredContent(function (AssertableJson $json) {
+                $json->where('status', PendingAction::STATUS_PENDING)->etc();
             });
 
         $this->assertSame(1, PendingAction::query()->where('tool', 'jobs.createApplication')->count());
@@ -124,7 +124,7 @@ class Phase8JobSearchTest extends TestCase
 
         $action = PendingAction::query()->firstOrFail();
 
-        $this->expectException(\Illuminate\Validation\ValidationException::class);
+        $this->expectException(ValidationException::class);
         app(PendingActionApplier::class)->apply($action, $this->user);
     }
 }
