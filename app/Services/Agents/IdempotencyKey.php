@@ -51,9 +51,9 @@ class IdempotencyKey
         $amount = $this->amountCents($p['amount'] ?? 0);
         $currency = strtoupper((string) ($p['currency'] ?? ''));
         $date = (string) ($p['expense_date'] ?? '');
-        $sourceEmail = (string) ($p['source_email_id'] ?? '');
+        $sourceRef = $this->sourceRef($p);
 
-        return "expenses.create|{$tenantId}|{$merchant}|{$amount}|{$currency}|{$date}|{$sourceEmail}";
+        return "expenses.create|{$tenantId}|{$merchant}|{$amount}|{$currency}|{$date}|{$sourceRef}";
     }
 
     /**
@@ -96,9 +96,9 @@ class IdempotencyKey
         $service = $this->normalize((string) ($p['service_name'] ?? ''));
         $currency = strtoupper((string) ($p['currency'] ?? ''));
         $cycle = $this->normalize((string) ($p['billing_cycle'] ?? ''));
-        $sourceEmail = (string) ($p['source_email_id'] ?? '');
+        $sourceRef = $this->sourceRef($p);
 
-        return "subscriptions.create|{$tenantId}|{$service}|{$currency}|{$cycle}|{$sourceEmail}";
+        return "subscriptions.create|{$tenantId}|{$service}|{$currency}|{$cycle}|{$sourceRef}";
     }
 
     /**
@@ -109,9 +109,9 @@ class IdempotencyKey
         $title = $this->normalize((string) ($p['title'] ?? ''));
         $counterparty = $this->normalize((string) ($p['counterparty'] ?? ''));
         $start = (string) ($p['start_date'] ?? '');
-        $sourceEmail = (string) ($p['source_email_id'] ?? '');
+        $sourceRef = $this->sourceRef($p);
 
-        return "contracts.create|{$tenantId}|{$title}|{$counterparty}|{$start}|{$sourceEmail}";
+        return "contracts.create|{$tenantId}|{$title}|{$counterparty}|{$start}|{$sourceRef}";
     }
 
     /**
@@ -122,9 +122,9 @@ class IdempotencyKey
         $product = $this->normalize((string) ($p['product_name'] ?? ''));
         $serial = $this->normalize((string) ($p['serial_number'] ?? ''));
         $purchase = (string) ($p['purchase_date'] ?? '');
-        $sourceEmail = (string) ($p['source_email_id'] ?? '');
+        $sourceRef = $this->sourceRef($p);
 
-        return "warranties.create|{$tenantId}|{$product}|{$serial}|{$purchase}|{$sourceEmail}";
+        return "warranties.create|{$tenantId}|{$product}|{$serial}|{$purchase}|{$sourceRef}";
     }
 
     /**
@@ -137,9 +137,9 @@ class IdempotencyKey
         $amount = $this->amountCents($p['amount'] ?? 0);
         $currency = strtoupper((string) ($p['currency'] ?? ''));
         $date = (string) ($p['transaction_date'] ?? '');
-        $sourceEmail = (string) ($p['source_email_id'] ?? '');
+        $sourceRef = $this->sourceRef($p);
 
-        return "iou.create|{$tenantId}|{$direction}|{$person}|{$amount}|{$currency}|{$date}|{$sourceEmail}";
+        return "iou.create|{$tenantId}|{$direction}|{$person}|{$amount}|{$currency}|{$date}|{$sourceRef}";
     }
 
     /**
@@ -153,9 +153,9 @@ class IdempotencyKey
         $currency = strtoupper((string) ($p['currency'] ?? ''));
         $due = (string) ($p['due_date'] ?? '');
         $period = (string) ($p['bill_period_end'] ?? '');
-        $sourceEmail = (string) ($p['source_email_id'] ?? '');
+        $sourceRef = $this->sourceRef($p);
 
-        return "utilityBills.create|{$tenantId}|{$type}|{$provider}|{$amount}|{$currency}|{$due}|{$period}|{$sourceEmail}";
+        return "utilityBills.create|{$tenantId}|{$type}|{$provider}|{$amount}|{$currency}|{$due}|{$period}|{$sourceRef}";
     }
 
     /**
@@ -285,6 +285,30 @@ class IdempotencyKey
         $expenseId = (int) ($p['expense_id'] ?? 0);
 
         return "bank.linkExpense|{$tenantId}|{$bankLineId}|{$expenseId}";
+    }
+
+    /**
+     * Compose a source-reference fragment for idempotency keys.
+     *
+     * Backward-compatibility contract: when only `source_email_id` is set the
+     * helper returns the legacy email-only encoding so existing pending_action
+     * keys continue to dedupe across agent runs. When `source_file_id` is also
+     * present (Phase 7's receipt OCR agent), the helper appends a `file:<id>`
+     * suffix so re-running OCR over the same Drive file collapses to the same
+     * pending action even when the OCR text drifts slightly.
+     *
+     * @param  array<string, mixed>  $p
+     */
+    private function sourceRef(array $p): string
+    {
+        $email = (string) ($p['source_email_id'] ?? '');
+        $file = (string) ($p['source_file_id'] ?? '');
+
+        if ($file === '') {
+            return $email;
+        }
+
+        return "{$email}|file:{$file}";
     }
 
     private function normalize(string $value): string

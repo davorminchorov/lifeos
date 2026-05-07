@@ -476,6 +476,31 @@ Read-only triage helper.
 
 Returns `{ count, within_days, items[] }`. Each item carries the line plus the matcher's persisted top-3 candidates from `match_candidates`.
 
+## Receipts / OCR (Phase 7)
+
+Phase 7 adds the receipts-OCR agent. It uses Anthropic vision via the Drive MCP to extract structured fields from receipt photos and PDFs, then writes through the **existing** create-style tools — no new write tools per se, but every relevant tool now accepts a `source_file_id` and includes it in the idempotency key so re-running OCR over the same Drive file collapses to one pending action.
+
+### Tools updated to accept `source_file_id`
+
+| tool | new field | semantics |
+|---|---|---|
+| `expenses.create` | `source_file_id` | Drive file id when extracted from a receipt scan or PDF. Combined with `source_email_id` in the idempotency key. |
+| `warranties.create` | `source_file_id` | Drive file id of the warranty document or original receipt. |
+| `utilityBills.create` | `source_file_id` | Drive file id when the bill arrived as a PDF rather than an email. |
+
+Backward-compatibility: when `source_file_id` is absent, the legacy idempotency-key encoding is preserved verbatim, so existing pending-action rows continue to dedupe across agent runs. When `source_file_id` is present, the encoding extends with a `|file:<id>` suffix (still deterministic).
+
+### `receipts.processed` (read)
+
+| field | type | description |
+|---|---|---|
+| `within_days` | int | Default 60. Limit search to actions created in the last N days. |
+| `limit` | int | Default 500, max 2000. |
+
+Returns `{ count, within_days, items[] }` where each item is `{ source_file_id, tool, pending_action_id, first_seen_at }`. The agent calls this **once** at the start of a session and skips Drive files whose ids are in the result set, saving a vision call per skipped file.
+
+The tool walks both single-payload tools (`expenses.create`, `warranties.create`, `utilityBills.create`) and bulk-style tools (`expenses.bulkImport`) so any agent that attached `source_file_id` is reflected.
+
 ## Approval surface
 
 Reviewers act through `/dashboard/pending-actions`:

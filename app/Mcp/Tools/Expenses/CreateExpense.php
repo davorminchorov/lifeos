@@ -33,6 +33,7 @@ class CreateExpense extends AbstractTool
             'is_tax_deductible' => $schema->boolean()->description('Whether this expense is tax-deductible.'),
             'tags' => $schema->array()->description('Tag strings.'),
             'source_email_id' => $schema->string()->description('Optional Gmail message id used for idempotency disambiguation.'),
+            'source_file_id' => $schema->string()->description('Optional Drive file id when this expense was extracted from a receipt scan or PDF.'),
         ];
     }
 
@@ -57,6 +58,7 @@ class CreateExpense extends AbstractTool
             'is_tax_deductible' => $request->get('is_tax_deductible'),
             'tags' => $request->get('tags'),
             'source_email_id' => $request->get('source_email_id'),
+            'source_file_id' => $request->get('source_file_id'),
         ], static fn ($v) => $v !== null);
 
         try {

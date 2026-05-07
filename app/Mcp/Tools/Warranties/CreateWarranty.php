@@ -33,6 +33,7 @@ class CreateWarranty extends AbstractTool
             'warranty_type' => $schema->string()->description('"manufacturer", "extended", etc.'),
             'warranty_terms' => $schema->string()->description('Coverage details.'),
             'source_email_id' => $schema->string()->description('Optional Gmail message id for idempotency.'),
+            'source_file_id' => $schema->string()->description('Optional Drive file id when extracted from a receipt scan / PDF.'),
         ];
     }
 
@@ -56,6 +57,7 @@ class CreateWarranty extends AbstractTool
             'warranty_terms' => $request->get('warranty_terms'),
             'current_status' => 'active',
             'source_email_id' => $request->get('source_email_id'),
+            'source_file_id' => $request->get('source_file_id'),
         ], static fn ($v) => $v !== null);
 
         try {
