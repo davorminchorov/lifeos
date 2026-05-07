@@ -36,6 +36,8 @@ class Investment extends Model
         'last_price_update',
         'notes',
         'status',
+        'source',
+        'created_by_agent_token_id',
     ];
 
     protected function casts(): array

@@ -354,6 +354,72 @@ Idempotency key: `sha256("subscriptions.create|<tenant>|<service_normalized>|<cu
 | `notes` | string | Optional. |
 | `source_email_id` | string | Optional. |
 
+## Write tools (Phase 5)
+
+Phase 5 adds the investments-sync agent's tool surface. None of these create the parent `Investment` row — that's a one-time manual setup the user does. All four record activity *against* an existing investment.
+
+### `investments.recordTransaction`
+
+| field | type | description |
+|---|---|---|
+| `investment_id` | int | Required. Must belong to the authenticated tenant. |
+| `transaction_type` | string | Required. One of `buy`, `sell`, `dividend_reinvestment`, `transfer_in`, `transfer_out`, `stock_split`, `stock_dividend`. |
+| `quantity` | number | Required. |
+| `price_per_share` | number | Required. |
+| `total_amount` | number | Auto-computed from `quantity * price_per_share` if absent. |
+| `fees`, `taxes` | number | Optional. |
+| `transaction_date` | date | Required. |
+| `settlement_date` | date | Optional. |
+| `order_id` | string | Broker order id. **Strongest idempotency anchor.** |
+| `confirmation_number` | string | Broker confirmation number. Fallback idempotency anchor. |
+| `broker` | string | Optional. |
+| `currency` | string | ISO 4217. Defaults to investment currency. |
+| `notes` | string | Optional. |
+| `source_email_id` | string | Optional Gmail message id. |
+
+Idempotency: `order_id` (when present) → `confirmation_number` (when present) → `(investment, type, qty, price, date, source_email_id)`.
+
+### `investments.recordDividend`
+
+| field | type | description |
+|---|---|---|
+| `investment_id` | int | Required. |
+| `amount` | number | Required. Total dividend amount. |
+| `payment_date` | date | Required. |
+| `record_date`, `ex_dividend_date` | date | Optional. |
+| `dividend_type` | string | Optional. `"ordinary"`, `"qualified"`, `"special"`, etc. |
+| `frequency` | string | Optional. |
+| `dividend_per_share`, `shares_held` | number | Optional. |
+| `tax_withheld` | number | Optional. |
+| `currency` | string | Defaults to investment currency. |
+| `reinvested` | bool | Optional. |
+| `notes` | string | Optional. |
+| `source_email_id` | string | Optional. |
+
+Idempotency: `(investment, payment_date, amount, source_email_id)`.
+
+### `investments.repriceLot`
+
+Mark-to-market — update an investment's per-share `current_value`.
+
+| field | type | description |
+|---|---|---|
+| `investment_id` | int | Required. |
+| `current_value` | number | Required. New per-share value. |
+| `as_of` | date | Defaults to today. |
+
+Idempotency: `(investment, as_of)`. Re-running on the same date collapses to the same pending action so the agent can call this once per position per session safely. Revert restores the prior `current_value` and `last_price_update`.
+
+### `investments.bulkImportTransactions`
+
+Queue an entire brokerage statement as a single pending action.
+
+| field | type | description |
+|---|---|---|
+| `items` | array | Each item uses the same shape as `investments.recordTransaction`. |
+
+Idempotency: derived from the sorted hashes of the per-item `recordTransaction` keys, so reorderings collide.
+
 ## Approval surface
 
 Reviewers act through `/dashboard/pending-actions`:
