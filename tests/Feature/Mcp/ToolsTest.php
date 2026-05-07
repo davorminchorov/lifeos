@@ -87,11 +87,11 @@ class ToolsTest extends TestCase
 
         LifeOsServer::tool(ListExpenses::class)
             ->assertOk()
-            ->assertStructuredContent(function (AssertableJson $json) {
-                $json->where('count', 1)
-                    ->where('items.0.merchant', 'My Merchant')
-                    ->etc();
-            });
+            ->assertStructuredContent(fn (AssertableJson $json) => $json
+                ->where('count', 1)
+                ->where('items.0.merchant', 'My Merchant')
+                ->etc()
+            );
     }
 
     public function test_dashboard_summary(): void
@@ -101,14 +101,14 @@ class ToolsTest extends TestCase
 
         LifeOsServer::tool(Summary::class)
             ->assertOk()
-            ->assertStructuredContent(function (AssertableJson $json) {
-                $json->has('totals')
-                    ->has('upcoming')
-                    ->has('alerts')
-                    ->where('totals.subscriptions_active', 1)
-                    ->where('totals.contracts_active', 1)
-                    ->etc();
-            });
+            ->assertStructuredContent(fn (AssertableJson $json) => $json
+                ->has('totals')
+                ->has('upcoming')
+                ->has('alerts')
+                ->where('totals.subscriptions_active', 1)
+                ->where('totals.contracts_active', 1)
+                ->etc()
+            );
     }
 
     public function test_expenses_list(): void
@@ -123,12 +123,12 @@ class ToolsTest extends TestCase
 
         LifeOsServer::tool(ListExpenses::class, ['merchant' => 'Lidl'])
             ->assertOk()
-            ->assertStructuredContent(function (AssertableJson $json) {
-                $json->where('count', 1)
-                    ->where('items.0.merchant', 'Lidl')
-                    ->where('items.0.currency', 'EUR')
-                    ->etc();
-            });
+            ->assertStructuredContent(fn (AssertableJson $json) => $json
+                ->where('count', 1)
+                ->where('items.0.merchant', 'Lidl')
+                ->where('items.0.currency', 'EUR')
+                ->etc()
+            );
     }
 
     public function test_subscriptions_list(): void
@@ -144,11 +144,11 @@ class ToolsTest extends TestCase
 
         LifeOsServer::tool(ListSubscriptions::class, ['due_within_days' => 7])
             ->assertOk()
-            ->assertStructuredContent(function (AssertableJson $json) {
-                $json->where('count', 1)
-                    ->where('items.0.service_name', 'Netflix')
-                    ->etc();
-            });
+            ->assertStructuredContent(fn (AssertableJson $json) => $json
+                ->where('count', 1)
+                ->where('items.0.service_name', 'Netflix')
+                ->etc()
+            );
     }
 
     public function test_investments_portfolio(): void
@@ -164,13 +164,13 @@ class ToolsTest extends TestCase
 
         LifeOsServer::tool(Portfolio::class)
             ->assertOk()
-            ->assertStructuredContent(function (AssertableJson $json) {
-                $json->where('count', 1)
-                    ->has('totals_by_currency.EUR')
-                    ->where('totals_by_currency.EUR.market_value', 1100.0)
-                    ->where('totals_by_currency.EUR.unrealized_gain_loss', 100.0)
-                    ->etc();
-            });
+            ->assertStructuredContent(fn (AssertableJson $json) => $json
+                ->where('count', 1)
+                ->has('totals_by_currency.EUR')
+                ->where('totals_by_currency.EUR.market_value', 1100.0)
+                ->where('totals_by_currency.EUR.unrealized_gain_loss', 100.0)
+                ->etc()
+            );
     }
 
     public function test_bills_upcoming(): void
@@ -186,11 +186,11 @@ class ToolsTest extends TestCase
 
         LifeOsServer::tool(UpcomingBills::class, ['within_days' => 7])
             ->assertOk()
-            ->assertStructuredContent(function (AssertableJson $json) {
-                $json->where('count', fn ($count) => $count >= 1)
-                    ->where('items.0.service_provider', 'EVN')
-                    ->etc();
-            });
+            ->assertStructuredContent(fn (AssertableJson $json) => $json
+                ->where('count', fn ($value) => $value >= 1)
+                ->where('items.0.service_provider', 'EVN')
+                ->etc()
+            );
     }
 
     public function test_contracts_list(): void
@@ -204,11 +204,11 @@ class ToolsTest extends TestCase
 
         LifeOsServer::tool(ListContracts::class, ['expiring_within_days' => 30])
             ->assertOk()
-            ->assertStructuredContent(function (AssertableJson $json) {
-                $json->where('count', 1)
-                    ->where('items.0.title', 'Office Lease')
-                    ->etc();
-            });
+            ->assertStructuredContent(fn (AssertableJson $json) => $json
+                ->where('count', 1)
+                ->where('items.0.title', 'Office Lease')
+                ->etc()
+            );
     }
 
     public function test_warranties_list(): void
@@ -222,11 +222,11 @@ class ToolsTest extends TestCase
 
         LifeOsServer::tool(ListWarranties::class, ['expiring_within_days' => 60])
             ->assertOk()
-            ->assertStructuredContent(function (AssertableJson $json) {
-                $json->where('count', 1)
-                    ->where('items.0.product_name', 'Laptop')
-                    ->etc();
-            });
+            ->assertStructuredContent(fn (AssertableJson $json) => $json
+                ->where('count', 1)
+                ->where('items.0.product_name', 'Laptop')
+                ->etc()
+            );
     }
 
     public function test_iou_list(): void
@@ -242,12 +242,12 @@ class ToolsTest extends TestCase
 
         LifeOsServer::tool(ListIou::class, ['direction' => 'owe'])
             ->assertOk()
-            ->assertStructuredContent(function (AssertableJson $json) {
-                $json->where('count', 1)
-                    ->where('items.0.person_name', 'John Doe')
-                    ->where('items.0.remaining', 150.0)
-                    ->etc();
-            });
+            ->assertStructuredContent(fn (AssertableJson $json) => $json
+                ->where('count', 1)
+                ->where('items.0.person_name', 'John Doe')
+                ->where('items.0.remaining', 150.0)
+                ->etc()
+            );
     }
 
     public function test_jobs_pipeline(): void
@@ -261,11 +261,11 @@ class ToolsTest extends TestCase
 
         LifeOsServer::tool(Pipeline::class, ['remote_only' => true])
             ->assertOk()
-            ->assertStructuredContent(function (AssertableJson $json) {
-                $json->where('count', 1)
-                    ->where('items.0.company_name', 'Acme')
-                    ->etc();
-            });
+            ->assertStructuredContent(fn (AssertableJson $json) => $json
+                ->where('count', 1)
+                ->where('items.0.company_name', 'Acme')
+                ->etc()
+            );
     }
 
     public function test_cycle_menu_current_week(): void
@@ -287,12 +287,11 @@ class ToolsTest extends TestCase
 
         LifeOsServer::tool(CurrentWeekCycleMenu::class)
             ->assertOk()
-            ->assertStructuredContent(function (AssertableJson $json) {
-                $json->has('menu')
-                    ->where('menu.name', 'Standard')
-                    ->has('week', 7)
-                    ->etc();
-            });
+            ->assertStructuredContent(fn (AssertableJson $json) => $json
+                ->where('menu.name', 'Standard')
+                ->has('week', 7)
+                ->etc()
+            );
     }
 
     public function test_notifications_list(): void
@@ -305,8 +304,9 @@ class ToolsTest extends TestCase
 
         LifeOsServer::tool(ListNotifications::class, ['limit' => 10])
             ->assertOk()
-            ->assertStructuredContent(function (AssertableJson $json) {
-                $json->where('count', fn ($count) => $count >= 1)->etc();
-            });
+            ->assertStructuredContent(fn (AssertableJson $json) => $json
+                ->where('count', fn ($value) => $value >= 1)
+                ->etc()
+            );
     }
 }

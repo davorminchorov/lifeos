@@ -286,7 +286,7 @@ Route::middleware('auth')->group(function () {
         Route::post('expenses/{expense}/duplicate', [ExpenseController::class, 'duplicate'])->name('expenses.duplicate');
         Route::post('expenses/bulk-action', [ExpenseController::class, 'bulkAction'])->name('expenses.bulk-action');
 
-        // Pending Agent Actions
+        // Pending Agent Actions + Agent runs
         Route::prefix('dashboard')->name('dashboard.')->group(function () {
             Route::get('pending-actions', [\App\Http\Controllers\PendingActionsController::class, 'index'])->name('pending-actions.index');
             Route::get('pending-actions/{pendingAction}', [\App\Http\Controllers\PendingActionsController::class, 'show'])->name('pending-actions.show');
@@ -294,6 +294,9 @@ Route::middleware('auth')->group(function () {
             Route::patch('pending-actions/{pendingAction}/reject', [\App\Http\Controllers\PendingActionsController::class, 'reject'])->name('pending-actions.reject');
             Route::patch('pending-actions/{pendingAction}/revert', [\App\Http\Controllers\PendingActionsController::class, 'revert'])->name('pending-actions.revert');
             Route::post('pending-actions/bulk-approve', [\App\Http\Controllers\PendingActionsController::class, 'bulkApprove'])->name('pending-actions.bulk-approve');
+
+            Route::get('agents', [\App\Http\Controllers\AgentRunsController::class, 'index'])->name('agents.index');
+            Route::get('agents/{agentRun}', [\App\Http\Controllers\AgentRunsController::class, 'show'])->name('agents.show');
         });
 
         // Budget Analytics routes must come before resource routes to prevent conflicts

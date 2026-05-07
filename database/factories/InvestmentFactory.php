@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Investment;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -55,7 +56,7 @@ class InvestmentFactory extends Factory
         $currentValue = $purchasePrice * $this->faker->randomFloat(2, 0.5, 3.0); // -50% to +200% change
 
         return [
-            'user_id' => 1, // Will be overridden when creating with relationships
+            'user_id' => User::factory(),
             'investment_type' => $investmentType,
             'symbol_identifier' => $symbol,
             'name' => $name,

@@ -52,13 +52,13 @@ class WriteToolsTest extends TestCase
     {
         LifeOsServer::tool(CreateExpense::class, $this->expenseArgs())
             ->assertOk()
-            ->assertStructuredContent(function (AssertableJson $json) {
-                $json->has('pending_action_id')
-                    ->where('status', PendingAction::STATUS_PENDING)
-                    ->whereNot('idempotency_key', '')
-                    ->where('auto_applied', false)
-                    ->etc();
-            });
+            ->assertStructuredContent(fn (AssertableJson $json) => $json
+                ->has('pending_action_id')
+                ->where('status', PendingAction::STATUS_PENDING)
+                ->where('auto_applied', false)
+                ->whereNot('idempotency_key', '')
+                ->etc()
+            );
 
         $this->assertSame(1, PendingAction::query()->count());
         $this->assertSame(0, Expense::query()->count(), 'No expense before approval.');
@@ -92,11 +92,11 @@ class WriteToolsTest extends TestCase
             ],
         ])
             ->assertOk()
-            ->assertStructuredContent(function (AssertableJson $json) {
-                $json->where('item_count', 2)
-                    ->where('status', PendingAction::STATUS_PENDING)
-                    ->etc();
-            });
+            ->assertStructuredContent(fn (AssertableJson $json) => $json
+                ->where('item_count', 2)
+                ->where('status', PendingAction::STATUS_PENDING)
+                ->etc()
+            );
 
         $this->assertSame(1, PendingAction::query()->count());
         $this->assertSame('expenses.bulkImport', PendingAction::query()->first()->tool);
