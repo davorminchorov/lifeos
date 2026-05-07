@@ -28,6 +28,7 @@ use App\Mcp\Tools\Jobs\AddInterview;
 use App\Mcp\Tools\Jobs\Pipeline;
 use App\Mcp\Tools\Jobs\UpdateJobStatus;
 use App\Mcp\Tools\Notifications\ListNotifications;
+use App\Mcp\Tools\Receipts\ProcessedFiles as ReceiptsProcessedFiles;
 use App\Mcp\Tools\Subscriptions\CreateSubscription;
 use App\Mcp\Tools\Subscriptions\ListSubscriptions;
 use App\Mcp\Tools\Warranties\CreateWarranty;
@@ -80,5 +81,6 @@ class LifeOsServer extends Server
         BankRecordLines::class,
         BankLinkExpense::class,
         BankUnmatchedLines::class,
+        ReceiptsProcessedFiles::class,
     ];
 }

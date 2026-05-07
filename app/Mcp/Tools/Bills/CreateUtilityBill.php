@@ -33,6 +33,7 @@ class CreateUtilityBill extends AbstractTool
             'bill_period_end' => $schema->string()->description('YYYY-MM-DD.'),
             'due_date' => $schema->string()->description('YYYY-MM-DD. Required.'),
             'source_email_id' => $schema->string()->description('Optional Gmail message id for idempotency.'),
+            'source_file_id' => $schema->string()->description('Optional Drive file id when extracted from a bill scan / PDF.'),
         ];
     }
 
@@ -56,6 +57,7 @@ class CreateUtilityBill extends AbstractTool
             'due_date' => $request->get('due_date'),
             'payment_status' => 'pending',
             'source_email_id' => $request->get('source_email_id'),
+            'source_file_id' => $request->get('source_file_id'),
         ], static fn ($v) => $v !== null);
 
         try {

@@ -1,0 +1,19 @@
+{
+    "slug": "receipts-ocr",
+    "model": "claude-opus-4-7",
+    "fallback_model": "claude-sonnet-4-6",
+    "mcp_servers": ["lifeos", "drive"],
+    "allowed_tools": [
+        "expenses.list",
+        "warranties.list",
+        "bills.upcoming",
+        "receipts.processed",
+        "expenses.create",
+        "warranties.create",
+        "utilityBills.create"
+    ],
+    "max_session_duration_seconds": 1200,
+    "max_tool_calls": 200,
+    "feature_flag": "agents.receipts_ocr.enabled",
+    "schedule": "0 */6 * * *"
+}
