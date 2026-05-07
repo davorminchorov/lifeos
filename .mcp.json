@@ -10,6 +10,13 @@
         "nightwatch": {
             "type": "http",
             "url": "https://nightwatch.laravel.com/mcp"
+        },
+        "lifeos": {
+            "type": "http",
+            "url": "${LIFEOS_MCP_URL:-http://localhost/mcp/lifeos}",
+            "headers": {
+                "Authorization": "Bearer ${LIFEOS_AGENT_TOKEN}"
+            }
         }
     }
 }

@@ -361,12 +361,17 @@ Each phase ships: (a) any service-extraction needed, (b) module write tools adde
 - **Phase 2 auto-apply.** Strict — every write produces a pending action in Phase 2. The auto-apply rule is implemented as plumbing (config + idempotency-key match check) but the config defaults to `false` for every (tenant, tool) pair and only flips after the user approves it explicitly in a later phase.
 - **Branch cadence.** One PR per phase, child branches off `claude/implement-managed-agents-L1MeH`. Final merge to `main` once all phases land.
 
-## Open questions still to clarify (non-blocking for Phase 0 approval, but needed before specific phases)
+## Open questions
 
-1. **MCP exposure target.** Production URL only, or do we also need a tunnel (ngrok / Cloudflare Tunnel) playbook for dev-time Managed Agents sessions to reach a local server? (Needed before Phase 3.)
-2. **Pending Actions UI placement.** Dedicated `/dashboard/pending-actions` page with sidebar badge, notification-center integration, or both? (Needed before Phase 2.)
-3. **Scope of `wvp-fondovi-scraper`.** Where does this live today, and is it a Claude Code skill or a separate tool? (Needed before Phase 5.)
-4. **Skill content.** User to provide the expense-category map and vendor-alias list before Phase 3 starts — Phase 3 hard-blocks on this so the agent never invents categories.
+Resolved 2026-05-06:
+
+- **MCP exposure target.** Deployed URL only — no dev tunnel playbook. The Phase 3 `agents:run` command points Managed Agents at the production (or staging) MCP URL; local development uses `php artisan boost:mcp` for Claude Code, not Managed Agents.
+- **Pending Actions UI placement.** Both — a dedicated `/dashboard/pending-actions` page with a sidebar badge for the actual review/approve/reject workflow, plus entries surfaced in the Notification Center for discoverability. Notification entries deep-link into the dedicated page.
+
+Still open:
+
+1. **Scope of `wvp-fondovi-scraper`.** Where does this live today, and is it a Claude Code skill or a separate tool? (Needed before Phase 5.)
+2. **Skill content.** User to provide the expense-category map and vendor-alias list before Phase 3 starts — Phase 3 hard-blocks on this so the agent never invents categories.
 
 ---
 
