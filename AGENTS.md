@@ -35,6 +35,12 @@ This project has domain-specific skills available. You MUST activate the relevan
 - Use descriptive names for variables and methods. For example, `isRegisteredForDiscounts`, not `discount()`.
 - Check for existing components to reuse before writing a new one.
 
+## Issue & Agent Workflow
+
+- Before working on an issue autonomously, verify it passes the [Definition of Ready](docs/agents/DEFINITION_OF_READY.md). If it doesn't, ask for the missing pieces rather than guessing.
+- The end-to-end loop (capture → triage → ready check → pickup → review → merge) is documented in [docs/agents/WORKFLOW.md](docs/agents/WORKFLOW.md).
+- When drafting a new issue from a chat, pick the right template under `.github/ISSUE_TEMPLATE/` (`feature.yml`, `bug.yml`, `agent-task.yml`, or `chore.yml`).
+
 ## Verification Scripts
 
 - Do not create verification scripts or tinker when tests cover that functionality and prove they work. Unit and feature tests are more important.

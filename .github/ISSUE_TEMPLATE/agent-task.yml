@@ -1,0 +1,138 @@
+name: Agent task
+description: A scoped task ready (or nearly ready) to hand to an autonomous agent.
+title: "[agent] "
+labels: ["status:needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Before submitting, skim the
+        [Definition of Ready](../blob/main/docs/agents/DEFINITION_OF_READY.md).
+        The agent's first-try success rate depends on the quality of the
+        fields below — vague acceptance criteria produce vague PRs.
+  - type: input
+    id: goal
+    attributes:
+      label: Goal in one sentence
+      placeholder: "Add a CSV export button to the expenses index page."
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why this matters
+      description: Brief — one or two sentences.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: |
+        Concrete, testable bullets. Prefer "given/when/then" or "the code
+        should X" form. The agent will treat this as the contract.
+      value: |
+        - [ ] Given … when … then …
+        - [ ] The code should …
+        - [ ]
+    validations:
+      required: true
+  - type: textarea
+    id: files
+    attributes:
+      label: Files likely involved
+      description: Best-guess paths. Helps the agent locate the work fast.
+      placeholder: |
+        - app/Http/Controllers/ExpenseController.php
+        - resources/js/pages/expenses/Index.tsx
+        - tests/Feature/ExpenseExportTest.php
+    validations:
+      required: true
+  - type: textarea
+    id: out-of-scope
+    attributes:
+      label: Out of scope
+      description: What the agent must NOT touch. Prevents scope creep.
+    validations:
+      required: true
+  - type: textarea
+    id: tests
+    attributes:
+      label: Test expectations
+      description: What tests should exist after this is done?
+      placeholder: |
+        - Feature test covering the export button hits the controller and returns CSV.
+        - Edge case: empty result set still exports headers.
+    validations:
+      required: true
+  - type: dropdown
+    id: type
+    attributes:
+      label: Task type
+      options:
+        - feature
+        - chore
+    validations:
+      required: true
+  - type: dropdown
+    id: module
+    attributes:
+      label: Module
+      options:
+        - subscriptions
+        - contracts
+        - warranties
+        - investments
+        - expenses
+        - utility-bills
+        - iou
+        - budgets
+        - job-applications
+        - cycle-menu
+        - notifications
+        - dashboard
+        - invoicing
+        - agents
+        - mcp
+        - infra
+    validations:
+      required: true
+  - type: dropdown
+    id: phase
+    attributes:
+      label: Phase (optional)
+      description: Only relevant for the Managed Agents implementation work.
+      options:
+        - n/a
+        - phase:0
+        - phase:1
+        - phase:2
+        - phase:3
+        - phase:4
+        - phase:5
+        - phase:6
+        - phase:7
+        - phase:8
+        - phase:9
+        - phase:10
+  - type: textarea
+    id: tenancy
+    attributes:
+      label: Tenancy implications (if multi-tenant code)
+      description: Required if this touches multi-tenant code. Otherwise leave blank.
+  - type: textarea
+    id: pending-actions
+    attributes:
+      label: Pending Actions queue behavior (if financial writes)
+      description: Required if this performs financial writes. Otherwise leave blank.
+  - type: textarea
+    id: references
+    attributes:
+      label: References
+  - type: checkboxes
+    id: ready
+    attributes:
+      label: Ready for autonomous pickup
+      description: Check only if every item in the Definition of Ready passes.
+      options:
+        - label: This issue passes the Definition of Ready and may be assigned to an autonomous agent.

@@ -1,0 +1,51 @@
+name: Chore
+description: Maintenance, refactor, or dependency work.
+title: "[chore] "
+labels: ["type:chore", "status:needs-triage"]
+body:
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal
+    validations:
+      required: true
+  - type: textarea
+    id: rationale
+    attributes:
+      label: Rationale
+      description: Why now? What does this enable or unblock?
+    validations:
+      required: true
+  - type: dropdown
+    id: module
+    attributes:
+      label: Module
+      options:
+        - subscriptions
+        - contracts
+        - warranties
+        - investments
+        - expenses
+        - utility-bills
+        - iou
+        - budgets
+        - job-applications
+        - cycle-menu
+        - notifications
+        - dashboard
+        - invoicing
+        - agents
+        - mcp
+        - infra
+    validations:
+      required: true
+  - type: textarea
+    id: done-when
+    attributes:
+      label: Done when
+      description: Checklist of completion conditions.
+      value: |
+        - [ ]
+        - [ ]
+    validations:
+      required: true

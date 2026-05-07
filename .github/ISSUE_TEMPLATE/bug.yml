@@ -1,0 +1,71 @@
+name: Bug
+description: Something is broken or behaving incorrectly.
+title: "[bug] "
+labels: ["type:bug", "status:needs-triage"]
+body:
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: Describe the actual behavior you observed.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What I expected
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      value: |
+        1.
+        2.
+        3.
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Browser, mobile/desktop, tenant identifier if relevant.
+      placeholder: |
+        - Browser:
+        - Device:
+        - Tenant:
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      options:
+        - data-loss
+        - broken
+        - degraded
+        - cosmetic
+    validations:
+      required: true
+  - type: dropdown
+    id: module
+    attributes:
+      label: Module
+      options:
+        - subscriptions
+        - contracts
+        - warranties
+        - investments
+        - expenses
+        - utility-bills
+        - iou
+        - budgets
+        - job-applications
+        - cycle-menu
+        - notifications
+        - dashboard
+        - invoicing
+        - agents
+        - mcp
+        - infra
+    validations:
+      required: true
