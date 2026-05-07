@@ -1,0 +1,24 @@
+{
+    "slug": "weekly-digest",
+    "model": "claude-sonnet-4-6",
+    "fallback_model": "claude-haiku-4-5-20251001",
+    "mcp_servers": ["lifeos"],
+    "allowed_tools": [
+        "dashboard.summary",
+        "expenses.list",
+        "subscriptions.list",
+        "investments.portfolio",
+        "bills.upcoming",
+        "contracts.list",
+        "warranties.list",
+        "iou.list",
+        "jobs.pipeline",
+        "cycleMenu.currentWeek",
+        "cycleMenu.shoppingList",
+        "digest.send"
+    ],
+    "max_session_duration_seconds": 600,
+    "max_tool_calls": 80,
+    "feature_flag": "agents.weekly_digest.enabled",
+    "schedule": "0 21 * * 0"
+}
