@@ -34,6 +34,8 @@ class IdempotencyKey
             'investments.recordDividend' => $this->investmentsRecordDividend($tenantId, $payload),
             'investments.repriceLot' => $this->investmentsRepriceLot($tenantId, $payload),
             'investments.bulkImportTransactions' => $this->investmentsBulkImportTransactions($tenantId, $payload),
+            'bank.recordLines' => $this->bankRecordLines($tenantId, $payload),
+            'bank.linkExpense' => $this->bankLinkExpense($tenantId, $payload),
             default => throw new InvalidArgumentException("No idempotency-key generator registered for tool [{$tool}]."),
         };
 
@@ -253,6 +255,36 @@ class IdempotencyKey
         sort($itemKeys);
 
         return "investments.bulkImportTransactions|{$tenantId}|".implode("\n", $itemKeys);
+    }
+
+    /**
+     * Bank statements are keyed on the sorted set of per-line fingerprints, so
+     * re-importing the same statement (even with rows in a different order)
+     * collapses to the same pending action.
+     *
+     * @param  array<string, mixed>  $p
+     */
+    private function bankRecordLines(int $tenantId, array $p): string
+    {
+        $fingerprints = array_map(
+            static fn (array $line): string => (string) ($line['fingerprint'] ?? ''),
+            (array) ($p['lines'] ?? []),
+        );
+
+        sort($fingerprints);
+
+        return "bank.recordLines|{$tenantId}|".implode(',', $fingerprints);
+    }
+
+    /**
+     * @param  array<string, mixed>  $p
+     */
+    private function bankLinkExpense(int $tenantId, array $p): string
+    {
+        $bankLineId = (int) ($p['bank_line_id'] ?? 0);
+        $expenseId = (int) ($p['expense_id'] ?? 0);
+
+        return "bank.linkExpense|{$tenantId}|{$bankLineId}|{$expenseId}";
     }
 
     private function normalize(string $value): string

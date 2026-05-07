@@ -8,7 +8,8 @@
 > - Phase 2 — Pending Actions queue + Expenses writes: PR #150, **merged**.
 > - Phase 3 — email-ingestion agent + ManagedAgentsClient + `agents:run`: PR #154 (in review). See `docs/agents/AGENTS.md`.
 > - Phase 4 — email-ingestion expansion (Subscriptions, Contracts, Warranties, IOU, Utility Bills, Job status updates + interviews): PR #155.
-> - Phase 5 — investments-sync agent (record transactions, dividends, mark-to-market, bulk-import statements): in PR. Broker-agnostic; reads from Gmail (broker confirms) + Drive (statements).
+> - Phase 5 — investments-sync agent (record transactions, dividends, mark-to-market, bulk-import statements): PR #156. Broker-agnostic; reads from Gmail (broker confirms) + Drive (statements).
+> - Phase 6 — bank/card statement processor with reconciliation against existing expenses: in PR. Introduces a `bank_lines` table, a deterministic matcher (amount + date + merchant fuzzy), and `bank.recordLines` / `bank.linkExpense` / `bank.unmatched` MCP tools.
 
 ## Context
 

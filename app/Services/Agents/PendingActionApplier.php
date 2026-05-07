@@ -12,6 +12,7 @@ use App\Http\Requests\StoreSubscriptionRequest;
 use App\Http\Requests\StoreUtilityBillRequest;
 use App\Http\Requests\StoreWarrantyRequest;
 use App\Models\AgentToken;
+use App\Models\BankLine;
 use App\Models\Contract;
 use App\Models\Expense;
 use App\Models\Investment;
@@ -24,6 +25,7 @@ use App\Models\Subscription;
 use App\Models\User;
 use App\Models\UtilityBill;
 use App\Models\Warranty;
+use App\Services\Bank\BankReconciliationService;
 use App\Services\Contracts\ContractService;
 use App\Services\Expenses\ExpenseService;
 use App\Services\Investments\InvestmentService;
@@ -54,6 +56,7 @@ class PendingActionApplier
         protected UtilityBillService $bills,
         protected JobApplicationService $jobs,
         protected InvestmentService $investments,
+        protected BankReconciliationService $bank,
         protected IdempotencyKey $keys,
     ) {}
 
@@ -249,8 +252,56 @@ class PendingActionApplier
             'investments.recordDividend' => $this->validateInvestmentsRecordDividend($action->payload),
             'investments.repriceLot' => $this->validateInvestmentsRepriceLot($action->payload),
             'investments.bulkImportTransactions' => $this->validateInvestmentsBulkImportTransactions($action->payload),
+            'bank.recordLines' => $this->validateBankRecordLines($action->payload),
+            'bank.linkExpense' => $this->validateBankLinkExpense($action->payload),
             default => throw new RuntimeException("No validator registered for tool [{$action->tool}]."),
         };
+    }
+
+    /**
+     * @param  array<string, mixed>  $payload
+     */
+    private function validateBankRecordLines(array $payload): void
+    {
+        $lines = (array) ($payload['lines'] ?? []);
+
+        if ($lines === []) {
+            throw ValidationException::withMessages(['lines' => 'At least one line is required.']);
+        }
+
+        foreach ($lines as $i => $line) {
+            $validator = Validator::make((array) $line, [
+                'account' => 'required|string|max:128',
+                'posted_at' => 'required|date',
+                'amount_cents' => 'required|integer|not_in:0',
+                'currency' => 'required|string|size:3',
+                'merchant_raw' => 'nullable|string|max:255',
+                'description' => 'nullable|string|max:1024',
+                'balance_after_cents' => 'nullable|integer',
+                'statement_id' => 'nullable|string|max:128',
+                'statement_row' => 'nullable|integer|min:0',
+                'fingerprint' => 'required|string|size:64',
+            ]);
+
+            if ($validator->fails()) {
+                throw ValidationException::withMessages(["lines.{$i}" => $validator->errors()->all()]);
+            }
+        }
+    }
+
+    /**
+     * @param  array<string, mixed>  $payload
+     */
+    private function validateBankLinkExpense(array $payload): void
+    {
+        $validator = Validator::make($payload, [
+            'bank_line_id' => 'required|integer|exists:bank_lines,id',
+            'expense_id' => 'required|integer|exists:expenses,id',
+        ]);
+
+        if ($validator->fails()) {
+            throw new ValidationException($validator);
+        }
     }
 
     /**
@@ -467,8 +518,80 @@ class PendingActionApplier
             'investments.recordDividend' => $this->executeInvestmentsRecordDividend($action, $attribution),
             'investments.repriceLot' => $this->executeInvestmentsRepriceLot($action),
             'investments.bulkImportTransactions' => $this->executeInvestmentsBulkImportTransactions($action, $attribution),
+            'bank.recordLines' => $this->executeBankRecordLines($action, $user, $attribution),
+            'bank.linkExpense' => $this->executeBankLinkExpense($action),
             default => throw new RuntimeException("No executor registered for tool [{$action->tool}]."),
         };
+    }
+
+    /**
+     * @param  array<string, mixed>  $attribution
+     * @return array<string, mixed>
+     */
+    private function executeBankRecordLines(PendingAction $action, User $user, array $attribution): array
+    {
+        $lines = (array) ($action->payload['lines'] ?? []);
+
+        $createdIds = [];
+        $matchedCount = 0;
+        $unmatchedCount = 0;
+        $skippedCount = 0;
+
+        foreach ($lines as $line) {
+            $row = (array) $line;
+            $bankLine = $this->bank->ingest($user, $action->tenant_id, $row, $attribution);
+
+            // ingest() is idempotent on fingerprint — check whether it created a
+            // brand-new row or returned an existing one. If existing and it's
+            // matched, treat it as "skipped".
+            $isExisting = ! $bankLine->wasRecentlyCreated;
+            if ($isExisting) {
+                $skippedCount++;
+
+                continue;
+            }
+
+            $createdIds[] = $bankLine->id;
+
+            if ($bankLine->match_status === BankLine::STATUS_MATCHED) {
+                $matchedCount++;
+            } else {
+                $unmatchedCount++;
+            }
+        }
+
+        return [
+            'before' => null,
+            'after' => [
+                'bank_line_ids' => $createdIds,
+                'matched' => $matchedCount,
+                'unmatched' => $unmatchedCount,
+                'skipped_existing' => $skippedCount,
+            ],
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function executeBankLinkExpense(PendingAction $action): array
+    {
+        $bankLine = BankLine::query()->findOrFail((int) $action->payload['bank_line_id']);
+        $expense = Expense::query()->findOrFail((int) $action->payload['expense_id']);
+
+        $before = $bankLine->only(['id', 'matched_expense_id', 'match_status', 'match_confidence']);
+
+        $this->bank->linkExpense($bankLine, $expense);
+
+        $action->forceFill([
+            'target_type' => BankLine::class,
+            'target_id' => $bankLine->id,
+        ])->save();
+
+        return [
+            'before' => $before,
+            'after' => $bankLine->refresh()->only(['id', 'matched_expense_id', 'match_status', 'match_confidence']),
+        ];
     }
 
     /**
@@ -833,9 +956,51 @@ class PendingActionApplier
                 $this->revertInvestmentsBulkImport($action);
 
                 return;
+            case 'bank.recordLines':
+                $this->revertBankRecordLines($action);
+
+                return;
+            case 'bank.linkExpense':
+                $this->revertBankLinkExpense($action);
+
+                return;
         }
 
         throw new RuntimeException("No revert executor for tool [{$action->tool}].");
+    }
+
+    private function revertBankRecordLines(PendingAction $action): void
+    {
+        $diff = $action->applied_diff ?? [];
+        $after = $diff['after'] ?? null;
+
+        if (! is_array($after) || ! isset($after['bank_line_ids'])) {
+            return;
+        }
+
+        BankLine::query()->whereIn('id', (array) $after['bank_line_ids'])->delete();
+    }
+
+    private function revertBankLinkExpense(PendingAction $action): void
+    {
+        $diff = $action->applied_diff ?? [];
+        $before = $diff['before'] ?? null;
+
+        if (! is_array($before) || ! isset($before['id'])) {
+            return;
+        }
+
+        $line = BankLine::query()->find((int) $before['id']);
+
+        if ($line === null) {
+            return;
+        }
+
+        $line->forceFill([
+            'matched_expense_id' => $before['matched_expense_id'] ?? null,
+            'match_status' => $before['match_status'] ?? BankLine::STATUS_UNMATCHED,
+            'match_confidence' => $before['match_confidence'] ?? null,
+        ])->save();
     }
 
     private function revertInvestmentsRepriceLot(PendingAction $action): void
@@ -1114,6 +1279,16 @@ class PendingActionApplier
             ],
             'investments.bulkImportTransactions' => [
                 'summary' => sprintf('%d investment transactions', count((array) ($payload['items'] ?? []))),
+            ],
+            'bank.recordLines' => [
+                'summary' => sprintf('Import %d bank line(s) and reconcile against existing expenses', count((array) ($payload['lines'] ?? []))),
+            ],
+            'bank.linkExpense' => [
+                'summary' => sprintf(
+                    'Link bank line #%d → expense #%d',
+                    (int) ($payload['bank_line_id'] ?? 0),
+                    (int) ($payload['expense_id'] ?? 0),
+                ),
             ],
             default => [],
         };
