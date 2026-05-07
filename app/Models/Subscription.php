@@ -35,6 +35,8 @@ class Subscription extends Model
         'tags',
         'status',
         'unique_key',
+        'source',
+        'created_by_agent_token_id',
     ];
 
     protected function casts(): array
