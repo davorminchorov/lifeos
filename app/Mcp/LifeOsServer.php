@@ -25,6 +25,7 @@ use App\Mcp\Tools\Investments\RepriceLot;
 use App\Mcp\Tools\Iou\CreateIou;
 use App\Mcp\Tools\Iou\ListIou;
 use App\Mcp\Tools\Jobs\AddInterview;
+use App\Mcp\Tools\Jobs\CreateApplication as JobsCreateApplication;
 use App\Mcp\Tools\Jobs\Pipeline;
 use App\Mcp\Tools\Jobs\UpdateJobStatus;
 use App\Mcp\Tools\Notifications\ListNotifications;
@@ -74,6 +75,7 @@ class LifeOsServer extends Server
         CreateUtilityBill::class,
         UpdateJobStatus::class,
         AddInterview::class,
+        JobsCreateApplication::class,
         RecordTransaction::class,
         RecordDividend::class,
         RepriceLot::class,

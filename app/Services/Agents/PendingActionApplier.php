@@ -248,6 +248,7 @@ class PendingActionApplier
             'utilityBills.create' => $this->validateWithFormRequest(StoreUtilityBillRequest::class, $action->payload),
             'jobs.updateStatus' => $this->validateJobsUpdateStatus($action->payload),
             'jobs.addInterview' => $this->validateJobsAddInterview($action->payload),
+            'jobs.createApplication' => $this->validateJobsCreateApplication($action->payload),
             'investments.recordTransaction' => $this->validateInvestmentsRecordTransaction($action->payload),
             'investments.recordDividend' => $this->validateInvestmentsRecordDividend($action->payload),
             'investments.repriceLot' => $this->validateInvestmentsRepriceLot($action->payload),
@@ -426,6 +427,34 @@ class PendingActionApplier
     /**
      * @param  array<string, mixed>  $payload
      */
+    private function validateJobsCreateApplication(array $payload): void
+    {
+        $validator = Validator::make($payload, [
+            'company_name' => 'required|string|max:255',
+            'job_title' => 'required|string|max:255',
+            'job_description' => 'nullable|string|max:65535',
+            'job_url' => 'nullable|url|max:2048',
+            'location' => 'nullable|string|max:255',
+            'remote' => 'nullable|boolean',
+            'salary_min' => 'nullable|numeric|min:0',
+            'salary_max' => 'nullable|numeric|min:0',
+            'currency' => 'nullable|string|size:3',
+            'status' => 'nullable|string|max:64',
+            'source' => 'nullable|string|max:64',
+            'priority' => 'nullable|integer|between:1,5',
+            'contact_name' => 'nullable|string|max:255',
+            'contact_email' => 'nullable|email|max:255',
+            'notes' => 'nullable|string|max:65535',
+        ]);
+
+        if ($validator->fails()) {
+            throw new ValidationException($validator);
+        }
+    }
+
+    /**
+     * @param  array<string, mixed>  $payload
+     */
     private function validateJobsAddInterview(array $payload): void
     {
         $validator = Validator::make($payload, [
@@ -514,6 +543,7 @@ class PendingActionApplier
             'utilityBills.create' => $this->executeUtilityBillCreate($action, $user, $attribution),
             'jobs.updateStatus' => $this->executeJobsUpdateStatus($action),
             'jobs.addInterview' => $this->executeJobsAddInterview($action),
+            'jobs.createApplication' => $this->executeJobsCreateApplication($action, $user),
             'investments.recordTransaction' => $this->executeInvestmentsRecordTransaction($action, $attribution),
             'investments.recordDividend' => $this->executeInvestmentsRecordDividend($action, $attribution),
             'investments.repriceLot' => $this->executeInvestmentsRepriceLot($action),
@@ -789,6 +819,28 @@ class PendingActionApplier
     /**
      * @return array<string, mixed>
      */
+    private function executeJobsCreateApplication(PendingAction $action, User $user): array
+    {
+        $payload = collect($action->payload)
+            ->except(['source_email_id', 'source_file_id'])
+            ->all();
+
+        $application = $this->jobs->create($user, $payload);
+
+        $action->forceFill([
+            'target_type' => JobApplication::class,
+            'target_id' => $application->id,
+        ])->save();
+
+        return [
+            'before' => null,
+            'after' => $application->only(['id', 'company_name', 'job_title', 'status', 'job_url']),
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
     private function executeJobsUpdateStatus(PendingAction $action): array
     {
         $application = JobApplication::query()->findOrFail((int) $action->payload['job_application_id']);
@@ -938,6 +990,10 @@ class PendingActionApplier
                 return;
             case 'jobs.addInterview':
                 $this->revertJobsAddInterview($action);
+
+                return;
+            case 'jobs.createApplication':
+                $this->revertCreateById($action, JobApplication::class);
 
                 return;
             case 'investments.recordTransaction':
@@ -1249,6 +1305,16 @@ class PendingActionApplier
                     (int) ($payload['job_application_id'] ?? 0),
                     (string) ($payload['scheduled_at'] ?? ''),
                 ),
+            ],
+            'jobs.createApplication' => [
+                'summary' => sprintf(
+                    '%s — %s%s%s',
+                    (string) ($payload['company_name'] ?? '?'),
+                    (string) ($payload['job_title'] ?? '?'),
+                    isset($payload['location']) ? ' · '.$payload['location'] : '',
+                    ($payload['remote'] ?? false) ? ' · remote' : '',
+                ),
+                'status' => (string) ($payload['status'] ?? 'discovered'),
             ],
             'investments.recordTransaction' => [
                 'summary' => sprintf(
