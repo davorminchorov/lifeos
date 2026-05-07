@@ -7,7 +7,6 @@ namespace App\Services\Agents;
 use App\Http\Requests\StoreContractRequest;
 use App\Http\Requests\StoreExpenseRequest;
 use App\Http\Requests\StoreIouRequest;
-use App\Http\Requests\StoreJobApplicationRequest;
 use App\Http\Requests\StoreSubscriptionRequest;
 use App\Http\Requests\StoreUtilityBillRequest;
 use App\Http\Requests\StoreWarrantyRequest;
@@ -24,6 +23,7 @@ use App\Models\InvestmentDividend;
 use App\Models\InvestmentTransaction;
 use App\Models\Iou;
 use App\Models\JobApplication;
+use App\Models\JobApplicationInterview;
 use App\Models\PendingAction;
 use App\Models\Subscription;
 use App\Models\User;
@@ -39,6 +39,8 @@ use App\Services\Jobs\JobApplicationService;
 use App\Services\Subscriptions\SubscriptionService;
 use App\Services\UtilityBills\UtilityBillService;
 use App\Services\Warranties\WarrantyService;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
@@ -463,7 +465,7 @@ class PendingActionApplier
     }
 
     /**
-     * @param  class-string<\Illuminate\Foundation\Http\FormRequest>  $formRequestClass
+     * @param  class-string<FormRequest>  $formRequestClass
      * @param  array<string, mixed>  $payload
      */
     private function validateWithFormRequest(string $formRequestClass, array $payload): void
@@ -768,7 +770,7 @@ class PendingActionApplier
 
         $existing = DigestLog::query()
             ->where('tenant_id', $action->tenant_id)
-            ->where('week_starts_on', $weekStart)
+            ->whereDate('week_starts_on', $weekStart)
             ->first();
 
         if ($existing !== null) {
@@ -1354,7 +1356,7 @@ class PendingActionApplier
     }
 
     /**
-     * @param  class-string<\Illuminate\Database\Eloquent\Model>  $modelClass
+     * @param  class-string<Model>  $modelClass
      */
     private function revertCreateById(PendingAction $action, string $modelClass): void
     {
@@ -1401,7 +1403,7 @@ class PendingActionApplier
             return;
         }
 
-        \App\Models\JobApplicationInterview::query()->whereKey((int) $after['interview_id'])->delete();
+        JobApplicationInterview::query()->whereKey((int) $after['interview_id'])->delete();
     }
 
     private function revertExpenseCreate(PendingAction $action): void
