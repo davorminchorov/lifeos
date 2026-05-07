@@ -123,7 +123,7 @@ class AgentRunRecorder
     private function countPendingActionsForSession(AgentRun $run): int
     {
         if ($run->session_id === null) {
-            return $run->pending_actions_created;
+            return (int) ($run->pending_actions_created ?? 0);
         }
 
         return PendingAction::query()

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
-use App\Models\AgentRun;
 use App\Models\AgentToken;
 use App\Models\Tenant;
 use App\Models\User;
@@ -14,6 +13,7 @@ use App\Services\Agents\AgentRunRecorder;
 use App\Services\Agents\AgentSessionConfig;
 use App\Services\Agents\ManagedAgentsClient;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
 use Throwable;
@@ -90,6 +90,17 @@ class AgentsRun extends Command
     ): void {
         $this->info("agents:run {$definition->slug} → {$tenant->slug}");
 
+        // The TenantScope on tenant-aware models reads the current user's
+        // current_tenant_id to fail-closed under no-auth. The CLI has no
+        // authenticated user by default, so log the resolved user in for the
+        // duration of this run with their current_tenant_id set to $tenant.
+        $previousTenantId = $user->current_tenant_id;
+        if ($previousTenantId !== $tenant->id) {
+            $user->forceFill(['current_tenant_id' => $tenant->id])->save();
+        }
+        $previousAuth = Auth::user();
+        Auth::login($user);
+
         // Per-run, ephemeral agent token. We retain the row in agent_tokens
         // (so applied pending_actions can resolve agent_token_id) but expire
         // it shortly after the session ends.
@@ -112,14 +123,14 @@ class AgentsRun extends Command
 
         $run = $recorder->start($definition, $token);
 
-        if ($this->option('dry-run')) {
-            $this->line('  dry-run: skipping Managed Agents API call.');
-            $recorder->complete($run);
-
-            return;
-        }
-
         try {
+            if ($this->option('dry-run')) {
+                $this->line('  dry-run: skipping Managed Agents API call.');
+                $recorder->complete($run);
+
+                return;
+            }
+
             $sessionConfig = (new AgentSessionConfig($definition, $token))->toArray();
             $session = $client->createSession($sessionConfig);
             $recorder->setSession($run, $session['id']);
@@ -141,6 +152,14 @@ class AgentsRun extends Command
             $this->error('  '.$e->getMessage());
         } finally {
             $token->forceFill(['revoked_at' => now()])->save();
+            if ($previousAuth !== null) {
+                Auth::login($previousAuth);
+            } else {
+                Auth::logout();
+            }
+            if ($previousTenantId !== $tenant->id) {
+                $user->forceFill(['current_tenant_id' => $previousTenantId])->save();
+            }
         }
     }
 

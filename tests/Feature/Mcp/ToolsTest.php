@@ -32,6 +32,8 @@ use App\Models\UtilityBill;
 use App\Models\Warranty;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Str;
+use Illuminate\Testing\Fluent\AssertableJson;
 use Tests\TestCase;
 
 class ToolsTest extends TestCase
@@ -85,12 +87,11 @@ class ToolsTest extends TestCase
 
         LifeOsServer::tool(ListExpenses::class)
             ->assertOk()
-            ->assertStructuredContent(function (array $content): bool {
-                $this->assertSame(1, $content['count']);
-                $this->assertSame('My Merchant', $content['items'][0]['merchant']);
-
-                return true;
-            });
+            ->assertStructuredContent(fn (AssertableJson $json) => $json
+                ->where('count', 1)
+                ->where('items.0.merchant', 'My Merchant')
+                ->etc()
+            );
     }
 
     public function test_dashboard_summary(): void
@@ -100,15 +101,14 @@ class ToolsTest extends TestCase
 
         LifeOsServer::tool(Summary::class)
             ->assertOk()
-            ->assertStructuredContent(function (array $content): bool {
-                $this->assertArrayHasKey('totals', $content);
-                $this->assertArrayHasKey('upcoming', $content);
-                $this->assertArrayHasKey('alerts', $content);
-                $this->assertSame(1, $content['totals']['subscriptions_active']);
-                $this->assertSame(1, $content['totals']['contracts_active']);
-
-                return true;
-            });
+            ->assertStructuredContent(fn (AssertableJson $json) => $json
+                ->has('totals')
+                ->has('upcoming')
+                ->has('alerts')
+                ->where('totals.subscriptions_active', 1)
+                ->where('totals.contracts_active', 1)
+                ->etc()
+            );
     }
 
     public function test_expenses_list(): void
@@ -123,13 +123,12 @@ class ToolsTest extends TestCase
 
         LifeOsServer::tool(ListExpenses::class, ['merchant' => 'Lidl'])
             ->assertOk()
-            ->assertStructuredContent(function (array $content): bool {
-                $this->assertSame(1, $content['count']);
-                $this->assertSame('Lidl', $content['items'][0]['merchant']);
-                $this->assertSame('EUR', $content['items'][0]['currency']);
-
-                return true;
-            });
+            ->assertStructuredContent(fn (AssertableJson $json) => $json
+                ->where('count', 1)
+                ->where('items.0.merchant', 'Lidl')
+                ->where('items.0.currency', 'EUR')
+                ->etc()
+            );
     }
 
     public function test_subscriptions_list(): void
@@ -145,12 +144,11 @@ class ToolsTest extends TestCase
 
         LifeOsServer::tool(ListSubscriptions::class, ['due_within_days' => 7])
             ->assertOk()
-            ->assertStructuredContent(function (array $content): bool {
-                $this->assertSame(1, $content['count']);
-                $this->assertSame('Netflix', $content['items'][0]['service_name']);
-
-                return true;
-            });
+            ->assertStructuredContent(fn (AssertableJson $json) => $json
+                ->where('count', 1)
+                ->where('items.0.service_name', 'Netflix')
+                ->etc()
+            );
     }
 
     public function test_investments_portfolio(): void
@@ -166,14 +164,13 @@ class ToolsTest extends TestCase
 
         LifeOsServer::tool(Portfolio::class)
             ->assertOk()
-            ->assertStructuredContent(function (array $content): bool {
-                $this->assertSame(1, $content['count']);
-                $this->assertArrayHasKey('EUR', $content['totals_by_currency']);
-                $this->assertSame(1100.0, $content['totals_by_currency']['EUR']['market_value']);
-                $this->assertSame(100.0, $content['totals_by_currency']['EUR']['unrealized_gain_loss']);
-
-                return true;
-            });
+            ->assertStructuredContent(fn (AssertableJson $json) => $json
+                ->where('count', 1)
+                ->has('totals_by_currency.EUR')
+                ->where('totals_by_currency.EUR.market_value', 1100.0)
+                ->where('totals_by_currency.EUR.unrealized_gain_loss', 100.0)
+                ->etc()
+            );
     }
 
     public function test_bills_upcoming(): void
@@ -189,12 +186,11 @@ class ToolsTest extends TestCase
 
         LifeOsServer::tool(UpcomingBills::class, ['within_days' => 7])
             ->assertOk()
-            ->assertStructuredContent(function (array $content): bool {
-                $this->assertGreaterThanOrEqual(1, $content['count']);
-                $this->assertSame('EVN', $content['items'][0]['service_provider']);
-
-                return true;
-            });
+            ->assertStructuredContent(fn (AssertableJson $json) => $json
+                ->where('count', fn ($value) => $value >= 1)
+                ->where('items.0.service_provider', 'EVN')
+                ->etc()
+            );
     }
 
     public function test_contracts_list(): void
@@ -208,12 +204,11 @@ class ToolsTest extends TestCase
 
         LifeOsServer::tool(ListContracts::class, ['expiring_within_days' => 30])
             ->assertOk()
-            ->assertStructuredContent(function (array $content): bool {
-                $this->assertSame(1, $content['count']);
-                $this->assertSame('Office Lease', $content['items'][0]['title']);
-
-                return true;
-            });
+            ->assertStructuredContent(fn (AssertableJson $json) => $json
+                ->where('count', 1)
+                ->where('items.0.title', 'Office Lease')
+                ->etc()
+            );
     }
 
     public function test_warranties_list(): void
@@ -227,12 +222,11 @@ class ToolsTest extends TestCase
 
         LifeOsServer::tool(ListWarranties::class, ['expiring_within_days' => 60])
             ->assertOk()
-            ->assertStructuredContent(function (array $content): bool {
-                $this->assertSame(1, $content['count']);
-                $this->assertSame('Laptop', $content['items'][0]['product_name']);
-
-                return true;
-            });
+            ->assertStructuredContent(fn (AssertableJson $json) => $json
+                ->where('count', 1)
+                ->where('items.0.product_name', 'Laptop')
+                ->etc()
+            );
     }
 
     public function test_iou_list(): void
@@ -248,13 +242,12 @@ class ToolsTest extends TestCase
 
         LifeOsServer::tool(ListIou::class, ['direction' => 'owe'])
             ->assertOk()
-            ->assertStructuredContent(function (array $content): bool {
-                $this->assertSame(1, $content['count']);
-                $this->assertSame('John Doe', $content['items'][0]['person_name']);
-                $this->assertSame(150.0, $content['items'][0]['remaining']);
-
-                return true;
-            });
+            ->assertStructuredContent(fn (AssertableJson $json) => $json
+                ->where('count', 1)
+                ->where('items.0.person_name', 'John Doe')
+                ->where('items.0.remaining', 150.0)
+                ->etc()
+            );
     }
 
     public function test_jobs_pipeline(): void
@@ -268,12 +261,11 @@ class ToolsTest extends TestCase
 
         LifeOsServer::tool(Pipeline::class, ['remote_only' => true])
             ->assertOk()
-            ->assertStructuredContent(function (array $content): bool {
-                $this->assertSame(1, $content['count']);
-                $this->assertSame('Acme', $content['items'][0]['company_name']);
-
-                return true;
-            });
+            ->assertStructuredContent(fn (AssertableJson $json) => $json
+                ->where('count', 1)
+                ->where('items.0.company_name', 'Acme')
+                ->etc()
+            );
     }
 
     public function test_cycle_menu_current_week(): void
@@ -295,29 +287,26 @@ class ToolsTest extends TestCase
 
         LifeOsServer::tool(CurrentWeekCycleMenu::class)
             ->assertOk()
-            ->assertStructuredContent(function (array $content): bool {
-                $this->assertNotNull($content['menu']);
-                $this->assertSame('Standard', $content['menu']['name']);
-                $this->assertCount(7, $content['week']);
-
-                return true;
-            });
+            ->assertStructuredContent(fn (AssertableJson $json) => $json
+                ->where('menu.name', 'Standard')
+                ->has('week', 7)
+                ->etc()
+            );
     }
 
     public function test_notifications_list(): void
     {
         $this->user->notifications()->create([
-            'id' => (string) \Illuminate\Support\Str::uuid(),
+            'id' => (string) Str::uuid(),
             'type' => 'TestNotification',
             'data' => ['title' => 'Hello'],
         ]);
 
         LifeOsServer::tool(ListNotifications::class, ['limit' => 10])
             ->assertOk()
-            ->assertStructuredContent(function (array $content): bool {
-                $this->assertGreaterThanOrEqual(1, $content['count']);
-
-                return true;
-            });
+            ->assertStructuredContent(fn (AssertableJson $json) => $json
+                ->where('count', fn ($value) => $value >= 1)
+                ->etc()
+            );
     }
 }

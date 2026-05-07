@@ -6,8 +6,6 @@ namespace Tests\Feature\Agents;
 
 use App\Models\AgentRun;
 use App\Models\AgentToken;
-use App\Models\Expense;
-use App\Models\PendingAction;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Services\Agents\AgentRegistry;
@@ -60,6 +58,7 @@ class AgentsRunCommandTest extends TestCase
         $user = User::factory()->create();
         $tenant = Tenant::factory()->create(['owner_id' => $user->id]);
         $user->forceFill(['current_tenant_id' => $tenant->id])->save();
+        $this->actingAs($user);
 
         $this->artisan('agents:run', [
             'slug' => 'email-ingestion',
@@ -84,7 +83,7 @@ class AgentsRunCommandTest extends TestCase
             'slug' => 'email-ingestion',
             '--tenant' => $tenant->slug,
         ])->expectsOutputToContain('disabled')
-          ->assertSuccessful();
+            ->assertSuccessful();
 
         $this->assertSame(0, AgentRun::query()->count());
     }
@@ -110,6 +109,7 @@ class AgentsRunCommandTest extends TestCase
         $user = User::factory()->create();
         $tenant = Tenant::factory()->create(['owner_id' => $user->id]);
         $user->forceFill(['current_tenant_id' => $tenant->id])->save();
+        $this->actingAs($user);
 
         $client = $this->mock(ManagedAgentsClient::class);
         $client->shouldReceive('createSession')
