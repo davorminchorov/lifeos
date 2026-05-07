@@ -568,6 +568,33 @@ Existing items on every covered `day_index` are deleted on apply; revert fully r
 
 Returns `{ menu, window_days, item_count, items[] }` where each item is `{ title, meal_type, count, quantities[], days[] }`. Quantities are returned as a list rather than summed because the schema carries free-text (`"1 bowl"`, `"250 g"`).
 
+## Weekly digest (Phase 10)
+
+Phase 10 ships the weekly-digest agent. The agent itself is read-only across LifeOS data; the only write tool it uses is `digest.send`, which queues the email body. On apply, the email is dispatched via Laravel Mail and a row is recorded in `digest_logs`.
+
+### `digest.send` (write)
+
+| field | type | description |
+|---|---|---|
+| `week_starts_on` | date | Required. YYYY-MM-DD of the Monday of the digest week. **Idempotency anchor.** |
+| `subject` | string | Required. Email subject. |
+| `body_text` | string | Required. Plaintext (Markdown OK; renders as preformatted text). |
+| `body_html` | string | Optional. Pre-rendered HTML body. |
+| `recipient_email` | email | Optional. Defaults to the bound user's email. |
+| `structured_summary` | object | Optional. Machine-readable highlights for archive use. |
+
+Idempotency: `(tenant, week_starts_on)`. Re-running the agent on the same Sunday returns the same pending action. The unique `(tenant_id, week_starts_on)` constraint on `digest_logs` is the second line of defence — if two pending actions for the same week ever both apply, only one row writes and only one email sends.
+
+### Auto-apply exception
+
+Most write tools require the **same idempotency key** to have been previously approved before auto-apply fires. `digest.send` is the one documented exception: by design every week's key differs, so the rule is relaxed to "any prior `digest.send` approved by the same tenant in the last 90 days." The exception lives in `PendingActionApplier::autoApplyAllowsAnyPriorApproval()` and is unit-tested.
+
+To enable Sunday-night auto-send: approve one weekly digest manually, then set `tenants.tool_auto_apply.digest.send = true`. From the next week on the digest sends without intervention.
+
+### Revert behaviour
+
+The email can't be unsent. Revert deletes the `digest_logs` row so the unique constraint allows a corrected digest to be re-queued for the same week if needed. The original email already in your inbox is on you.
+
 ## Approval surface
 
 Reviewers act through `/dashboard/pending-actions`:

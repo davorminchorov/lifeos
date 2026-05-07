@@ -33,6 +33,7 @@ class IdempotencyKey
             'jobs.createApplication' => $this->jobsCreateApplication($tenantId, $payload),
             'cycleMenu.addItem' => $this->cycleMenuAddItem($tenantId, $payload),
             'cycleMenu.setWeek' => $this->cycleMenuSetWeek($tenantId, $payload),
+            'digest.send' => $this->digestSend($tenantId, $payload),
             'investments.recordTransaction' => $this->investmentsRecordTransaction($tenantId, $payload),
             'investments.recordDividend' => $this->investmentsRecordDividend($tenantId, $payload),
             'investments.repriceLot' => $this->investmentsRepriceLot($tenantId, $payload),
@@ -258,6 +259,22 @@ class IdempotencyKey
         }
 
         return "cycleMenu.setWeek|{$tenantId}|{$menuId}|".implode(';', $perDay);
+    }
+
+    /**
+     * Weekly digest. Anchors on (tenant, ISO-week start date). Re-running the
+     * agent on the same Sunday collapses to one pending action; the unique
+     * (tenant, week_starts_on) constraint on digest_logs is the second line of
+     * defence preventing a duplicate send if two pending actions somehow get
+     * approved concurrently.
+     *
+     * @param  array<string, mixed>  $p
+     */
+    private function digestSend(int $tenantId, array $p): string
+    {
+        $weekStart = (string) ($p['week_starts_on'] ?? '');
+
+        return "digest.send|{$tenantId}|{$weekStart}";
     }
 
     /**

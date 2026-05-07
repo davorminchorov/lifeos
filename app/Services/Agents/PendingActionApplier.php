@@ -11,11 +11,13 @@ use App\Http\Requests\StoreJobApplicationRequest;
 use App\Http\Requests\StoreSubscriptionRequest;
 use App\Http\Requests\StoreUtilityBillRequest;
 use App\Http\Requests\StoreWarrantyRequest;
+use App\Mail\WeeklyDigestMail;
 use App\Models\AgentToken;
 use App\Models\BankLine;
 use App\Models\Contract;
 use App\Models\CycleMenu;
 use App\Models\CycleMenuItem;
+use App\Models\DigestLog;
 use App\Models\Expense;
 use App\Models\Investment;
 use App\Models\InvestmentDividend;
@@ -38,6 +40,7 @@ use App\Services\Subscriptions\SubscriptionService;
 use App\Services\UtilityBills\UtilityBillService;
 use App\Services\Warranties\WarrantyService;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use RuntimeException;
@@ -261,6 +264,7 @@ class PendingActionApplier
             'bank.linkExpense' => $this->validateBankLinkExpense($action->payload),
             'cycleMenu.addItem' => $this->validateCycleMenuAddItem($action->payload),
             'cycleMenu.setWeek' => $this->validateCycleMenuSetWeek($action->payload),
+            'digest.send' => $this->validateDigestSend($action->payload),
             default => throw new RuntimeException("No validator registered for tool [{$action->tool}]."),
         };
     }
@@ -328,6 +332,25 @@ class PendingActionApplier
             'items_by_day_index.*.*.meal_type' => 'required|string|max:32',
             'items_by_day_index.*.*.time_of_day' => 'nullable|string|max:10',
             'items_by_day_index.*.*.quantity' => 'nullable|string|max:255',
+        ]);
+
+        if ($validator->fails()) {
+            throw new ValidationException($validator);
+        }
+    }
+
+    /**
+     * @param  array<string, mixed>  $payload
+     */
+    private function validateDigestSend(array $payload): void
+    {
+        $validator = Validator::make($payload, [
+            'week_starts_on' => 'required|date',
+            'subject' => 'required|string|max:255',
+            'body_text' => 'required|string|max:65535',
+            'body_html' => 'nullable|string|max:200000',
+            'recipient_email' => 'nullable|email|max:255',
+            'structured_summary' => 'nullable|array',
         ]);
 
         if ($validator->fails()) {
@@ -597,6 +620,7 @@ class PendingActionApplier
             'bank.linkExpense' => $this->executeBankLinkExpense($action),
             'cycleMenu.addItem' => $this->executeCycleMenuAddItem($action),
             'cycleMenu.setWeek' => $this->executeCycleMenuSetWeek($action),
+            'digest.send' => $this->executeDigestSend($action, $user),
             default => throw new RuntimeException("No executor registered for tool [{$action->tool}]."),
         };
     }
@@ -721,6 +745,74 @@ class PendingActionApplier
                 'menu_id' => $menu->id,
                 'item_ids_by_day_index' => $afterIds,
             ],
+        ];
+    }
+
+    /**
+     * Send the weekly digest email and record it in digest_logs. Idempotent on
+     * the unique (tenant_id, week_starts_on) constraint, so concurrent
+     * approvals (or auto-apply re-runs) can't double-send.
+     *
+     * @return array<string, mixed>
+     */
+    private function executeDigestSend(PendingAction $action, User $user): array
+    {
+        $weekStart = (string) $action->payload['week_starts_on'];
+        $subject = (string) $action->payload['subject'];
+        $bodyText = (string) $action->payload['body_text'];
+        $bodyHtml = isset($action->payload['body_html']) ? (string) $action->payload['body_html'] : null;
+        $structured = isset($action->payload['structured_summary']) && is_array($action->payload['structured_summary'])
+            ? $action->payload['structured_summary']
+            : null;
+        $recipient = (string) ($action->payload['recipient_email'] ?? $user->email);
+
+        $existing = DigestLog::query()
+            ->where('tenant_id', $action->tenant_id)
+            ->where('week_starts_on', $weekStart)
+            ->first();
+
+        if ($existing !== null) {
+            // Already sent this week — short-circuit, return the existing log.
+            $action->forceFill([
+                'target_type' => DigestLog::class,
+                'target_id' => $existing->id,
+            ])->save();
+
+            return [
+                'before' => null,
+                'after' => $existing->only(['id', 'recipient_email', 'subject', 'sent_at']) + ['skipped' => 'already-sent'],
+            ];
+        }
+
+        Mail::to($recipient)->send(new WeeklyDigestMail(
+            weekStartsOn: $weekStart,
+            bodyText: $bodyText,
+            bodyHtml: $bodyHtml,
+            structuredSummary: $structured,
+        ));
+
+        $log = DigestLog::create([
+            'tenant_id' => $action->tenant_id,
+            'user_id' => $user->id,
+            'pending_action_id' => $action->id,
+            'agent_run_id' => null,
+            'week_starts_on' => $weekStart,
+            'recipient_email' => $recipient,
+            'subject' => $subject,
+            'body_text' => $bodyText,
+            'body_html' => $bodyHtml,
+            'structured_summary' => $structured,
+            'sent_at' => now(),
+        ]);
+
+        $action->forceFill([
+            'target_type' => DigestLog::class,
+            'target_id' => $log->id,
+        ])->save();
+
+        return [
+            'before' => null,
+            'after' => $log->only(['id', 'recipient_email', 'subject', 'sent_at']),
         ];
     }
 
@@ -1151,6 +1243,17 @@ class PendingActionApplier
                 $this->revertCycleMenuSetWeek($action);
 
                 return;
+            case 'digest.send':
+                // Email can't be unsent. Mark the log row reverted so a fresh
+                // pending_action can re-send if needed; the unique constraint
+                // on (tenant, week) will prevent a duplicate to the same week.
+                $diff = $action->applied_diff ?? [];
+                $after = $diff['after'] ?? null;
+                if (is_array($after) && isset($after['id'])) {
+                    DigestLog::query()->whereKey((int) $after['id'])->delete();
+                }
+
+                return;
         }
 
         throw new RuntimeException("No revert executor for tool [{$action->tool}].");
@@ -1356,6 +1459,26 @@ class PendingActionApplier
             return false;
         }
 
+        // The default gate requires a previously-approved write with the
+        // *same* idempotency key. That works for tools where the user
+        // approves a stable-shaped write once and then trusts repetitions
+        // (e.g. expenses.create from a recurring receipt).
+        //
+        // For notification-only tools whose key naturally changes per run
+        // (digest.send keys on week_starts_on), the rule is relaxed: any
+        // prior applied write of the same tool, by the same tenant, in the
+        // last 90 days counts as the user having opted in. This is a
+        // narrow, documented per-tool exception.
+        if ($this->autoApplyAllowsAnyPriorApproval($tool)) {
+            return PendingAction::query()
+                ->where('tenant_id', $token->tenant_id)
+                ->where('tool', $tool)
+                ->where('id', '!=', $newActionId)
+                ->where('status', PendingAction::STATUS_APPLIED)
+                ->where('applied_at', '>=', now()->subDays(90))
+                ->exists();
+        }
+
         return PendingAction::query()
             ->where('tenant_id', $token->tenant_id)
             ->where('tool', $tool)
@@ -1363,6 +1486,17 @@ class PendingActionApplier
             ->where('id', '!=', $newActionId)
             ->where('status', PendingAction::STATUS_APPLIED)
             ->exists();
+    }
+
+    /**
+     * Tools where every run uses a fresh idempotency key by design (e.g.
+     * digest.send, where the key encodes the ISO week). Listed here so the
+     * auto-apply gate accepts "user has approved any prior digest in the
+     * last 90 days" as opt-in.
+     */
+    private function autoApplyAllowsAnyPriorApproval(string $tool): bool
+    {
+        return in_array($tool, ['digest.send'], true);
     }
 
     /**
@@ -1519,6 +1653,13 @@ class PendingActionApplier
                     'Plan menu #%d across %d day(s)',
                     (int) ($payload['cycle_menu_id'] ?? 0),
                     count((array) ($payload['items_by_day_index'] ?? [])),
+                ),
+            ],
+            'digest.send' => [
+                'summary' => sprintf(
+                    'Weekly digest — week of %s · %s',
+                    (string) ($payload['week_starts_on'] ?? '?'),
+                    (string) ($payload['subject'] ?? ''),
                 ),
             ],
             default => [],

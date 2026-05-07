@@ -15,6 +15,7 @@ use App\Mcp\Tools\CycleMenu\AddItem as CycleMenuAddItem;
 use App\Mcp\Tools\CycleMenu\CurrentWeekCycleMenu;
 use App\Mcp\Tools\CycleMenu\SetWeek as CycleMenuSetWeek;
 use App\Mcp\Tools\CycleMenu\ShoppingList as CycleMenuShoppingList;
+use App\Mcp\Tools\Digest\Send as DigestSend;
 use App\Mcp\Tools\Dashboard\Summary;
 use App\Mcp\Tools\Expenses\BulkImportExpenses;
 use App\Mcp\Tools\Expenses\CategorizeExpense;
@@ -90,5 +91,6 @@ class LifeOsServer extends Server
         CycleMenuAddItem::class,
         CycleMenuSetWeek::class,
         CycleMenuShoppingList::class,
+        DigestSend::class,
     ];
 }
