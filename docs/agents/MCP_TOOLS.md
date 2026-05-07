@@ -519,7 +519,7 @@ Phase 8 ships a single new write tool plus the `job-search` agent definition and
 | `salary_max` | number | Optional. |
 | `currency` | string | ISO 4217. Defaults to MKD. |
 | `status` | string | `"discovered"` (default) or `"shortlisted"`. |
-| `source` | string | e.g. `"recruiter_email"`, `"linkedin"`, `"company_site"`. |
+| `source` | string | One of `linkedin`, `company_website`, `job_board`, `referral`, `recruiter`, `networking`, `other`. |
 | `priority` | int | 1-3 only. (4-5 are reserved for the user.) |
 | `contact_name`, `contact_email` | string | Optional. |
 | `notes` | string | Required-by-convention. One-line rationale. |

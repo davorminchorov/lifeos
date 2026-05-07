@@ -2,7 +2,6 @@
 
 namespace Tests\Unit;
 
-use App\Models\User;
 use App\Models\Warranty;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -13,6 +12,7 @@ class WarrantyModelTest extends TestCase
     use RefreshDatabase;
 
     protected $user;
+
     protected $tenant;
 
     protected function setUp(): void
@@ -29,6 +29,7 @@ class WarrantyModelTest extends TestCase
             'warranty_terms', 'warranty_expiration_date', 'claim_history', 'receipt_attachments',
             'proof_of_purchase_attachments', 'current_status', 'transfer_history',
             'maintenance_reminders', 'notes',
+            'source', 'created_by_agent_token_id',
         ];
         $warranty = new Warranty;
 

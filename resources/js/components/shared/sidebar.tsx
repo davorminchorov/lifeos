@@ -24,6 +24,7 @@ import {
     DollarSign,
     Calendar,
     Inbox,
+    Bot,
     type LucideIcon,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -53,6 +54,7 @@ const navigation: NavGroup[] = [
             { label: 'Subscriptions', href: '/subscriptions', icon: CreditCard },
             { label: 'Utility Bills', href: '/utility-bills', icon: Zap },
             { label: 'Pending Actions', href: '/dashboard/pending-actions', icon: Inbox, badgeKey: 'pendingActionsCount' },
+            { label: 'Agents', href: '/dashboard/agents', icon: Bot },
         ],
     },
     {

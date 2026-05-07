@@ -21,10 +21,10 @@ use App\Models\Subscription;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Models\UtilityBill;
-use App\Models\Warranty;
 use App\Services\Agents\PendingActionApplier;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\App;
+use Illuminate\Testing\Fluent\AssertableJson;
 use Tests\TestCase;
 
 class Phase4WriteToolsTest extends TestCase
@@ -52,10 +52,8 @@ class Phase4WriteToolsTest extends TestCase
             'currency' => 'EUR',
             'billing_cycle' => 'monthly',
             'start_date' => '2026-05-01',
-        ])->assertOk()->assertStructuredContent(function (array $content): bool {
-            $this->assertSame(PendingAction::STATUS_PENDING, $content['status']);
-
-            return true;
+        ])->assertOk()->assertStructuredContent(function (AssertableJson $json) {
+            $json->where('status', PendingAction::STATUS_PENDING)->etc();
         });
 
         $this->assertSame(1, PendingAction::query()->where('tool', 'subscriptions.create')->count());
@@ -66,10 +64,12 @@ class Phase4WriteToolsTest extends TestCase
     {
         LifeOsServer::tool(CreateSubscription::class, [
             'service_name' => 'Netflix',
+            'category' => 'streaming',
             'cost' => 9.99,
             'currency' => 'EUR',
             'billing_cycle' => 'monthly',
             'start_date' => '2026-05-01',
+            'next_billing_date' => '2026-06-01',
         ]);
 
         $action = PendingAction::query()->firstOrFail();
