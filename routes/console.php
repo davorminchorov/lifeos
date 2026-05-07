@@ -62,3 +62,11 @@ Schedule::command('gmail:sync-receipts --all --queue')
     ->name('gmail-sync-receipts')
     ->description('Sync receipts from Gmail for all active connections')
     ->when(config('gmail_receipts.sync.auto_sync_enabled', true)); // Only when auto-sync is enabled
+
+// Email-ingestion agent: every 30 minutes, behind a feature flag.
+Schedule::command('agents:run email-ingestion')
+    ->cron('*/30 * * * *')
+    ->name('agent-email-ingestion')
+    ->description('Run the email-ingestion agent across all eligible tenants')
+    ->withoutOverlapping(15)
+    ->when(fn (): bool => (bool) config('agents.flags.agents.email_ingestion.enabled', false));
