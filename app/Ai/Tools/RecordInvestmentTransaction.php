@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Ai\Tools;
 
 use App\Models\Investment;
-use App\Models\InvestmentTransaction;
+use App\Services\Investments\InvestmentService;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Ai\Tools\Request;
 
@@ -86,16 +86,13 @@ class RecordInvestmentTransaction extends TenantScopedTool
 
         $totalAmount = (float) $validated['quantity'] * (float) $validated['price_per_share'];
 
-        InvestmentTransaction::create([
-            'tenant_id' => $this->tenantId,
-            'investment_id' => $investment->id,
+        app(InvestmentService::class)->recordTransaction($investment, [
             'transaction_type' => $validated['transaction_type'],
             'quantity' => $validated['quantity'],
             'price_per_share' => $validated['price_per_share'],
             'total_amount' => $totalAmount,
             'fees' => $validated['fees'],
             'transaction_date' => $validated['transaction_date'],
-            'currency' => $investment->currency ?? 'MKD',
             'notes' => $validated['notes'],
         ]);
 

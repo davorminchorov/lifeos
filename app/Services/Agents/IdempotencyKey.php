@@ -30,6 +30,10 @@ class IdempotencyKey
             'utilityBills.create' => $this->utilityBillsCreate($tenantId, $payload),
             'jobs.updateStatus' => $this->jobsUpdateStatus($tenantId, $payload),
             'jobs.addInterview' => $this->jobsAddInterview($tenantId, $payload),
+            'investments.recordTransaction' => $this->investmentsRecordTransaction($tenantId, $payload),
+            'investments.recordDividend' => $this->investmentsRecordDividend($tenantId, $payload),
+            'investments.repriceLot' => $this->investmentsRepriceLot($tenantId, $payload),
+            'investments.bulkImportTransactions' => $this->investmentsBulkImportTransactions($tenantId, $payload),
             default => throw new InvalidArgumentException("No idempotency-key generator registered for tool [{$tool}]."),
         };
 
@@ -175,6 +179,80 @@ class IdempotencyKey
         $sourceEmail = (string) ($p['source_email_id'] ?? '');
 
         return "jobs.addInterview|{$tenantId}|{$jobId}|{$scheduledAt}|{$type}|{$sourceEmail}";
+    }
+
+    /**
+     * Investment transactions are keyed on broker-provided fields when present
+     * (order_id / confirmation_number), falling back to (investment, type, qty,
+     * price, date). The order_id collapses any retry of the same broker action.
+     *
+     * @param  array<string, mixed>  $p
+     */
+    private function investmentsRecordTransaction(int $tenantId, array $p): string
+    {
+        $investmentId = (int) ($p['investment_id'] ?? 0);
+        $orderId = $this->normalize((string) ($p['order_id'] ?? ''));
+        $confirmation = $this->normalize((string) ($p['confirmation_number'] ?? ''));
+
+        if ($orderId !== '') {
+            return "investments.recordTransaction|{$tenantId}|{$investmentId}|order:{$orderId}";
+        }
+
+        if ($confirmation !== '') {
+            return "investments.recordTransaction|{$tenantId}|{$investmentId}|conf:{$confirmation}";
+        }
+
+        $type = $this->normalize((string) ($p['transaction_type'] ?? ''));
+        $qty = $this->amountCents($p['quantity'] ?? 0);
+        $price = $this->amountCents($p['price_per_share'] ?? 0);
+        $date = (string) ($p['transaction_date'] ?? '');
+        $sourceEmail = (string) ($p['source_email_id'] ?? '');
+
+        return "investments.recordTransaction|{$tenantId}|{$investmentId}|{$type}|{$qty}|{$price}|{$date}|{$sourceEmail}";
+    }
+
+    /**
+     * @param  array<string, mixed>  $p
+     */
+    private function investmentsRecordDividend(int $tenantId, array $p): string
+    {
+        $investmentId = (int) ($p['investment_id'] ?? 0);
+        $amount = $this->amountCents($p['amount'] ?? 0);
+        $payment = (string) ($p['payment_date'] ?? '');
+        $sourceEmail = (string) ($p['source_email_id'] ?? '');
+
+        return "investments.recordDividend|{$tenantId}|{$investmentId}|{$amount}|{$payment}|{$sourceEmail}";
+    }
+
+    /**
+     * Mark-to-market: one logical price per (investment, as_of date). Re-running
+     * the agent on the same day collapses to the same row.
+     *
+     * @param  array<string, mixed>  $p
+     */
+    private function investmentsRepriceLot(int $tenantId, array $p): string
+    {
+        $investmentId = (int) ($p['investment_id'] ?? 0);
+        $asOf = (string) ($p['as_of'] ?? date('Y-m-d'));
+
+        return "investments.repriceLot|{$tenantId}|{$investmentId}|{$asOf}";
+    }
+
+    /**
+     * @param  array<string, mixed>  $p
+     */
+    private function investmentsBulkImportTransactions(int $tenantId, array $p): string
+    {
+        $items = (array) ($p['items'] ?? []);
+
+        $itemKeys = array_map(
+            fn (array $item): string => $this->investmentsRecordTransaction($tenantId, $item),
+            $items,
+        );
+
+        sort($itemKeys);
+
+        return "investments.bulkImportTransactions|{$tenantId}|".implode("\n", $itemKeys);
     }
 
     private function normalize(string $value): string

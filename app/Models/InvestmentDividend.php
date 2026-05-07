@@ -27,6 +27,8 @@ class InvestmentDividend extends Model
         'currency',
         'reinvested',
         'notes',
+        'source',
+        'created_by_agent_token_id',
     ];
 
     protected function casts(): array

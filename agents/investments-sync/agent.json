@@ -1,0 +1,17 @@
+{
+    "slug": "investments-sync",
+    "model": "claude-opus-4-7",
+    "fallback_model": "claude-sonnet-4-6",
+    "mcp_servers": ["lifeos", "gmail", "drive"],
+    "allowed_tools": [
+        "investments.portfolio",
+        "investments.recordTransaction",
+        "investments.recordDividend",
+        "investments.repriceLot",
+        "investments.bulkImportTransactions"
+    ],
+    "max_session_duration_seconds": 900,
+    "max_tool_calls": 200,
+    "feature_flag": "agents.investments_sync.enabled",
+    "schedule": "0 7 * * *"
+}

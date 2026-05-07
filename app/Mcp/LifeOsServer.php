@@ -14,7 +14,11 @@ use App\Mcp\Tools\Expenses\BulkImportExpenses;
 use App\Mcp\Tools\Expenses\CategorizeExpense;
 use App\Mcp\Tools\Expenses\CreateExpense;
 use App\Mcp\Tools\Expenses\ListExpenses;
+use App\Mcp\Tools\Investments\BulkImportTransactions;
 use App\Mcp\Tools\Investments\Portfolio;
+use App\Mcp\Tools\Investments\RecordDividend;
+use App\Mcp\Tools\Investments\RecordTransaction;
+use App\Mcp\Tools\Investments\RepriceLot;
 use App\Mcp\Tools\Iou\CreateIou;
 use App\Mcp\Tools\Iou\ListIou;
 use App\Mcp\Tools\Jobs\AddInterview;
@@ -66,5 +70,9 @@ class LifeOsServer extends Server
         CreateUtilityBill::class,
         UpdateJobStatus::class,
         AddInterview::class,
+        RecordTransaction::class,
+        RecordDividend::class,
+        RepriceLot::class,
+        BulkImportTransactions::class,
     ];
 }

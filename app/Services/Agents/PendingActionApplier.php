@@ -14,6 +14,9 @@ use App\Http\Requests\StoreWarrantyRequest;
 use App\Models\AgentToken;
 use App\Models\Contract;
 use App\Models\Expense;
+use App\Models\Investment;
+use App\Models\InvestmentDividend;
+use App\Models\InvestmentTransaction;
 use App\Models\Iou;
 use App\Models\JobApplication;
 use App\Models\PendingAction;
@@ -23,6 +26,7 @@ use App\Models\UtilityBill;
 use App\Models\Warranty;
 use App\Services\Contracts\ContractService;
 use App\Services\Expenses\ExpenseService;
+use App\Services\Investments\InvestmentService;
 use App\Services\Iou\IouService;
 use App\Services\Jobs\JobApplicationService;
 use App\Services\Subscriptions\SubscriptionService;
@@ -49,6 +53,7 @@ class PendingActionApplier
         protected IouService $ious,
         protected UtilityBillService $bills,
         protected JobApplicationService $jobs,
+        protected InvestmentService $investments,
         protected IdempotencyKey $keys,
     ) {}
 
@@ -240,8 +245,101 @@ class PendingActionApplier
             'utilityBills.create' => $this->validateWithFormRequest(StoreUtilityBillRequest::class, $action->payload),
             'jobs.updateStatus' => $this->validateJobsUpdateStatus($action->payload),
             'jobs.addInterview' => $this->validateJobsAddInterview($action->payload),
+            'investments.recordTransaction' => $this->validateInvestmentsRecordTransaction($action->payload),
+            'investments.recordDividend' => $this->validateInvestmentsRecordDividend($action->payload),
+            'investments.repriceLot' => $this->validateInvestmentsRepriceLot($action->payload),
+            'investments.bulkImportTransactions' => $this->validateInvestmentsBulkImportTransactions($action->payload),
             default => throw new RuntimeException("No validator registered for tool [{$action->tool}]."),
         };
+    }
+
+    /**
+     * @param  array<string, mixed>  $payload
+     */
+    private function validateInvestmentsRecordTransaction(array $payload): void
+    {
+        $validator = Validator::make($payload, [
+            'investment_id' => 'required|integer|exists:investments,id',
+            'transaction_type' => 'required|string|in:buy,sell,dividend_reinvestment,transfer_in,transfer_out,stock_split,stock_dividend',
+            'quantity' => 'required|numeric|min:0.00000001',
+            'price_per_share' => 'required|numeric|min:0',
+            'total_amount' => 'nullable|numeric',
+            'fees' => 'nullable|numeric|min:0',
+            'taxes' => 'nullable|numeric|min:0',
+            'transaction_date' => 'required|date',
+            'settlement_date' => 'nullable|date',
+            'order_id' => 'nullable|string|max:128',
+            'confirmation_number' => 'nullable|string|max:128',
+            'broker' => 'nullable|string|max:128',
+            'currency' => 'nullable|string|size:3',
+            'notes' => 'nullable|string|max:65535',
+        ]);
+
+        if ($validator->fails()) {
+            throw new ValidationException($validator);
+        }
+    }
+
+    /**
+     * @param  array<string, mixed>  $payload
+     */
+    private function validateInvestmentsRecordDividend(array $payload): void
+    {
+        $validator = Validator::make($payload, [
+            'investment_id' => 'required|integer|exists:investments,id',
+            'amount' => 'required|numeric|min:0',
+            'payment_date' => 'required|date',
+            'record_date' => 'nullable|date',
+            'ex_dividend_date' => 'nullable|date',
+            'dividend_type' => 'nullable|string|max:64',
+            'frequency' => 'nullable|string|max:64',
+            'dividend_per_share' => 'nullable|numeric|min:0',
+            'shares_held' => 'nullable|numeric|min:0',
+            'tax_withheld' => 'nullable|numeric|min:0',
+            'currency' => 'nullable|string|size:3',
+            'reinvested' => 'nullable|boolean',
+            'notes' => 'nullable|string|max:65535',
+        ]);
+
+        if ($validator->fails()) {
+            throw new ValidationException($validator);
+        }
+    }
+
+    /**
+     * @param  array<string, mixed>  $payload
+     */
+    private function validateInvestmentsRepriceLot(array $payload): void
+    {
+        $validator = Validator::make($payload, [
+            'investment_id' => 'required|integer|exists:investments,id',
+            'current_value' => 'required|numeric|min:0',
+            'as_of' => 'nullable|date',
+        ]);
+
+        if ($validator->fails()) {
+            throw new ValidationException($validator);
+        }
+    }
+
+    /**
+     * @param  array<string, mixed>  $payload
+     */
+    private function validateInvestmentsBulkImportTransactions(array $payload): void
+    {
+        $items = (array) ($payload['items'] ?? []);
+
+        if ($items === []) {
+            throw ValidationException::withMessages(['items' => 'At least one item is required.']);
+        }
+
+        foreach ($items as $i => $item) {
+            try {
+                $this->validateInvestmentsRecordTransaction((array) $item);
+            } catch (ValidationException $e) {
+                throw ValidationException::withMessages(["items.{$i}" => $e->errors()]);
+            }
+        }
     }
 
     /**
@@ -365,8 +463,109 @@ class PendingActionApplier
             'utilityBills.create' => $this->executeUtilityBillCreate($action, $user, $attribution),
             'jobs.updateStatus' => $this->executeJobsUpdateStatus($action),
             'jobs.addInterview' => $this->executeJobsAddInterview($action),
+            'investments.recordTransaction' => $this->executeInvestmentsRecordTransaction($action, $attribution),
+            'investments.recordDividend' => $this->executeInvestmentsRecordDividend($action, $attribution),
+            'investments.repriceLot' => $this->executeInvestmentsRepriceLot($action),
+            'investments.bulkImportTransactions' => $this->executeInvestmentsBulkImportTransactions($action, $attribution),
             default => throw new RuntimeException("No executor registered for tool [{$action->tool}]."),
         };
+    }
+
+    /**
+     * @param  array<string, mixed>  $attribution
+     * @return array<string, mixed>
+     */
+    private function executeInvestmentsRecordTransaction(PendingAction $action, array $attribution): array
+    {
+        $investment = Investment::query()->findOrFail((int) $action->payload['investment_id']);
+
+        $transaction = $this->investments->recordTransaction(
+            $investment,
+            collect($action->payload)->except(['investment_id', 'source_email_id'])->all(),
+            $attribution,
+        );
+
+        $action->forceFill([
+            'target_type' => InvestmentTransaction::class,
+            'target_id' => $transaction->id,
+        ])->save();
+
+        return [
+            'before' => null,
+            'after' => $transaction->only(['id', 'investment_id', 'transaction_type', 'quantity', 'price_per_share', 'total_amount', 'transaction_date', 'currency']),
+        ];
+    }
+
+    /**
+     * @param  array<string, mixed>  $attribution
+     * @return array<string, mixed>
+     */
+    private function executeInvestmentsRecordDividend(PendingAction $action, array $attribution): array
+    {
+        $investment = Investment::query()->findOrFail((int) $action->payload['investment_id']);
+
+        $dividend = $this->investments->recordDividend(
+            $investment,
+            collect($action->payload)->except(['investment_id', 'source_email_id'])->all(),
+            $attribution,
+        );
+
+        $action->forceFill([
+            'target_type' => InvestmentDividend::class,
+            'target_id' => $dividend->id,
+        ])->save();
+
+        return [
+            'before' => null,
+            'after' => $dividend->only(['id', 'investment_id', 'amount', 'payment_date', 'currency']),
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function executeInvestmentsRepriceLot(PendingAction $action): array
+    {
+        $investment = Investment::query()->findOrFail((int) $action->payload['investment_id']);
+        $before = $investment->only(['id', 'current_value', 'last_price_update']);
+
+        $asOf = isset($action->payload['as_of'])
+            ? new \DateTimeImmutable((string) $action->payload['as_of'])
+            : null;
+
+        $this->investments->repriceLot(
+            $investment,
+            (float) $action->payload['current_value'],
+            $asOf,
+        );
+
+        $action->forceFill([
+            'target_type' => Investment::class,
+            'target_id' => $investment->id,
+        ])->save();
+
+        return [
+            'before' => $before,
+            'after' => $investment->refresh()->only(['id', 'current_value', 'last_price_update']),
+        ];
+    }
+
+    /**
+     * @param  array<string, mixed>  $attribution
+     * @return array<string, mixed>
+     */
+    private function executeInvestmentsBulkImportTransactions(PendingAction $action, array $attribution): array
+    {
+        $rows = (array) ($action->payload['items'] ?? []);
+        $created = $this->investments->bulkRecordTransactions($rows, $attribution);
+
+        return [
+            'before' => null,
+            'after' => array_map(
+                fn (InvestmentTransaction $t): array => $t->only(['id', 'investment_id', 'transaction_type', 'quantity', 'price_per_share']),
+                $created,
+            ),
+        ];
     }
 
     /**
@@ -618,9 +817,67 @@ class PendingActionApplier
                 $this->revertJobsAddInterview($action);
 
                 return;
+            case 'investments.recordTransaction':
+                $this->revertCreateById($action, InvestmentTransaction::class);
+
+                return;
+            case 'investments.recordDividend':
+                $this->revertCreateById($action, InvestmentDividend::class);
+
+                return;
+            case 'investments.repriceLot':
+                $this->revertInvestmentsRepriceLot($action);
+
+                return;
+            case 'investments.bulkImportTransactions':
+                $this->revertInvestmentsBulkImport($action);
+
+                return;
         }
 
         throw new RuntimeException("No revert executor for tool [{$action->tool}].");
+    }
+
+    private function revertInvestmentsRepriceLot(PendingAction $action): void
+    {
+        $diff = $action->applied_diff ?? [];
+        $before = $diff['before'] ?? null;
+
+        if (! is_array($before) || ! isset($before['id'])) {
+            return;
+        }
+
+        $investment = Investment::query()->find((int) $before['id']);
+
+        if ($investment === null) {
+            return;
+        }
+
+        $investment->update([
+            'current_value' => $before['current_value'] ?? null,
+            'last_price_update' => $before['last_price_update'] ?? null,
+        ]);
+    }
+
+    private function revertInvestmentsBulkImport(PendingAction $action): void
+    {
+        $diff = $action->applied_diff ?? [];
+        $after = $diff['after'] ?? null;
+
+        if (! is_array($after)) {
+            return;
+        }
+
+        $ids = array_values(array_filter(array_map(
+            static fn ($row) => is_array($row) && isset($row['id']) ? (int) $row['id'] : null,
+            $after,
+        )));
+
+        if ($ids === []) {
+            return;
+        }
+
+        InvestmentTransaction::query()->whereIn('id', $ids)->delete();
     }
 
     /**
@@ -827,6 +1084,36 @@ class PendingActionApplier
                     (int) ($payload['job_application_id'] ?? 0),
                     (string) ($payload['scheduled_at'] ?? ''),
                 ),
+            ],
+            'investments.recordTransaction' => [
+                'summary' => sprintf(
+                    '%s %s @ %s on investment #%d (%s)',
+                    (string) ($payload['transaction_type'] ?? '?'),
+                    number_format((float) ($payload['quantity'] ?? 0), 4),
+                    number_format((float) ($payload['price_per_share'] ?? 0), 4),
+                    (int) ($payload['investment_id'] ?? 0),
+                    (string) ($payload['transaction_date'] ?? ''),
+                ),
+            ],
+            'investments.recordDividend' => [
+                'summary' => sprintf(
+                    'Dividend %s %s on investment #%d (%s)',
+                    number_format((float) ($payload['amount'] ?? 0), 2),
+                    (string) ($payload['currency'] ?? ''),
+                    (int) ($payload['investment_id'] ?? 0),
+                    (string) ($payload['payment_date'] ?? ''),
+                ),
+            ],
+            'investments.repriceLot' => [
+                'summary' => sprintf(
+                    'Reprice investment #%d → %s as of %s',
+                    (int) ($payload['investment_id'] ?? 0),
+                    number_format((float) ($payload['current_value'] ?? 0), 4),
+                    (string) ($payload['as_of'] ?? date('Y-m-d')),
+                ),
+            ],
+            'investments.bulkImportTransactions' => [
+                'summary' => sprintf('%d investment transactions', count((array) ($payload['items'] ?? []))),
             ],
             default => [],
         };
