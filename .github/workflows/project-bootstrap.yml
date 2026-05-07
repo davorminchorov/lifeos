@@ -1,0 +1,55 @@
+name: Project bootstrap
+
+# Idempotently provisions LifeOS labels, GitHub Project v2, and migrates
+# existing issues onto the new state. Manually triggered.
+#
+# Required secrets:
+#   GH_PROJECT_TOKEN  PAT with `project` + `repo` scopes. Without it, the
+#                     run skips Project v2 work and only syncs labels +
+#                     applies issue migrations that don't need the project.
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run (no mutations)'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+jobs:
+  bootstrap:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify gh + jq are available
+        run: |
+          gh --version
+          jq --version
+
+      - name: Run bootstrap
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_PROJECT_TOKEN: ${{ secrets.GH_PROJECT_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          DRY_RUN: ${{ inputs.dry_run && '1' || '0' }}
+        run: |
+          chmod +x scripts/github/bootstrap.sh
+          ./scripts/github/bootstrap.sh
+
+      - name: Commit migration report (if changed)
+        if: ${{ !inputs.dry_run }}
+        run: |
+          if [[ -n "$(git status --porcelain docs/agents/MIGRATION_REPORT.md)" ]]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add docs/agents/MIGRATION_REPORT.md
+            git commit -m "chore: update migration report from bootstrap run"
+            git push
+          else
+            echo "No changes to migration report."
+          fi
