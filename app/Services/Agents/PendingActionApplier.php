@@ -14,6 +14,8 @@ use App\Http\Requests\StoreWarrantyRequest;
 use App\Models\AgentToken;
 use App\Models\BankLine;
 use App\Models\Contract;
+use App\Models\CycleMenu;
+use App\Models\CycleMenuItem;
 use App\Models\Expense;
 use App\Models\Investment;
 use App\Models\InvestmentDividend;
@@ -27,6 +29,7 @@ use App\Models\UtilityBill;
 use App\Models\Warranty;
 use App\Services\Bank\BankReconciliationService;
 use App\Services\Contracts\ContractService;
+use App\Services\CycleMenu\CycleMenuService;
 use App\Services\Expenses\ExpenseService;
 use App\Services\Investments\InvestmentService;
 use App\Services\Iou\IouService;
@@ -57,6 +60,7 @@ class PendingActionApplier
         protected JobApplicationService $jobs,
         protected InvestmentService $investments,
         protected BankReconciliationService $bank,
+        protected CycleMenuService $cycleMenus,
         protected IdempotencyKey $keys,
     ) {}
 
@@ -255,6 +259,8 @@ class PendingActionApplier
             'investments.bulkImportTransactions' => $this->validateInvestmentsBulkImportTransactions($action->payload),
             'bank.recordLines' => $this->validateBankRecordLines($action->payload),
             'bank.linkExpense' => $this->validateBankLinkExpense($action->payload),
+            'cycleMenu.addItem' => $this->validateCycleMenuAddItem($action->payload),
+            'cycleMenu.setWeek' => $this->validateCycleMenuSetWeek($action->payload),
             default => throw new RuntimeException("No validator registered for tool [{$action->tool}]."),
         };
     }
@@ -287,6 +293,45 @@ class PendingActionApplier
             if ($validator->fails()) {
                 throw ValidationException::withMessages(["lines.{$i}" => $validator->errors()->all()]);
             }
+        }
+    }
+
+    /**
+     * @param  array<string, mixed>  $payload
+     */
+    private function validateCycleMenuAddItem(array $payload): void
+    {
+        $validator = Validator::make($payload, [
+            'cycle_menu_id' => 'required|integer|exists:cycle_menus,id',
+            'day_index' => 'required|integer|min:0',
+            'title' => 'required|string|max:255',
+            'meal_type' => 'required|string|max:32',
+            'time_of_day' => 'nullable|string|max:10',
+            'quantity' => 'nullable|string|max:255',
+        ]);
+
+        if ($validator->fails()) {
+            throw new ValidationException($validator);
+        }
+    }
+
+    /**
+     * @param  array<string, mixed>  $payload
+     */
+    private function validateCycleMenuSetWeek(array $payload): void
+    {
+        $validator = Validator::make($payload, [
+            'cycle_menu_id' => 'required|integer|exists:cycle_menus,id',
+            'items_by_day_index' => 'required|array|min:1',
+            'items_by_day_index.*' => 'array',
+            'items_by_day_index.*.*.title' => 'required|string|max:255',
+            'items_by_day_index.*.*.meal_type' => 'required|string|max:32',
+            'items_by_day_index.*.*.time_of_day' => 'nullable|string|max:10',
+            'items_by_day_index.*.*.quantity' => 'nullable|string|max:255',
+        ]);
+
+        if ($validator->fails()) {
+            throw new ValidationException($validator);
         }
     }
 
@@ -550,6 +595,8 @@ class PendingActionApplier
             'investments.bulkImportTransactions' => $this->executeInvestmentsBulkImportTransactions($action, $attribution),
             'bank.recordLines' => $this->executeBankRecordLines($action, $user, $attribution),
             'bank.linkExpense' => $this->executeBankLinkExpense($action),
+            'cycleMenu.addItem' => $this->executeCycleMenuAddItem($action),
+            'cycleMenu.setWeek' => $this->executeCycleMenuSetWeek($action),
             default => throw new RuntimeException("No executor registered for tool [{$action->tool}]."),
         };
     }
@@ -597,6 +644,82 @@ class PendingActionApplier
                 'matched' => $matchedCount,
                 'unmatched' => $unmatchedCount,
                 'skipped_existing' => $skippedCount,
+            ],
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function executeCycleMenuAddItem(PendingAction $action): array
+    {
+        $menu = CycleMenu::query()->findOrFail((int) $action->payload['cycle_menu_id']);
+
+        $item = $this->cycleMenus->addItem(
+            $menu,
+            (int) $action->payload['day_index'],
+            [
+                'title' => (string) $action->payload['title'],
+                'meal_type' => (string) $action->payload['meal_type'],
+                'time_of_day' => $action->payload['time_of_day'] ?? null,
+                'quantity' => $action->payload['quantity'] ?? null,
+            ],
+        );
+
+        $action->forceFill([
+            'target_type' => CycleMenuItem::class,
+            'target_id' => $item->id,
+        ])->save();
+
+        return [
+            'before' => null,
+            'after' => $item->only(['id', 'cycle_menu_day_id', 'title', 'meal_type', 'time_of_day', 'quantity', 'position']),
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function executeCycleMenuSetWeek(PendingAction $action): array
+    {
+        $menu = CycleMenu::query()->findOrFail((int) $action->payload['cycle_menu_id']);
+
+        // Capture the prior state so revert can fully restore the affected
+        // day rows to what they looked like before approval.
+        $itemsByDayIndex = (array) $action->payload['items_by_day_index'];
+        $before = [];
+
+        foreach (array_keys($itemsByDayIndex) as $dayIndex) {
+            $day = $menu->days()->where('day_index', (int) $dayIndex)->with('items')->first();
+            $before[(int) $dayIndex] = $day === null ? [] : $day->items->map(fn (CycleMenuItem $i): array => [
+                'title' => $i->title,
+                'meal_type' => is_object($i->meal_type) ? $i->meal_type?->value : $i->meal_type,
+                'time_of_day' => $i->time_of_day,
+                'quantity' => $i->quantity,
+                'position' => $i->position,
+            ])->all();
+        }
+
+        $created = $this->cycleMenus->replaceWeek($menu, $itemsByDayIndex);
+
+        $action->forceFill([
+            'target_type' => CycleMenu::class,
+            'target_id' => $menu->id,
+        ])->save();
+
+        $afterIds = [];
+        foreach ($created as $dayIndex => $items) {
+            $afterIds[$dayIndex] = array_map(fn (CycleMenuItem $i) => $i->id, $items);
+        }
+
+        return [
+            'before' => [
+                'menu_id' => $menu->id,
+                'items_by_day_index' => $before,
+            ],
+            'after' => [
+                'menu_id' => $menu->id,
+                'item_ids_by_day_index' => $afterIds,
             ],
         ];
     }
@@ -1020,6 +1143,14 @@ class PendingActionApplier
                 $this->revertBankLinkExpense($action);
 
                 return;
+            case 'cycleMenu.addItem':
+                $this->revertCreateById($action, CycleMenuItem::class);
+
+                return;
+            case 'cycleMenu.setWeek':
+                $this->revertCycleMenuSetWeek($action);
+
+                return;
         }
 
         throw new RuntimeException("No revert executor for tool [{$action->tool}].");
@@ -1035,6 +1166,24 @@ class PendingActionApplier
         }
 
         BankLine::query()->whereIn('id', (array) $after['bank_line_ids'])->delete();
+    }
+
+    private function revertCycleMenuSetWeek(PendingAction $action): void
+    {
+        $diff = $action->applied_diff ?? [];
+        $before = $diff['before'] ?? null;
+
+        if (! is_array($before) || ! isset($before['menu_id'], $before['items_by_day_index'])) {
+            return;
+        }
+
+        $menu = CycleMenu::query()->find((int) $before['menu_id']);
+
+        if ($menu === null) {
+            return;
+        }
+
+        $this->cycleMenus->replaceWeek($menu, (array) $before['items_by_day_index']);
     }
 
     private function revertBankLinkExpense(PendingAction $action): void
@@ -1354,6 +1503,22 @@ class PendingActionApplier
                     'Link bank line #%d → expense #%d',
                     (int) ($payload['bank_line_id'] ?? 0),
                     (int) ($payload['expense_id'] ?? 0),
+                ),
+            ],
+            'cycleMenu.addItem' => [
+                'summary' => sprintf(
+                    'Menu #%d day %d: %s (%s)',
+                    (int) ($payload['cycle_menu_id'] ?? 0),
+                    (int) ($payload['day_index'] ?? 0),
+                    (string) ($payload['title'] ?? '?'),
+                    (string) ($payload['meal_type'] ?? ''),
+                ),
+            ],
+            'cycleMenu.setWeek' => [
+                'summary' => sprintf(
+                    'Plan menu #%d across %d day(s)',
+                    (int) ($payload['cycle_menu_id'] ?? 0),
+                    count((array) ($payload['items_by_day_index'] ?? [])),
                 ),
             ],
             default => [],

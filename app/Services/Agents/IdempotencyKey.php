@@ -31,6 +31,8 @@ class IdempotencyKey
             'jobs.updateStatus' => $this->jobsUpdateStatus($tenantId, $payload),
             'jobs.addInterview' => $this->jobsAddInterview($tenantId, $payload),
             'jobs.createApplication' => $this->jobsCreateApplication($tenantId, $payload),
+            'cycleMenu.addItem' => $this->cycleMenuAddItem($tenantId, $payload),
+            'cycleMenu.setWeek' => $this->cycleMenuSetWeek($tenantId, $payload),
             'investments.recordTransaction' => $this->investmentsRecordTransaction($tenantId, $payload),
             'investments.recordDividend' => $this->investmentsRecordDividend($tenantId, $payload),
             'investments.repriceLot' => $this->investmentsRepriceLot($tenantId, $payload),
@@ -206,6 +208,56 @@ class IdempotencyKey
         $anchor = $sourceRef !== '' ? $sourceRef : strtolower(trim($url));
 
         return "jobs.createApplication|{$tenantId}|{$company}|{$title}|{$anchor}";
+    }
+
+    /**
+     * Cycle-menu item add. Anchors on (tenant, menu, day_index, normalized
+     * title, meal_type). Re-running with the same item collapses, but adding
+     * a second copy of the same dish on the same day is intentional and
+     * goes through linked write paths (different position).
+     *
+     * @param  array<string, mixed>  $p
+     */
+    private function cycleMenuAddItem(int $tenantId, array $p): string
+    {
+        $menuId = (int) ($p['cycle_menu_id'] ?? 0);
+        $dayIndex = (int) ($p['day_index'] ?? -1);
+        $title = $this->normalize((string) ($p['title'] ?? ''));
+        $mealType = $this->normalize((string) ($p['meal_type'] ?? ''));
+
+        return "cycleMenu.addItem|{$tenantId}|{$menuId}|{$dayIndex}|{$title}|{$mealType}";
+    }
+
+    /**
+     * Cycle-menu set-week. Anchors on (tenant, menu, sorted day-index list,
+     * canonicalized item set per day). Re-running the same plan collapses;
+     * tweaking any item produces a distinct key.
+     *
+     * @param  array<string, mixed>  $p
+     */
+    private function cycleMenuSetWeek(int $tenantId, array $p): string
+    {
+        $menuId = (int) ($p['cycle_menu_id'] ?? 0);
+        $itemsByDayIndex = (array) ($p['items_by_day_index'] ?? []);
+
+        ksort($itemsByDayIndex);
+
+        $perDay = [];
+
+        foreach ($itemsByDayIndex as $dayIndex => $items) {
+            $rows = array_map(
+                fn (array $item): string => sprintf(
+                    '%s/%s',
+                    $this->normalize((string) ($item['title'] ?? '')),
+                    $this->normalize((string) ($item['meal_type'] ?? '')),
+                ),
+                (array) $items,
+            );
+            sort($rows);
+            $perDay[] = "{$dayIndex}=".implode(',', $rows);
+        }
+
+        return "cycleMenu.setWeek|{$tenantId}|{$menuId}|".implode(';', $perDay);
     }
 
     /**

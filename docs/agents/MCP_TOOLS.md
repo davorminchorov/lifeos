@@ -533,6 +533,41 @@ Idempotency: `(tenant, normalized company, normalized title, source_email_id || 
 - **`cv`** — the user's CV. Authoritative for fit assessment. Replace placeholder content before enabling the agent.
 - **`job-criteria`** — hard and soft criteria, plus an active-search-window date range. The agent exits immediately if today is outside the window or if either skill is still placeholder content.
 
+## Cycle menu (Phase 9)
+
+Phase 9 adds three tools backing the cycle-menu-planner agent. The agent never creates the parent `CycleMenu` row (the user owns the rotation), and never overwrites a populated day — it only fills empty days.
+
+### `cycleMenu.addItem` (write)
+
+| field | type | description |
+|---|---|---|
+| `cycle_menu_id` | int | Required. |
+| `day_index` | int | Required. 0-based day in the rotation. |
+| `title` | string | Required. |
+| `meal_type` | string | Required. `"breakfast"`, `"lunch"`, `"dinner"`, `"snack"`, or `"other"`. |
+| `time_of_day` | string | Optional `HH:MM`. |
+| `quantity` | string | Optional free-text serving (e.g. `"1 bowl"`, `"250 g"`). |
+
+Idempotency: `(tenant, menu, day_index, normalized title, meal_type)`.
+
+### `cycleMenu.setWeek` (write, bulk)
+
+| field | type | description |
+|---|---|---|
+| `cycle_menu_id` | int | Required. |
+| `items_by_day_index` | object | Required. Map of `day_index → array of items`. Each item = `{ title, meal_type, time_of_day?, quantity? }`. |
+
+Existing items on every covered `day_index` are deleted on apply; revert fully restores them. Idempotency is order-insensitive within a day and across days.
+
+### `cycleMenu.shoppingList` (read)
+
+| field | type | description |
+|---|---|---|
+| `cycle_menu_id` | int | Optional — defaults to the tenant's active menu. |
+| `window_days` | int | Default 7, max 30. |
+
+Returns `{ menu, window_days, item_count, items[] }` where each item is `{ title, meal_type, count, quantities[], days[] }`. Quantities are returned as a list rather than summed because the schema carries free-text (`"1 bowl"`, `"250 g"`).
+
 ## Approval surface
 
 Reviewers act through `/dashboard/pending-actions`:

@@ -1,0 +1,17 @@
+{
+    "slug": "cycle-menu-planner",
+    "model": "claude-sonnet-4-6",
+    "fallback_model": "claude-haiku-4-5-20251001",
+    "mcp_servers": ["lifeos"],
+    "allowed_tools": [
+        "cycleMenu.currentWeek",
+        "cycleMenu.shoppingList",
+        "cycleMenu.addItem",
+        "cycleMenu.setWeek",
+        "expenses.list"
+    ],
+    "max_session_duration_seconds": 600,
+    "max_tool_calls": 100,
+    "feature_flag": "agents.cycle_menu_planner.enabled",
+    "schedule": "0 9 * * 0"
+}
