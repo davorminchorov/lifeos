@@ -26,6 +26,12 @@ return [
     */
     'flags' => [
         'agents.email_ingestion.enabled' => env('AGENT_EMAIL_INGESTION_ENABLED', false),
+        'agents.investments_sync.enabled' => env('AGENT_INVESTMENTS_SYNC_ENABLED', false),
+        'agents.bank_statements.enabled' => env('AGENT_BANK_STATEMENTS_ENABLED', false),
+        'agents.receipts_ocr.enabled' => env('AGENT_RECEIPTS_OCR_ENABLED', false),
+        'agents.job_search.enabled' => env('AGENT_JOB_SEARCH_ENABLED', false),
+        'agents.cycle_menu_planner.enabled' => env('AGENT_CYCLE_MENU_PLANNER_ENABLED', false),
+        'agents.weekly_digest.enabled' => env('AGENT_WEEKLY_DIGEST_ENABLED', false),
     ],
 
     /*
@@ -60,6 +66,10 @@ return [
         ],
         'gmail' => [
             'url' => env('GMAIL_MCP_URL'),
+            'auth' => 'managed_console',
+        ],
+        'drive' => [
+            'url' => env('DRIVE_MCP_URL'),
             'auth' => 'managed_console',
         ],
     ],
