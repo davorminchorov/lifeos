@@ -58,8 +58,9 @@ export default function ProjectInvestmentShow({ projectInvestment }: ProjectInve
     }, [confirmDeleteTx])
 
     const transactions = projectInvestment.transactions ?? []
-    const totalInvested = transactions.reduce((sum, t) => sum + t.amount, 0)
-    const gainLoss = (projectInvestment.current_value ?? totalInvested) - totalInvested
+    const totalInvested = transactions.reduce((sum, t) => sum + Number(t.amount), 0)
+    const currentValue = projectInvestment.current_value != null ? Number(projectInvestment.current_value) : null
+    const gainLoss = (currentValue ?? totalInvested) - totalInvested
 
     return (
         <AppLayout>
@@ -265,8 +266,8 @@ export default function ProjectInvestmentShow({ projectInvestment }: ProjectInve
                             <div>
                                 <p className="text-sm text-muted-foreground">Current Value</p>
                                 <p className="text-xl font-semibold">
-                                    {projectInvestment.current_value != null
-                                        ? formatCurrency(projectInvestment.current_value, 'USD')
+                                    {currentValue != null
+                                        ? formatCurrency(currentValue, 'USD')
                                         : '\u2014'}
                                 </p>
                             </div>
