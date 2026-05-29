@@ -1,6 +1,7 @@
 import { Head } from '@inertiajs/react'
 import AppLayout from '@/components/shared/app-layout'
 import { PageHeader } from '@/components/shared/page-header'
+import { ExportCsvButton } from '@/components/shared/export-csv-button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
     Table,
@@ -27,7 +28,9 @@ export default function HolidayIndex({ holidays, countryName, countryCode }: Hol
             <PageHeader
                 title={`${countryName} Holidays`}
                 description={`National and religious holidays celebrated in ${countryName}`}
-            />
+            >
+                <ExportCsvButton module="holidays" />
+            </PageHeader>
 
             {/* Desktop Table */}
             <div className="hidden rounded-md border border-border md:block">

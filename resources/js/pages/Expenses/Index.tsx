@@ -2,6 +2,7 @@ import { Head, Link, router } from '@inertiajs/react'
 import { useState, useCallback, type ChangeEvent } from 'react'
 import AppLayout from '@/components/shared/app-layout'
 import { PageHeader } from '@/components/shared/page-header'
+import { ExportCsvButton } from '@/components/shared/export-csv-button'
 import { StatusBadge } from '@/components/shared/status-badge'
 import { EmptyState } from '@/components/shared/empty-state'
 import { ConfirmationDialog } from '@/components/shared/confirmation-dialog'
@@ -162,6 +163,7 @@ export default function ExpenseIndex({ expenses, filters = {} }: ExpenseIndexPro
             <Head title="Expenses" />
 
             <PageHeader title="Expenses" description="Track your spending and manage your budget">
+                <ExportCsvButton module="expenses" />
                 <div className="flex gap-2">
                     <Button variant="outline" asChild>
                         <Link href="/expenses/import">

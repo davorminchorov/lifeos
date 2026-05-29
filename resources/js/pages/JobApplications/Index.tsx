@@ -2,6 +2,7 @@ import { Head, Link, router } from '@inertiajs/react'
 import { useState, useCallback, type ChangeEvent } from 'react'
 import AppLayout from '@/components/shared/app-layout'
 import { PageHeader } from '@/components/shared/page-header'
+import { ExportCsvButton } from '@/components/shared/export-csv-button'
 import { StatusBadge } from '@/components/shared/status-badge'
 import { EmptyState } from '@/components/shared/empty-state'
 import { StatCard } from '@/components/shared/stat-card'
@@ -119,6 +120,7 @@ export default function JobApplicationIndex({ applications, filters = {} }: JobA
             <Head title="Job Applications" />
 
             <PageHeader title="Job Applications" description="Track your job search progress">
+                <ExportCsvButton module="job-applications" />
                 <Button variant="outline" asChild>
                     <Link href="/job-applications/kanban">
                         <LayoutGrid className="mr-2 h-4 w-4" />

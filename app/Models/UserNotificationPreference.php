@@ -141,6 +141,12 @@ class UserNotificationPreference extends Model
                 'push_enabled' => false,
                 'settings' => [],
             ],
+            'data_export' => [
+                'email_enabled' => false,
+                'database_enabled' => true,
+                'push_enabled' => false,
+                'settings' => [],
+            ],
         ];
     }
 }

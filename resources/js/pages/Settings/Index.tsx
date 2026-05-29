@@ -36,11 +36,11 @@ export default function SettingsIndex() {
             enabled: false,
         },
         {
-            title: 'Data Management',
-            description: 'Export, import, and backup your data',
-            href: '#',
+            title: 'Data Export',
+            description: 'Download your data from every module as CSV',
+            href: '/exports',
             icon: Database,
-            enabled: false,
+            enabled: true,
         },
         {
             title: 'API & Integrations',
