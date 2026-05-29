@@ -2,6 +2,7 @@ import { Head, Link, router } from '@inertiajs/react'
 import { useState, useCallback, type ChangeEvent } from 'react'
 import AppLayout from '@/components/shared/app-layout'
 import { PageHeader } from '@/components/shared/page-header'
+import { ExportCsvButton } from '@/components/shared/export-csv-button'
 import { StatusBadge } from '@/components/shared/status-badge'
 import { EmptyState } from '@/components/shared/empty-state'
 import { ConfirmationDialog } from '@/components/shared/confirmation-dialog'
@@ -163,6 +164,7 @@ export default function UtilityBillIndex({ utilityBills, filters = {} }: Utility
             <Head title="Utility Bills" />
 
             <PageHeader title="Utility Bills" description="Track your utility bills and monitor usage patterns">
+                <ExportCsvButton module="utility-bills" />
                 <div className="flex gap-2">
                     <Button variant="outline" asChild>
                         <Link href="/utility-bills/import">

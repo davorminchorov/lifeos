@@ -2,6 +2,7 @@ import { Head, Link, router } from '@inertiajs/react'
 import { useState, useCallback, type ChangeEvent } from 'react'
 import AppLayout from '@/components/shared/app-layout'
 import { PageHeader } from '@/components/shared/page-header'
+import { ExportCsvButton } from '@/components/shared/export-csv-button'
 import { EmptyState } from '@/components/shared/empty-state'
 import { ConfirmationDialog } from '@/components/shared/confirmation-dialog'
 import { Button } from '@/components/ui/button'
@@ -72,6 +73,7 @@ export default function CustomerIndex({ customers, summary, filters = {} }: Cust
             <Head title="Customers" />
 
             <PageHeader title="Customers" description="Manage your invoicing customers">
+                <ExportCsvButton module="customers" />
                 <Button asChild>
                     <Link href="/invoicing/customers/create">
                         <Plus className="mr-2 h-4 w-4" />

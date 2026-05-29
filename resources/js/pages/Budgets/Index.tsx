@@ -2,6 +2,7 @@ import { Head, Link, router } from '@inertiajs/react'
 import { useState, useCallback, type ChangeEvent } from 'react'
 import AppLayout from '@/components/shared/app-layout'
 import { PageHeader } from '@/components/shared/page-header'
+import { ExportCsvButton } from '@/components/shared/export-csv-button'
 import { StatusBadge } from '@/components/shared/status-badge'
 import { EmptyState } from '@/components/shared/empty-state'
 import { ConfirmationDialog } from '@/components/shared/confirmation-dialog'
@@ -100,6 +101,7 @@ export default function BudgetIndex({ budgets, categories, summaryStats, filters
             <Head title="Budgets" />
 
             <PageHeader title="Budgets" description="Track and manage your spending budgets">
+                <ExportCsvButton module="budgets" />
                 <Button variant="outline" asChild>
                     <Link href="/budgets/analytics">
                         <BarChart3 className="mr-2 h-4 w-4" />

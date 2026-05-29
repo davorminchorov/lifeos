@@ -2,6 +2,7 @@ import { Head, Link, router } from '@inertiajs/react'
 import { useState, useCallback } from 'react'
 import AppLayout from '@/components/shared/app-layout'
 import { PageHeader } from '@/components/shared/page-header'
+import { ExportCsvButton } from '@/components/shared/export-csv-button'
 import { StatusBadge } from '@/components/shared/status-badge'
 import { EmptyState } from '@/components/shared/empty-state'
 import { ConfirmationDialog } from '@/components/shared/confirmation-dialog'
@@ -45,6 +46,7 @@ export default function CycleMenuIndex({ menus }: CycleMenuIndexProps) {
             <Head title="Cycle Menus" />
 
             <PageHeader title="Cycle Menus" description="Plan meals in repeating cycles and see each day's items">
+                <ExportCsvButton module="cycle-menus" />
                 <Button variant="outline" asChild>
                     <Link href="/cycle-menu-items/import">
                         <Upload className="mr-2 h-4 w-4" />
