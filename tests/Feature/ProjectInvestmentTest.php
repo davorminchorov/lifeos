@@ -6,6 +6,7 @@ use App\Models\ProjectInvestment;
 use App\Models\ProjectInvestmentTransaction;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Cache;
 use Tests\TestCase;
 
 class ProjectInvestmentTest extends TestCase
@@ -44,6 +45,39 @@ class ProjectInvestmentTest extends TestCase
         $response->assertInertia(fn ($page) => $page
             ->component('ProjectInvestments/Show')
             ->where('projectInvestment.primary_currency', 'EUR')
+        );
+    }
+
+    public function test_show_page_converts_total_invested_into_primary_currency(): void
+    {
+        config(['currency.conversion.enabled' => true]);
+        // Seed the exchange rate so no external API call is made (1 USD = 0.9 EUR).
+        Cache::put('exchange_rate_USD_EUR', 0.9);
+
+        $projectInvestment = ProjectInvestment::factory()->create(['user_id' => $this->user->id]);
+
+        // EUR is the primary currency (largest total); the USD amount must be converted into EUR.
+        ProjectInvestmentTransaction::factory()->create([
+            'project_investment_id' => $projectInvestment->id,
+            'user_id' => $this->user->id,
+            'amount' => 5000,
+            'currency' => 'EUR',
+        ]);
+        ProjectInvestmentTransaction::factory()->create([
+            'project_investment_id' => $projectInvestment->id,
+            'user_id' => $this->user->id,
+            'amount' => 1000,
+            'currency' => 'USD',
+        ]);
+
+        $response = $this->get(route('project-investments.show', $projectInvestment));
+
+        $response->assertStatus(200);
+        // 5000 EUR + (1000 USD * 0.9) = 5900 EUR
+        $response->assertInertia(fn ($page) => $page
+            ->component('ProjectInvestments/Show')
+            ->where('projectInvestment.primary_currency', 'EUR')
+            ->where('projectInvestment.total_invested', fn ($value) => (float) $value === 5900.0)
         );
     }
 

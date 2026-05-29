@@ -631,6 +631,7 @@ export interface ProjectInvestment {
     updated_at: string
     // Computed
     primary_currency?: string
+    total_invested?: number
     // Relationships
     user?: User
     transactions?: ProjectInvestmentTransaction[]

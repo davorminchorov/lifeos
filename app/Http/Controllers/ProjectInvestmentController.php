@@ -167,9 +167,10 @@ class ProjectInvestmentController extends Controller
             $query->orderByDesc('transaction_date')->orderByDesc('created_at');
         }]);
 
-        // Expose the primary currency so the financial summary is labelled
-        // with the investment's actual currency instead of a hardcoded one.
-        $projectInvestment->append('primary_currency');
+        // Expose the primary currency and the converted total invested so the
+        // financial summary is labelled with the investment's actual currency
+        // and aggregates transactions across currencies correctly.
+        $projectInvestment->append(['primary_currency', 'total_invested']);
 
         return Inertia::render('ProjectInvestments/Show', compact('projectInvestment'));
     }

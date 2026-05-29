@@ -58,7 +58,8 @@ export default function ProjectInvestmentShow({ projectInvestment }: ProjectInve
     }, [confirmDeleteTx])
 
     const transactions = projectInvestment.transactions ?? []
-    const totalInvested = transactions.reduce((sum, t) => sum + Number(t.amount), 0)
+    // total_invested comes from the backend already converted into the primary currency.
+    const totalInvested = Number(projectInvestment.total_invested ?? 0)
     const currentValue = projectInvestment.current_value != null ? Number(projectInvestment.current_value) : null
     const gainLoss = (currentValue ?? totalInvested) - totalInvested
     const summaryCurrency = projectInvestment.primary_currency ?? 'USD'
