@@ -88,14 +88,33 @@ class ProjectInvestment extends Model
     // Get total invested amount from all transactions, converted into the primary currency
     public function getTotalInvestedAttribute(): float
     {
-        $primaryCurrency = $this->primary_currency;
+        return $this->totalInvestedIn($this->primary_currency);
+    }
+
+    /**
+     * Sum all transaction amounts converted into the given currency.
+     */
+    public function totalInvestedIn(string $currency): float
+    {
         $currencyService = $this->getCurrencyService();
 
-        return (float) $this->transactions->reduce(function (float $total, ProjectInvestmentTransaction $transaction) use ($currencyService, $primaryCurrency): float {
-            $currency = $transaction->currency ?? $primaryCurrency;
+        return (float) $this->transactions->reduce(function (float $total, ProjectInvestmentTransaction $transaction) use ($currencyService, $currency): float {
+            $from = $transaction->currency ?? $currency;
 
-            return $total + $currencyService->convert((float) $transaction->amount, $currency, $primaryCurrency);
+            return $total + $currencyService->convert((float) $transaction->amount, $from, $currency);
         }, 0.0);
+    }
+
+    /**
+     * Get the current value (or total invested when unset) converted into the given currency.
+     */
+    public function currentValueIn(string $currency): float
+    {
+        if ($this->current_value === null) {
+            return $this->totalInvestedIn($currency);
+        }
+
+        return $this->getCurrencyService()->convert((float) $this->current_value, $this->primary_currency, $currency);
     }
 
     // Get primary currency (most commonly used in transactions, or first transaction's currency)

@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreProjectInvestmentRequest;
 use App\Http\Requests\UpdateProjectInvestmentRequest;
 use App\Models\ProjectInvestment;
+use App\Services\CurrencyService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class ProjectInvestmentController extends Controller
@@ -26,6 +26,14 @@ class ProjectInvestmentController extends Controller
         if ($projectInvestment->user_id !== auth()->id()) {
             abort(403);
         }
+    }
+
+    /**
+     * Resolve the currency used for portfolio-wide aggregates (the tenant's default currency).
+     */
+    private function portfolioCurrency(): string
+    {
+        return app(CurrencyService::class)->getTenantDefaultCurrency(auth()->user()?->currentTenant);
     }
 
     /**
@@ -79,32 +87,27 @@ class ProjectInvestmentController extends Controller
 
         $projectInvestments = $query->paginate($request->get('per_page', 15));
 
-        // Calculate summary statistics from transactions
-        $summary = DB::table('project_investments')
-            ->leftJoin('project_investment_transactions', 'project_investments.id', '=', 'project_investment_transactions.project_investment_id')
-            ->where('project_investments.user_id', auth()->id())
-            ->selectRaw('
-                COUNT(DISTINCT project_investments.id) as total_projects,
-                SUM(CASE WHEN project_investments.status = ? THEN 1 ELSE 0 END) as active_projects,
-                COALESCE(SUM(project_investment_transactions.amount), 0) as total_invested
-            ', ['active'])
-            ->first();
+        // Expose each row's own primary currency and converted total so list
+        // figures show the correct currency per project.
+        $projectInvestments->through(fn (ProjectInvestment $project) => $project->append(['primary_currency', 'total_invested']));
 
-        $totalCurrentValue = ProjectInvestment::where('user_id', auth()->id())
+        // Portfolio-wide summary, converted into the tenant's default currency.
+        $currency = $this->portfolioCurrency();
+
+        $allProjects = ProjectInvestment::where('user_id', auth()->id())
             ->with('transactions')
-            ->get()
-            ->sum(function ($project) {
-                return $project->current_value ?? $project->total_invested;
-            });
+            ->get();
 
-        $totalGainLoss = $totalCurrentValue - $summary->total_invested;
+        $totalInvested = $allProjects->sum(fn (ProjectInvestment $project) => $project->totalInvestedIn($currency));
+        $totalCurrentValue = $allProjects->sum(fn (ProjectInvestment $project) => $project->currentValueIn($currency));
 
         $summaryData = [
-            'total_projects' => (int) $summary->total_projects,
-            'active_projects' => (int) $summary->active_projects,
-            'total_invested' => (float) $summary->total_invested,
-            'total_current_value' => (float) $totalCurrentValue,
-            'total_gain_loss' => (float) $totalGainLoss,
+            'total_projects' => $allProjects->count(),
+            'active_projects' => $allProjects->where('status', 'active')->count(),
+            'total_invested' => round($totalInvested, 2),
+            'total_current_value' => round($totalCurrentValue, 2),
+            'total_gain_loss' => round($totalCurrentValue - $totalInvested, 2),
+            'currency' => $currency,
         ];
 
         return Inertia::render('ProjectInvestments/Index', [
@@ -248,58 +251,42 @@ class ProjectInvestmentController extends Controller
             ', ['active', 'completed', 'sold', 'abandoned'])
             ->first();
 
-        // Calculate total invested from transactions
-        $totalInvested = DB::table('project_investment_transactions')
-            ->join('project_investments', 'project_investment_transactions.project_investment_id', '=', 'project_investments.id')
-            ->where('project_investments.user_id', $userId)
-            ->sum('project_investment_transactions.amount');
+        // All monetary figures are converted into the tenant's default currency
+        // so the portfolio can be compared in a single, consistent currency.
+        $currency = $this->portfolioCurrency();
 
         // Get all projects with transactions for calculations
         $projects = ProjectInvestment::where('user_id', $userId)
             ->with('transactions')
             ->get();
 
-        $totalCurrentValue = $projects->sum(function ($project) {
-            return $project->current_value ?? $project->total_invested;
-        });
-
+        $totalInvested = $projects->sum(fn (ProjectInvestment $project) => $project->totalInvestedIn($currency));
+        $totalCurrentValue = $projects->sum(fn (ProjectInvestment $project) => $project->currentValueIn($currency));
         $totalGainLoss = $totalCurrentValue - $totalInvested;
 
-        // Get breakdown by stage
-        $byStage = $projects->filter(fn ($p) => $p->stage !== null)
-            ->groupBy('stage')
-            ->map(function ($group) {
-                return [
+        $breakdownBy = function (string $attribute) use ($projects, $currency) {
+            return $projects->filter(fn (ProjectInvestment $project) => $project->{$attribute} !== null)
+                ->groupBy($attribute)
+                ->map(fn ($group) => [
                     'count' => $group->count(),
-                    'invested' => $group->sum('total_invested'),
-                    'current_value' => $group->sum(fn ($p) => $p->current_value ?? $p->total_invested),
-                ];
-            });
+                    'invested' => round($group->sum(fn (ProjectInvestment $project) => $project->totalInvestedIn($currency)), 2),
+                    'current_value' => round($group->sum(fn (ProjectInvestment $project) => $project->currentValueIn($currency)), 2),
+                ]);
+        };
 
-        // Get breakdown by business model
-        $byBusinessModel = $projects->filter(fn ($p) => $p->business_model !== null)
-            ->groupBy('business_model')
-            ->map(function ($group) {
-                return [
-                    'count' => $group->count(),
-                    'invested' => $group->sum('total_invested'),
-                    'current_value' => $group->sum(fn ($p) => $p->current_value ?? $p->total_invested),
-                ];
-            });
+        $byStage = $breakdownBy('stage');
+        $byBusinessModel = $breakdownBy('business_model');
+        $byProjectType = $breakdownBy('project_type');
 
-        // Get breakdown by project type
-        $byProjectType = $projects->filter(fn ($p) => $p->project_type !== null)
-            ->groupBy('project_type')
-            ->map(function ($group) {
-                return [
-                    'count' => $group->count(),
-                    'invested' => $group->sum('total_invested'),
-                    'current_value' => $group->sum(fn ($p) => $p->current_value ?? $p->total_invested),
-                ];
-            });
-
-        // Sort projects by total invested
-        $projects = $projects->sortByDesc('total_invested')->values();
+        // Per-project rows, converted into the portfolio currency and sorted by investment.
+        $projectsList = $projects->map(fn (ProjectInvestment $project) => [
+            'id' => $project->id,
+            'name' => $project->name,
+            'stage' => $project->stage,
+            'status' => $project->status,
+            'total_invested' => round($project->totalInvestedIn($currency), 2),
+            'current_value' => $project->current_value !== null ? round($project->currentValueIn($currency), 2) : null,
+        ])->sortByDesc('total_invested')->values();
 
         $analytics = [
             'total_projects' => (int) $stats->total_projects,
@@ -307,13 +294,14 @@ class ProjectInvestmentController extends Controller
             'completed_projects' => (int) $stats->completed_projects,
             'sold_projects' => (int) $stats->sold_projects,
             'abandoned_projects' => (int) $stats->abandoned_projects,
-            'total_invested' => (float) $totalInvested,
-            'total_current_value' => (float) $totalCurrentValue,
-            'total_gain_loss' => (float) $totalGainLoss,
+            'total_invested' => round($totalInvested, 2),
+            'total_current_value' => round($totalCurrentValue, 2),
+            'total_gain_loss' => round($totalGainLoss, 2),
             'by_stage' => $byStage,
             'by_business_model' => $byBusinessModel,
             'by_project_type' => $byProjectType,
-            'projects' => $projects,
+            'projects' => $projectsList,
+            'currency' => $currency,
         ];
 
         return Inertia::render('ProjectInvestments/Analytics', compact('analytics'));

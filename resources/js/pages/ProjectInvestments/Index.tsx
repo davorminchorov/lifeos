@@ -36,6 +36,7 @@ import type { PaginatedData } from '@/types'
 
 interface ProjectInvestmentWithTotals extends ProjectInvestment {
     total_invested?: number
+    primary_currency?: string
 }
 
 interface ProjectInvestmentIndexProps {
@@ -46,6 +47,7 @@ interface ProjectInvestmentIndexProps {
         total_invested: number
         total_current_value: number
         total_gain_loss: number
+        currency: string
     }
     filters?: {
         search?: string
@@ -145,14 +147,14 @@ export default function ProjectInvestmentIndex({ projectInvestments, summary, fi
                     <Card>
                         <CardContent className="p-4">
                             <p className="text-sm text-muted-foreground">Total Invested</p>
-                            <p className="text-xl font-semibold">{formatCurrency(summary.total_invested, 'USD')}</p>
+                            <p className="text-xl font-semibold">{formatCurrency(summary.total_invested, summary.currency)}</p>
                         </CardContent>
                     </Card>
                     <Card>
                         <CardContent className="p-4">
                             <p className="text-sm text-muted-foreground">Gain / Loss</p>
                             <p className={`text-xl font-semibold ${summary.total_gain_loss >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                                {summary.total_gain_loss >= 0 ? '+' : ''}{formatCurrency(summary.total_gain_loss, 'USD')}
+                                {summary.total_gain_loss >= 0 ? '+' : ''}{formatCurrency(summary.total_gain_loss, summary.currency)}
                             </p>
                         </CardContent>
                     </Card>
@@ -242,7 +244,7 @@ export default function ProjectInvestmentIndex({ projectInvestments, summary, fi
                                         </TableCell>
                                         <TableCell>
                                             {investment.current_value != null
-                                                ? formatCurrency(investment.current_value, 'USD')
+                                                ? formatCurrency(investment.current_value, investment.primary_currency ?? summary.currency)
                                                 : '\u2014'}
                                         </TableCell>
                                         <TableCell className="text-sm">
@@ -299,7 +301,7 @@ export default function ProjectInvestmentIndex({ projectInvestments, summary, fi
                                     </div>
                                     <div className="mt-3 flex items-center justify-between text-sm">
                                         <span className="font-medium">
-                                            {investment.current_value != null ? formatCurrency(investment.current_value, 'USD') : '\u2014'}
+                                            {investment.current_value != null ? formatCurrency(investment.current_value, investment.primary_currency ?? summary.currency) : '\u2014'}
                                         </span>
                                         {investment.start_date ? (
                                             <span className="text-muted-foreground">{formatDate(investment.start_date)}</span>
