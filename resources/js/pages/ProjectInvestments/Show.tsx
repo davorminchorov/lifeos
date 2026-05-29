@@ -58,8 +58,11 @@ export default function ProjectInvestmentShow({ projectInvestment }: ProjectInve
     }, [confirmDeleteTx])
 
     const transactions = projectInvestment.transactions ?? []
-    const totalInvested = transactions.reduce((sum, t) => sum + t.amount, 0)
-    const gainLoss = (projectInvestment.current_value ?? totalInvested) - totalInvested
+    // total_invested comes from the backend already converted into the primary currency.
+    const totalInvested = Number(projectInvestment.total_invested ?? 0)
+    const currentValue = projectInvestment.current_value != null ? Number(projectInvestment.current_value) : null
+    const gainLoss = (currentValue ?? totalInvested) - totalInvested
+    const summaryCurrency = projectInvestment.primary_currency ?? 'USD'
 
     return (
         <AppLayout>
@@ -259,21 +262,21 @@ export default function ProjectInvestmentShow({ projectInvestment }: ProjectInve
                         <CardContent className="space-y-4">
                             <div>
                                 <p className="text-sm text-muted-foreground">Total Invested</p>
-                                <p className="text-2xl font-semibold">{formatCurrency(totalInvested, 'USD')}</p>
+                                <p className="text-2xl font-semibold">{formatCurrency(totalInvested, summaryCurrency)}</p>
                             </div>
                             <Separator />
                             <div>
                                 <p className="text-sm text-muted-foreground">Current Value</p>
                                 <p className="text-xl font-semibold">
-                                    {projectInvestment.current_value != null
-                                        ? formatCurrency(projectInvestment.current_value, 'USD')
+                                    {currentValue != null
+                                        ? formatCurrency(currentValue, summaryCurrency)
                                         : '\u2014'}
                                 </p>
                             </div>
                             <div>
                                 <p className="text-sm text-muted-foreground">Gain / Loss</p>
                                 <p className={`font-semibold ${gainLoss >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                                    {gainLoss >= 0 ? '+' : ''}{formatCurrency(gainLoss, 'USD')}
+                                    {gainLoss >= 0 ? '+' : ''}{formatCurrency(gainLoss, summaryCurrency)}
                                 </p>
                             </div>
                             <Separator />

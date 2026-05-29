@@ -13,12 +13,20 @@ import {
 } from '@/components/ui/table'
 import { ArrowLeft } from 'lucide-react'
 import { formatCurrency } from '@/lib/utils'
-import type { ProjectInvestment } from '@/types/models'
 
 interface BreakdownEntry {
     count: number
     invested: number
     current_value: number
+}
+
+interface AnalyticsProject {
+    id: number
+    name: string
+    stage: string | null
+    status: string
+    total_invested: number
+    current_value: number | null
 }
 
 interface ProjectInvestmentAnalyticsProps {
@@ -34,7 +42,8 @@ interface ProjectInvestmentAnalyticsProps {
         by_stage: Record<string, BreakdownEntry>
         by_business_model: Record<string, BreakdownEntry>
         by_project_type: Record<string, BreakdownEntry>
-        projects: ProjectInvestment[]
+        projects: AnalyticsProject[]
+        currency: string
     }
 }
 
@@ -67,14 +76,14 @@ export default function ProjectInvestmentAnalytics({ analytics }: ProjectInvestm
                 <Card>
                     <CardContent className="p-4">
                         <p className="text-sm text-muted-foreground">Total Invested</p>
-                        <p className="text-xl font-semibold">{formatCurrency(analytics.total_invested, 'USD')}</p>
+                        <p className="text-xl font-semibold">{formatCurrency(analytics.total_invested, analytics.currency)}</p>
                     </CardContent>
                 </Card>
                 <Card>
                     <CardContent className="p-4">
                         <p className="text-sm text-muted-foreground">Total Gain / Loss</p>
                         <p className={`text-xl font-semibold ${analytics.total_gain_loss >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                            {analytics.total_gain_loss >= 0 ? '+' : ''}{formatCurrency(analytics.total_gain_loss, 'USD')}
+                            {analytics.total_gain_loss >= 0 ? '+' : ''}{formatCurrency(analytics.total_gain_loss, analytics.currency)}
                         </p>
                     </CardContent>
                 </Card>
@@ -102,7 +111,7 @@ export default function ProjectInvestmentAnalytics({ analytics }: ProjectInvestm
                 <Card>
                     <CardContent className="p-4">
                         <p className="text-sm text-muted-foreground">Current Value</p>
-                        <p className="text-xl font-semibold">{formatCurrency(analytics.total_current_value, 'USD')}</p>
+                        <p className="text-xl font-semibold">{formatCurrency(analytics.total_current_value, analytics.currency)}</p>
                     </CardContent>
                 </Card>
             </div>
@@ -121,7 +130,7 @@ export default function ProjectInvestmentAnalytics({ analytics }: ProjectInvestm
                                             <p className="text-sm font-medium capitalize">{stage}</p>
                                             <p className="text-xs text-muted-foreground">{data.count} project{data.count !== 1 ? 's' : ''}</p>
                                         </div>
-                                        <p className="text-sm font-medium">{formatCurrency(data.invested, 'USD')}</p>
+                                        <p className="text-sm font-medium">{formatCurrency(data.invested, analytics.currency)}</p>
                                     </div>
                                 ))}
                             </div>
@@ -142,7 +151,7 @@ export default function ProjectInvestmentAnalytics({ analytics }: ProjectInvestm
                                             <p className="text-sm font-medium capitalize">{model}</p>
                                             <p className="text-xs text-muted-foreground">{data.count} project{data.count !== 1 ? 's' : ''}</p>
                                         </div>
-                                        <p className="text-sm font-medium">{formatCurrency(data.invested, 'USD')}</p>
+                                        <p className="text-sm font-medium">{formatCurrency(data.invested, analytics.currency)}</p>
                                     </div>
                                 ))}
                             </div>
@@ -163,7 +172,7 @@ export default function ProjectInvestmentAnalytics({ analytics }: ProjectInvestm
                                             <p className="text-sm font-medium">{type}</p>
                                             <p className="text-xs text-muted-foreground">{data.count} project{data.count !== 1 ? 's' : ''}</p>
                                         </div>
-                                        <p className="text-sm font-medium">{formatCurrency(data.invested, 'USD')}</p>
+                                        <p className="text-sm font-medium">{formatCurrency(data.invested, analytics.currency)}</p>
                                     </div>
                                 ))}
                             </div>
@@ -199,8 +208,8 @@ export default function ProjectInvestmentAnalytics({ analytics }: ProjectInvestm
                                             </TableCell>
                                             <TableCell className="capitalize">{project.stage ?? '\u2014'}</TableCell>
                                             <TableCell className="capitalize">{project.status}</TableCell>
-                                            <TableCell>{formatCurrency((project as unknown as { total_invested: number }).total_invested ?? 0, 'USD')}</TableCell>
-                                            <TableCell>{project.current_value != null ? formatCurrency(project.current_value, 'USD') : '\u2014'}</TableCell>
+                                            <TableCell>{formatCurrency(project.total_invested, analytics.currency)}</TableCell>
+                                            <TableCell>{project.current_value != null ? formatCurrency(project.current_value, analytics.currency) : '\u2014'}</TableCell>
                                         </TableRow>
                                     ))}
                                 </TableBody>
