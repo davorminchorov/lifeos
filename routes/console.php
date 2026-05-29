@@ -8,6 +8,12 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
 
+// Prune expired data export files and records daily at 03:00 AM
+Schedule::command('exports:prune')
+    ->dailyAt('03:00')
+    ->name('prune-data-exports')
+    ->description('Delete expired data export files and records');
+
 // Schedule job application reminders to run daily at 8:00 AM
 Schedule::command('job-applications:check-reminders')
     ->dailyAt('08:00')

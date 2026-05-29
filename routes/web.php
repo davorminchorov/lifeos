@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AgentRunsController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\BudgetController;
 use App\Http\Controllers\ContractController;
@@ -12,6 +13,7 @@ use App\Http\Controllers\CycleMenuItemController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\ExpenseController;
+use App\Http\Controllers\ExportController;
 use App\Http\Controllers\FileUploadController;
 use App\Http\Controllers\GmailReceiptController;
 use App\Http\Controllers\HolidayController;
@@ -27,6 +29,7 @@ use App\Http\Controllers\JobApplicationKanbanController;
 use App\Http\Controllers\JobApplicationOfferController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\PendingActionsController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectInvestmentController;
 use App\Http\Controllers\ProjectInvestmentTransactionController;
@@ -193,6 +196,15 @@ Route::middleware('auth')->group(function () {
         Route::patch('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password.update');
 
         // Settings Routes
+        // Data exports (per-module + export-everything ZIP, generated asynchronously)
+        Route::prefix('exports')->name('exports.')->group(function () {
+            Route::get('/', [ExportController::class, 'index'])->name('index');
+            Route::post('/', [ExportController::class, 'store'])->name('store');
+            Route::get('/{export}', [ExportController::class, 'show'])->name('show');
+            Route::get('/{export}/download', [ExportController::class, 'download'])->name('download');
+            Route::delete('/{export}', [ExportController::class, 'destroy'])->name('destroy');
+        });
+
         Route::prefix('settings')->name('settings.')->group(function () {
             Route::get('/', [SettingsController::class, 'index'])->name('index');
             Route::get('/account', [SettingsController::class, 'account'])->name('account');
@@ -288,15 +300,15 @@ Route::middleware('auth')->group(function () {
 
         // Pending Agent Actions + Agent runs
         Route::prefix('dashboard')->name('dashboard.')->group(function () {
-            Route::get('pending-actions', [\App\Http\Controllers\PendingActionsController::class, 'index'])->name('pending-actions.index');
-            Route::get('pending-actions/{pendingAction}', [\App\Http\Controllers\PendingActionsController::class, 'show'])->name('pending-actions.show');
-            Route::patch('pending-actions/{pendingAction}/approve', [\App\Http\Controllers\PendingActionsController::class, 'approve'])->name('pending-actions.approve');
-            Route::patch('pending-actions/{pendingAction}/reject', [\App\Http\Controllers\PendingActionsController::class, 'reject'])->name('pending-actions.reject');
-            Route::patch('pending-actions/{pendingAction}/revert', [\App\Http\Controllers\PendingActionsController::class, 'revert'])->name('pending-actions.revert');
-            Route::post('pending-actions/bulk-approve', [\App\Http\Controllers\PendingActionsController::class, 'bulkApprove'])->name('pending-actions.bulk-approve');
+            Route::get('pending-actions', [PendingActionsController::class, 'index'])->name('pending-actions.index');
+            Route::get('pending-actions/{pendingAction}', [PendingActionsController::class, 'show'])->name('pending-actions.show');
+            Route::patch('pending-actions/{pendingAction}/approve', [PendingActionsController::class, 'approve'])->name('pending-actions.approve');
+            Route::patch('pending-actions/{pendingAction}/reject', [PendingActionsController::class, 'reject'])->name('pending-actions.reject');
+            Route::patch('pending-actions/{pendingAction}/revert', [PendingActionsController::class, 'revert'])->name('pending-actions.revert');
+            Route::post('pending-actions/bulk-approve', [PendingActionsController::class, 'bulkApprove'])->name('pending-actions.bulk-approve');
 
-            Route::get('agents', [\App\Http\Controllers\AgentRunsController::class, 'index'])->name('agents.index');
-            Route::get('agents/{agentRun}', [\App\Http\Controllers\AgentRunsController::class, 'show'])->name('agents.show');
+            Route::get('agents', [AgentRunsController::class, 'index'])->name('agents.index');
+            Route::get('agents/{agentRun}', [AgentRunsController::class, 'show'])->name('agents.show');
         });
 
         // Budget Analytics routes must come before resource routes to prevent conflicts
