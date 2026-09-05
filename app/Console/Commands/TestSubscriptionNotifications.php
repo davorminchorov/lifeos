@@ -167,7 +167,7 @@ class TestSubscriptionNotifications extends Command
                     $this->info('✅ Test notification sent successfully!');
                     $this->newLine();
                     $this->info('📧 Check:');
-                    $this->line('  - Mailpit: http://localhost:45302');
+                    $this->line('  - Mailpit: http://localhost:'.config('mail.mailpit.forward_port', 45302));
                     $this->line('  - Database: SELECT * FROM notifications WHERE notifiable_id = '.$user->id.' ORDER BY created_at DESC LIMIT 5;');
                     $this->line('  - Logs: tail -f storage/logs/laravel.log');
                 } catch (\Exception $e) {

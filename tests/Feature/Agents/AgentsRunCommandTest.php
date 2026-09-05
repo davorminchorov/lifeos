@@ -39,7 +39,7 @@ class AgentsRunCommandTest extends TestCase
         Config::set('agents.definitions_path', $this->agentsPath);
         Config::set('agents.flags.agents.email_ingestion.enabled', true);
         Config::set('agents.mcp_servers', [
-            'lifeos' => ['url' => 'http://localhost/mcp/lifeos', 'auth' => 'agent_token'],
+            'lifeos' => ['url' => 'https://lifeos.test/mcp/lifeos', 'https_only' => true, 'auth' => 'agent_token'],
         ]);
         Config::set('agents.anthropic.api_key', 'test');
         Config::set('agents.anthropic.base_url', 'https://api.anthropic.test');

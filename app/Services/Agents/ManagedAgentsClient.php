@@ -130,6 +130,7 @@ class ManagedAgentsClient
         }
 
         return Http::baseUrl((string) $config['base_url'])
+            ->withoutRedirecting()
             ->withHeaders([
                 'x-api-key' => $apiKey,
                 'anthropic-version' => (string) ($config['version'] ?? '2023-06-01'),

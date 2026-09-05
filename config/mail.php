@@ -16,6 +16,10 @@ return [
 
     'default' => env('MAIL_MAILER', 'log'),
 
+    'mailpit' => [
+        'forward_port' => env('MAILPIT_FORWARD_PORT', 45302),
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Mailer Configurations

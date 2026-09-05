@@ -61,6 +61,6 @@ class TestSubscriptionNotificationsSeeder extends Seeder
         $this->command->info('Next steps:');
         $this->command->line('  1. Run: php artisan subscriptions:check-renewals');
         $this->command->line('  2. Check notifications: SELECT * FROM notifications ORDER BY created_at DESC;');
-        $this->command->line('  3. Check Mailpit: http://localhost:45302');
+        $this->command->line('  3. Check Mailpit: http://localhost:'.config('mail.mailpit.forward_port', 45302));
     }
 }

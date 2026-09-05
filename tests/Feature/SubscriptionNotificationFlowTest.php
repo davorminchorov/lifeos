@@ -3,10 +3,12 @@
 namespace Tests\Feature;
 
 use App\Models\Subscription;
+use App\Models\Tenant;
 use App\Models\User;
 use App\Notifications\SubscriptionRenewalAlert;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Notification;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -44,6 +46,29 @@ class SubscriptionNotificationFlowTest extends TestCase
                 return $notification->subscription->id === $subscription->id;
             }
         );
+    }
+
+    #[Test]
+    public function test_notification_command_uses_the_configured_mailpit_port(): void
+    {
+        Notification::fake();
+        Config::set('mail.mailpit.forward_port', 46302);
+
+        $user = User::factory()->create();
+        $tenant = Tenant::factory()->create(['owner_id' => $user->id]);
+        $user->forceFill(['current_tenant_id' => $tenant->id])->save();
+        $this->actingAs($user);
+        $user->createDefaultNotificationPreferences();
+        Subscription::factory()->create([
+            'user_id' => $user->id,
+            'next_billing_date' => now()->addDays(7),
+            'status' => 'active',
+        ]);
+
+        $this->artisan('subscriptions:test-notifications', ['user_id' => $user->id])
+            ->expectsConfirmation('Would you like to send a test notification?', 'yes')
+            ->expectsOutputToContain('Mailpit: http://localhost:46302')
+            ->assertSuccessful();
     }
 
     #[Test]
