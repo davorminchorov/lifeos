@@ -1,12 +1,5 @@
 services:
 
-  traefik:
-    image: traefik:v3.5
-
-  php:
-    depends_on:
-      - traefik
-
   mysql:
       image: mysql:8.4
 

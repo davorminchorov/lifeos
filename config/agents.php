@@ -61,7 +61,8 @@ return [
     */
     'mcp_servers' => [
         'lifeos' => [
-            'url' => env('LIFEOS_MCP_PUBLIC_URL', 'http://localhost/mcp/lifeos'),
+            'url' => env('LIFEOS_MCP_PUBLIC_URL', 'https://lifeos.test/mcp/lifeos'),
+            'https_only' => true,
             'auth' => 'agent_token',
         ],
         'gmail' => [

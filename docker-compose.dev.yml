@@ -1,19 +1,4 @@
 services:
-  traefik:
-    ports:
-    - "80:80"
-    - "443:443"
-    networks:
-      lifeos:
-        aliases:
-          - lifeos.test
-    volumes:
-      # Mount the Docker socket as read-only so Traefik can listen to events
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./.infrastructure/conf/traefik/dev/traefik.yml:/traefik.yml:ro
-      - ./.infrastructure/conf/traefik/dev/traefik-certs.yml:/traefik-certs.yml
-      - ./.infrastructure/conf/traefik/dev/certificates/:/certificates
-
   php:
     build:
       target: development
@@ -24,17 +9,21 @@ services:
       - .:/var/www/html/
     networks:
       - lifeos
+      - spin-proxy
+    extra_hosts:
+      # Let PHP reach its own public hostname through the shared proxy on the host
+      - "lifeos.test:host-gateway"
     depends_on:
-      traefik:
-        condition: service_started
       mysql:
         condition: service_healthy
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.laravel.rule=HostRegexp(`lifeos.test`)"
-      - "traefik.http.routers.laravel.entrypoints=web"
-      - "traefik.http.services.laravel.loadbalancer.server.port=8080"
-      - "traefik.http.services.laravel.loadbalancer.server.scheme=http"
+      - "traefik.docker.network=spin-proxy"
+      - "traefik.http.routers.lifeos-web.rule=HostRegexp(`lifeos.test`)"
+      - "traefik.http.routers.lifeos-web.entrypoints=websecure"
+      - "traefik.http.routers.lifeos-web.tls=true"
+      - "traefik.http.services.lifeos-web.loadbalancer.server.port=8080"
+      - "traefik.http.services.lifeos-web.loadbalancer.server.scheme=http"
 
   node:
     image: node:22
@@ -49,7 +38,7 @@ services:
       networks:
         - lifeos
       ports:
-        - "8025:8025"
+        - "${MAILPIT_FORWARD_PORT:-45302}:8025"
 
   mysql:
     networks:
@@ -62,7 +51,7 @@ services:
       MYSQL_USER: ${DB_USERNAME:-lifeos}
       MYSQL_PASSWORD: ${DB_PASSWORD:-lifeos}
     ports:
-      - "3306:3306"
+      - "${DB_FORWARD_PORT:-45300}:3306"
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u$$MYSQL_USER", "-p$$MYSQL_PASSWORD"]
       interval: 5s
@@ -74,15 +63,15 @@ services:
     volumes:
       - redis_data:/data
     ports:
-      - "6379:6379"
+      - "${REDIS_FORWARD_PORT:-45301}:6379"
     networks:
       - lifeos
 
 
   minio:
     ports:
-      - '${FORWARD_MINIO_PORT:-9000}:9000'
-      - '${FORWARD_MINIO_CONSOLE_PORT:-8900}:8900'
+      - '${MINIO_FORWARD_PORT:-45303}:9000'
+      - '${MINIO_CONSOLE_FORWARD_PORT:-45304}:8900'
     environment:
       MINIO_ROOT_USER: ${MINIO_ROOT_USERNAME:-lifeos}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-lifeos}
@@ -102,6 +91,8 @@ services:
       - .:/var/www/html/
     networks:
       - lifeos
+    extra_hosts:
+      - "lifeos.test:host-gateway"
     depends_on:
       mysql:
         condition: service_healthy
@@ -117,6 +108,8 @@ services:
       - .:/var/www/html/
     networks:
       - lifeos
+    extra_hosts:
+      - "lifeos.test:host-gateway"
     depends_on:
       mysql:
         condition: service_healthy
@@ -124,6 +117,8 @@ services:
 
 networks:
   lifeos:
+  spin-proxy:
+    external: true
 
 volumes:
   mysql_data:

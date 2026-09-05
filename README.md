@@ -172,9 +172,37 @@ Notes:
 - Docker and Docker Compose
 - Node.js (for frontend assets)
 
+## Local development
+
+Development uses one shared Traefik proxy for all Spin projects on the machine instead of a
+per-project Traefik. Set it up once:
+
+1. `git clone https://github.com/davorminchorov/spin-template-laravel-stack /tmp/spin-template`
+   and copy `proxy/docker-compose.yml` and `proxy/traefik.yml` to `~/.spin-proxy/`.
+2. Certificates (needs `mkcert`, run `mkcert -install` once):
+   ```
+   mkcert -cert-file ~/.spin-proxy/certs/default.pem -key-file ~/.spin-proxy/certs/default-key.pem "*.test" localhost 127.0.0.1 ::1
+   mkcert -cert-file ~/.spin-proxy/certs/lifeos.pem -key-file ~/.spin-proxy/certs/lifeos-key.pem lifeos.test "*.lifeos.test"
+   ```
+   Then create `~/.spin-proxy/dynamic/default.yml` and `~/.spin-proxy/dynamic/lifeos.yml` (see the template README for the two files).
+3. Resolve `*.test` to 127.0.0.1 (dnsmasq + /etc/resolver/test, or add `lifeos.test` to /etc/hosts).
+4. `docker compose -f ~/.spin-proxy/docker-compose.yml up -d`
+
+Then `spin up` as usual.
+
+| Service | URL |
+| --- | --- |
+| App | https://lifeos.test |
+| Mailpit | http://localhost:45302 (override with `MAILPIT_FORWARD_PORT`) |
+| Database | localhost:45300 (override with `DB_FORWARD_PORT`) |
+| Redis | localhost:45301 (override with `REDIS_FORWARD_PORT`) |
+| MinIO S3 API | localhost:45303 (override with `MINIO_FORWARD_PORT`) |
+| MinIO console | localhost:45304 (override with `MINIO_CONSOLE_FORWARD_PORT`) |
+| Traefik dashboard | http://localhost:8080 |
+
 ## Docker Setup with ServerSideUp Spin
 
-This project uses ServerSideUp Spin for local development, which provides a streamlined Docker-based development environment with automatic SSL certificates and easy service management.
+This project uses ServerSideUp Spin for local development, which provides a streamlined Docker-based development environment. SSL and hostname routing are handled by the shared proxy described above, not by a per-project Traefik.
 
 ### Installation
 
@@ -216,14 +244,15 @@ This project uses ServerSideUp Spin for local development, which provides a stre
 
    This will start:
    - **PHP/Laravel** - Main application server
-   - **Traefik** - Reverse proxy with automatic SSL
    - **Node.js** - For frontend asset compilation
-   - **Mailpit** - Email testing interface (accessible at http://localhost:8025)
+   - **Mailpit** - Email testing interface (accessible at http://localhost:45302)
+
+   The shared proxy (see "Local development" above) must already be running, or `spin up` fails
+   with `network spin-proxy declared as external, but could not be found`.
 
 ### Available Services
 
-- **Application**: http://localhost (with automatic SSL via Traefik)
-- **Mailpit**: http://localhost:8025 (Email testing interface)
+See the table in "Local development" above.
 
 ### Common Development Commands
 
@@ -260,7 +289,7 @@ The project includes the following Docker configuration files:
 
 The development environment is pre-configured with:
 - SQLite database (located at `.infrastructure/volume_data/sqlite/database.sqlite`)
-- Automatic SSL certificates via Traefik
+- Automatic SSL certificates via the shared Traefik proxy
 - Hot reload for frontend assets
 - Email testing with Mailpit
 

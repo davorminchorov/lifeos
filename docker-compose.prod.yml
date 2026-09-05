@@ -1,6 +1,7 @@
 services:
 
   traefik:
+    image: traefik:v3.5
     ports:
       - target: 80
         published: 80
@@ -38,6 +39,8 @@ services:
       SSL_MODE: full
     networks:
       - web-public
+    depends_on:
+      - traefik
     volumes:
       - "storage_private:/var/www/html/storage/app/private/"
       - "storage_public:/var/www/html/storage/app/public/"

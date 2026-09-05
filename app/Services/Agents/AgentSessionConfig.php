@@ -60,9 +60,17 @@ final class AgentSessionConfig
                 throw new RuntimeException("MCP server [{$name}] has no url configured.");
             }
 
+            $url = (string) $config['url'];
+
+            $requiresHttps = ($config['https_only'] ?? false) || ($config['auth'] ?? null) === 'agent_token';
+
+            if ($requiresHttps && ! $this->isValidHttpsUrl($url)) {
+                throw new RuntimeException("MCP server [{$name}] must use a valid HTTPS URL.");
+            }
+
             $entry = [
                 'name' => $name,
-                'url' => (string) $config['url'],
+                'url' => $url,
             ];
 
             if (($config['auth'] ?? null) === 'agent_token') {
@@ -79,5 +87,12 @@ final class AgentSessionConfig
         }
 
         return $resolved;
+    }
+
+    private function isValidHttpsUrl(string $url): bool
+    {
+        return filter_var($url, FILTER_VALIDATE_URL) !== false
+            && strtolower((string) parse_url($url, PHP_URL_SCHEME)) === 'https'
+            && parse_url($url, PHP_URL_HOST) !== null;
     }
 }

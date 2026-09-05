@@ -13,7 +13,8 @@
         },
         "lifeos": {
             "type": "http",
-            "url": "${LIFEOS_MCP_URL:-http://localhost/mcp/lifeos}",
+            "url": "${LIFEOS_MCP_URL:-https://lifeos.test/mcp/lifeos}",
+            "headersHelper": "php -r '$url = getenv(\"CLAUDE_CODE_MCP_SERVER_URL\"); if (filter_var($url, FILTER_VALIDATE_URL) === false || strtolower((string) parse_url($url, PHP_URL_SCHEME)) !== \"https\" || parse_url($url, PHP_URL_HOST) === null) { fwrite(STDERR, \"LIFEOS_MCP_URL must be a valid HTTPS URL.\\n\"); exit(1); } echo \"{}\";'",
             "headers": {
                 "Authorization": "Bearer ${LIFEOS_AGENT_TOKEN}"
             }
