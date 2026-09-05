@@ -13,7 +13,7 @@
         },
         "lifeos": {
             "type": "http",
-            "url": "${LIFEOS_MCP_URL:-http://localhost/mcp/lifeos}",
+            "url": "${LIFEOS_MCP_URL:-https://lifeos.test/mcp/lifeos}",
             "headers": {
                 "Authorization": "Bearer ${LIFEOS_AGENT_TOKEN}"
             }
